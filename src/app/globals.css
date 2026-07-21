@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+
+  --brand-crimson: #9b1a1a;
+  --brand-crimson-hover: #b91c1c;
+  --brand-crimson-dark: #7f1d1d;
+
+  --surface-nav: rgba(10, 10, 10, 0.85);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand-crimson: var(--brand-crimson);
+  --color-brand-crimson-hover: var(--brand-crimson-hover);
+  --color-brand-crimson-dark: var(--brand-crimson-dark);
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
+  min-height: 100%;
+  overflow-x: hidden;
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn-bracket {
+  position: relative;
+  display: inline-flex;
+  padding: 8px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.btn-bracket::before,
+.btn-bracket::after,
+.btn-bracket .btn-inner::before,
+.btn-bracket .btn-inner::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--brand-crimson);
+  border-style: solid;
+  transition: border-color 0.2s;
+}
+
+.btn-bracket::before {
+  top: 0;
+  left: 0;
+  border-width: 1px 0 0 1px;
+}
+
+.btn-bracket::after {
+  top: 0;
+  right: 0;
+  border-width: 1px 1px 0 0;
+}
+
+.btn-bracket .btn-inner::before {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 1px 1px;
+}
+
+.btn-bracket .btn-inner::after {
+  bottom: 0;
+  right: 0;
+  border-width: 0 1px 1px 0;
+}
+
+.btn-bracket .btn-inner {
+  background-color: var(--brand-crimson);
+  color: white;
+  padding: 14px 32px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: background-color 0.2s;
+}
+
+.btn-bracket:hover .btn-inner {
+  background-color: var(--brand-crimson-hover);
+}
+.btn-bracket:hover::before,
+.btn-bracket:hover::after,
+.btn-bracket:hover .btn-inner::before,
+.btn-bracket:hover .btn-inner::after {
+  border-color: var(--brand-crimson-hover);
 }

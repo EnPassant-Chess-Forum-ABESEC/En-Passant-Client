@@ -1,65 +1,59 @@
 import Image from "next/image";
+import Link from "next/link";
+import NumbersSection from "@/components/NumbersSection";
+import StrategySection from "@/components/StrategySection";
+import EcosystemSection from "@/components/EcosystemSection";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="relative w-full h-screen bg-[#111111] overflow-hidden font-sans">
+        <div className="absolute top-[22%] w-full px-6 md:px-12 select-none pointer-events-none z-0">
+          <div className="relative w-full mx-auto">
+            <p className="text-white font-bold uppercase absolute -top-4 md:-top-8 left-1 md:left-2 text-sm md:text-2xl tracking-[0.15em]">
+              EN
+            </p>
+
+            <div className="flex justify-between items-center w-full text-white font-black uppercase leading-[0.75] text-[21vw] tracking-tighter">
+              <span>P</span>
+              <span>A</span>
+              <span>S</span>
+              <span>S</span>
+              <span>A</span>
+              <span>N</span>
+              <span>T</span>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div
+          className="absolute left-1/2 z-20 -translate-x-1/2"
+          style={{
+            bottom: "-5%",
+            width: "min(90vw,1300px)",
+            height: "105vh",
+          }}
+        >
+          <Image
+            src="/hero.png"
+            alt="King"
+            fill
+            priority
+            className="object-contain object-bottom"
+          />
         </div>
-      </main>
-    </div>
+
+        <div className="absolute bottom-14 right-14 z-40">
+          <div className="group relative">
+            <Link href="/sign-up" className="btn-bracket group">
+              <div className="btn-inner">Join The Club</div>
+            </Link>
+          </div>
+        </div>
+      </section>
+      <NumbersSection />
+      <StrategySection />
+      <EcosystemSection />
+    </>
   );
 }
