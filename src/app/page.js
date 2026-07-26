@@ -3,6 +3,7 @@ import Link from "next/link";
 import NumbersSection from "@/components/NumbersSection";
 import StrategySection from "@/components/StrategySection";
 import EcosystemSection from "@/components/EcosystemSection";
+import WorkingProcessSection from "@/components/WorkingProcessSection";
 
 export default function Home() {
   return (
@@ -54,6 +55,7 @@ export default function Home() {
       <NumbersSection />
       <StrategySection />
       <EcosystemSection />
+      <WorkingProcessSection />
     </>
   );
 }
