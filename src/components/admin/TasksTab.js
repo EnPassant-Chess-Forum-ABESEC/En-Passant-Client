@@ -109,91 +109,163 @@ export default function TasksTab() {
     setAcceptsFiles(false);
   };
 
-  if (loading) return <div className="p-8 text-center text-white/40 uppercase">Loading...</div>;
+  if (loading) return <div className="p-12 text-center text-white/40 uppercase tracking-widest text-sm">Loading Data...</div>;
 
   return (
-    <div>
-      <form onSubmit={handleSave} className="bg-[#1a1a1a] border border-white/10 p-6 mb-8 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs uppercase text-white/50 mb-1">Department</label>
-            <select value={departmentId} onChange={e=>setDepartmentId(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white focus:border-[#9b1a1a] focus:outline-none">
-              {departments.map(d => <option key={d._id} value={d._id}>{d.name} ({d.code})</option>)}
+    <div className="space-y-12">
+      {/* ─── Task Form ─── */}
+      <form onSubmit={handleSave} className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
+        {/* Subtle top glow */}
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#9b1a1a]/50 to-transparent" />
+        
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-white">
+            {editId ? 'Edit Task' : 'Create New Task'}
+          </h2>
+          {editId && (
+            <button type="button" onClick={resetForm} className="text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+              Cancel Edit
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Department</label>
+            <select 
+              value={departmentId} 
+              onChange={e=>setDepartmentId(e.target.value)} 
+              className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none appearance-none"
+            >
+              {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
             </select>
           </div>
-          <div>
-            <label className="block text-xs uppercase text-white/50 mb-1">Title</label>
-            <input required value={title} onChange={e=>setTitle(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white focus:border-[#9b1a1a] focus:outline-none" />
+          
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Title</label>
+            <input 
+              required 
+              value={title} 
+              onChange={e=>setTitle(e.target.value)} 
+              placeholder="e.g. Write an Instagram Caption"
+              className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20" 
+            />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs uppercase text-white/50 mb-1">Summary</label>
-            <textarea required value={summary} onChange={e=>setSummary(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white focus:border-[#9b1a1a] focus:outline-none" rows="2"></textarea>
+
+          <div className="md:col-span-2 space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Summary</label>
+            <textarea 
+              required 
+              value={summary} 
+              onChange={e=>setSummary(e.target.value)} 
+              placeholder="Brief description of what needs to be done..."
+              className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20 resize-none" 
+              rows="2"
+            />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs uppercase text-white/50 mb-1">Instructions (One per line)</label>
-            <textarea required value={instructions} onChange={e=>setInstructions(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white focus:border-[#9b1a1a] focus:outline-none" rows="3"></textarea>
+
+          <div className="md:col-span-2 space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Instructions (One per line)</label>
+            <textarea 
+              required 
+              value={instructions} 
+              onChange={e=>setInstructions(e.target.value)} 
+              placeholder="1. Read the guidelines\n2. Draft the caption\n3. Submit for review"
+              className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20 resize-none font-mono" 
+              rows="4"
+            />
           </div>
         </div>
 
-        <div className="flex gap-6 items-center bg-white/5 p-4 border border-white/10">
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" checked={isRequired} onChange={e=>setIsRequired(e.target.checked)} className="accent-[#9b1a1a]" />
-            Required Task
-          </label>
-          <div className="h-4 w-px bg-white/20"></div>
-          <span className="text-xs uppercase tracking-widest text-white/50">Accepts:</span>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" checked={acceptsText} onChange={e=>setAcceptsText(e.target.checked)} className="accent-[#9b1a1a]" />
-            Text
-          </label>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" checked={acceptsLinks} onChange={e=>setAcceptsLinks(e.target.checked)} className="accent-[#9b1a1a]" />
-            Links
-          </label>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" checked={acceptsFiles} onChange={e=>setAcceptsFiles(e.target.checked)} className="accent-[#9b1a1a]" />
-            Files
-          </label>
-          <div className="flex-1 text-right space-x-2">
-            {editId && <button type="button" onClick={resetForm} className="bg-white/10 px-4 py-2 text-sm uppercase">Cancel</button>}
-            <button type="submit" className="bg-[#9b1a1a] px-6 py-2 text-sm font-bold uppercase tracking-widest">{editId ? 'Update' : 'Create'}</button>
+        {/* Configuration Bar */}
+        <div className="mt-8 pt-8 border-t border-white/5 flex flex-col lg:flex-row gap-6 items-center justify-between">
+          <div className="flex flex-wrap items-center gap-6">
+            <label className="group flex items-center gap-3 cursor-pointer">
+              <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isRequired ? 'bg-[#9b1a1a] border-transparent' : 'bg-transparent border border-white/20 group-hover:border-white/50'}`}>
+                {isRequired && <span className="text-white text-xs">✓</span>}
+              </div>
+              <input type="checkbox" checked={isRequired} onChange={e=>setIsRequired(e.target.checked)} className="hidden" />
+              <span className="text-xs uppercase tracking-widest text-white/70 group-hover:text-white transition-colors">Required Task</span>
+            </label>
+            
+            <div className="h-4 w-px bg-white/10 hidden md:block" />
+            
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Accepts:</span>
+              
+              <label className="group flex items-center gap-2 cursor-pointer">
+                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsText ? 'bg-[#9b1a1a] border-transparent' : 'bg-transparent border border-white/20'}`}>
+                  {acceptsText && <span className="text-white text-[10px]">✓</span>}
+                </div>
+                <input type="checkbox" checked={acceptsText} onChange={e=>setAcceptsText(e.target.checked)} className="hidden" />
+                <span className="text-xs uppercase tracking-widest text-white/60">Text</span>
+              </label>
+
+              <label className="group flex items-center gap-2 cursor-pointer">
+                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsLinks ? 'bg-[#9b1a1a] border-transparent' : 'bg-transparent border border-white/20'}`}>
+                  {acceptsLinks && <span className="text-white text-[10px]">✓</span>}
+                </div>
+                <input type="checkbox" checked={acceptsLinks} onChange={e=>setAcceptsLinks(e.target.checked)} className="hidden" />
+                <span className="text-xs uppercase tracking-widest text-white/60">Links</span>
+              </label>
+
+              <label className="group flex items-center gap-2 cursor-pointer">
+                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsFiles ? 'bg-[#9b1a1a] border-transparent' : 'bg-transparent border border-white/20'}`}>
+                  {acceptsFiles && <span className="text-white text-[10px]">✓</span>}
+                </div>
+                <input type="checkbox" checked={acceptsFiles} onChange={e=>setAcceptsFiles(e.target.checked)} className="hidden" />
+                <span className="text-xs uppercase tracking-widest text-white/60">Files</span>
+              </label>
+            </div>
           </div>
+
+          <button 
+            type="submit" 
+            className="w-full lg:w-auto bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+          >
+            {editId ? 'Update Task' : 'Create Task'}
+          </button>
         </div>
       </form>
 
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-sm overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-[#222] text-white/50 text-xs uppercase tracking-widest">
-            <tr>
-              <th className="p-4 font-normal w-12">Ord</th>
-              <th className="p-4 font-normal">Department</th>
-              <th className="p-4 font-normal">Title</th>
-              <th className="p-4 font-normal">Accepts</th>
-              <th className="p-4 font-normal text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-white">
-            {tasks.length === 0 && (
-              <tr><td colSpan="5" className="p-8 text-center text-white/40 uppercase">No tasks found</td></tr>
-            )}
-            {tasks.map((task) => (
-              <tr key={task._id} className="hover:bg-white/5 transition">
-                <td className="p-4 text-center text-white/50">{task.order}</td>
-                <td className="p-4 text-xs font-mono">{task.departmentId?.name || task.departmentId}</td>
-                <td className="p-4 font-bold">{task.title}</td>
-                <td className="p-4 text-xs font-mono text-white/60">
-                  {task.submission?.acceptsText && <span className="bg-white/10 px-2 py-1 mr-1">TXT</span>}
-                  {task.submission?.acceptsLinks && <span className="bg-white/10 px-2 py-1 mr-1">LNK</span>}
-                  {task.submission?.acceptsFiles && <span className="bg-white/10 px-2 py-1 mr-1">FILE</span>}
-                </td>
-                <td className="p-4 text-right space-x-2">
-                  <button onClick={() => handleEdit(task)} className="text-xs uppercase text-white/50 hover:text-white">Edit</button>
-                  <button onClick={() => handleDelete(task._id)} className="text-xs uppercase text-red-500 hover:text-red-400">Delete</button>
-                </td>
+      {/* ─── Task List Table ─── */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left whitespace-nowrap">
+            <thead className="bg-[#050505] text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5">
+              <tr>
+                <th className="px-6 py-4 font-normal w-16 text-center">Ord</th>
+                <th className="px-6 py-4 font-normal">Department</th>
+                <th className="px-6 py-4 font-normal">Title</th>
+                <th className="px-6 py-4 font-normal">Accepts</th>
+                <th className="px-6 py-4 font-normal text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-white">
+              {tasks.length === 0 && (
+                <tr><td colSpan="5" className="p-12 text-center text-white/40 uppercase tracking-widest text-xs">No tasks found</td></tr>
+              )}
+              {tasks.map((task) => (
+                <tr key={task._id} className="hover:bg-white/[0.02] transition-colors group">
+                  <td className="px-6 py-5 text-center text-white/40 font-mono text-sm">{task.order}</td>
+                  <td className="px-6 py-5 text-xs text-white/70 uppercase tracking-wider">{task.departmentId?.name || task.departmentId}</td>
+                  <td className="px-6 py-5 font-bold text-white tracking-wide">{task.title}</td>
+                  <td className="px-6 py-5">
+                    <div className="flex gap-2">
+                      {task.submission?.acceptsText && <span className="bg-white/5 border border-white/10 text-white/60 rounded px-2 py-1 text-[10px] uppercase tracking-widest">TXT</span>}
+                      {task.submission?.acceptsLinks && <span className="bg-white/5 border border-white/10 text-white/60 rounded px-2 py-1 text-[10px] uppercase tracking-widest">LNK</span>}
+                      {task.submission?.acceptsFiles && <span className="bg-white/5 border border-white/10 text-white/60 rounded px-2 py-1 text-[10px] uppercase tracking-widest">FILE</span>}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-right space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(task)} className="text-[10px] uppercase font-bold text-white/40 hover:text-white tracking-widest transition-colors">Edit</button>
+                    <button onClick={() => handleDelete(task._id)} className="text-[10px] uppercase font-bold text-red-500/60 hover:text-red-500 tracking-widest transition-colors">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
-          <Navbar />
+          <NavbarWrapper>
+            <Navbar />
+          </NavbarWrapper>
           <main className="flex-1 flex flex-col overflow-x-hidden">
             {children}
           </main>

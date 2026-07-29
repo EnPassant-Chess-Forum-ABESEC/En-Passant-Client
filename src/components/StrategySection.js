@@ -2,12 +2,11 @@ import Image from "next/image";
 
 export default function StrategySection() {
   return (
-    <section className="relative w-full bg-[#0a0a0a] overflow-hidden font-sans">
-      {/* ─── Image as the layout driver — never crops, scales to push black borders offscreen ─── */}
+    <section className="relative w-full bg-[#050505] overflow-hidden font-sans">
+      {/* Top Fade — blends seamlessly from NumbersSection */}
+      <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-[#050505] to-transparent z-20 pointer-events-none"></div>
+      {/* ─── Image as the layout driver ─── */}
       <div className="relative w-full overflow-hidden">
-        {/* The image sits in normal flow so its full aspect ratio determines the section height.
-             scale(1.25) zooms it 25% larger, pushing any baked-in black borders off the edges.
-             overflow-hidden on the parent clips the overflow so no scrollbar appears. */}
         <Image
           src="/image.png"
           alt="Think Before You Move"
@@ -18,11 +17,12 @@ export default function StrategySection() {
           priority
         />
         {/* Gradient overlay to fade the bottom */}
-        <div className="absolute bottom-0 left-0 w-full h-[25%] bg-gradient-to-t from-[#0a0a0a] to-transparent z-10"></div>
+        <div className="absolute bottom-0 left-0 w-full h-[35%] bg-gradient-to-t from-[#050505] to-transparent z-10"></div>
       </div>
 
       {/* ─── Content Overlay ─── */}
-      <div className="absolute inset-0 z-10 flex flex-col pt-[5vw] px-6 md:px-12 pointer-events-none">
+      <div className="absolute inset-0 z-30 flex justify-center w-full pt-[5vw] px-6 md:px-12 pointer-events-none">
+        <div className="relative w-full max-w-7xl flex flex-col">
         {/* ─── Header ─── */}
         <div className="flex flex-col uppercase font-black leading-[0.85] tracking-tighter z-20 w-max pointer-events-auto">
           <span className="text-white text-[12vw] md:text-[100px] xl:text-[130px]">
@@ -102,6 +102,7 @@ export default function StrategySection() {
               is built on structure — not luck
             </p>
           </div>
+        </div>
         </div>
       </div>
     </section>

@@ -62,9 +62,9 @@ export default function ApplicationsTab() {
 
   if (selectedAppId) {
     return (
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-sm p-6">
-        <button onClick={() => setSelectedAppId(null)} className="mb-6 text-sm uppercase text-white/50 hover:text-white flex items-center gap-2">
-          &larr; Back to List
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-lg p-8">
+        <button onClick={() => setSelectedAppId(null)} className="mb-6 text-xs uppercase font-bold tracking-widest text-white/50 hover:text-white transition-colors flex items-center gap-2">
+          &larr; Back to Applications
         </button>
         
         {loadingDetails ? (
@@ -81,14 +81,14 @@ export default function ApplicationsTab() {
               </div>
               <div className="text-right">
                 <div className="mb-2">
-                  <span className="text-xs uppercase text-white/50 mr-2 tracking-widest">Status:</span>
+                  <span className="text-xs uppercase text-white/40 mr-2 tracking-widest">Status:</span>
                   <select 
                     onChange={(e) => updateApplicationStatus(appDetails._id, e.target.value)}
                     value={appDetails.status}
-                    className="bg-[#222] border border-white/20 p-2 text-xs font-bold text-[#9b1a1a] focus:outline-none uppercase"
+                    className="bg-transparent border-b border-white/20 py-1 text-xs font-bold text-[#9b1a1a] focus:outline-none focus:border-[#9b1a1a] uppercase cursor-pointer"
                   >
                     {["DRAFT", "PAYMENT_PENDING", "ACTIVE", "TASK_SUBMITTED", "UNDER_REVIEW", "SHORTLISTED", "INTERVIEW", "SELECTED", "REJECTED"].map(s => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s} className="bg-[#0a0a0a] text-white">{s}</option>
                     ))}
                   </select>
                 </div>
@@ -108,13 +108,13 @@ export default function ApplicationsTab() {
               ) : (
                 <div className="space-y-6">
                   {appSubmissions.map((sub, index) => (
-                    <div key={sub._id} className="p-4 border border-white/10 bg-[#222]">
-                      <h4 className="text-[#9b1a1a] font-bold uppercase mb-2">Submission {index + 1}</h4>
+                    <div key={sub._id} className="p-6 border border-white/5 bg-[#0a0a0a] rounded-lg">
+                      <h4 className="text-[#9b1a1a] text-sm font-bold uppercase mb-4 tracking-wider border-b border-white/5 pb-2">Submission {index + 1}</h4>
                       
                       {sub.text && (
                         <div className="mb-4">
                           <strong className="block text-xs uppercase text-white/50 tracking-widest mb-1">Text Response:</strong>
-                          <div className="p-3 bg-[#111] text-sm text-white/80 whitespace-pre-wrap font-mono border border-white/5">{sub.text}</div>
+                          <div className="p-4 bg-[#050505] rounded-md text-sm text-white/70 whitespace-pre-wrap font-mono border border-white/5">{sub.text}</div>
                         </div>
                       )}
                       
@@ -159,9 +159,9 @@ export default function ApplicationsTab() {
   }
 
   return (
-    <div className="bg-[#1a1a1a] border border-white/10 rounded-sm overflow-x-auto">
+    <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden">
       <table className="w-full text-left">
-        <thead className="bg-[#222] text-white/50 text-xs uppercase tracking-widest">
+        <thead className="bg-[#050505] text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5">
           <tr>
             <th className="p-4 font-normal">App ID</th>
             <th className="p-4 font-normal">User</th>
@@ -184,15 +184,15 @@ export default function ApplicationsTab() {
                   {app.paymentStatus}
                 </td>
                 <td className="p-4 font-mono text-xs text-[#9b1a1a] font-bold">{app.status}</td>
-                <td className="p-4 text-right space-x-3">
-                  <button onClick={() => viewDetails(app._id)} className="text-xs uppercase font-bold text-white/70 hover:text-white tracking-widest">Review</button>
+                <td className="p-4 text-right space-x-4">
+                  <button onClick={() => viewDetails(app._id)} className="text-[10px] uppercase font-bold text-white/40 hover:text-white tracking-widest transition-colors">Review</button>
                   <select 
                     onChange={(e) => updateApplicationStatus(app._id, e.target.value)}
                     value={app.status}
-                    className="bg-[#222] border border-white/20 p-1 text-xs text-white focus:outline-none"
+                    className="bg-transparent border-b border-white/10 pb-1 text-[10px] uppercase font-bold text-white/70 focus:outline-none focus:border-[#9b1a1a] cursor-pointer"
                   >
                     {["DRAFT", "PAYMENT_PENDING", "ACTIVE", "TASK_SUBMITTED", "UNDER_REVIEW", "SHORTLISTED", "INTERVIEW", "SELECTED", "REJECTED"].map(s => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s} className="bg-[#0a0a0a] text-white">{s}</option>
                     ))}
                   </select>
                 </td>

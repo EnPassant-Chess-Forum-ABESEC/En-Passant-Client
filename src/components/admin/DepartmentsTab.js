@@ -65,55 +65,79 @@ export default function DepartmentsTab() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-white/40 uppercase">Loading...</div>;
+  if (loading) return <div className="p-12 text-center text-white/40 uppercase tracking-widest text-sm">Loading Data...</div>;
 
   return (
-    <div>
-      <form onSubmit={handleSave} className="bg-[#1a1a1a] border border-white/10 p-6 mb-8 flex flex-col md:flex-row gap-4 items-end">
-        <div className="flex-1">
-          <label className="block text-xs uppercase text-white/50 mb-1">Name</label>
-          <input required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white" />
+    <div className="space-y-12">
+      {/* ─── Department Form ─── */}
+      <form onSubmit={handleSave} className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#9b1a1a]/50 to-transparent" />
+        
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-white">
+            {editId ? 'Edit Department' : 'Create Department'}
+          </h2>
+          {editId && (
+            <button type="button" onClick={() => {setEditId(null); setName(""); setCode(""); setDescription("");}} className="text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+              Cancel Edit
+            </button>
+          )}
         </div>
-        <div className="flex-1">
-          <label className="block text-xs uppercase text-white/50 mb-1">Code</label>
-          <input required value={code} onChange={e=>setCode(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Name</label>
+            <input required value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Media & Videography" className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20" />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Code</label>
+            <input required value={code} onChange={e=>setCode(e.target.value)} placeholder="e.g. MEDIA" className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20" />
+          </div>
+          <div className="md:col-span-2 space-y-2">
+            <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Description</label>
+            <input value={description} onChange={e=>setDescription(e.target.value)} placeholder="Brief description of the department's role..." className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-[#9b1a1a] focus:ring-1 focus:ring-[#9b1a1a] transition-all outline-none placeholder:text-white/20" />
+          </div>
         </div>
-        <div className="flex-2 w-full md:w-1/3">
-          <label className="block text-xs uppercase text-white/50 mb-1">Description</label>
-          <input value={description} onChange={e=>setDescription(e.target.value)} className="w-full bg-[#222] border border-white/20 p-2 text-sm text-white" />
-        </div>
-        <div className="flex gap-2">
-          {editId && <button type="button" onClick={() => {setEditId(null); setName(""); setCode(""); setDescription("");}} className="bg-white/10 px-4 py-2 text-sm uppercase">Cancel</button>}
-          <button type="submit" className="bg-[#9b1a1a] px-4 py-2 text-sm font-bold uppercase">{editId ? 'Update' : 'Create'}</button>
+
+        <div className="mt-8 pt-8 border-t border-white/5 flex justify-end">
+          <button type="submit" className="w-full lg:w-auto bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+            {editId ? 'Update Department' : 'Create Department'}
+          </button>
         </div>
       </form>
 
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-sm overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-[#222] text-white/50 text-xs uppercase tracking-widest">
-            <tr>
-              <th className="p-4 font-normal">Dept ID</th>
-              <th className="p-4 font-normal">Code</th>
-              <th className="p-4 font-normal">Name</th>
-              <th className="p-4 font-normal">Description</th>
-              <th className="p-4 font-normal text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-white">
-            {departments.map((dept) => (
-              <tr key={dept._id} className="hover:bg-white/5 transition">
-                <td className="p-4 font-mono text-xs text-white/50">{dept._id}</td>
-                <td className="p-4 font-mono text-[#9b1a1a] font-bold">{dept.code}</td>
-                <td className="p-4">{dept.name}</td>
-                <td className="p-4 text-sm text-white/70">{dept.description}</td>
-                <td className="p-4 text-right space-x-2">
-                  <button onClick={() => handleEdit(dept)} className="text-xs uppercase text-white/50 hover:text-white">Edit</button>
-                  <button onClick={() => handleDelete(dept._id)} className="text-xs uppercase text-red-500 hover:text-red-400">Delete</button>
-                </td>
+      {/* ─── Department List Table ─── */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left whitespace-nowrap">
+            <thead className="bg-[#050505] text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5">
+              <tr>
+                <th className="px-6 py-4 font-normal">Dept ID</th>
+                <th className="px-6 py-4 font-normal">Code</th>
+                <th className="px-6 py-4 font-normal">Name</th>
+                <th className="px-6 py-4 font-normal">Description</th>
+                <th className="px-6 py-4 font-normal text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-white">
+              {departments.length === 0 && (
+                <tr><td colSpan="5" className="p-12 text-center text-white/40 uppercase tracking-widest text-xs">No departments found</td></tr>
+              )}
+              {departments.map((dept) => (
+                <tr key={dept._id} className="hover:bg-white/[0.02] transition-colors group">
+                  <td className="px-6 py-5 font-mono text-sm text-white/40">{dept._id}</td>
+                  <td className="px-6 py-5 font-mono text-xs text-[#9b1a1a] font-bold tracking-wider">{dept.code}</td>
+                  <td className="px-6 py-5 font-bold tracking-wide">{dept.name}</td>
+                  <td className="px-6 py-5 text-xs text-white/60">{dept.description}</td>
+                  <td className="px-6 py-5 text-right space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(dept)} className="text-[10px] uppercase font-bold text-white/40 hover:text-white tracking-widest transition-colors">Edit</button>
+                    <button onClick={() => handleDelete(dept._id)} className="text-[10px] uppercase font-bold text-red-500/60 hover:text-red-500 tracking-widest transition-colors">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

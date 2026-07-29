@@ -1,8 +1,11 @@
-import Image from "next/image";
 
 /* ─── Grid square colours ──────────────────────────────────────── */
-const dark  = { backgroundColor: "#0a0a0a" };
-const light = { background: "linear-gradient(145deg,#e8e8e8 0%,#c0c0c0 100%)" };
+const dark = { backgroundColor: "#0a0a0a" };
+const light = {
+  backgroundImage: 'url("/white_marble_texture.png")',
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+};
 
 function D() { return <div className="aspect-square" style={dark} />; }
 function W() { return <div className="aspect-square" style={light} />; }
@@ -47,7 +50,7 @@ export default function WorkingProcessSection() {
         Title sits in top-right corner, large, flush to edge
         ════════════════════════════════════════════
       */}
-      <div className="relative w-full" style={{ height: "25vw" }}>
+      <div className="relative w-full" style={{ height: "14vw" }}>
         <div
           className="absolute top-0 right-0 flex flex-col items-end justify-start"
           style={{ paddingTop: "1.5vw", paddingRight: "2vw", zIndex: 30 }}
@@ -118,80 +121,24 @@ export default function WorkingProcessSection() {
         </div>
         <W /><D />
 
-        {/*
-          Gradient fade — covers top ~1.5 rows of grid so it emerges
-          smoothly from the dark top band, no hard line visible
-        */}
+        {/* Narrow top edge softener — just blends the hard cut, not a full fade */}
         <div
           className="absolute inset-x-0 top-0 pointer-events-none"
           style={{
-            height: "42vw",
-            background: "linear-gradient(to bottom, #0a0a0a 0%, rgba(10,10,10,0.75) 40%, transparent 100%)",
+            height: "6vw",
+            background: "linear-gradient(to bottom, #0a0a0a, transparent)",
             zIndex: 10,
           }}
         />
-      </div>
-
-      {/*
-        ════════════════════════════════════════════
-        OVERLAY IMAGES
-        All absolute relative to <section>
-
-        COORDINATE SYSTEM:
-          x: left edge = 0, right edge = 100vw
-          y: top of section = 0
-             grid starts at y = 25vw (after top band)
-             row n starts at y = 25vw + (n-1)*25vw
-
-        HAND  — col 1–2, top-band + row 1
-                x: 0 → 52vw,  y: 0 → 68vw
-
-        QUEEN — col 4, rows 1–3
-                centre of col 4 = 87.5vw
-                x: 68vw → 100vw (right:-0), y: 10vw → 90vw
-                slight clockwise tilt matching the reference photo
-
-        KING  — col 2–3 border, rows 5–6 (bottom)
-                centre between col 2 start (25vw) & col 3 end (75vw) = 50vw
-                x: 25vw → 62vw, y: (175vw - 55vw) → 175vw = bottom of section
-        ════════════════════════════════════════════
-      */}
-
-      {/* HAND */}
-      <div className="absolute pointer-events-none"
-        style={{ top: 0, left: 0, width: "52vw", height: "68vw", zIndex: 20 }}>
-        <Image src="/hand.png" alt="Hand" fill priority
-          className="object-contain object-left-top" />
-      </div>
-
-      {/* QUEEN — col 4 (x: 75vw–100vw), rows 1-3 (y: 25vw–100vw)
-          Slight clockwise rotation to match reference tilt            */}
-      <div className="absolute pointer-events-none"
-        style={{
-          top: "12vw",
-          right: "0",
-          width: "28vw",
-          height: "65vw",
-          zIndex: 18,
-          transform: "rotate(8deg)",
-          transformOrigin: "center top",
-        }}>
-        <Image src="/queen.png" alt="Queen" fill
-          className="object-contain object-right-top" />
-      </div>
-
-      {/* KING — between col 2 start (25vw) and col 3 midpoint (~62vw)
-          Sits at the bottom of rows 5–6, peeking upward               */}
-      <div className="absolute pointer-events-none"
-        style={{
-          bottom: 0,
-          left: "28vw",
-          width: "36vw",
-          height: "52vw",
-          zIndex: 20,
-        }}>
-        <Image src="/king.png" alt="King" fill
-          className="object-contain object-bottom" />
+        {/* Bottom fade into whatever follows */}
+        <div
+          className="absolute inset-x-0 bottom-0 pointer-events-none"
+          style={{
+            height: "20vw",
+            background: "linear-gradient(to top, #0a0a0a 0%, transparent 100%)",
+            zIndex: 10,
+          }}
+        />
       </div>
 
     </section>
