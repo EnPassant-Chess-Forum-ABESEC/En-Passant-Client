@@ -1,8 +1,42 @@
+"use client";
+
 import Image from "next/image";
+import { useRef } from "react";
+import { useScroll } from "framer-motion";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useGLTF, Environment, Center } from "@react-three/drei";
+
+function ChessPieceModel({ scrollYProgress }) {
+  const { scene } = useGLTF("/king.glb");
+  const modelRef = useRef();
+
+  useFrame(() => {
+    if (modelRef.current) {
+      // Map scroll progress (0 to 1) to rotation.
+      modelRef.current.rotation.y = scrollYProgress.get() * Math.PI * 4;
+    }
+  });
+
+  return (
+    <Center position={[0, 0, 0]}>
+      <primitive
+        ref={modelRef}
+        object={scene}
+        scale={5.5}
+      />
+    </Center>
+  );
+}
 
 export default function NumbersSection() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
   return (
-    <section className="relative w-full bg-[#050505] font-sans border-none overflow-hidden">
+    <section ref={containerRef} className="relative w-full bg-[#050505] font-sans border-none overflow-hidden">
       {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
@@ -83,14 +117,14 @@ export default function NumbersSection() {
             </div>
           </div>
 
-          {/* ─── Center Chess Piece (Ranks 3 to 7) ─── */}
-          <div className="absolute left-1/2 top-[24vw] -translate-x-1/2 w-[60vw] md:w-[40vw] h-[60vw] z-10 pointer-events-none rotate-[6deg]">
-            <Image
-              src="/king.png"
-              alt="Chess Piece"
-              fill
-              className="object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
-            />
+          {/* ─── Center Chess Piece 3D Model ─── */}
+          <div className="absolute left-1/2 top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[150vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]">
+            <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
+              <ambientLight intensity={0.2} />
+              <directionalLight position={[10, 10, 5]} intensity={0.5} />
+              <Environment preset="night" />
+              <ChessPieceModel scrollYProgress={scrollYProgress} />
+            </Canvas>
           </div>
         </div>
 
@@ -141,3 +175,5 @@ export default function NumbersSection() {
     </section>
   );
 }
+
+useGLTF.preload("/king.glb");
