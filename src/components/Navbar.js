@@ -43,7 +43,7 @@ export default async function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-4 md:gap-6">
-              <Link href="/sign-in" className="btn-bracket">
+              <Link href="/auth/sign-in" className="btn-bracket">
                 <div className="btn-inner">GET STARTED</div>
               </Link>
             </div>
