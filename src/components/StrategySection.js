@@ -24,42 +24,42 @@ export default function StrategySection() {
       {/* ─── Content Overlay ─── */}
       <div className="absolute inset-0 z-30 flex justify-center w-full pt-[5vw] px-6 md:px-12 pointer-events-none">
         <div className="relative w-full max-w-7xl flex flex-col">
-        {/* ─── Header ─── */}
-        <div className="flex flex-col uppercase font-black leading-[0.85] tracking-tighter z-20 w-max pointer-events-auto">
-          <span className="text-white text-[12vw] md:text-[100px] xl:text-[130px]">
-            THINK
-          </span>
-          <div className="flex gap-4">
+          {/* ─── Header ─── */}
+          <div className="flex flex-col uppercase font-black leading-[0.85] tracking-tighter z-20 w-max pointer-events-auto">
             <span className="text-white text-[12vw] md:text-[100px] xl:text-[130px]">
-              BEFORE
+              THINK
             </span>
+            <div className="flex gap-4">
+              <span className="text-white text-[12vw] md:text-[100px] xl:text-[130px]">
+                BEFORE
+              </span>
+              <span className="text-[#9b1a1a] text-[12vw] md:text-[100px] xl:text-[130px]">
+                YOU
+              </span>
+            </div>
             <span className="text-[#9b1a1a] text-[12vw] md:text-[100px] xl:text-[130px]">
-              YOU
+              MOVE
             </span>
           </div>
-          <span className="text-[#9b1a1a] text-[12vw] md:text-[100px] xl:text-[130px]">
-            MOVE
-          </span>
-        </div>
 
-        {/* ─── Top Right Faint Text ─── */}
-        <div className="absolute top-[5vw] right-6 md:right-12 text-right max-w-[300px] md:max-w-[400px] text-[10px] md:text-xs text-white/40 uppercase tracking-widest leading-relaxed hidden sm:block pointer-events-auto">
-          <p>We don't act impulsively.</p>
-          <p>
-            We analyze, position and execute with{" "}
-            <span className="text-white/80 font-bold">precision</span>.
-          </p>
-          <p>
-            Every move is intentional. Every{" "}
-            <span className="text-white/80 font-bold">decision</span> is
-            measurable.
-          </p>
-        </div>
+          {/* ─── Top Right Faint Text ─── */}
+          <div className="absolute top-[5vw] right-6 md:right-12 text-right max-w-[300px] md:max-w-[400px] text-[10px] md:text-xs text-white/40 uppercase tracking-widest leading-relaxed hidden sm:block pointer-events-auto">
+            <p>We don't act impulsively.</p>
+            <p>
+              We analyze, position and execute with{" "}
+              <span className="text-white/80 font-bold">precision</span>.
+            </p>
+            <p>
+              Every move is intentional. Every{" "}
+              <span className="text-white/80 font-bold">decision</span> is
+              measurable.
+            </p>
+          </div>
 
-        {/* ─── Callouts ─── */}
+          {/* ─── Callouts ─── */}
 
-        {/* Callout 1: Left */}
-        <SpotlightCard className="absolute top-[45%] left-6 md:left-12 max-w-[200px] md:max-w-[280px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
+          {/* Callout 1: Left */}
+          <SpotlightCard className="absolute top-[45%] left-6 md:left-12 max-w-[200px] md:max-w-[280px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
             <p>
               No random campaigns. Only{" "}
               <span className="text-white font-bold">structured action.</span>
@@ -69,10 +69,10 @@ export default function StrategySection() {
               <br />
               Measurable impact
             </p>
-        </SpotlightCard>
+          </SpotlightCard>
 
-        {/* Callout 2: Right Middle */}
-        <SpotlightCard className="absolute top-[35%] right-6 md:right-12 max-w-[200px] md:max-w-[300px] text-[10px] md:text-sm text-white/60 text-left pointer-events-auto border-white/10 bg-black p-4">
+          {/* Callout 2: Right Middle */}
+          <SpotlightCard className="absolute top-[35%] right-6 md:right-12 max-w-[200px] md:max-w-[300px] text-[10px] md:text-sm text-white/60 text-left pointer-events-auto border-white/10 bg-black p-4">
             <p>
               We define your{" "}
               <span className="text-white font-bold">strongest market</span>{" "}
@@ -80,15 +80,15 @@ export default function StrategySection() {
               <span className="text-white font-bold">systems</span> that scale
               sustainably.
             </p>
-        </SpotlightCard>
+          </SpotlightCard>
 
-        {/* Callout 3: Right Bottom */}
-        <SpotlightCard className="absolute bottom-[20%] right-6 md:right-[20%] max-w-[200px] md:max-w-[250px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
+          {/* Callout 3: Right Bottom */}
+          <SpotlightCard className="absolute bottom-[20%] right-6 md:right-[20%] max-w-[200px] md:max-w-[250px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
             <p>
               Because real <span className="text-white font-bold">growth</span>{" "}
               is built on structure — not luck
             </p>
-        </SpotlightCard>
+          </SpotlightCard>
         </div>
       </div>
     </section>

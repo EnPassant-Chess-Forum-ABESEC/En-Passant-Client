@@ -33,18 +33,27 @@ export default function RecruitmentPage() {
         </div>
 
         {/* ── Layer 2 (z-20): Typography — sits ABOVE background, BELOW front figure ── */}
-        <div className="absolute top-[15%] md:top-[20%] w-full px-6 md:px-12 select-none pointer-events-none z-20 flex justify-center">
-          <div className="relative w-full max-w-7xl flex flex-col items-center text-center">
-            <p className="text-[#a3a3a3] font-bold uppercase text-sm md:text-xl tracking-[0.4em] mb-4 md:mb-6">
-              Join The Elite
-            </p>
-            <div className="relative flex flex-col items-center bg-gradient-to-b from-[#ffffff] via-[#aaaaaa] to-[#222222] bg-clip-text text-transparent font-black uppercase leading-[0.85] text-[12vw] md:text-[9vw] tracking-tighter">
-              <span>Test</span>
-              <span>Recruitment</span>
-              <span className="text-[#990000] bg-none drop-shadow-[0_0_30px_rgba(153,0,0,0.5)]">
-                2026
-              </span>
-            </div>
+        <div className="absolute inset-0 w-full h-full select-none pointer-events-none z-20">
+          {/* RECRUITMENT - starting below the hand, spanning right */}
+          <div
+            className="absolute top-[46%] md:top-[49%] left-[25%] md:left-[41%]"
+            style={{ width: "80vw" }}
+          >
+            <h1
+              className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555]
+              bg-clip-text text-transparent font-pezula uppercase
+              tracking-wider leading-[0.85]
+              text-[15vw] md:text-[10vw] whitespace-nowrap"
+            >
+              RECRUITMENT
+            </h1>
+          </div>
+
+          {/* 2026 - Positioned above the right chess pieces */}
+          <div className="absolute bottom-[22%] md:bottom-[28%] right-[5%] md:right-[12%]">
+            <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]">
+              2026
+            </span>
           </div>
         </div>
 
@@ -76,9 +85,6 @@ export default function RecruitmentPage() {
 
       {/* Timeline Section */}
       <RecruitmentTimeline />
-
-      {/* Why Join Section */}
-      <WhyJoinSection />
 
       {/* Featured Departments */}
       <DepartmentsSection />

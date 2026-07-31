@@ -1,142 +1,139 @@
 "use client";
 
-import { FileText, Target, CheckCircle2, MessageSquare, Trophy } from "lucide-react";
+import {
+  FileText,
+  Target,
+  CheckCircle2,
+  MessageSquare,
+  Trophy,
+} from "lucide-react";
 
 const steps = [
   {
     number: "01",
     title: "Fill the Form",
-    description: "Begin by submitting your application through our portal. Tell us who you are and which department you're targeting.",
-    icon: FileText,
+    description:
+      "Begin by submitting your application through our portal. Tell us who you are and which department you're targeting.",
   },
   {
     number: "02",
     title: "Task Given",
-    description: "Shortlisted candidates receive a custom task tailored to their chosen department. This is your first real test.",
-    icon: Target,
+    description:
+      "Shortlisted candidates receive a custom task tailored to their chosen department. This is your first real test.",
   },
   {
     number: "03",
     title: "Submit the Task",
-    description: "Complete and submit your task within the deadline. Quality, creativity and precision are what we look for.",
-    icon: CheckCircle2,
+    description:
+      "Complete and submit your task within the deadline. Quality, creativity and precision are what we look for.",
   },
   {
     number: "04",
     title: "Interview",
-    description: "Successful candidates are invited for a one-on-one session with our core leads to discuss your work and mindset.",
-    icon: MessageSquare,
+    description:
+      "Successful candidates are invited for a one-on-one session with our core leads to discuss your work and mindset.",
   },
   {
     number: "05",
     title: "Selection",
-    description: "Final results are announced. Those selected are onboarded into the elite En Passant community.",
-    icon: Trophy,
+    description:
+      "Final results are announced. Those selected are onboarded into the elite En Passant community.",
+
     isAccent: true,
   },
 ];
 
 export default function RecruitmentTimeline() {
   return (
-    <section
-      style={{ width: "100%", background: "#050505", borderTop: "1px solid rgba(255,255,255,0.06)" }}
-    >
+    <section className="relative w-full bg-[#050505] overflow-hidden py-32 md:py-56 font-sans">
+      {/* Dark Marble Texture Background */}
       <div
+        className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          padding: "96px 40px",
+          backgroundImage: 'url("/dark_marble_bg.png")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
-      >
+      />
+      <div className="absolute inset-0 z-0 bg-[#050505]/70 pointer-events-none" />
+
+      {/* Top/Bottom Fade for smooth blending */}
+      <div className="absolute top-0 left-0 w-full h-[20vw] bg-gradient-to-b from-[#050505] to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-[20vw] bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
+
+      <div className="relative max-w-[1400px] mx-auto px-6 z-20">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "80px" }}>
-          <p style={{ color: "#555", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, marginBottom: "16px" }}>
+        <div className="text-center mb-48">
+          <p className="text-[#555] text-xs md:text-base tracking-[0.5em] uppercase font-bold mb-8">
             How it works
           </p>
-          <h2 style={{ fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", lineHeight: 0.85, fontSize: "clamp(48px, 8vw, 80px)", margin: 0 }}>
-            <span style={{ color: "#fff" }}>THE </span>
-            <span style={{ color: "#9b1a1a" }}>PROCEDURE</span>
+          <h2
+            className="font-black uppercase tracking-tighter leading-[0.85] text-white"
+            style={{ fontSize: "clamp(60px, 12vw, 150px)" }}
+          >
+            THE <span className="text-[#9b1a1a]">PROCEDURE</span>
           </h2>
-          <p style={{ color: "#555", fontSize: "14px", marginTop: "20px", lineHeight: 1.7, maxWidth: "480px", margin: "20px auto 0" }}>
-            A merit-based process designed to identify the most driven and talented individuals.
+          <p className="text-[#666] text-base md:text-xl mt-10 leading-relaxed max-w-[700px] mx-auto font-light">
+            A merit-based process designed to identify the most driven and
+            talented individuals.
           </p>
         </div>
 
-        {/* Steps — vertical with center line */}
-        <div style={{ position: "relative" }}>
+        {/* Minimal Timeline */}
+        <div className="relative mt-20">
           {/* Center line */}
-          <div style={{
-            position: "absolute",
-            left: "50%",
-            top: 0,
-            bottom: 0,
-            width: "1px",
-            transform: "translateX(-50%)",
-            background: "linear-gradient(to bottom, transparent, #2a2a2a 20%, #2a2a2a 80%, transparent)",
-          }} />
+          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#9b1a1a]/40 to-transparent" />
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
+          <div className="flex flex-col gap-32 md:gap-56 relative z-10">
             {steps.map((step, i) => {
               const isLeft = i % 2 === 0;
-              const Icon = step.icon;
+
               return (
-                <div key={step.number} style={{ display: "flex", alignItems: "center", gap: 0 }}>
-                  {/* Left text box */}
-                  <div style={{
-                    width: "calc(50% - 32px)",
-                    textAlign: "right",
-                    padding: "24px 28px",
-                    background: isLeft ? "#0c0c0c" : "transparent",
-                    border: isLeft ? "1px solid #1e1e1e" : "none",
-                    borderRadius: "12px",
-                  }}>
+                <div key={step.number} className="flex w-full relative">
+                  {/* Left Column */}
+                  <div className="w-1/2 pr-12 md:pr-24 text-right">
                     {isLeft && (
-                      <>
-                        <p style={{ color: "#333", fontFamily: "monospace", fontSize: "11px", letterSpacing: "0.25em", marginBottom: "8px" }}>{step.number}</p>
-                        <h3 style={{ color: step.isAccent ? "#9b1a1a" : "#fff", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "15px", marginBottom: "8px" }}>{step.title}</h3>
-                        <p style={{ color: "#555", fontSize: "13px", lineHeight: 1.7 }}>{step.description}</p>
-                      </>
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center justify-end gap-6 mb-6">
+                          <span className="text-6xl md:text-[120px] font-light tracking-wide text-[#9b1a1a] leading-[0.8]">
+                            {step.number}
+                          </span>
+                        </div>
+                        <h3 className="text-lg md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-6">
+                          {step.title}
+                        </h3>
+                        <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">
+                          {step.description}
+                        </p>
+                      </div>
                     )}
                   </div>
 
-                  {/* Center icon node */}
-                  <div style={{
-                    width: "64px",
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 10,
-                  }}>
-                    <div style={{
-                      width: "44px",
-                      height: "44px",
-                      borderRadius: "50%",
-                      background: "#0c0c0c",
-                      border: `1px solid ${step.isAccent ? "#9b1a1a" : "#2a2a2a"}`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}>
-                      <Icon size={18} color={step.isAccent ? "#9b1a1a" : "#666"} strokeWidth={1.8} />
+                  {/* Center Dot */}
+                  <div className="absolute left-1/2 top-4 md:top-8 -translate-x-1/2 flex items-center justify-center">
+                    {/* Outer soft ring */}
+                    <div className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-[#050505] border-[4px] border-[#9b1a1a]/30 flex items-center justify-center shadow-[0_0_30px_rgba(155,26,26,0.25)]">
+                      {/* Inner solid dot */}
+                      <div className="w-2.5 h-2.5 md:w-4 md:h-4 rounded-full bg-[#9b1a1a]" />
                     </div>
                   </div>
 
-                  {/* Right text box */}
-                  <div style={{
-                    width: "calc(50% - 32px)",
-                    textAlign: "left",
-                    padding: "24px 28px",
-                    background: !isLeft ? "#0c0c0c" : "transparent",
-                    border: !isLeft ? "1px solid #1e1e1e" : "none",
-                    borderRadius: "12px",
-                  }}>
+                  {/* Right Column */}
+                  <div className="w-1/2 pl-12 md:pl-24 text-left">
                     {!isLeft && (
-                      <>
-                        <p style={{ color: "#333", fontFamily: "monospace", fontSize: "11px", letterSpacing: "0.25em", marginBottom: "8px" }}>{step.number}</p>
-                        <h3 style={{ color: step.isAccent ? "#9b1a1a" : "#fff", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "15px", marginBottom: "8px" }}>{step.title}</h3>
-                        <p style={{ color: "#555", fontSize: "13px", lineHeight: 1.7 }}>{step.description}</p>
-                      </>
+                      <div className="flex flex-col items-start">
+                        <div className="flex items-center justify-start gap-6 mb-6">
+                          <span className="text-6xl md:text-[120px] font-light tracking-wide text-[#9b1a1a] leading-[0.8]">
+                            {step.number}
+                          </span>
+                        </div>
+                        <h3 className="text-lg md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-6">
+                          {step.title}
+                        </h3>
+                        <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">
+                          {step.description}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -159,7 +159,6 @@ export default function EcosystemSection() {
         ))}
         {/* Bottom Fade — sits in the 8vw gap below D4 (96vw–104vw) */}
         <div className="absolute bottom-0 left-0 w-full h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />
-
       </div>
     </section>
   );

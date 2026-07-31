@@ -21,13 +21,12 @@ export default function Home() {
 
         <div className="absolute top-[22%] w-full px-6 md:px-12 select-none pointer-events-none z-10 flex justify-center">
           <div className="relative w-full max-w-7xl flex justify-center">
-            
-            <div className="relative flex justify-center gap-[1.5vw] md:gap-[2.5vw] bg-gradient-to-b from-[#ffffff] via-[#888888] to-[#111111] bg-clip-text text-transparent font-black uppercase leading-[0.75] text-[14vw] md:text-[13vw] tracking-tighter w-max mx-auto">
+            <div className="relative flex justify-center gap-[1.5vw] md:gap-[2.5vw] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-pezula font-bold uppercase tracking-[0.1em] leading-[0.85] text-[15vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
               {/* EN is now absolutely positioned relative to the start of the 'P' */}
-              <p className="text-[#a3a3a3] font-bold uppercase absolute -top-8 md:-top-12 lg:-top-16 left-0 text-sm md:text-xl lg:text-2xl tracking-[0.4em]">
+              <p className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black uppercase absolute -top-8 md:-top-12 lg:-top-16 left-0 text-sm md:text-xl lg:text-2xl tracking-[0.4em]">
                 EN
               </p>
-              
+
               <span>P</span>
               <span>A</span>
               <span>S</span>
@@ -73,7 +72,9 @@ export default function Home() {
 
             <div className="flex flex-col items-end text-right gap-4 pointer-events-auto ml-auto">
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
-                <span className="text-[#cccccc] font-bold">[chess community]</span>
+                <span className="text-[#cccccc] font-bold">
+                  [chess community]
+                </span>
                 <br />
                 that creates elite grandmaster systems
               </div>

@@ -20,11 +20,7 @@ function ChessPieceModel({ scrollYProgress }) {
 
   return (
     <Center position={[0, 0, 0]}>
-      <primitive
-        ref={modelRef}
-        object={scene}
-        scale={5.5}
-      />
+      <primitive ref={modelRef} object={scene} scale={5.5} />
     </Center>
   );
 }
@@ -37,7 +33,10 @@ export default function NumbersSection() {
   });
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#050505] font-sans border-none overflow-hidden">
+    <section
+      ref={containerRef}
+      className="relative w-full bg-[#050505] font-sans border-none overflow-hidden"
+    >
       {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
@@ -108,10 +107,10 @@ export default function NumbersSection() {
           <div className="absolute top-[6vw] right-[5vw] z-30 text-right leading-[0.85]">
             <div className="relative inline-block">
               <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
-                <span className="text-white text-[8vw] md:text-[100px]">
+                <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black text-[8vw] md:text-[100px]">
                   THE
                 </span>
-                <span className="text-[#9b1a1a] text-[10vw] md:text-[140px]">
+                <span className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-pezula font-bold tracking-wider text-[10vw] md:text-[140px]">
                   NUMBERS
                 </span>
               </h2>
