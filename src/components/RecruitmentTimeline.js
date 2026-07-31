@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  FileText,
-  Target,
-  CheckCircle2,
-  MessageSquare,
-  Trophy,
-} from "lucide-react";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -89,7 +83,14 @@ export default function RecruitmentTimeline() {
               const isLeft = i % 2 === 0;
 
               return (
-                <div key={step.number} className="flex w-full relative">
+                <motion.div
+                  key={step.number}
+                  className="flex w-full relative"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                >
                   {/* Left Column */}
                   <div className="w-1/2 pr-12 md:pr-24 text-right">
                     {isLeft && (
@@ -136,7 +137,7 @@ export default function RecruitmentTimeline() {
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>

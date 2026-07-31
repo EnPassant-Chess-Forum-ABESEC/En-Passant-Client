@@ -7,7 +7,7 @@ import RecruitmentCTASection from "@/components/RecruitmentCTASection";
 
 export default function RecruitmentPage() {
   return (
-    <main className="w-full bg-[#0a0a0a] font-sans">
+    <main className="w-full bg-[#050505] font-sans">
       {/* Hero Section */}
       <section className="relative w-full h-screen overflow-hidden">
         <div
@@ -80,7 +80,7 @@ export default function RecruitmentPage() {
         </div>
 
         {/* Bottom Fade transition */}
-        <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent z-40 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-full h-[15vw] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-40 pointer-events-none"></div>
       </section>
 
       {/* Timeline Section */}

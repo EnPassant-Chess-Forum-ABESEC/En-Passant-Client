@@ -1,13 +1,34 @@
-import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+"use client";
 
-export default async function Navbar() {
-  const { userId } = await auth();
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { UserButton, useAuth } from "@clerk/nextjs";
+
+export default function Navbar() {
+  const { userId } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="absolute top-8 left-0 right-0 z-50 flex justify-center w-full px-6 md:px-12">
-      <div className="w-full max-w-7xl flex items-center justify-between">
+    <header
+      className={`fixed left-0 right-0 z-50 flex justify-center w-full px-4 md:px-8 transition-all duration-300 ${
+        scrolled ? "top-4 md:top-6" : "top-8"
+      }`}
+    >
+      <div
+        className={`w-full max-w-7xl flex items-center justify-between transition-all duration-300 ${
+          scrolled
+            ? "bg-[#050505]/70 backdrop-blur-md shadow-2xl rounded-2xl md:rounded-full px-6 md:px-10 py-4"
+            : "bg-transparent px-2 md:px-0 py-2 md:py-0"
+        }`}
+      >
         {/* Logo */}
         <Link
           href="/"
@@ -20,13 +41,13 @@ export default async function Navbar() {
         <nav className="flex items-center gap-5 md:gap-8">
           <Link
             href="/leaderboard"
-            className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[var(--brand-crimson)] transition-colors"
+            className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
           >
             Leaderboard
           </Link>
           <Link
             href="/events"
-            className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[var(--brand-crimson)] transition-colors"
+            className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
           >
             Events
           </Link>
