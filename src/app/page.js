@@ -3,7 +3,7 @@ import Link from "next/link";
 import NumbersSection from "@/components/NumbersSection";
 import StrategySection from "@/components/StrategySection";
 import EcosystemSection from "@/components/EcosystemSection";
-import WorkingProcessSection from "@/components/WorkingProcessSection";
+import ClubJournalSection from "@/components/ClubJournalSection";
 
 export default function Home() {
   return (
@@ -94,7 +94,7 @@ export default function Home() {
       <NumbersSection />
       <StrategySection />
       <EcosystemSection />
-      <WorkingProcessSection />
+      <ClubJournalSection />
     </>
   );
 }
