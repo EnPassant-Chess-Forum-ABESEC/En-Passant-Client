@@ -40,6 +40,7 @@ const LineSidebar = ({
   fontSize = 1.1,
   smoothing = 100,
   defaultActive = null,
+  activeItem = null,
   onItemClick,
   className = ''
 }) => {
@@ -51,7 +52,13 @@ const LineSidebar = ({
   const lastRef = useRef(0);
   const activeRef = useRef(defaultActive);
   const smoothingRef = useRef(smoothing);
-  const [activeIndex, setActiveIndex] = useState(defaultActive);
+  const [activeIndex, setActiveIndex] = useState(activeItem ?? defaultActive);
+
+  useEffect(() => {
+    if (activeItem !== undefined && activeItem !== null) {
+      setActiveIndex(activeItem);
+    }
+  }, [activeItem]);
 
   activeRef.current = activeIndex;
   smoothingRef.current = smoothing;
