@@ -1,4 +1,5 @@
 import Image from "next/image";
+import SpotlightCard from "./SpotlightCard";
 
 export default function StrategySection() {
   return (
@@ -58,11 +59,7 @@ export default function StrategySection() {
         {/* ─── Callouts ─── */}
 
         {/* Callout 1: Left */}
-        <div className="absolute top-[45%] left-6 md:left-12 max-w-[200px] md:max-w-[280px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto">
-          <div className="relative pr-4 py-2">
-            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/20"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20"></div>
-
+        <SpotlightCard className="absolute top-[45%] left-6 md:left-12 max-w-[200px] md:max-w-[280px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
             <p>
               No random campaigns. Only{" "}
               <span className="text-white font-bold">structured action.</span>
@@ -72,15 +69,10 @@ export default function StrategySection() {
               <br />
               Measurable impact
             </p>
-          </div>
-        </div>
+        </SpotlightCard>
 
         {/* Callout 2: Right Middle */}
-        <div className="absolute top-[35%] right-6 md:right-12 max-w-[200px] md:max-w-[300px] text-[10px] md:text-sm text-white/60 text-left pointer-events-auto">
-          <div className="relative pl-4 py-2">
-            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/20"></div>
-
+        <SpotlightCard className="absolute top-[35%] right-6 md:right-12 max-w-[200px] md:max-w-[300px] text-[10px] md:text-sm text-white/60 text-left pointer-events-auto border-white/10 bg-black p-4">
             <p>
               We define your{" "}
               <span className="text-white font-bold">strongest market</span>{" "}
@@ -88,21 +80,15 @@ export default function StrategySection() {
               <span className="text-white font-bold">systems</span> that scale
               sustainably.
             </p>
-          </div>
-        </div>
+        </SpotlightCard>
 
         {/* Callout 3: Right Bottom */}
-        <div className="absolute bottom-[20%] right-6 md:right-[20%] max-w-[200px] md:max-w-[250px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto">
-          <div className="relative pr-4 py-2">
-            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/20"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20"></div>
-
+        <SpotlightCard className="absolute bottom-[20%] right-6 md:right-[20%] max-w-[200px] md:max-w-[250px] text-[10px] md:text-sm text-white/60 text-right pointer-events-auto border-white/10 bg-black p-4">
             <p>
               Because real <span className="text-white font-bold">growth</span>{" "}
               is built on structure — not luck
             </p>
-          </div>
-        </div>
+        </SpotlightCard>
         </div>
       </div>
     </section>

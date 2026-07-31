@@ -1,3 +1,5 @@
+import SpotlightCard from "./SpotlightCard";
+
 export default function EcosystemSection() {
   const cards = [
     {
@@ -127,8 +129,9 @@ export default function EcosystemSection() {
 
         {/* ─── Cards (snapped to 12vw grid) ─── */}
         {cards.map((card) => (
-          <div
+          <SpotlightCard
             key={card.notation}
+            spotlightColor="rgba(155, 26, 26, 0.35)"
             className={`absolute ${card.position} z-20 w-[36vw] h-[24vw] p-[2vw] flex flex-col justify-between bg-[#000000] border border-white/10 pointer-events-auto`}
           >
             {/* Notation label — large, bold, red, top-right */}
@@ -152,7 +155,7 @@ export default function EcosystemSection() {
                 </li>
               ))}
             </ul>
-          </div>
+          </SpotlightCard>
         ))}
         {/* Bottom Fade — sits in the 8vw gap below D4 (96vw–104vw) */}
         <div className="absolute bottom-0 left-0 w-full h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />

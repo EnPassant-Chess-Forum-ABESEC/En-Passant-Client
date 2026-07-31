@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Center } from "@react-three/drei";
+import SpotlightCard from "./SpotlightCard";
 
 function ChessPieceModel({ scrollYProgress }) {
   const { scene } = useGLTF("/king.glb");
@@ -130,44 +131,44 @@ export default function NumbersSection() {
 
         {/* ─── Stats Boxes (Locked perfectly to the 12vw Grid) ─── */}
         {/* Box 1: Club Members (Row 2-3, Col A-B) */}
-        <div className="absolute top-[12vw] left-[2vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
+        <SpotlightCard className="absolute top-[12vw] left-[2vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
           <span className="text-white font-black text-[7vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-1">
             120+
           </span>
           <span className="text-white text-[1.5vw] md:text-sm lg:text-base font-normal tracking-wide">
             Club Members
           </span>
-        </div>
+        </SpotlightCard>
 
         {/* Box 2: Events Conducted (Row 4-5, Col F-G) */}
-        <div className="absolute top-[36vw] right-[14vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
+        <SpotlightCard className="absolute top-[36vw] right-[14vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
           <span className="text-white font-black text-[7vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-1">
             -35%
           </span>
           <span className="text-white text-[1.5vw] md:text-sm lg:text-base font-normal tracking-wide">
             Events Conducted
           </span>
-        </div>
+        </SpotlightCard>
 
         {/* Box 3: Events Participated (Row 6-7, Col B-C) */}
-        <div className="absolute top-[60vw] left-[14vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
+        <SpotlightCard className="absolute top-[60vw] left-[14vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
           <span className="text-white font-black text-[7vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-1">
             8+
           </span>
           <span className="text-white text-[1.5vw] md:text-sm lg:text-base font-normal tracking-wide">
             Events Participated
           </span>
-        </div>
+        </SpotlightCard>
 
         {/* Box 4: Tournaments Won (Row 7-8, Col G-H) */}
-        <div className="absolute top-[72vw] right-[2vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
+        <SpotlightCard className="absolute top-[72vw] right-[2vw] bg-[#000000] border border-white/10 w-[24vw] h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center">
           <span className="text-white font-black text-[7vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-1">
             3X
           </span>
           <span className="text-white text-[1.5vw] md:text-sm lg:text-base font-normal tracking-wide">
             Growth Rate
           </span>
-        </div>
+        </SpotlightCard>
       </div>
 
       {/* Bottom Fade — blends seamlessly into EcosystemSection */}
