@@ -89,7 +89,7 @@ export default function RecruitmentCTASection() {
 
         {/* CTA button */}
         <div>
-          <Link href="/sign-up" className="btn-bracket group" style={{ display: "inline-flex" }}>
+          <Link href="/recruitment/apply" className="btn-bracket group" style={{ display: "inline-flex" }}>
             <div className="btn-inner" style={{ cursor: "pointer" }}>
               Apply Now
             </div>
