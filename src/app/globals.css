@@ -243,4 +243,8 @@ body {
   html {
     @apply font-sans;
   }
+  img {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
 }
