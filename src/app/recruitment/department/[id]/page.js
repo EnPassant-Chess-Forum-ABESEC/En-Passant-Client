@@ -64,8 +64,14 @@ export default function DepartmentTasksPage() {
 
       {/* Hero Section */}
       <div className="relative min-h-[60vh] md:min-h-[90vh] pt-20 flex items-center justify-end px-6 md:px-12 lg:px-24 max-w-[1920px] mx-auto z-10">
-        {/* Absolute Hand Image anchored to the left viewport edge */}
-        <div className="absolute left-0 top-[55%] -translate-y-1/2 w-[80%] md:w-[55%] lg:w-[45%] max-w-[750px] z-0 pointer-events-none origin-left">
+        {/* Absolute Hand Image anchored to the left viewport edge with bottom fade */}
+        <div 
+          className="absolute left-0 top-[55%] -translate-y-1/2 w-[80%] md:w-[55%] lg:w-[45%] max-w-[750px] z-0 pointer-events-none origin-left"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
+          }}
+        >
           <img
             src="/hand.png"
             alt="Hand holding chess piece"
@@ -85,7 +91,7 @@ export default function DepartmentTasksPage() {
       </div>
 
       {/* Tasks List Section */}
-      <div className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32">
+      <div className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32 mt-16 md:mt-32">
         {loading ? (
           <div className="text-center text-white/40 uppercase tracking-widest text-sm py-12">
             Fetching classified tasks...

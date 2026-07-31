@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { Download, CheckCircle2, Send } from "lucide-react";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import TaskSubmissionModal from "./TaskSubmissionModal";
 
 export default function TaskAccordion({ tasks }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedTaskForSubmit, setSelectedTaskForSubmit] = useState(null);
 
   if (!tasks || tasks.length === 0) {
     return (
@@ -16,15 +18,20 @@ export default function TaskAccordion({ tasks }) {
   }
 
   return (
-    <div className="flex justify-end w-full h-[75vh] min-h-[600px] max-h-[850px] gap-2 md:gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 px-2">
-      {tasks.map((task, index) => {
-        const isActive = activeIndex === index;
+    <>
+      <div 
+        className={`flex justify-end w-full h-[75vh] min-h-[600px] max-h-[850px] gap-2 md:gap-4 snap-x snap-mandatory hide-scrollbar pb-8 px-2 transition-opacity ${
+          selectedTaskForSubmit ? 'overflow-hidden pointer-events-none' : 'overflow-x-auto'
+        }`}
+      >
+        {tasks.map((task, index) => {
+          const isActive = activeIndex === index;
 
-        return (
-          <div
-            key={task._id}
-            onClick={() => setActiveIndex(index)}
-            className={`
+          return (
+            <div
+              key={task._id}
+              onClick={() => setActiveIndex(index)}
+              className={`
               relative h-full flex-shrink-0 rounded-[2rem] overflow-hidden cursor-pointer snap-center
               bg-[#0a0a0a] border border-white/10 group
               transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
@@ -155,10 +162,15 @@ export default function TaskAccordion({ tasks }) {
                   </div>
                 </CardContent>
 
-                {/* Bottom Submit Action */}
                 <div className="p-8 md:p-12 lg:p-16 border-t border-white/5 bg-black/20 shrink-0 flex mt-auto">
                   <div className="w-[calc(100vw-6rem)] md:w-[calc(100vw-12rem)] lg:w-[calc(100vw-18rem)] max-w-[1300px] flex justify-end">
-                    <button className="flex items-center gap-3 bg-[#9b1a1a] hover:bg-[#cc0000] text-white px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors rounded-xl group">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTaskForSubmit(task);
+                      }}
+                      className="flex items-center gap-3 bg-[#9b1a1a] hover:bg-[#cc0000] text-white px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors rounded-xl group"
+                    >
                       <span>Submit Task</span>
                       <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
@@ -169,6 +181,13 @@ export default function TaskAccordion({ tasks }) {
           </div>
         );
       })}
-    </div>
+      </div>
+
+      <TaskSubmissionModal 
+        isOpen={!!selectedTaskForSubmit} 
+        onClose={() => setSelectedTaskForSubmit(null)}
+        task={selectedTaskForSubmit}
+      />
+    </>
   );
 }
