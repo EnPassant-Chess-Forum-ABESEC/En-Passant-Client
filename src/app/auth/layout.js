@@ -14,9 +14,9 @@ export default function Layout({ children }) {
         AnimatePresence slides only the content, not the shell.
       */}
       <div
+        className="w-full max-w-[420px]"
         style={{
-          width: "420px",
-          height: "640px",
+          height: "auto",
           borderRadius: "2.5rem",
           border: "1px solid rgba(255, 255, 255, 0.2)",
           background: "rgba(255, 255, 255, 0.05)",
@@ -34,12 +34,8 @@ export default function Layout({ children }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           style={{
-            position: "absolute",
-            inset: 0,
-            overflowY: "auto",
-            // hide scrollbar but allow scrolling if content exceeds height
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
+            position: "relative",
+            width: "100%",
           }}
         >
           {children}

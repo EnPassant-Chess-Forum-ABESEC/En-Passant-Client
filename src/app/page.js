@@ -19,11 +19,11 @@ export default function Home() {
         ></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.06)_0%,transparent_60%)] pointer-events-none z-0"></div>
 
-        <div className="absolute top-[22%] w-full px-6 md:px-12 select-none pointer-events-none z-10 flex justify-center">
+        <div className="absolute top-[25%] md:top-[22%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center">
           <div className="relative w-full max-w-7xl flex justify-center">
-            <div className="relative flex justify-center gap-[1.5vw] md:gap-[2.5vw] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-pezula font-bold uppercase tracking-[0.1em] leading-[0.85] text-[15vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
+            <div className="relative flex justify-center gap-[1vw] md:gap-[2.5vw] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-pezula font-bold uppercase tracking-[0.1em] leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
               {/* EN is now absolutely positioned relative to the start of the 'P' */}
-              <p className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black uppercase absolute -top-8 md:-top-12 lg:-top-16 left-0 text-sm md:text-xl lg:text-2xl tracking-[0.4em]">
+              <p className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black uppercase absolute -top-5 md:-top-12 lg:-top-16 left-0 text-[10px] md:text-xl lg:text-2xl tracking-[0.4em]">
                 EN
               </p>
 
@@ -39,12 +39,7 @@ export default function Home() {
         </div>
 
         <div
-          className="absolute left-1/2 z-20 -translate-x-1/2"
-          style={{
-            bottom: "0",
-            width: "min(120vw, 1600px)",
-            height: "110vh",
-          }}
+          className="absolute left-1/2 z-20 -translate-x-1/2 w-[200vw] sm:w-[150vw] md:w-[120vw] max-w-[1600px] h-[85vh] md:h-[110vh] bottom-0"
         >
           <Image
             src="/hero.png"
@@ -56,8 +51,8 @@ export default function Home() {
         </div>
 
         {/* Bottom content wrapped in max-w-7xl global margin */}
-        <div className="absolute bottom-6 md:bottom-14 left-0 w-full px-6 md:px-12 z-40 flex justify-center pointer-events-none">
-          <div className="w-full max-w-7xl flex justify-between items-end">
+        <div className="absolute bottom-10 md:bottom-14 left-0 w-full px-6 md:px-12 z-40 flex justify-center pointer-events-none">
+          <div className="w-full max-w-7xl flex justify-center md:justify-between items-end">
             <div className="max-w-[280px] hidden md:block pointer-events-auto">
               <p className="text-[#555555] text-[10px] md:text-xs font-semibold tracking-widest uppercase leading-relaxed">
                 Strategic Mastery And
@@ -70,7 +65,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="flex flex-col items-end text-right gap-4 pointer-events-auto ml-auto">
+            <div className="flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto">
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
                 <span className="text-[#cccccc] font-bold">
                   [chess community]
@@ -78,9 +73,9 @@ export default function Home() {
                 <br />
                 that creates elite grandmaster systems
               </div>
-              <div className="group relative">
+              <div className="group relative w-full sm:w-auto flex justify-center">
                 <Link href="/sign-up" className="btn-bracket group">
-                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors">
+                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors whitespace-nowrap">
                     Book A Strategy Call
                   </div>
                 </Link>

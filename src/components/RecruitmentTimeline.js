@@ -74,68 +74,50 @@ export default function RecruitmentTimeline() {
         </div>
 
         {/* Minimal Timeline */}
-        <div className="relative mt-20">
-          {/* Center line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#9b1a1a]/40 to-transparent" />
+        <div className="relative mt-12 md:mt-20">
+          {/* Center line (left on mobile, center on desktop) */}
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#9b1a1a]/40 to-transparent" />
 
-          <div className="flex flex-col gap-32 md:gap-56 relative z-10">
+          <div className="flex flex-col gap-24 md:gap-56 relative z-10">
             {steps.map((step, i) => {
               const isLeft = i % 2 === 0;
 
               return (
                 <motion.div
                   key={step.number}
-                  className="flex w-full relative"
+                  className={`flex w-full relative ${isLeft ? "md:flex-row-reverse" : ""}`}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                 >
-                  {/* Left Column */}
-                  <div className="w-1/2 pr-12 md:pr-24 text-right">
-                    {isLeft && (
-                      <div className="flex flex-col items-end">
-                        <div className="flex items-center justify-end gap-6 mb-6">
-                          <span className="text-6xl md:text-[120px] font-light tracking-wide text-[#9b1a1a] leading-[0.8]">
-                            {step.number}
-                          </span>
-                        </div>
-                        <h3 className="text-lg md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-6">
-                          {step.title}
-                        </h3>
-                        <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">
-                          {step.description}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  {/* Empty space for the other side (desktop only) */}
+                  <div className="hidden md:block md:w-1/2" />
 
-                  {/* Center Dot */}
-                  <div className="absolute left-1/2 top-4 md:top-8 -translate-x-1/2 flex items-center justify-center">
+                  {/* Dot (Left on mobile, Center on desktop) */}
+                  <div className="absolute left-8 md:left-1/2 top-0 md:top-8 -translate-x-1/2 flex items-center justify-center">
                     {/* Outer soft ring */}
-                    <div className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-[#050505] border-[4px] border-[#9b1a1a]/30 flex items-center justify-center shadow-[0_0_30px_rgba(155,26,26,0.25)]">
+                    <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-[#050505] border-[2px] md:border-[4px] border-[#9b1a1a]/30 flex items-center justify-center shadow-[0_0_30px_rgba(155,26,26,0.25)]">
                       {/* Inner solid dot */}
-                      <div className="w-2.5 h-2.5 md:w-4 md:h-4 rounded-full bg-[#9b1a1a]" />
+                      <div className="w-2 h-2 md:w-4 md:h-4 rounded-full bg-[#9b1a1a]" />
                     </div>
                   </div>
 
-                  {/* Right Column */}
-                  <div className="w-1/2 pl-12 md:pl-24 text-left">
-                    {!isLeft && (
-                      <div className="flex flex-col items-start">
-                        <div className="flex items-center justify-start gap-6 mb-6">
-                          <span className="text-6xl md:text-[120px] font-light tracking-wide text-[#9b1a1a] leading-[0.8]">
-                            {step.number}
-                          </span>
-                        </div>
-                        <h3 className="text-lg md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-6">
-                          {step.title}
-                        </h3>
-                        <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">
-                          {step.description}
-                        </p>
+                  {/* Content Column */}
+                  <div className={`w-full pl-20 pr-6 md:w-1/2 ${isLeft ? "md:pr-24 md:pl-0 text-left md:text-right" : "md:pl-24 md:pr-0 text-left"}`}>
+                    <div className={`flex flex-col ${isLeft ? "items-start md:items-end" : "items-start"}`}>
+                      <div className="flex items-center gap-6 mb-4 md:mb-6">
+                        <span className="text-5xl sm:text-6xl md:text-[120px] font-light tracking-wide text-[#9b1a1a] leading-[0.8]">
+                          {step.number}
+                        </span>
                       </div>
-                    )}
+                      <h3 className="text-xl md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-4 md:mb-6">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
                 </motion.div>
               );

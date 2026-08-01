@@ -66,7 +66,7 @@ export default function DepartmentTasksPage() {
       <div className="relative min-h-[60vh] md:min-h-[90vh] pt-20 flex items-center justify-end px-6 md:px-12 lg:px-24 max-w-[1920px] mx-auto z-10">
         {/* Absolute Hand Image anchored to the left viewport edge with bottom fade */}
         <div 
-          className="absolute left-0 top-[55%] -translate-y-1/2 w-[80%] md:w-[55%] lg:w-[45%] max-w-[750px] z-0 pointer-events-none origin-left"
+          className="absolute left-[-5%] md:left-[2%] top-[55%] md:top-[60%] -translate-y-1/2 w-[95%] md:w-[55%] lg:w-[45%] max-w-[750px] z-0 pointer-events-none origin-left"
           style={{
             WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
             maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
@@ -75,16 +75,16 @@ export default function DepartmentTasksPage() {
           <img
             src="/hand.png"
             alt="Hand holding chess piece"
-            className="scale-x-[-1] w-full h-auto drop-shadow-2xl object-left object-contain"
+            className="scale-x-[-1] w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)] object-left object-contain"
           />
         </div>
 
         {/* Typography */}
-        <div className="relative z-10 flex flex-col items-end text-right mt-32 md:mt-0 pt-32 md:pt-0">
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-normal uppercase tracking-loose leading-[0.95] text-white drop-shadow-lg">
+        <div className="relative z-10 flex flex-col items-end text-right mt-32 md:mt-0 pt-48 md:pt-0 w-full px-4">
+          <h1 className="text-[14vw] md:text-[8vw] lg:text-[110px] font-black uppercase tracking-tighter leading-[0.85] text-white drop-shadow-lg break-words">
             {loading ? "..." : departmentName || "DEPARTMENT"}
           </h1>
-          <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-normal uppercase tracking-loose leading-[0.95] text-[#9b1a1a] drop-shadow-[0_0_30px_rgba(155,26,26,0.3)]">
+          <h2 className="text-[16vw] md:text-[9vw] lg:text-[130px] font-black uppercase tracking-tighter leading-[0.85] text-[#9b1a1a] drop-shadow-[0_0_30px_rgba(155,26,26,0.3)]">
             TASKS
           </h2>
         </div>

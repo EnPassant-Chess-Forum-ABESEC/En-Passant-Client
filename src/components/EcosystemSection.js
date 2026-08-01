@@ -11,19 +11,19 @@ export default function EcosystemSection() {
         "Intercollege events",
         "Arena nights",
       ],
-      position: "top-[12vw] left-[2vw]",
+      position: "top-[60vw] md:top-[12vw] left-0 md:left-[2vw]",
     },
     {
       notation: "B2",
       title: "LEARN",
       items: ["Workshops", "Game reviews", "Opening theory", "Masterclasses"],
-      position: "top-[24vw] left-[50vw]",
+      position: "top-[110vw] md:top-[24vw] left-[50vw] md:left-[50vw]",
     },
     {
       notation: "C3",
       title: "CONNECT",
       items: ["Community", "Club nights", "Casual games", "Collaborations"],
-      position: "top-[60vw] left-[14vw]",
+      position: "top-[160vw] md:top-[60vw] left-0 md:left-[14vw]",
     },
     {
       notation: "D4",
@@ -34,7 +34,7 @@ export default function EcosystemSection() {
         "Design media",
         "Grow the club",
       ],
-      position: "top-[72vw] left-[62vw]",
+      position: "top-[210vw] md:top-[72vw] left-[50vw] md:left-[62vw]",
     },
   ];
 
@@ -54,10 +54,10 @@ export default function EcosystemSection() {
       {/* Top Fade — blends seamlessly from NumbersSection */}
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
-      <div className="relative w-full h-[104vw]">
+      <div className="relative w-full h-[300vw] md:h-[104vw]">
         {/* ─── Faint Chess Board Grid Background ─── */}
         <div
-          className="absolute inset-0 z-0 opacity-[0.07] pointer-events-none"
+          className="absolute inset-0 z-0 opacity-[0.07] pointer-events-none hidden md:block"
           style={{
             backgroundImage: `
               linear-gradient(to right, #ffffff 1px, transparent 1px),
@@ -72,8 +72,15 @@ export default function EcosystemSection() {
           }}
         ></div>
 
+        {/* ─── Mobile 2x4 Grid Borders ─── */}
+        <div className="absolute top-[60vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="w-[50vw] h-[50vw] border border-white/[0.05]"></div>
+          ))}
+        </div>
+
         {/* Grid Coordinates — Columns (A–H) */}
-        <div className="absolute top-0 w-full px-[2vw] flex text-white/20 text-[10px] font-mono pt-2 z-0">
+        <div className="absolute top-0 w-full px-[2vw] hidden md:flex text-white/20 text-[10px] font-mono pt-2 z-0">
           {["A", "B", "C", "D", "E", "F", "G", "H"].map((col) => (
             <div key={col} className="w-[12vw] text-center">
               {col}
@@ -82,7 +89,7 @@ export default function EcosystemSection() {
         </div>
 
         {/* Thin Left Gutter */}
-        <div className="absolute top-0 left-0 h-full flex flex-col text-[#555555] text-[9px] font-mono pr-2 z-0">
+        <div className="absolute top-0 left-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pr-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
               key={row}
@@ -94,7 +101,7 @@ export default function EcosystemSection() {
         </div>
 
         {/* Thin Right Gutter */}
-        <div className="absolute top-0 right-0 h-full flex flex-col text-[#555555] text-[9px] font-mono pl-2 z-0">
+        <div className="absolute top-0 right-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pl-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
               key={row}
@@ -106,19 +113,19 @@ export default function EcosystemSection() {
         </div>
 
         {/* ─── Header: THE CLUB IN ACTION ─── */}
-        <div className="absolute top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
+        <div className="absolute top-[6vw] md:top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
           <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
-            <span className="text-white text-[7vw] bg-gradient-to-b from-white via-white/70 to-white/30 bg-clip-text text-transparent">
+            <span className="text-white text-[12vw] md:text-[7vw] bg-gradient-to-b from-white via-white/70 to-white/30 bg-clip-text text-transparent">
               THE CLUB
             </span>
-            <span className="text-[7vw]">
+            <span className="text-[12vw] md:text-[7vw]">
               IN <span className="text-[#9b1a1a]">ACTION</span>
             </span>
           </h2>
         </div>
 
         {/* ─── Subtext (top-left, like the reference) ─── */}
-        <div className="absolute top-[2vw] left-[2vw] z-30 max-w-[180px] md:max-w-[250px] text-[9px] md:text-xs text-white/40 uppercase tracking-widest leading-relaxed pointer-events-none">
+        <div className="absolute top-[32vw] md:top-[2vw] left-[4vw] md:left-[2vw] z-30 max-w-[50vw] md:max-w-[250px] text-[3.5vw] md:text-[9px] lg:text-xs text-white/40 uppercase tracking-widest leading-relaxed pointer-events-none">
           <p>Building the</p>
           <p>
             foundation <span className="text-white/80 font-bold">for</span>
@@ -127,28 +134,28 @@ export default function EcosystemSection() {
           <p className="text-white/80 font-bold">growth</p>
         </div>
 
-        {/* ─── Cards (snapped to 12vw grid) ─── */}
+        {/* ─── Cards (snapped to grid) ─── */}
         {cards.map((card) => (
           <SpotlightCard
             key={card.notation}
             spotlightColor="rgba(155, 26, 26, 0.35)"
-            className={`absolute ${card.position} z-20 w-[36vw] h-[24vw] p-[2vw] flex flex-col justify-between bg-[#000000] border border-white/10 pointer-events-auto`}
+            className={`absolute ${card.position} z-20 w-[50vw] md:w-[36vw] h-[50vw] md:h-[24vw] p-[4vw] md:p-[2vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300`}
           >
             {/* Notation label — large, bold, red, top-right */}
             <div className="flex justify-between items-start">
-              <h3 className="text-white text-[1.8vw] font-bold uppercase tracking-[0.2em] pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
+              <h3 className="text-white text-[4vw] md:text-[1.8vw] font-bold uppercase tracking-[0.2em] pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                 {card.title}
               </h3>
-              <span className="text-[#9b1a1a] text-[5vw] font-black leading-none tracking-tighter">
+              <span className="text-[#9b1a1a] text-[10vw] md:text-[5vw] font-black leading-none tracking-tighter">
                 {card.notation}
               </span>
             </div>
 
-            <ul className="space-y-[0.6vw] mb-[0.5vw]">
+            <ul className="space-y-[1.5vw] md:space-y-[0.6vw] mb-[1vw] md:mb-[0.5vw]">
               {card.items.map((item) => (
                 <li
                   key={item}
-                  className="text-white/60 text-[1.1vw] flex items-center gap-[0.5vw]"
+                  className="text-white/60 text-[3vw] md:text-[1.1vw] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
                 >
                   <span className="text-white/30">—</span>
                   {item}
@@ -157,8 +164,8 @@ export default function EcosystemSection() {
             </ul>
           </SpotlightCard>
         ))}
-        {/* Bottom Fade — sits in the 8vw gap below D4 (96vw–104vw) */}
-        <div className="absolute bottom-0 left-0 w-full h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />
+        {/* Bottom Fade — sits in the gap below D4 */}
+        <div className="absolute bottom-0 left-0 w-full h-[30vw] md:h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />
       </div>
     </section>
   );

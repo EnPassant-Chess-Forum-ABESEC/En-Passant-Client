@@ -68,8 +68,68 @@ export default function DepartmentsSection() {
       {/* Top Fade */}
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none" />
 
-      {/* 8×8 grid container — exactly 8 rows × 12vw = 96vw tall */}
-      <div className="relative w-full h-[96vw]">
+      {/* ─── Mobile Grid (2 columns) ─── */}
+      <div className="md:hidden relative w-full pt-[5vw] pb-[20vw]">
+        {/* Section Header */}
+        <div className="w-full px-[6vw] mb-[12vw] text-right leading-[0.85] z-30">
+          <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
+            <span className="text-white text-[11vw]">FEATURED</span>
+            <span className="text-[#9b1a1a] text-[15vw]">DEPARTMENTS</span>
+          </h2>
+        </div>
+        
+        {/* Mobile Grid */}
+        <div className="w-full grid grid-cols-2 relative z-20">
+          {departments.map((dept, i) => {
+            const isRight = i % 2 !== 0;
+
+            return (
+              <React.Fragment key={dept._id || i}>
+                {/* If it belongs on the right, render an empty box on the left first */}
+                {isRight && <div className="border border-white/5" />}
+
+                {/* The Department Card */}
+                <div className="w-[50vw] h-[50vw]">
+                  <SpotlightCard
+                    spotlightColor="rgba(155, 26, 26, 0.15)"
+                    className="w-full h-full border border-white/10 group cursor-pointer bg-[#000000]"
+                  >
+                    <div className="relative w-full h-full">
+                      {/* Default State */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out group-hover:opacity-0 group-hover:-translate-y-4">
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <span className="text-[#9b1a1a] opacity-40 text-[20vw] font-serif leading-none tracking-tighter -mt-[6vw]">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                        </div>
+                        <span className="text-white font-black text-[4.5vw] tracking-tight uppercase leading-[0.9] relative z-10 text-center mt-[6vw]">
+                          {dept.name}
+                        </span>
+                      </div>
+
+                      {/* Hover State */}
+                      <div className="absolute inset-0 p-[5vw] flex flex-col justify-start opacity-0 translate-y-4 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0">
+                        <span className="text-[#9b1a1a] font-black text-[3.5vw] tracking-tight uppercase mb-2 leading-none break-words">
+                          {dept.name}
+                        </span>
+                        <p className="text-white/80 text-[2.5vw] leading-snug lowercase font-light break-words">
+                          {dept.description || "view recruitment tasks for this department"}
+                        </p>
+                      </div>
+                    </div>
+                  </SpotlightCard>
+                </div>
+
+                {/* If it belongs on the left, render an empty box on the right after */}
+                {!isRight && <div className="border border-white/5" />}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ─── Desktop Scattered Grid ─── */}
+      <div className="hidden md:block relative w-full h-[96vw]">
         {/* ─── Faint Chess Board Grid ─── */}
         <div
           className="absolute inset-0 z-0 opacity-10 pointer-events-none"

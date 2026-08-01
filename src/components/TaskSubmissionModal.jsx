@@ -12,11 +12,14 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -30,14 +33,15 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   const maxTexts = task.submission?.maxTexts || 5;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 pointer-events-auto">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 pointer-events-auto overflow-y-auto overscroll-none">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity touch-none"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity touch-none"
+        onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 my-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 md:p-8 border-b border-white/5 bg-white/[0.02] shrink-0">
           <div>

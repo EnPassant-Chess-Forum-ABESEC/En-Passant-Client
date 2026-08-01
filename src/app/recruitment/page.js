@@ -26,7 +26,7 @@ export default function RecruitmentPage() {
             alt="Background"
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover object-[70%_center] md:object-center"
           />
           {/* Dark overlay so text is legible */}
           <div className="absolute inset-0 bg-black/50 pointer-events-none" />
@@ -49,8 +49,8 @@ export default function RecruitmentPage() {
             </h1>
           </div>
 
-          {/* 2026 - Positioned above the right chess pieces */}
-          <div className="absolute bottom-[22%] md:bottom-[28%] right-[5%] md:right-[12%]">
+          {/* 2026 - Positioned below RECRUITMENT to avoid being hidden by the foreground piece */}
+          <div className="absolute top-[56%] md:top-[58%] right-[10%] md:right-[20%]">
             <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]">
               2026
             </span>
@@ -75,7 +75,7 @@ export default function RecruitmentPage() {
             alt="Recruitment Hero"
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover object-[70%_center] md:object-center"
           />
         </div>
 

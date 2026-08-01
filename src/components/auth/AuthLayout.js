@@ -16,7 +16,7 @@ export default function AuthLayout({ children }) {
 
       {/* Right Figure Image */}
       <div
-        className="absolute right-0 bottom-0 z-20 w-[60%] lg:w-[50%] max-w-[800px] h-[95%] pointer-events-none"
+        className="hidden lg:block absolute right-0 bottom-0 z-20 w-[50%] max-w-[800px] h-[95%] pointer-events-none"
         style={{
           backgroundImage: "url('/login_signup_figure.png')",
           backgroundSize: "contain",

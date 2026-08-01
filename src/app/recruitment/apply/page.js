@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { User, Mail, Phone, CreditCard } from "lucide-react";
 import LineSidebar from "@/components/LineSidebar";
 import OptionWheel from "@/components/OptionWheel";
 import { Input } from "@/components/ui/input";
@@ -126,94 +127,180 @@ export default function RecruitmentApplyPage() {
           />
         </div>
 
-        {/* Right Column - Modern Shadcn Form */}
-        <div className="flex-1 h-full flex items-center justify-center p-8">
-          <Card className="w-full max-w-lg bg-black/50 backdrop-blur-2xl border-white/10 text-white shadow-2xl rounded-2xl overflow-hidden">
-            <CardHeader className="border-b border-white/5 pb-6">
-              <CardTitle className="text-3xl font-bold tracking-tight">{getStepTitle()}</CardTitle>
-              <CardDescription className="text-gray-400 mt-2">{getStepDesc()}</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[380px] p-6 flex flex-col justify-center">
+        {/* Right Column - Clerk Aesthetic Form */}
+        <div className="flex-1 h-full flex items-center justify-center p-6 md:p-12 relative z-20 pt-24 md:pt-12 overflow-y-auto">
+          <div className="w-full max-w-[400px] bg-[#111111] border border-white/10 rounded-[20px] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex flex-col my-auto" style={{ fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif" }}>
+            
+            {/* Header */}
+            <div className="px-8 pt-8 pb-4 relative overflow-hidden">
+              <h2 className="text-[1.5rem] font-bold tracking-tight text-white mb-2" style={{ fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif" }}>
+                {getStepTitle()}
+              </h2>
+              <p className="text-[#a1a1aa] text-[14px] leading-relaxed">
+                {getStepDesc()}
+              </p>
+            </div>
+
+            {/* Content Area */}
+            <div className="px-8 py-4 flex-1 flex flex-col justify-center relative min-h-[300px]">
               {currentStep === 0 && (
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <Label htmlFor="name" className="text-gray-300">Full Name</Label>
-                    <Input id="name" className="bg-black/40 border-white/10 text-white h-12 focus-visible:ring-[#9b1a1a]" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="John Doe" />
+                <div className="space-y-4 fade-in w-full">
+                  <div className="space-y-1.5">
+                    <label htmlFor="name" className="text-[13px] font-semibold text-[#e4e4e7]">
+                      Full name
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717a]">
+                        <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      </div>
+                      <input 
+                        id="name" 
+                        type="text"
+                        className="w-full bg-[#1c1c1c] border border-white/5 text-white rounded-lg h-10 pl-10 pr-3 text-[14px] focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder:text-[#52525b]" 
+                        value={formData.name} 
+                        onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                        placeholder="John Doe"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="email" className="text-gray-300">Email Address</Label>
-                    <Input id="email" type="email" className="bg-black/40 border-white/10 text-white h-12 focus-visible:ring-[#9b1a1a]" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="john@example.com" />
+                  <div className="space-y-1.5">
+                    <label htmlFor="email" className="text-[13px] font-semibold text-[#e4e4e7]">
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717a]">
+                        <Mail className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      </div>
+                      <input 
+                        id="email" 
+                        type="email"
+                        className="w-full bg-[#1c1c1c] border border-white/5 text-white rounded-lg h-10 pl-10 pr-3 text-[14px] focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder:text-[#52525b]" 
+                        value={formData.email} 
+                        onChange={(e) => setFormData({...formData, email: e.target.value})} 
+                        placeholder="john@example.com"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-gray-300">Phone Number</Label>
-                    <Input id="phone" type="tel" className="bg-black/40 border-white/10 text-white h-12 focus-visible:ring-[#9b1a1a]" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+1 (555) 000-0000" />
+                  <div className="space-y-1.5">
+                    <label htmlFor="phone" className="text-[13px] font-semibold text-[#e4e4e7]">
+                      Phone number
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717a]">
+                        <Phone className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      </div>
+                      <input 
+                        id="phone" 
+                        type="tel"
+                        className="w-full bg-[#1c1c1c] border border-white/5 text-white rounded-lg h-10 pl-10 pr-3 text-[14px] focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all placeholder:text-[#52525b]" 
+                        value={formData.phone} 
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
 
               {currentStep === 1 && (
-                <div className="w-full h-full relative fade-in">
-                  <OptionWheel 
-                    items={PRIMARY_DEPARTMENTS} 
-                    defaultSelected={formData.primaryDept} 
-                    onChange={(index) => setFormData({...formData, primaryDept: index})} 
-                    activeColor="#9b1a1a"
-                    textColor="#555555"
-                    fontSize={2.5}
-                    spacing={1.8}
-                  />
+                <div className="w-full fade-in flex flex-col max-h-[300px]">
+                  <div className="space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+                    {PRIMARY_DEPARTMENTS.map((dept, index) => {
+                      if (index === 0) return null; // Skip "Not Selected"
+                      const isSelected = formData.primaryDept === index;
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setFormData({...formData, primaryDept: index})}
+                          className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-all text-left ${
+                            isSelected 
+                              ? 'bg-[#e50914]/10 border-[#e50914]/50 text-white shadow-[0_0_15px_rgba(229,9,20,0.1)]' 
+                              : 'bg-[#18181b] border-white/5 text-[#a1a1aa] hover:bg-[#27272a] hover:text-white'
+                          }`}
+                        >
+                          <span className="text-[14px] font-medium">{dept}</span>
+                          <div className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center transition-colors ${
+                            isSelected ? 'border-[#e50914]' : 'border-[#52525b]'
+                          }`}>
+                            {isSelected && <div className="w-[10px] h-[10px] rounded-full bg-[#e50914]" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
               {currentStep === 2 && (
-                <div className="w-full h-full relative fade-in">
-                  <OptionWheel 
-                    items={SECONDARY_DEPARTMENTS} 
-                    defaultSelected={formData.secondaryDept} 
-                    onChange={(index) => setFormData({...formData, secondaryDept: index})} 
-                    activeColor="#9b1a1a"
-                    textColor="#555555"
-                    fontSize={2.5}
-                    spacing={1.8}
-                  />
+                <div className="w-full fade-in flex flex-col max-h-[300px]">
+                  <div className="space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+                    {SECONDARY_DEPARTMENTS.map((dept, index) => {
+                      const isSelected = formData.secondaryDept === index;
+                      const isNone = index === 0;
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setFormData({...formData, secondaryDept: index})}
+                          className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-all text-left ${
+                            isSelected 
+                              ? 'bg-[#e50914]/10 border-[#e50914]/50 text-white shadow-[0_0_15px_rgba(229,9,20,0.1)]' 
+                              : 'bg-[#18181b] border-white/5 text-[#a1a1aa] hover:bg-[#27272a] hover:text-white'
+                          }`}
+                        >
+                          <span className={`text-[14px] ${isNone ? 'italic opacity-70' : 'font-medium'}`}>{dept}</span>
+                          <div className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center transition-colors ${
+                            isSelected ? 'border-[#e50914]' : 'border-[#52525b]'
+                          }`}>
+                            {isSelected && <div className="w-[10px] h-[10px] rounded-full bg-[#e50914]" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
               {currentStep === 3 && (
-                <div className="h-full flex flex-col items-center justify-center text-center space-y-6 fade-in">
-                  <div className="w-24 h-24 rounded-full bg-[#9b1a1a]/20 flex items-center justify-center mb-4">
-                    <span className="text-4xl">💳</span>
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 fade-in">
+                  <div className="w-20 h-20 rounded-full bg-[#e50914]/10 border border-[#e50914]/20 flex items-center justify-center mb-2">
+                    <span className="text-3xl">💳</span>
                   </div>
-                  <h3 className="text-2xl font-bold">Ready for Checkout</h3>
-                  <p className="text-gray-400 max-w-sm">
-                    You have successfully completed all form details. Please proceed to payment to confirm your application.
+                  <h3 className="text-xl font-bold text-white tracking-tight">Ready for checkout</h3>
+                  <p className="text-[#a1a1aa] max-w-[280px] text-[15px] leading-relaxed">
+                    You have successfully completed all details. Proceed to payment to confirm.
                   </p>
-                  <Button className="w-full max-w-xs h-12 text-lg bg-[#9b1a1a] hover:bg-[#b91c1c] text-white rounded-full transition-all mt-4">
-                    Pay Now
-                  </Button>
+                  <button className="h-11 w-full max-w-[280px] rounded-lg bg-[#e50914] hover:bg-[#b9090b] text-white font-bold text-[15px] transition-all mt-4 flex justify-center items-center gap-2">
+                    Pay Now <span className="text-[10px]">▶</span>
+                  </button>
                 </div>
               )}
-            </CardContent>
+            </div>
             
-            <CardFooter className="flex justify-between border-t border-white/10 p-6 bg-black/20">
-              <Button 
-                variant="outline" 
-                className={`h-11 px-8 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 transition-all ${currentStep === 0 ? 'invisible' : ''}`}
-                onClick={handleBack}
-              >
-                Back
-              </Button>
+            {/* Footer */}
+            <div className="px-8 pb-8 pt-2 flex flex-col justify-end">
               {currentStep < 3 && (
-                <Button 
-                  className="h-11 px-8 rounded-full bg-[#9b1a1a] hover:bg-[#b91c1c] text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
+                <button 
+                  className="h-11 w-full rounded-lg bg-[#e50914] hover:bg-[#b9090b] text-white font-bold text-[15px] transition-all disabled:opacity-50 disabled:hover:bg-[#e50914] flex items-center justify-center gap-2 group" 
                   onClick={handleNext} 
                   disabled={!isStepValid(currentStep)}
                 >
-                  {currentStep === 2 ? 'Review & Pay' : 'Next Step'} 
-                </Button>
+                  {currentStep === 2 ? 'Review & Pay' : 'Continue'}
+                  <span className="text-[10px] group-hover:translate-x-0.5 transition-transform">▶</span>
+                </button>
               )}
-            </CardFooter>
-          </Card>
+
+              {currentStep > 0 && (
+                <div className="w-full text-center mt-4 fade-in">
+                  <button 
+                    className="text-[13px] font-medium text-[#a1a1aa] hover:text-white transition-colors"
+                    onClick={handleBack}
+                  >
+                    Go back
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </main>
