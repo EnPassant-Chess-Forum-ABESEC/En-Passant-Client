@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserButton, useAuth } from "@clerk/nextjs";
@@ -50,7 +51,7 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-white text-base md:text-lg font-bold tracking-[0.3em] uppercase hover:opacity-70 transition-opacity z-50"
           >
-            LOGO
+            <Image src={"/logo.png"} alt="Logo" width={28} height={28} />
           </Link>
 
           {/* Nav Links & Auth (Desktop) */}
@@ -104,7 +105,11 @@ export default function Navbar() {
               className="text-white hover:text-[#9b1a1a] transition-colors p-2"
               aria-label="Toggle Menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
