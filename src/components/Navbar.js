@@ -46,10 +46,10 @@ export default function Navbar() {
             Leaderboard
           </Link>
           <Link
-            href="/events"
+            href="/recruitment"
             className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
           >
-            Events
+            Recruitment
           </Link>
 
           {/* Subtle vertical divider to separate links from auth actions */}

@@ -41,29 +41,9 @@ export default function DepartmentsSection() {
   useEffect(() => {
     async function loadDepts() {
       try {
-        const tasksData = await fetchApi("/tasks?year=2026").catch(() => null);
-        if (tasksData?.tasks) {
-          const uniqueDepts = [];
-          tasksData.tasks.forEach((t) => {
-            if (
-              t.departmentId &&
-              !uniqueDepts.find((d) => d._id === t.departmentId._id)
-            ) {
-              uniqueDepts.push(t.departmentId);
-            }
-          });
-          
-          // Sort departments to roughly match the visual order (01, 02, etc.)
-          const order = ["content", "media", "graphic", "design", "web", "event", "community"];
-          uniqueDepts.sort((a, b) => {
-            const aName = a.name.toLowerCase();
-            const bName = b.name.toLowerCase();
-            const aIndex = order.findIndex(o => aName.includes(o));
-            const bIndex = order.findIndex(o => bName.includes(o));
-            return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
-          });
-          
-          setDepartments(uniqueDepts);
+        const data = await fetchApi("/tasks/all-departments").catch(() => null);
+        if (data?.departments) {
+          setDepartments(data.departments);
         }
       } catch (err) {
         console.error("Failed to load departments:", err);
