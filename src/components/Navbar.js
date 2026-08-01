@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { UserButton, useAuth } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
+import SpecularButton from "@/components/SpecularButton";
 
 export default function Navbar() {
   const { userId } = useAuth();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -77,9 +80,19 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-4 md:gap-6">
-                <Link href="/auth/sign-in" className="btn-bracket">
-                  <div className="btn-inner">GET STARTED</div>
-                </Link>
+                <SpecularButton
+                  size="sm"
+                  radius={8}
+                  lineColor="#ff3333"
+                  baseColor="#444444"
+                  textColor="#ffffff"
+                  intensity={2}
+                  thickness={2}
+                  onClick={() => router.push("/auth/sign-in")}
+                  className="font-bold tracking-widest uppercase"
+                >
+                  GET STARTED
+                </SpecularButton>
               </div>
             )}
           </nav>
@@ -134,13 +147,24 @@ export default function Navbar() {
               />
             </div>
           ) : (
-            <Link
-              href="/auth/sign-in"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="btn-bracket mt-4"
-            >
-              <div className="btn-inner text-base">GET STARTED</div>
-            </Link>
+            <div className="mt-4">
+              <SpecularButton
+                size="md"
+                radius={12}
+                lineColor="#ff3333"
+                baseColor="#444444"
+                textColor="#ffffff"
+                intensity={2}
+                thickness={3}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  router.push("/auth/sign-in");
+                }}
+                className="font-bold tracking-widest uppercase text-base"
+              >
+                GET STARTED
+              </SpecularButton>
+            </div>
           )}
         </nav>
       </div>
