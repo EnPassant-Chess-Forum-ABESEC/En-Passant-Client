@@ -1,15 +1,32 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import RecruitmentTimeline from "@/components/RecruitmentTimeline";
 import WhyJoinSection from "@/components/WhyJoinSection";
 import DepartmentsSection from "@/components/DepartmentsSection";
 import RecruitmentCTASection from "@/components/RecruitmentCTASection";
 
 export default function RecruitmentPage() {
+  const premiumEase = [0.16, 1, 0.3, 1];
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const yText = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const yFront = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
     <main className="w-full bg-[#050505] font-sans">
-      {/* Hero Section */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section
+        ref={containerRef}
+        className="relative w-full h-screen overflow-hidden"
+      >
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
           style={{
@@ -19,77 +36,95 @@ export default function RecruitmentPage() {
         ></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.06)_0%,transparent_60%)] pointer-events-none z-0"></div>
 
-        {/* ── Layer 1 (z-10): Background image ── */}
-        <div className="absolute inset-0 z-10">
-          <Image
-            src="/recruitment_hero_front_background.png"
-            alt="Background"
-            fill
-            priority
-            className="object-cover object-[70%_center] md:object-center"
-          />
-          {/* Dark overlay so text is legible */}
-          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
-        </div>
+        <motion.div style={{ y: yFront }} className="absolute inset-0 z-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: premiumEase }}
+            className="w-full h-full relative"
+          >
+            <Image
+              src="/recruitment_hero_front_background.png"
+              alt="Background"
+              fill
+              priority
+              className="object-cover object-[70%_center] md:object-center"
+            />
 
-        {/* ── Layer 2 (z-20): Typography — sits ABOVE background, BELOW front figure ── */}
-        <div className="absolute inset-0 w-full h-full select-none pointer-events-none z-20">
-          {/* RECRUITMENT - starting below the hand, spanning right */}
+            <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          style={{ y: yText, opacity }}
+          className="absolute inset-0 w-full h-full select-none pointer-events-none z-20"
+        >
           <div
             className="absolute top-[46%] md:top-[49%] left-[25%] md:left-[41%]"
             style={{ width: "80vw" }}
           >
-            <h1
+            <motion.h1
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 60,
+                damping: 20,
+                delay: 0.4,
+              }}
               className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555]
               bg-clip-text text-transparent font-pezula uppercase
               tracking-wider leading-[0.85]
               text-[15vw] md:text-[10vw] whitespace-nowrap"
             >
               RECRUITMENT
-            </h1>
+            </motion.h1>
           </div>
 
-          {/* 2026 - Positioned below RECRUITMENT to avoid being hidden by the foreground piece */}
           <div className="absolute top-[56%] md:top-[58%] right-[10%] md:right-[20%]">
-            <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]">
+            <motion.span
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 60,
+                damping: 20,
+                delay: 0.6,
+              }}
+              className="inline-block text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]"
+            >
               2026
-            </span>
+            </motion.span>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── Layer 2 (z-20): Apply Now button ── */}
-        <div className="absolute bottom-12 left-0 w-full px-6 md:px-12 z-20 flex justify-center pointer-events-none">
-          <div className="group relative pointer-events-auto">
-            <Link href="/recruitment/apply" className="btn-bracket group">
-              <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-10 py-5 uppercase font-bold tracking-widest text-sm transition-colors shadow-[0_0_30px_rgba(153,0,0,0.3)]">
-                Apply Now
-              </div>
-            </Link>
-          </div>
-        </div>
+        <motion.div
+          style={{ y: yFront }}
+          className="absolute inset-0 z-30 pointer-events-none"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: premiumEase }}
+            className="w-full h-full relative"
+          >
+            <Image
+              src="/recruitment_hero_front.png"
+              alt="Recruitment Hero"
+              fill
+              priority
+              className="object-cover object-[70%_center] md:object-center"
+            />
+          </motion.div>
+        </motion.div>
 
-        {/* ── Layer 3 (z-30): Foreground figure — overlaps text for depth ── */}
-        <div className="absolute inset-0 z-30 pointer-events-none">
-          <Image
-            src="/recruitment_hero_front.png"
-            alt="Recruitment Hero"
-            fill
-            priority
-            className="object-cover object-[70%_center] md:object-center"
-          />
-        </div>
-
-        {/* Bottom Fade transition */}
         <div className="absolute bottom-0 left-0 w-full h-[15vw] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-40 pointer-events-none"></div>
       </section>
 
-      {/* Timeline Section */}
       <RecruitmentTimeline />
 
-      {/* Featured Departments */}
       <DepartmentsSection />
 
-      {/* Final CTA Section */}
       <RecruitmentCTASection />
     </main>
   );

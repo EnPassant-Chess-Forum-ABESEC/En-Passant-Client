@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { useScroll } from "framer-motion";
+import { useScroll, motion } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Center } from "@react-three/drei";
 import SpotlightCard from "./SpotlightCard";
@@ -32,10 +32,30 @@ export default function NumbersSection() {
     offset: ["start end", "end start"],
   });
 
+  // Stagger configurations
+  const textVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8, y: 50 },
+    visible: (custom) => ({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: custom * 0.15, ease: "easeOut" },
+    }),
+  };
+
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-[#050505] font-sans border-none overflow-hidden"
+      className="relative w-full bg-[#050505] font-prfaExtrabold border-none overflow-hidden"
     >
       {/* Dark Marble Texture Background */}
       <div
@@ -72,7 +92,10 @@ export default function NumbersSection() {
         {/* ─── Mobile 2x4 Grid Borders ─── */}
         <div className="absolute top-[40vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="w-[50vw] h-[50vw] border border-white/[0.05]"></div>
+            <div
+              key={i}
+              className="w-[50vw] h-[50vw] border border-white/[0.05]"
+            ></div>
           ))}
         </div>
 
@@ -111,7 +134,13 @@ export default function NumbersSection() {
 
         <div className="relative w-full h-full max-w-screen-2xl mx-auto">
           {/* Section Header */}
-          <div className="absolute top-[8vw] md:top-[6vw] w-full md:w-auto text-center md:text-right right-0 md:right-[5vw] z-30 leading-[0.85]">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={textVariants}
+            className="absolute top-[8vw] md:top-[6vw] w-full md:w-auto text-center md:text-right right-0 md:right-[5vw] z-30 leading-[0.85]"
+          >
             <div className="relative inline-block">
               <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
                 <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] font-black text-[10vw] md:text-[100px]">
@@ -122,60 +151,102 @@ export default function NumbersSection() {
                 </span>
               </h2>
             </div>
-          </div>
+          </motion.div>
 
           {/* ─── Center Chess Piece 3D Model ─── */}
-          <div className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.5 }}
+            className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]"
+          >
             <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
               <ambientLight intensity={0.2} />
               <directionalLight position={[10, 10, 5]} intensity={0.5} />
               <Environment preset="night" />
               <ChessPieceModel scrollYProgress={scrollYProgress} />
             </Canvas>
-          </div>
+          </motion.div>
         </div>
 
         {/* ─── Stats Boxes ─── */}
-        
+
         {/* Box 1 (-35%): Row 1, Col 1 on mobile */}
-        <SpotlightCard className="absolute top-[40vw] md:top-[36vw] left-0 md:left-auto md:right-[14vw] bg-[#050505] border border-white/10 w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-          <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
-            -35%
-          </span>
-          <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
-            CAC Reduction After Optimization
-          </span>
-        </SpotlightCard>
+        <motion.div
+          custom={0}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={cardVariants}
+          className="absolute top-[40vw] md:top-[36vw] left-0 md:left-auto md:right-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
+        >
+          <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
+            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+              -35%
+            </span>
+            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+              CAC Reduction After Optimization
+            </span>
+          </SpotlightCard>
+        </motion.div>
 
         {/* Box 2 (120+): Row 2, Col 2 on mobile */}
-        <SpotlightCard className="absolute top-[90vw] md:top-[12vw] left-[50vw] md:left-[2vw] bg-[#050505] border border-white/10 w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-          <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
-            120+
-          </span>
-          <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
-            Successful Projects Delivered
-          </span>
-        </SpotlightCard>
+        <motion.div
+          custom={1}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={cardVariants}
+          className="absolute top-[90vw] md:top-[12vw] left-[50vw] md:left-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
+        >
+          <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
+            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+              120+
+            </span>
+            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+              Successful Projects Delivered
+            </span>
+          </SpotlightCard>
+        </motion.div>
 
         {/* Box 3 (8+): Row 3, Col 1 on mobile */}
-        <SpotlightCard className="absolute top-[140vw] md:top-[60vw] left-0 md:left-[14vw] bg-[#050505] border border-white/10 w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-          <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
-            8+
-          </span>
-          <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
-            Years experience in Digital Growth
-          </span>
-        </SpotlightCard>
+        <motion.div
+          custom={2}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={cardVariants}
+          className="absolute top-[140vw] md:top-[60vw] left-0 md:left-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
+        >
+          <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
+            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+              8+
+            </span>
+            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+              Years experience in Digital Growth
+            </span>
+          </SpotlightCard>
+        </motion.div>
 
         {/* Box 4 (3x): Row 4, Col 2 on mobile */}
-        <SpotlightCard className="absolute top-[190vw] md:top-[72vw] left-[50vw] md:left-auto md:right-[2vw] bg-[#050505] border border-white/10 w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20 flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-          <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
-            3X
-          </span>
-          <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
-            Average Lead Growth
-          </span>
-        </SpotlightCard>
+        <motion.div
+          custom={3}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={cardVariants}
+          className="absolute top-[190vw] md:top-[72vw] left-[50vw] md:left-auto md:right-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
+        >
+          <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
+            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+              3X
+            </span>
+            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+              Average Lead Growth
+            </span>
+          </SpotlightCard>
+        </motion.div>
       </div>
 
       {/* Bottom Fade — blends seamlessly into EcosystemSection */}

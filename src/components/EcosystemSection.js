@@ -1,6 +1,30 @@
+"use client";
+
+import { motion } from "framer-motion";
 import SpotlightCard from "./SpotlightCard";
 
 export default function EcosystemSection() {
+  const premiumEase = [0.16, 1, 0.3, 1];
+
+  const headerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (custom) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1.2, ease: premiumEase, delay: custom * 0.15 },
+    }),
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.9, y: 30 },
+    visible: (custom) => ({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 60, damping: 20, delay: custom * 0.15 },
+    }),
+  };
+
   const cards = [
     {
       notation: "A1",
@@ -75,7 +99,10 @@ export default function EcosystemSection() {
         {/* ─── Mobile 2x4 Grid Borders ─── */}
         <div className="absolute top-[60vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="w-[50vw] h-[50vw] border border-white/[0.05]"></div>
+            <div
+              key={i}
+              className="w-[50vw] h-[50vw] border border-white/[0.05]"
+            ></div>
           ))}
         </div>
 
@@ -115,54 +142,79 @@ export default function EcosystemSection() {
         {/* ─── Header: THE CLUB IN ACTION ─── */}
         <div className="absolute top-[6vw] md:top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
           <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
-            <span className="text-white text-[12vw] md:text-[7vw] bg-gradient-to-b from-white via-white/70 to-white/30 bg-clip-text text-transparent">
+            <motion.span 
+              custom={0}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={headerVariants}
+              className="text-white text-[12vw] md:text-[7vw] bg-gradient-to-b from-white via-white/70 to-white/30 bg-clip-text text-transparent"
+            >
               THE CLUB
-            </span>
+            </motion.span>
             <span className="text-[12vw] md:text-[7vw]">
-              IN <span className="text-[#9b1a1a]">ACTION</span>
+              <motion.span 
+                custom={1}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={headerVariants}
+                className="inline-block"
+              >
+                IN
+              </motion.span>{" "}
+              <motion.span 
+                custom={2}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={headerVariants}
+                className="text-[#9b1a1a] inline-block"
+              >
+                ACTION
+              </motion.span>
             </span>
           </h2>
         </div>
 
-        {/* ─── Subtext (top-left, like the reference) ─── */}
-        <div className="absolute top-[32vw] md:top-[2vw] left-[4vw] md:left-[2vw] z-30 max-w-[50vw] md:max-w-[250px] text-[3.5vw] md:text-[9px] lg:text-xs text-white/40 uppercase tracking-widest leading-relaxed pointer-events-none">
-          <p>Building the</p>
-          <p>
-            foundation <span className="text-white/80 font-bold">for</span>
-          </p>
-          <p>scalable</p>
-          <p className="text-white/80 font-bold">growth</p>
-        </div>
-
         {/* ─── Cards (snapped to grid) ─── */}
-        {cards.map((card) => (
-          <SpotlightCard
+        {cards.map((card, index) => (
+          <motion.div
             key={card.notation}
-            spotlightColor="rgba(155, 26, 26, 0.35)"
-            className={`absolute ${card.position} z-20 w-[50vw] md:w-[36vw] h-[50vw] md:h-[24vw] p-[4vw] md:p-[2vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300`}
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
+            className={`absolute ${card.position} z-20 w-[50vw] md:w-[36vw] h-[50vw] md:h-[24vw]`}
           >
-            {/* Notation label — large, bold, red, top-right */}
-            <div className="flex justify-between items-start">
-              <h3 className="text-white text-[4vw] md:text-[1.8vw] font-bold uppercase tracking-[0.2em] pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
-                {card.title}
-              </h3>
-              <span className="text-[#9b1a1a] text-[10vw] md:text-[5vw] font-black leading-none tracking-tighter">
-                {card.notation}
-              </span>
-            </div>
+            <SpotlightCard
+              spotlightColor="rgba(155, 26, 26, 0.35)"
+              className="w-full h-full p-[4vw] md:p-[2vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300"
+            >
+              {/* Notation label — large, bold, red, top-right */}
+              <div className="flex justify-between items-start">
+                <h3 className="text-white text-[4vw] md:text-[1.8vw] font-bold uppercase tracking-[0.2em] pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
+                  {card.title}
+                </h3>
+                <span className="text-[#9b1a1a] text-[10vw] md:text-[5vw] font-black leading-none tracking-tighter">
+                  {card.notation}
+                </span>
+              </div>
 
-            <ul className="space-y-[1.5vw] md:space-y-[0.6vw] mb-[1vw] md:mb-[0.5vw]">
-              {card.items.map((item) => (
-                <li
-                  key={item}
-                  className="text-white/60 text-[3vw] md:text-[1.1vw] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
-                >
-                  <span className="text-white/30">—</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </SpotlightCard>
+              <ul className="space-y-[1.5vw] md:space-y-[0.6vw] mb-[1vw] md:mb-[0.5vw]">
+                {card.items.map((item) => (
+                  <li
+                    key={item}
+                    className="text-white/60 text-[3vw] md:text-[1.1vw] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
+                  >
+                    <span className="text-white/30">—</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </SpotlightCard>
+          </motion.div>
         ))}
         {/* Bottom Fade — sits in the gap below D4 */}
         <div className="absolute bottom-0 left-0 w-full h-[30vw] md:h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />

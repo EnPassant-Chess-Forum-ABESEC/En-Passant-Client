@@ -39,13 +39,14 @@ export function useApi() {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data?.message || `API Error: ${response.status}`);
+        const errDetails = data?.errors ? JSON.stringify(data.errors) : (data?.error || "");
+        throw new Error(data?.message ? `${data.message} ${errDetails}` : `API Error: ${response.status}`);
       }
 
       return data;
     },
     [getToken]
   );
-
+   0
   return fetchApi;
 }

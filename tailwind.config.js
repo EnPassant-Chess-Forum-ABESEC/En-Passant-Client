@@ -9,6 +9,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        akira: ['akira', 'sans-serif'],
+        prfaExtrabold: ['prfaExtrabold', 'sans-serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

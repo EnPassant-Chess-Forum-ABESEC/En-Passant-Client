@@ -254,7 +254,7 @@ body {
   h4,
   h5,
   h6 {
-    font-family: "Condens", sans-serif;
+    font-family: "prfaExtrabold", "Condens", sans-serif;
   }
 }
 
@@ -270,6 +270,22 @@ body {
   font-family: "pezula";
   src: url("/fonts/Pezula.ttf") format("truetype");
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "akira";
+  src: url("/fonts/Akira.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "prfaExtrabold";
+  src: url("/fonts/ProfaExtraBold.ttf") format("truetype");
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }

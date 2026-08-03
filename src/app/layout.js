@@ -20,19 +20,22 @@ export const metadata = {
 };
 
 import { ClerkProvider } from "@clerk/nextjs";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
-          <NavbarWrapper>
-            <Navbar />
-          </NavbarWrapper>
-          <main className="flex-1 flex flex-col overflow-x-hidden">
-            {children}
-          </main>
-          <Footer />
+          <SmoothScroll>
+            <NavbarWrapper>
+              <Navbar />
+            </NavbarWrapper>
+            <main className="flex-1 flex flex-col overflow-x-hidden">
+              {children}
+            </main>
+            <Footer />
+          </SmoothScroll>
         </body>
       </html>
     </ClerkProvider>
