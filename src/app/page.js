@@ -47,31 +47,35 @@ export default function Home() {
           className="absolute top-[25%] md:top-[22%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center"
         >
           <div className="relative w-full max-w-7xl flex justify-center">
-            <div className="relative flex justify-center gap-[1vw] md:gap-[2.5vw] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-prfaExtrabold font-bold uppercase tracking-[0.1em] leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
-              <motion.p
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
+            <div className="relative flex items-baseline justify-center uppercase leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
+              {/* EN */}
+              <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.2, delay: 0.6, ease: premiumEase }}
-                className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black uppercase absolute -top-5 md:-top-12 lg:-top-16 left-0 text-[10px] md:text-xl lg:text-2xl tracking-[0.4em]"
+                className="text-[#c41e3a] font-cinzel font-bold tracking-[0.12em]"
               >
                 EN
-              </motion.p>
+              </motion.span>
 
-              {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
-                <motion.span
-                  key={index}
-                  className="inline-block"
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    duration: 1.2,
-                    delay: 0.08 * index,
-                    ease: premiumEase,
-                  }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
+              {/* PASSANT */}
+              <div className="flex ml-[0.15em] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em]">
+                {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
+                  <motion.span
+                    key={index}
+                    className="inline-block"
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{
+                      duration: 1.2,
+                      delay: 0.08 * index,
+                      ease: premiumEase,
+                    }}
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -104,9 +108,9 @@ export default function Home() {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.2, delay: 0.8, ease: premiumEase }}
-              className="max-w-[280px] hidden md:block pointer-events-auto"
+              className="max-w-[340px] hidden md:block pointer-events-auto"
             >
-              <p className="text-[#555555] text-[10px] md:text-xs font-semibold tracking-widest uppercase leading-relaxed">
+              <p className="text-[#cccccc] font-inter font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
                 Strategic Mastery And
                 <br />
                 Performance-Driven Growth
@@ -124,7 +128,7 @@ export default function Home() {
               className="flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto"
             >
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
-                <span className="text-[#cccccc] font-bold">
+                <span className="text-[#cccccc] font-inter font-medium text-[13px] tracking-[0.1em] opacity-80">
                   [chess community]
                 </span>
                 <br />
@@ -132,7 +136,7 @@ export default function Home() {
               </div>
               <div className="group relative w-full sm:w-auto flex justify-center">
                 <Link href="/sign-up" className="btn-bracket group">
-                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors whitespace-nowrap">
+                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] hover:tracking-[0.16em] transition-all duration-200 ease-in-out whitespace-nowrap">
                     Book A Strategy Call
                   </div>
                 </Link>

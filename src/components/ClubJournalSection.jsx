@@ -44,19 +44,19 @@ function JournalText({ date, title, text, align }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 1.2, ease: premiumEase }}
-      className="aspect-square flex flex-col justify-center p-4 sm:p-6 md:p-10 border border-black/10"
+      className="aspect-square flex flex-col justify-center p-4 sm:p-6 md:p-10 border border-black/10 group cursor-pointer"
       style={light}
     >
       <div
         className={`flex flex-col ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
       >
-        <span className="text-[#9b1a1a] text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] mb-1 sm:mb-2 md:mb-4">
+        <span className="text-[#9b1a1a] font-inter font-medium text-[11px] tracking-[0.15em] uppercase mb-1 sm:mb-2 md:mb-4">
           {date}
         </span>
-        <h3 className="text-[#0a0a0a] text-base sm:text-lg md:text-2xl lg:text-3xl font-normal uppercase tracking-normal mb-1 sm:mb-2 md:mb-4 leading-none">
+        <h3 className="text-[#0a0a0a] font-cinzel font-bold group-hover:font-black text-[18px] tracking-[0.05em] uppercase mb-1 sm:mb-2 md:mb-4 leading-none transition-all duration-200 ease-in-out">
           {title}
         </h3>
-        <p className="text-[#0a0a0a]/70 text-[9px] sm:text-[10px] md:text-xs leading-relaxed font-bold">
+        <p className="text-[#0a0a0a]/80 font-inter font-normal text-[13px] leading-[1.7]">
           {text}
         </p>
       </div>
@@ -73,7 +73,7 @@ export default function ClubJournalSection() {
       <div className="relative w-full h-[30vw] md:h-[14vw]">
         <div className="absolute top-0 right-0 flex flex-col items-end justify-start pt-[6vw] md:pt-[1.5vw] pr-[6vw] md:pr-[2vw] z-30">
           <h2
-            className="text-white font-black uppercase text-right leading-[0.88] tracking-tight text-[14vw] sm:text-[10vw] md:text-[5.5vw]"
+            className="text-white font-cinzel font-bold uppercase text-right leading-[0.88] tracking-[0.04em] md:tracking-[0.08em] text-[14vw] sm:text-[10vw] md:text-[5.5vw]"
             style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)" }}
           >
             <motion.div

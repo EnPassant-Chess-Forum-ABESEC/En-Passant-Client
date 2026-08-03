@@ -141,7 +141,7 @@ export default function EcosystemSection() {
 
         {/* ─── Header: THE CLUB IN ACTION ─── */}
         <div className="absolute top-[6vw] md:top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
-          <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
+          <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
             <motion.span 
               custom={0}
               initial="hidden"
@@ -194,10 +194,10 @@ export default function EcosystemSection() {
             >
               {/* Notation label — large, bold, red, top-right */}
               <div className="flex justify-between items-start">
-                <h3 className="text-white text-[4vw] md:text-[1.8vw] font-bold uppercase tracking-[0.2em] pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
+                <h3 className="text-white font-cinzel font-bold text-[16px] tracking-[0.1em] uppercase pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                   {card.title}
                 </h3>
-                <span className="text-[#9b1a1a] text-[10vw] md:text-[5vw] font-black leading-none tracking-tighter">
+                <span className="text-[#9b1a1a] font-cinzel font-black text-[28px] leading-none tracking-tighter">
                   {card.notation}
                 </span>
               </div>
@@ -206,7 +206,7 @@ export default function EcosystemSection() {
                 {card.items.map((item) => (
                   <li
                     key={item}
-                    className="text-white/60 text-[3vw] md:text-[1.1vw] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
+                    className="text-white/80 font-inter font-normal text-[14px] leading-[1.8] tracking-[0.02em] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
                   >
                     <span className="text-white/30">—</span>
                     {item}

@@ -58,13 +58,13 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-5 md:gap-8">
             <Link
               href="/leaderboard"
-              className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
+              className="text-white/90 font-inter font-semibold text-[14px] tracking-[0.12em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
             >
               Leaderboard
             </Link>
             <Link
               href="/recruitment"
-              className="text-white text-xs md:text-sm font-medium tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
+              className="text-white/90 font-inter font-semibold text-[14px] tracking-[0.12em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
             >
               Recruitment
             </Link>
@@ -90,7 +90,7 @@ export default function Navbar() {
                   intensity={2}
                   thickness={2}
                   onClick={() => router.push("/auth/sign-in")}
-                  className="font-bold tracking-widest uppercase"
+                  className="font-inter font-semibold text-[14px] tracking-[0.1em] uppercase"
                 >
                   GET STARTED
                 </SpecularButton>
@@ -127,14 +127,14 @@ export default function Navbar() {
           <Link
             href="/leaderboard"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-white text-2xl font-black tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
+            className="text-white/90 font-inter font-semibold text-[16px] tracking-[0.08em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
           >
             Leaderboard
           </Link>
           <Link
             href="/recruitment"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-white text-2xl font-black tracking-widest uppercase hover:text-[#9b1a1a] transition-colors"
+            className="text-white/90 font-inter font-semibold text-[16px] tracking-[0.08em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
           >
             Recruitment
           </Link>
@@ -165,7 +165,7 @@ export default function Navbar() {
                   setIsMobileMenuOpen(false);
                   router.push("/auth/sign-in");
                 }}
-                className="font-bold tracking-widest uppercase text-base"
+                className="font-inter font-semibold text-[14px] tracking-[0.1em] uppercase"
               >
                 GET STARTED
               </SpecularButton>

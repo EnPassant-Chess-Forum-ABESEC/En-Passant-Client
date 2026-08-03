@@ -142,11 +142,11 @@ export default function NumbersSection() {
             className="absolute top-[8vw] md:top-[6vw] w-full md:w-auto text-center md:text-right right-0 md:right-[5vw] z-30 leading-[0.85]"
           >
             <div className="relative inline-block">
-              <h2 className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter">
-                <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] font-black text-[10vw] md:text-[100px]">
+              <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
+                <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] text-[10vw] md:text-[100px]">
                   PROVEN
                 </span>
-                <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-bold tracking-wider text-[12vw] md:text-[140px]">
+                <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] text-[10vw] md:text-[100px]">
                   PERFORMANCE
                 </span>
               </h2>
@@ -182,10 +182,10 @@ export default function NumbersSection() {
           className="absolute top-[40vw] md:top-[36vw] left-0 md:left-auto md:right-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               -35%
             </span>
-            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               CAC Reduction After Optimization
             </span>
           </SpotlightCard>
@@ -201,10 +201,10 @@ export default function NumbersSection() {
           className="absolute top-[90vw] md:top-[12vw] left-[50vw] md:left-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               120+
             </span>
-            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Successful Projects Delivered
             </span>
           </SpotlightCard>
@@ -220,10 +220,10 @@ export default function NumbersSection() {
           className="absolute top-[140vw] md:top-[60vw] left-0 md:left-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               8+
             </span>
-            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Years experience in Digital Growth
             </span>
           </SpotlightCard>
@@ -239,10 +239,10 @@ export default function NumbersSection() {
           className="absolute top-[190vw] md:top-[72vw] left-[50vw] md:left-auto md:right-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-black text-[12vw] md:text-[6vw] tracking-tighter uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               3X
             </span>
-            <span className="text-white/70 text-[3vw] sm:text-[2.5vw] md:text-sm lg:text-base font-normal tracking-wide leading-tight max-w-[80%]">
+            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Average Lead Growth
             </span>
           </SpotlightCard>

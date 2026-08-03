@@ -65,7 +65,7 @@ export default function StrategySection() {
       <div className="absolute inset-0 z-30 flex justify-center w-full pt-[6vw] md:pt-[2vw] px-6 md:px-12 pointer-events-none">
         <div className="relative w-full max-w-7xl flex flex-col h-full">
           {/* ─── Header ─── */}
-          <div className="flex flex-col uppercase font-black leading-[0.85] tracking-tighter z-20 w-max pointer-events-auto">
+          <div className="flex flex-col uppercase font-cinzel font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.08em] z-20 w-max pointer-events-auto">
             <motion.span 
               custom={0}
               initial="hidden"
@@ -118,14 +118,14 @@ export default function StrategySection() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textRightVariants}
-            className="absolute top-[45%] md:top-[55%] lg:top-[60%] right-6 md:right-12 max-w-[65vw] md:max-w-[400px] text-[3.5vw] md:text-sm lg:text-base text-white/60 text-right pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
+            className="absolute top-[45%] md:top-[55%] lg:top-[60%] right-6 md:right-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[16px] leading-[1.75] text-white/90 text-right pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
           >
             <p>
               We define your{" "}
-              <span className="text-white font-bold">strongest market</span>{" "}
+              <span className="text-white font-inter font-semibold">strongest market</span>{" "}
               position before launch.
               <br className="hidden md:block" />
-              We build <span className="text-white font-bold">
+              We build <span className="text-white font-inter font-semibold">
                 systems
               </span>{" "}
               that scale sustainably.
@@ -139,12 +139,12 @@ export default function StrategySection() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textLeftVariants}
-            className="absolute top-[65%] md:top-[75%] lg:top-[80%] left-6 md:left-12 max-w-[65vw] md:max-w-[400px] text-[3.5vw] md:text-sm lg:text-base text-white/60 text-left pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
+            className="absolute top-[65%] md:top-[75%] lg:top-[80%] left-6 md:left-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[13px] leading-[1.7] text-white/75 text-left pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
           >
             <p>
               Only{" "}
-              <span className="text-white font-bold">structured action.</span>{" "}
-              <span className="text-white font-bold">Clear KPIs.</span>
+              <span className="text-white font-inter font-semibold">structured action.</span>{" "}
+              <span className="text-white font-inter font-semibold">Clear KPIs.</span>
               <br className="hidden md:block" />
               Transparent reporting.
               <br className="hidden md:block" /> Measurable impact.
