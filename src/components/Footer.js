@@ -6,28 +6,28 @@ const columns = [
   {
     heading: "PLATFORM",
     links: [
-      { label: "About", href: "/about" },
-      { label: "Services", href: "/services" },
+      { label: "About", href: "#" },
+      { label: "Services", href: "#" },
       { label: "Recruitment", href: "/recruitment" },
-      { label: "Tournaments", href: "/tournaments" },
+      { label: "Tournaments", href: "#" },
     ],
   },
   {
     heading: "RESOURCES",
     links: [
-      { label: "Club Journal", href: "/journal" },
-      { label: "Blog", href: "/blog" },
-      { label: "Openings", href: "/openings" },
-      { label: "Endgames", href: "/endgames" },
+      { label: "Club Journal", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Openings", href: "#" },
+      { label: "Endgames", href: "#" },
     ],
   },
   {
     heading: "COMPANY",
     links: [
-      { label: "Contact", href: "/contact" },
-      { label: "Careers", href: "/careers" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
+      { label: "Contact", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Privacy", href: "#" },
+      { label: "Terms", href: "#" },
     ],
   },
 ];
@@ -206,9 +206,9 @@ export default function Footer() {
               FORGED IN TACTICAL EXCELLENCE
             </span>
             <span className="font-eb-garamond font-normal text-[13px] text-white flex items-center gap-2" style={{ letterSpacing: "0.04em", opacity: "0.45" }}>
-              <Link href="/privacy" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Privacy</Link>
+              <Link href="#" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Privacy</Link>
               <span className="opacity-30">·</span>
-              <Link href="/terms" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Terms</Link>
+              <Link href="#" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Terms</Link>
             </span>
           </div>
 
