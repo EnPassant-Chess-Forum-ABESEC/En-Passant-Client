@@ -7,15 +7,18 @@ import {
   motion,
   useScroll,
   useTransform,
-  useAnimationFrame,
 } from "framer-motion";
-import NumbersSection from "@/components/NumbersSection";
-import StrategySection from "@/components/StrategySection";
-import EcosystemSection from "@/components/EcosystemSection";
-import ClubJournalSection from "@/components/ClubJournalSection";
+import dynamic from "next/dynamic";
+
+const NumbersSection = dynamic(() => import("@/components/NumbersSection"), { ssr: true });
+const StrategySection = dynamic(() => import("@/components/StrategySection"), { ssr: true });
+const EcosystemSection = dynamic(() => import("@/components/EcosystemSection"), { ssr: true });
+const ClubJournalSection = dynamic(() => import("@/components/ClubJournalSection"), { ssr: true });
 
 export default function Home() {
   const containerRef = useRef(null);
+  const [imageReady, setImageReady] = useState(false);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -26,6 +29,34 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const premiumEase = [0.16, 1, 0.3, 1];
+
+  // Pre-decode the hero image before triggering any animation.
+  // img.decode() guarantees the bitmap is ready in GPU memory —
+  // unlike onLoad which fires before decode on priority images.
+  useEffect(() => {
+    const img = new window.Image();
+    img.src = "/hero.png";
+    img.decode().then(() => {
+      requestAnimationFrame(() => {
+        setImageReady(true);
+      });
+    }).catch(() => {
+      // Fallback: animate anyway
+      requestAnimationFrame(() => {
+        setImageReady(true);
+      });
+    });
+  }, []);
+
+  // Dissolve animation state for each letter — blur → sharp + opacity.
+  // Applied per-letter across both "EN" and "PASSANT" as one continuous stagger.
+  const dissolveIn = (delay) => ({
+    initial: { opacity: 0, filter: "blur(16px)", y: 10 },
+    animate: imageReady
+      ? { opacity: 1, filter: "blur(0px)", y: 0 }
+      : { opacity: 0, filter: "blur(16px)", y: 10 },
+    transition: { duration: 1.4, delay, ease: premiumEase },
+  });
 
   return (
     <>
@@ -38,6 +69,8 @@ export default function Home() {
           style={{
             backgroundImage:
               'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")',
+            transform: "translateZ(0)",
+            willChange: "transform",
           }}
         ></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.06)_0%,transparent_60%)] pointer-events-none z-0"></div>
@@ -48,45 +81,48 @@ export default function Home() {
         >
           <div className="relative w-full max-w-7xl flex justify-center">
             <div className="relative flex items-baseline justify-center uppercase leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
-              {/* EN */}
-              <motion.span
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.2, delay: 0.6, ease: premiumEase }}
-                className="text-[#c41e3a] font-cinzel font-bold tracking-[0.12em]"
-              >
-                EN
-              </motion.span>
+              {/* EN — dissolves letter by letter */}
+              {["E", "N"].map((letter, index) => (
+                <motion.span
+                  key={`en-${index}`}
+                  className="inline-block text-[#c41e3a] font-cinzel font-bold tracking-[0.12em]"
+                  {...dissolveIn(0.05 * index)}
+                >
+                  {letter}
+                </motion.span>
+              ))}
 
-              {/* PASSANT */}
-              <div className="flex ml-[0.15em] bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em]">
+              {/* PASSANT — dissolves letter by letter, continues stagger from EN */}
+              <span className="inline-flex ml-[0.15em]">
                 {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
                   <motion.span
-                    key={index}
-                    className="inline-block"
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{
-                      duration: 1.2,
-                      delay: 0.08 * index,
-                      ease: premiumEase,
-                    }}
+                    key={`p-${index}`}
+                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em]"
+                    {...dissolveIn(0.1 + 0.05 * index)}
                   >
                     {letter}
                   </motion.span>
                 ))}
-              </div>
+              </span>
             </div>
           </div>
         </motion.div>
 
-        <div className="absolute left-1/2 z-20 -translate-x-1/2 w-[200vw] sm:w-[150vw] md:w-[120vw] max-w-[1600px] h-[85vh] md:h-[110vh] bottom-0">
+        <div
+          className="absolute left-1/2 z-20 -translate-x-1/2 w-[200vw] sm:w-[150vw] md:w-[120vw] max-w-[1600px] h-[85vh] md:h-[110vh] bottom-0"
+          style={{ contain: "layout style paint" }}
+        >
           <motion.div style={{ y: yImage }} className="w-full h-full relative">
             <motion.div
-              initial={{ scale: 1.05, y: 50, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={imageReady ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
               transition={{ duration: 1.5, ease: premiumEase }}
               className="w-full h-full relative"
+              style={{
+                transformOrigin: "bottom center",
+                backfaceVisibility: "hidden",
+                willChange: "transform, opacity",
+              }}
             >
               <Image
                 src="/hero.png"
@@ -106,8 +142,8 @@ export default function Home() {
           <div className="w-full max-w-7xl flex justify-center md:justify-between items-end">
             <motion.div
               initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.8, ease: premiumEase }}
+              animate={imageReady ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
+              transition={{ duration: 1.6, ease: premiumEase }}
               className="max-w-[340px] hidden md:block pointer-events-auto"
             >
               <p className="text-[#cccccc] font-inter font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
@@ -123,8 +159,8 @@ export default function Home() {
 
             <motion.div
               initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.8, ease: premiumEase }}
+              animate={imageReady ? { x: 0, opacity: 1 } : { x: 20, opacity: 0 }}
+              transition={{ duration: 1.6, ease: premiumEase }}
               className="flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto"
             >
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
@@ -136,7 +172,7 @@ export default function Home() {
               </div>
               <div className="group relative w-full sm:w-auto flex justify-center">
                 <Link href="/sign-up" className="btn-bracket group">
-                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] hover:tracking-[0.16em] transition-all duration-200 ease-in-out whitespace-nowrap">
+                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
                     Book A Strategy Call
                   </div>
                 </Link>
