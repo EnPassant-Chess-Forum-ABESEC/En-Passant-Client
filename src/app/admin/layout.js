@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({ children }) {
   try {
     const authObj = await auth();
