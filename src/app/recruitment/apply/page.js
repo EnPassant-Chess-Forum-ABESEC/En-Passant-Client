@@ -1,20 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  User,
-  Mail,
-  Phone,
-  CreditCard,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { User, Mail, Phone, ChevronLeft, ChevronRight, QrCode } from "lucide-react";
 import LineSidebar from "@/components/LineSidebar";
 import { useApi } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import SpecularButton from "@/components/SpecularButton";
-import { useRazorpay } from "react-razorpay";
-import { useSignUp, useSignIn, useAuth, useUser, useClerk } from "@clerk/nextjs";
+import {
+  useSignUp,
+  useSignIn,
+  useAuth,
+  useUser,
+  useClerk,
+} from "@clerk/nextjs";
 
 export default function RecruitmentApplyPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -37,6 +35,8 @@ export default function RecruitmentApplyPage() {
   const [otpCode, setOtpCode] = useState("");
   const [authMode, setAuthMode] = useState("signUp"); // "signUp" | "signIn"
   const [isVerifying, setIsVerifying] = useState(false);
+  const [paymentUtr, setPaymentUtr] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
 
   const fetchApi = useApi();
   const [departments, setDepartments] = useState([]);
@@ -50,11 +50,22 @@ export default function RecruitmentApplyPage() {
         const res = await fetchApi("/recruitment/my-application");
         if (res?.myApplication) {
           const app = res.myApplication;
-          if (app.status === "ACTIVE" || app.status === "TASK_SUBMITTED" || app.status === "SHORTLISTED" || app.status === "UNDER_REVIEW" || app.status === "INTERVIEW" || app.status === "SELECTED" || app.status === "REJECTED") {
+          if (
+            app.status === "ACTIVE" ||
+            app.status === "TASK_SUBMITTED" ||
+            app.status === "SHORTLISTED" ||
+            app.status === "UNDER_REVIEW" ||
+            app.status === "INTERVIEW" ||
+            app.status === "SELECTED" ||
+            app.status === "REJECTED"
+          ) {
             window.location.href = "/recruitment"; // Redirect fully processed
-          } else if (app.status === "DRAFT" || app.paymentStatus === "PENDING") {
+          } else if (
+            app.status === "DRAFT" ||
+            app.paymentStatus === "PENDING"
+          ) {
             // Already created, jump to payment
-            setFormData(prev => ({
+            setFormData((prev) => ({
               ...prev,
               name: clerkUser?.fullName || prev.name,
               email: clerkUser?.primaryEmailAddress?.emailAddress || prev.email,
@@ -99,7 +110,10 @@ export default function RecruitmentApplyPage() {
     if (step === 2) {
       return true; // Secondary is completely optional
     }
-    return true; // Payment step always valid as end state
+    if (step === 3) {
+      return paymentUtr.trim() !== "" && paymentScreenshot !== null;
+    }
+    return true;
   };
 
   const handleNext = async () => {
@@ -108,7 +122,9 @@ export default function RecruitmentApplyPage() {
     if (currentStep === 0) {
       if (!isSignedIn) {
         if (!clerk?.client) {
-          alert("Authentication is still loading. Please wait a second and try again.");
+          alert(
+            "Authentication is still loading. Please wait a second and try again.",
+          );
           return;
         }
         // Trigger Clerk Custom Auth Flow
@@ -123,8 +139,10 @@ export default function RecruitmentApplyPage() {
               lastName: formData.name.split(" ").slice(1).join(" ") || "",
             });
 
-            await rawSignUp.prepareEmailAddressVerification({ strategy: "email_code" });
-            
+            await rawSignUp.prepareEmailAddressVerification({
+              strategy: "email_code",
+            });
+
             setAuthMode("signUp");
             setShowOtpModal(true);
           } catch (signUpErr) {
@@ -136,7 +154,9 @@ export default function RecruitmentApplyPage() {
                 identifier: formData.email,
               });
               const emailFactor = rawSignIn.supportedFirstFactors?.find(
-                (f) => f.strategy === "email_code" && f.safeIdentifier === formData.email
+                (f) =>
+                  f.strategy === "email_code" &&
+                  f.safeIdentifier === formData.email,
               );
               if (emailFactor) {
                 await rawSignIn.prepareFirstFactor({
@@ -146,7 +166,9 @@ export default function RecruitmentApplyPage() {
                 setAuthMode("signIn");
                 setShowOtpModal(true);
               } else {
-                throw new Error("Passwordless email sign-in is not supported for this account.");
+                throw new Error(
+                  "Passwordless email sign-in is not supported for this account.",
+                );
               }
             } else {
               throw signUpErr;
@@ -154,8 +176,14 @@ export default function RecruitmentApplyPage() {
           }
         } catch (err) {
           console.error("Auth init failed", err);
-          const msg = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || err.message || JSON.stringify(err);
-          alert(`Authentication failed: ${msg}. If OTP is disabled in your Clerk Dashboard, you'll need to enable it or sign in manually.`);
+          const msg =
+            err.errors?.[0]?.longMessage ||
+            err.errors?.[0]?.message ||
+            err.message ||
+            JSON.stringify(err);
+          alert(
+            `Authentication failed: ${msg}. If OTP is disabled in your Clerk Dashboard, you'll need to enable it or sign in manually.`,
+          );
         } finally {
           setIsSubmitting(false);
         }
@@ -198,9 +226,10 @@ export default function RecruitmentApplyPage() {
     try {
       setIsVerifying(true);
       if (authMode === "signUp") {
-        const verifyWrapper = await clerk.client.signUp.attemptEmailAddressVerification({
-          code: otpCode,
-        });
+        const verifyWrapper =
+          await clerk.client.signUp.attemptEmailAddressVerification({
+            code: otpCode,
+          });
         if (verifyWrapper?.error) {
           throw verifyWrapper.error;
         }
@@ -231,7 +260,12 @@ export default function RecruitmentApplyPage() {
       }
     } catch (err) {
       console.error("OTP verification failed", err);
-      alert(err.errors?.[0]?.longMessage || err.errors?.[0]?.message || err.message || "Invalid OTP code.");
+      alert(
+        err.errors?.[0]?.longMessage ||
+          err.errors?.[0]?.message ||
+          err.message ||
+          "Invalid OTP code.",
+      );
     } finally {
       setIsVerifying(false);
     }
@@ -253,51 +287,28 @@ export default function RecruitmentApplyPage() {
     setCurrentStep(index);
   };
 
-  const { Razorpay } = useRazorpay();
-
   const handlePayment = async () => {
     try {
       setIsSubmitting(true);
-      // Create Razorpay order via backend
-      const res = await fetchApi("/payments/checkout", { method: "POST" });
-      if (!res.order) {
-        alert(
-          "Failed to create payment order. Application might not be in DRAFT state.",
-        );
-        return;
-      }
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: res.order.amount,
-        currency: res.order.currency,
-        name: "En Passant",
-        description: "Recruitment Registration",
-        order_id: res.order.id,
-        handler: function (response) {
-          // Success callback: Webhook handles backend state updates
-          alert("Payment Successful! Welcome to En Passant.");
-          window.location.href = "/recruitment";
-        },
-        prefill: {
-          name: formData.name,
-          email: formData.email,
-          contact: formData.phone,
-        },
-        theme: {
-          color: "#9b1a1a",
-        },
-      };
+      const formData = new FormData();
+      formData.append("utr", paymentUtr);
+      formData.append("screenshot", paymentScreenshot);
 
-      const rzp = new Razorpay(options);
-      rzp.on("payment.failed", function (response) {
-        console.error("Payment failed:", response.error);
-        alert("Payment failed: " + response.error.description);
+      const res = await fetchApi("/payments/manual", {
+        method: "POST",
+        body: formData,
       });
-      rzp.open();
+
+      if (res.success) {
+        alert("Payment submitted successfully! It is pending verification.");
+        window.location.href = "/recruitment";
+      } else {
+        alert(res.message || "Failed to submit payment");
+      }
     } catch (err) {
       console.error(err);
-      alert("Error initiating payment.");
+      alert("Error submitting payment.");
     } finally {
       setIsSubmitting(false);
     }
@@ -657,25 +668,70 @@ export default function RecruitmentApplyPage() {
                     animate="animate"
                     exit="exit"
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="h-full flex flex-col items-center justify-center text-center space-y-5"
+                    className="w-full flex flex-col space-y-4"
                   >
-                    <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#9b1a1a]/40 to-black border border-[#9b1a1a]/30 flex items-center justify-center mb-2 shadow-[0_0_40px_rgba(155,26,26,0.2)]">
-                      <CreditCard className="w-10 h-10 text-[#ff3333]" />
-                    </div>
-                    <div>
+                    <div className="text-center mb-2">
                       <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-1">
-                        Ready to Proceed
+                        Manual Payment
                       </h3>
-                      <p className="text-white/50 max-w-[280px] text-[14px] font-medium leading-relaxed mx-auto">
-                        Your application is complete. Proceed to checkout to
-                        finalize your submission.
+                      <p className="text-white/50 text-[13px] font-medium leading-relaxed max-w-[280px] mx-auto">
+                        Please pay ₹50 to our UPI ID and upload the receipt.
                       </p>
                     </div>
 
-                    <div className="w-full mt-4">
+                    <div className="flex justify-center my-4">
+                      <div className="w-40 h-40 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center p-4 relative overflow-hidden group hover:border-white/20 transition-colors">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#9b1a1a]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="w-full h-full border-2 border-dashed border-white/10 rounded-xl flex items-center justify-center relative z-10 transition-colors group-hover:border-[#9b1a1a]/30">
+                          <div className="flex flex-col items-center gap-2">
+                            <QrCode className="w-8 h-8 text-white/20 group-hover:text-[#9b1a1a]/60 transition-colors" />
+                            <span className="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-[#9b1a1a]/60 transition-colors">
+                              QR Code
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 group">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                          Transaction ID (UTR)
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 px-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                          value={paymentUtr}
+                          onChange={(e) => setPaymentUtr(e.target.value)}
+                          placeholder="e.g. 123456789012"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                          Payment Screenshot
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setPaymentScreenshot(e.target.files[0]);
+                            }
+                          }}
+                          className="w-full bg-white/5 border border-white/10 text-white/70 rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-widest file:bg-[#9b1a1a]/20 file:text-[#ff4444] hover:file:bg-[#9b1a1a]/40 file:transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full mt-2">
                       <SpecularButton
                         onClick={handlePayment}
-                        disabled={isSubmitting}
+                        disabled={
+                          isSubmitting ||
+                          paymentUtr.trim() === "" ||
+                          paymentScreenshot === null
+                        }
                         className="w-full h-14 group"
                         radius={12}
                         lineColor="#ff4444"
@@ -686,7 +742,7 @@ export default function RecruitmentApplyPage() {
                         autoAnimate={true}
                       >
                         <div className="flex justify-center items-center gap-3 font-black uppercase tracking-[0.2em] text-[13px]">
-                          Pay Now{" "}
+                          {isSubmitting ? "Submitting..." : "Submit Payment"}
                           <span className="text-[11px] group-hover:translate-x-1 transition-transform">
                             <ChevronRight className="w-5 h-5" />
                           </span>
@@ -741,21 +797,23 @@ export default function RecruitmentApplyPage() {
           >
             <div className="bg-black/80 border border-white/10 p-8 rounded-3xl shadow-[0_0_80px_rgba(155,26,26,0.2)] max-w-sm w-full mx-4 flex flex-col items-center text-center">
               <Mail className="w-12 h-12 text-[#ff3333] mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2 tracking-wide">CHECK YOUR EMAIL</h3>
+              <h3 className="text-xl font-bold text-white mb-2 tracking-wide">
+                CHECK YOUR EMAIL
+              </h3>
               <p className="text-white/60 text-sm mb-6 leading-relaxed">
                 We've sent a 6-digit verification code to <br />
                 <span className="text-white font-medium">{formData.email}</span>
               </p>
-              
+
               <input
                 type="text"
                 maxLength={6}
                 value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="000000"
                 className="w-full bg-white/5 border border-white/10 text-white text-center rounded-xl h-14 text-2xl tracking-[0.5em] focus:outline-none focus:border-[#9b1a1a]/50 mb-6 font-mono"
               />
-              
+
               <div className="flex gap-3 w-full">
                 <button
                   onClick={() => setShowOtpModal(false)}
@@ -775,7 +833,6 @@ export default function RecruitmentApplyPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

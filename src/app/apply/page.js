@@ -13,6 +13,8 @@ export default function ApplyPage() {
 
   const [preferredId, setPreferredId] = useState("");
   const [secondaryId, setSecondaryId] = useState("");
+  const [paymentUtr, setPaymentUtr] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
   
   useEffect(() => {
     loadData();
@@ -71,16 +73,31 @@ export default function ApplyPage() {
   };
 
   const handlePay = async () => {
+    if (!paymentUtr.trim() || !paymentScreenshot) {
+      alert("Please provide UTR and upload screenshot");
+      return;
+    }
     try {
-      // In a real flow, this redirects to Razorpay checkout / returns order ID
-      const data = await fetchApi("/payments/checkout", { method: "POST" });
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("utr", paymentUtr);
+      formData.append("screenshot", paymentScreenshot);
+
+      const data = await fetchApi("/payments/manual", { 
+        method: "POST",
+        body: formData,
+      });
+
       if (data.success) {
-        alert("Payment session created! Order ID: " + data.order.id);
-        // Refresh app state
+        alert("Payment submitted successfully! It is pending verification.");
         loadData();
+      } else {
+        alert(data.message || "Payment submission failed");
       }
     } catch (err) {
-      alert("Error initiating payment: " + err.message);
+      alert("Error submitting payment: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,8 +133,33 @@ export default function ApplyPage() {
           {application.status === 'DRAFT' && application.paymentStatus === 'PENDING' && (
             <div className="mt-8 pt-6 border-t border-white/10">
               <p className="text-sm text-white/50 mb-4 uppercase tracking-wider">To proceed to the tasks, you must complete the registration fee.</p>
+              <div className="space-y-4 max-w-sm mb-4">
+                <div>
+                  <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">Transaction ID (UTR)</label>
+                  <input
+                    type="text"
+                    value={paymentUtr}
+                    onChange={(e) => setPaymentUtr(e.target.value)}
+                    className="w-full bg-[#222] border border-white/20 p-2 text-white focus:outline-none focus:border-[#9b1a1a]"
+                    placeholder="Enter UTR"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">Payment Screenshot</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setPaymentScreenshot(e.target.files[0]);
+                      }
+                    }}
+                    className="w-full bg-[#222] border border-white/20 p-2 text-white/70 file:mr-4 file:py-1 file:px-3 file:border-0 file:text-xs file:uppercase file:bg-[#9b1a1a] file:text-white"
+                  />
+                </div>
+              </div>
               <button onClick={handlePay} className="bg-[#9b1a1a] text-white uppercase font-bold tracking-widest px-6 py-2 hover:bg-red-800 transition">
-                Pay with Razorpay
+                Submit Payment
               </button>
             </div>
           )}

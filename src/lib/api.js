@@ -47,6 +47,5 @@ export function useApi() {
     },
     [getToken]
   );
-   0
   return fetchApi;
 }
