@@ -7,6 +7,7 @@ export default function PaymentsTab() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [verifyingId, setVerifyingId] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -40,6 +41,12 @@ export default function PaymentsTab() {
     setVerifyingId(null);
   };
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(text);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   if (loading && payments.length === 0) return <div className="p-12 text-center text-white/40 uppercase tracking-widest text-sm">Loading Data...</div>;
 
   return (
@@ -48,8 +55,8 @@ export default function PaymentsTab() {
         <table className="w-full text-left whitespace-nowrap">
           <thead className="bg-[#050505] text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5">
             <tr>
-              <th className="px-6 py-4 font-normal">Payment ID</th>
-              <th className="px-6 py-4 font-normal">Application ID</th>
+              <th className="px-4 py-4 font-normal">Applicant Name</th>
+              <th className="px-4 py-4 font-normal">App ID</th>
               <th className="px-6 py-4 font-normal">Amount</th>
               <th className="px-6 py-4 font-normal">Receipt & UTR</th>
               <th className="px-6 py-4 font-normal">Status</th>
@@ -63,8 +70,28 @@ export default function PaymentsTab() {
             ) : (
               payments.map((payment) => (
                 <tr key={payment._id} className="hover:bg-white/[0.02] transition-colors group">
-                  <td className="px-6 py-5 font-mono text-sm text-white/40">{payment.gatewayOrderId || payment._id}</td>
-                  <td className="px-6 py-5 font-mono text-xs text-white/70 tracking-wider">{payment.applicationId}</td>
+                  <td className="px-4 py-5 font-mono text-sm text-white/90">
+                    {payment.userId?.userName || "Unknown User"}
+                    {payment.userId?.collegeEmail && (
+                      <div className="text-[10px] text-white/40 uppercase tracking-widest mt-1">
+                        {payment.userId.collegeEmail}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-5">
+                    {payment.applicationId ? (
+                      <button 
+                        onClick={() => handleCopy(payment.applicationId)}
+                        className="font-mono text-xs text-white/70 tracking-wider hover:text-white transition-colors flex items-center gap-2"
+                        title="Click to copy Application ID"
+                      >
+                        {`${payment.applicationId.substring(0, 6)}...${payment.applicationId.substring(payment.applicationId.length - 4)}`}
+                        {copiedId === payment.applicationId && <span className="text-[10px] text-green-400 font-sans tracking-widest uppercase">Copied!</span>}
+                      </button>
+                    ) : (
+                      <span className="font-mono text-xs text-white/30">N/A</span>
+                    )}
+                  </td>
                   <td className="px-6 py-5 font-mono font-bold tracking-wide text-white">₹{payment.amount / 100}</td>
                   <td className="px-6 py-5">
                     {payment.paymentScreenshotUrl ? (
