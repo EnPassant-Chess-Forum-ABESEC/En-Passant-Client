@@ -72,15 +72,15 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#050505] font-sans overflow-hidden">
+    <div className="flex min-h-screen bg-[#050505] font-sans">
       {/* ─── Sidebar Navigation (Expanded like Kariighar) ─── */}
-      <aside className="w-[280px] flex-shrink-0 flex flex-col py-10 px-6 border-r border-white/5 bg-[#050505] z-10 relative">
+      <aside className="w-[280px] h-screen sticky top-0 flex-shrink-0 flex flex-col py-10 px-6 border-r border-white/5 bg-[#050505] z-20">
         <div className="mb-14 px-4">
           <h2 className="text-2xl font-black tracking-[0.2em] uppercase text-white">EN PASSANT</h2>
           <p className="text-[10px] text-white/40 tracking-[0.3em] uppercase mt-2">Admin Portal</p>
         </div>
 
-        <nav className="flex-1 flex flex-col gap-3">
+        <nav className="flex-1 flex flex-col gap-3 overflow-y-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* ─── Main Content Area ─── */}
-      <main className="flex-1 overflow-y-auto relative h-screen bg-[#030303]">
+      <main className="flex-1 relative bg-[#030303] min-h-screen">
         {/* Background Texture (Optional subtle integration) */}
         <div 
           className="fixed inset-0 z-0 opacity-[0.08] pointer-events-none mix-blend-overlay"
