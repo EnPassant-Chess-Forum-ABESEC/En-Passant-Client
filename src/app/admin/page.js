@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useApi } from "@/lib/api";
 import { 
   Menu, 
   FileText, 
@@ -21,6 +22,35 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("applications");
   const [error, setError] = useState("");
   const { signOut } = useClerk();
+  const fetchApi = useApi();
+  const [stats, setStats] = useState({
+    totalApplications: "...",
+    activeTasks: "...",
+    totalMembers: "...",
+    totalRevenue: "..."
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const res = await fetchApi("/admin/stats");
+        if (res?.stats) {
+          setStats({
+            totalApplications: res.stats.totalApplications || 0,
+            activeTasks: res.stats.activeTasks || 0,
+            totalMembers: res.stats.totalMembers || 0,
+            totalRevenue: `₹${((res.stats.totalRevenue || 0) / 100).toLocaleString('en-IN')}`
+          });
+        }
+      } catch (err) {
+        if (err.message.toLowerCase().includes("unauthorized") || err.message.includes("403")) {
+          setError("unauthorized");
+        }
+        console.error("Failed to load stats:", err);
+      }
+    };
+    loadStats();
+  }, [fetchApi]);
 
   if (error && error.toLowerCase().includes("unauthorized")) {
     return (
@@ -111,10 +141,10 @@ export default function AdminDashboard() {
           {/* Stats Cards Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {[
-              { label: "Total Applications", value: "142", icon: FileText },
-              { label: "Active Tasks", value: "24", icon: CheckSquare },
-              { label: "Total Members", value: "85", icon: Users },
-              { label: "Revenue (INR)", value: "₹45,000", icon: CreditCard },
+              { label: "Total Applications", value: stats.totalApplications, icon: FileText },
+              { label: "Active Tasks", value: stats.activeTasks, icon: CheckSquare },
+              { label: "Total Members", value: stats.totalMembers, icon: Users },
+              { label: "Revenue (INR)", value: stats.totalRevenue, icon: CreditCard },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
