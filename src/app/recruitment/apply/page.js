@@ -43,6 +43,17 @@ export default function RecruitmentApplyPage() {
   const [departments, setDepartments] = useState([]);
   const [loadingDepts, setLoadingDepts] = useState(true);
 
+  // Auto-fill form data if user is already signed in
+  useEffect(() => {
+    if (clerkUser) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || clerkUser.fullName || "",
+        email: prev.email || clerkUser.primaryEmailAddress?.emailAddress || "",
+      }));
+    }
+  }, [clerkUser]);
+
   // Sync application state if user is already signed in
   useEffect(() => {
     async function syncApplication() {

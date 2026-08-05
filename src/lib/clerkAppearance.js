@@ -124,3 +124,63 @@ export const glassAppearance = {
     },
   },
 };
+
+export const userButtonAppearance = {
+  baseTheme: dark,
+  variables: {
+    colorText: "#ffffff",
+    colorTextSecondary: "rgba(255, 255, 255, 0.5)",
+  },
+  elements: {
+    // Glass card — increased transparency so glassmorphism is more visible
+    userButtonPopoverCard: {
+      background: "rgba(20, 20, 20, 0.5) !important",
+      backdropFilter: "blur(20px) !important",
+      WebkitBackdropFilter: "blur(20px) !important",
+      border: "1px solid rgba(255, 255, 255, 0.08) !important",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5) !important",
+      borderRadius: "16px !important",
+    },
+    userButtonPopoverMain: {
+      background: "transparent !important",
+    },
+    // User name at top
+    userPreviewMainIdentifier: {
+      color: "#ffffff !important",
+      fontWeight: "600 !important",
+    },
+    userPreviewSecondaryIdentifier: {
+      color: "rgba(255, 255, 255, 0.5) !important",
+    },
+    // Thin divider line
+    userButtonPopoverActionButtonsSeparator: {
+      background: "rgba(255, 255, 255, 0.08) !important",
+    },
+    // All action button rows (built-in + custom Profile link)
+    userButtonPopoverActionButton: {
+      color: "#ffffff !important",
+      borderRadius: "8px !important",
+      background: "transparent !important",
+      "&:hover": {
+        background: "transparent !important",
+      }
+    },
+    // Text label on every row (including Profile custom link)
+    userButtonPopoverActionButtonText: {
+      color: "#ffffff !important",
+    },
+    // Icon on every row
+    userButtonPopoverActionButtonIconBox: {
+      color: "#ffffff !important",
+      "& > svg": {
+        color: "#ffffff !important",
+      }
+    },
+    // Footer
+    userButtonPopoverFooter: {
+      borderTop: "1px solid rgba(255, 255, 255, 0.06) !important",
+      background: "transparent !important",
+    },
+  },
+};
+

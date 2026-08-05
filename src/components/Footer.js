@@ -142,7 +142,7 @@ export default function Footer() {
                 <div className="flex flex-col">
                   {col.links.map((link) => (
                     <Link
-                      key={link.href}
+                      key={`${colIdx}-${link.label}`}
                       href={link.href}
                       className="group font-eb-garamond font-normal text-[16px] block transition-all duration-[250ms] ease-in-out hover:pl-[6px] hover:italic hover:text-[#c41e3a]"
                       style={{ lineHeight: "2.2", color: "rgba(255,255,255,0.6)", letterSpacing: "0.01em" }}

@@ -283,3 +283,42 @@ body {
   font-style: normal;
   font-display: swap;
 }
+
+/* 
+ * CLERK USERBUTTON OVERRIDES 
+ * These ensure the popover is properly glassmorphic, text is white, 
+ * and no hover background appears.
+ */
+.cl-userButtonPopoverCard {
+  background: rgba(10, 10, 10, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Nuclear option: force ALL text inside the card to be a softer white */
+.cl-userButtonPopoverCard * {
+  color: #e5e5e5 !important;
+}
+
+/* Except the email address which should be grey */
+.cl-userPreviewSecondaryIdentifier,
+.cl-userPreviewSecondaryIdentifier * {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Force icons to be fully opaque and soft white */
+.cl-userButtonPopoverCard svg {
+  color: #e5e5e5 !important;
+  opacity: 1 !important;
+}
+
+/* Remove hover backgrounds from all action buttons */
+.cl-userButtonPopoverActionButton,
+.cl-userButtonPopoverActionButton:hover,
+[class*="cl-userButtonPopoverActionButton"],
+[class*="cl-userButtonPopoverActionButton"]:hover {
+  background-color: transparent !important;
+}
+

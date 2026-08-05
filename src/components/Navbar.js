@@ -5,8 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserButton, useAuth } from "@clerk/nextjs";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import SpecularButton from "@/components/SpecularButton";
+import { userButtonAppearance } from "@/lib/clerkAppearance";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -76,8 +77,18 @@ export default function Navbar() {
               <div className="flex items-center pl-2">
                 <UserButton
                   afterSignOutUrl="/"
-                  appearance={{ elements: { avatarBox: "w-9 h-9 shadow-md" } }}
-                />
+                  appearance={userButtonAppearance}
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Profile"
+                      labelIcon={<User size={16} color="#ffffff" strokeWidth={2} />}
+                      href="/profile"
+                    />
+                    <UserButton.Action label="manageAccount" />
+                    <UserButton.Action label="signOut" />
+                  </UserButton.MenuItems>
+                </UserButton>
               </div>
             ) : (
               <div className="flex items-center gap-4 md:gap-6">
@@ -148,8 +159,18 @@ export default function Navbar() {
               </span>
               <UserButton
                 afterSignOutUrl="/"
-                appearance={{ elements: { avatarBox: "w-14 h-14 shadow-md" } }}
-              />
+                appearance={userButtonAppearance}
+              >
+                <UserButton.MenuItems>
+                  <UserButton.Link
+                    label="Profile"
+                    labelIcon={<User size={16} color="#ffffff" strokeWidth={2} />}
+                    href="/profile"
+                  />
+                  <UserButton.Action label="manageAccount" />
+                  <UserButton.Action label="signOut" />
+                </UserButton.MenuItems>
+              </UserButton>
             </div>
           ) : (
             <div className="mt-4">
