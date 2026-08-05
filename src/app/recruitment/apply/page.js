@@ -316,14 +316,18 @@ export default function RecruitmentApplyPage() {
       });
 
       if (res.success) {
-        alert("Payment submitted successfully! It is pending verification.");
-        window.location.href = "/recruitment";
+        setToastMessage("Payment submitted successfully! Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2500);
       } else {
-        alert(res.message || "Failed to submit payment");
+        setToastMessage(res.message || "Failed to submit payment");
+        setTimeout(() => setToastMessage(""), 4000);
       }
     } catch (err) {
       console.error(err);
-      alert("Error submitting payment.");
+      setToastMessage("Error submitting payment.");
+      setTimeout(() => setToastMessage(""), 4000);
     } finally {
       setIsSubmitting(false);
     }
