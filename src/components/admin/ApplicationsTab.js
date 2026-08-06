@@ -53,6 +53,19 @@ export default function ApplicationsTab() {
   const [appSubmissions, setAppSubmissions] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
+  const groupedSubmissions = useMemo(() => {
+    if (!appSubmissions || appSubmissions.length === 0) return {};
+    const groups = {};
+    appSubmissions.forEach(sub => {
+      const deptName = sub.taskId?.departmentId?.name || "Unknown Department";
+      if (!groups[deptName]) {
+        groups[deptName] = [];
+      }
+      groups[deptName].push(sub);
+    });
+    return groups;
+  }, [appSubmissions]);
+
   const statusOptions = [
     { label: "Draft", value: "DRAFT" },
     { label: "Payment Pending", value: "PAYMENT_PENDING" },
@@ -152,16 +165,17 @@ export default function ApplicationsTab() {
 
   if (selectedAppId) {
     return (
-      <div className="bg-white border border-slate-200 rounded-lg p-8">
-        <div className="mb-6">
-          <button
-            onClick={() => setSelectedAppId(null)}
-            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-full text-xs font-bold transition-colors shadow-sm"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back to List
-          </button>
-        </div>
+      <div className="space-y-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-8">
+          <div className="mb-6">
+            <button
+              onClick={() => setSelectedAppId(null)}
+              className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-full text-xs font-bold transition-colors shadow-sm"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back to List
+            </button>
+          </div>
 
         {loadingDetails ? (
           <div className="p-8 text-center text-slate-500 uppercase">
@@ -175,7 +189,7 @@ export default function ApplicationsTab() {
                 <div className="text-slate-500 font-mono text-[10px] md:text-xs mb-4">
                   {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.collegeEmail || "No Email"}
                 </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px]  tracking-[0.15em] font-bold">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
                   <span className="text-slate-500">Applied For:</span>
                   <div className="flex items-center gap-2">
                     <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">
@@ -191,12 +205,12 @@ export default function ApplicationsTab() {
               </div>
               <div className="flex flex-col gap-4 text-right min-w-[200px]">
                 <div className="flex items-center justify-end gap-3">
-                  <span className="text-[10px]  text-slate-500 tracking-[0.2em] font-bold">Status:</span>
+                  <span className="text-[10px] text-slate-500 font-bold">Status:</span>
                   <Select 
                     value={appDetails.status} 
                     onValueChange={(value) => updateApplicationStatus(appDetails._id, value)}
                   >
-                    <SelectTrigger className="w-[160px] bg-white border-slate-200 hover:border-slate-300 rounded-lg h-9 text-xs font-black tracking-widest text-blue-600 uppercase shadow-lg focus:ring-blue-500">
+                    <SelectTrigger className="w-[190px] bg-white border-slate-200 hover:border-slate-300 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 uppercase shadow-lg focus:ring-blue-500">
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-slate-200 text-slate-800">
@@ -209,107 +223,121 @@ export default function ApplicationsTab() {
                   </Select>
                 </div>
                 <div className="flex items-center justify-end gap-3 pr-2">
-                  <span className="text-[10px]  text-slate-500 tracking-[0.2em] font-bold">Payment:</span>
-                  <span className={`text-[10px] font-black  tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500' : 'text-yellow-500'}`}>
+                  <span className="text-[10px] text-slate-500 font-bold">Payment:</span>
+                  <span className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500' : 'text-yellow-500'}`}>
                     {appDetails.paymentStatus}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-bold  text-slate-800 mb-4 tracking-tight">
-                Task Submissions
-              </h3>
-              {appSubmissions.length === 0 ? (
-                <p className="text-slate-500 p-4 bg-slate-100 border border-slate-200 rounded-lg text-sm">
-                  No submissions found for this application.
-                </p>
-              ) : (
-                <div className="space-y-6">
-                  {appSubmissions.map((sub, index) => (
-                    <div
-                      key={sub._id}
-                      className="p-6 border border-slate-200 bg-white rounded-lg"
-                    >
-                      <h4 className="text-blue-600 text-sm font-bold  mb-4 tracking-tight border-b border-slate-200 pb-2">
-                        Submission {index + 1}
-                      </h4>
-
-                      {sub.text && (
-                        <div className="mb-4">
-                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-1">
-                            Text Response:
-                          </strong>
-                          <div className="p-4 bg-slate-50 rounded-md text-sm text-slate-600 whitespace-pre-wrap font-mono border border-slate-200">
-                            {sub.text}
-                          </div>
-                        </div>
-                      )}
-
-                      {sub.links && sub.links.length > 0 && (
-                        <div className="mb-4">
-                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-1">
-                            Links:
-                          </strong>
-                          <ul className="list-disc pl-5">
-                            {sub.links.map((link, i) => (
-                              <li key={i}>
-                                <a
-                                  href={link}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-blue-400 hover:underline break-all"
-                                >
-                                  {link}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {sub.files && sub.files.length > 0 && (
-                        <div>
-                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-2">
-                            Attached Files:
-                          </strong>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {sub.files.map((file, i) => (
-                              <a
-                                key={i}
-                                href={file.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="block p-3 border border-slate-200 hover:border-slate-300 transition text-center bg-slate-100"
-                              >
-                                <span className="block text-xs font-mono truncate text-slate-800/80 mb-1">
-                                  {file.originalName}
-                                </span>
-                                {file.resourceType === "image" && (
-                                  <img
-                                    src={file.url}
-                                    alt={file.originalName}
-                                    className="w-full h-24 object-cover mb-1 border border-slate-200 opacity-80 hover:opacity-100 transition"
-                                  />
-                                )}
-                                <span className="block text-[10px] text-slate-500 ">
-                                  {(file.size / 1024).toFixed(1)} KB
-                                </span>
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         ) : (
           <div className="p-8 text-center text-red-500 uppercase">
             Failed to load application details.
+          </div>
+        )}
+        </div>
+
+        {appDetails && (
+          <div className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-800 tracking-tight px-2">
+              Task Submissions
+            </h3>
+            {Object.keys(groupedSubmissions).length === 0 ? (
+              <p className="text-slate-500 p-4 bg-slate-100 border border-slate-200 rounded-lg text-sm">
+                No submissions found for this application.
+              </p>
+            ) : (
+              Object.entries(groupedSubmissions).map(([deptName, subs]) => (
+                <div key={deptName} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                  <div className="bg-slate-50 border-b border-slate-200 px-6 py-4">
+                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest">{deptName}</h4>
+                  </div>
+                  <div className="divide-y divide-slate-100">
+                    {subs.map((sub, index) => (
+                      <div key={sub._id} className="p-6 hover:bg-slate-50/50 transition-colors">
+                        <h5 className="text-blue-600 text-sm font-bold tracking-tight mb-4">
+                          {sub.taskId?.title || `Task ${index + 1}`}
+                        </h5>
+
+                        {sub.text && (
+                          <div className="mb-4">
+                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-1.5">
+                              Text Response:
+                            </strong>
+                            <div className="p-4 bg-white rounded-md text-sm text-slate-600 whitespace-pre-wrap font-mono border border-slate-200 shadow-sm">
+                              {sub.text}
+                            </div>
+                          </div>
+                        )}
+
+                        {sub.links && sub.links.length > 0 && (
+                          <div className="mb-4">
+                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-1.5">
+                              Links:
+                            </strong>
+                            <ul className="flex flex-wrap gap-2">
+                              {sub.links.map((link, i) => (
+                                <li key={i}>
+                                  <a
+                                    href={link}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-md hover:bg-blue-100 transition-colors border border-blue-100"
+                                  >
+                                    {link}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {sub.files && sub.files.length > 0 && (
+                          <div>
+                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-2">
+                              Attached Files:
+                            </strong>
+                            <div className="flex flex-wrap gap-4">
+                              {sub.files.map((file, i) => (
+                                <a
+                                  key={i}
+                                  href={file.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all min-w-[200px]"
+                                >
+                                  {file.resourceType === "image" ? (
+                                    <img
+                                      src={file.url}
+                                      alt={file.originalName}
+                                      className="w-10 h-10 object-cover rounded shadow-sm border border-slate-100"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-[10px]">
+                                      FILE
+                                    </div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-xs font-semibold text-slate-700 truncate">
+                                      {file.originalName}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 font-medium">
+                                      {(file.size / 1024).toFixed(1)} KB
+                                    </div>
+                                  </div>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

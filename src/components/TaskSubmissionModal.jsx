@@ -1,12 +1,37 @@
 "use client";
 
-import { X, Upload, Link as LinkIcon, FileText } from "lucide-react";
-import { useState, useEffect } from "react";
+import { X, Upload, Link as LinkIcon, FileText, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { useApi } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   const [isDragging, setIsDragging] = useState(false);
   const [links, setLinks] = useState([""]);
   const [texts, setTexts] = useState([""]);
+  const [files, setFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [applicationId, setApplicationId] = useState(null);
+  
+  const fileInputRef = useRef(null);
+  const fetchApi = useApi();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchApi("/recruitment/my-application")
+        .then((data) => {
+          if (data?.myApplication) {
+            setApplicationId(data.myApplication._id);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // Reset state when closed
+      setLinks([""]);
+      setTexts([""]);
+      setFiles([]);
+    }
+  }, [isOpen, fetchApi]);
 
   // Lock page scrolling when modal is open
   useEffect(() => {
@@ -31,6 +56,72 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   
   const maxLinks = task.submission?.maxLinks || 5;
   const maxTexts = task.submission?.maxTexts || 5;
+  const maxFiles = task.submission?.maxFiles || 1;
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(Array.from(e.dataTransfer.files));
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(Array.from(e.target.files));
+    }
+  };
+
+  const handleFiles = (newFiles) => {
+    if (files.length + newFiles.length > maxFiles) {
+      toast.error(`You can only upload up to ${maxFiles} files.`);
+      return;
+    }
+    setFiles([...files, ...newFiles]);
+  };
+
+  const removeFile = (index) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async () => {
+    if (!applicationId) {
+      toast.error("Application not found.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData();
+      
+      const filteredTexts = texts.filter(t => t.trim() !== "");
+      if (filteredTexts.length > 0) {
+        formData.append("text", filteredTexts.join("\n\n"));
+      }
+
+      const filteredLinks = links.filter(l => l.trim() !== "");
+      filteredLinks.forEach(link => {
+        formData.append("links", link);
+      });
+
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      await fetchApi(`/submissions/${applicationId}/${task._id}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      toast.success("Task submitted successfully!");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Failed to submit task.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 pointer-events-auto overflow-y-auto overscroll-none">
@@ -58,6 +149,17 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Info Banner */}
+        <div className="bg-[#9b1a1a]/10 border-b border-[#9b1a1a]/20 p-4 shrink-0 flex items-center justify-center">
+          <div className="text-[#ff4444] text-xs md:text-sm text-center tracking-wide flex items-center justify-center gap-2">
+            <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+            <p>
+              <span className="font-bold uppercase tracking-widest mr-2">IMPORTANT:</span> 
+              <span>Tasks can only be submitted once and cannot be edited.</span>
+            </p>
+          </div>
         </div>
 
         {/* Body */}
@@ -148,8 +250,16 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
                 }`}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => { e.preventDefault(); setIsDragging(false); }}
+                onDrop={handleFileDrop}
+                onClick={() => fileInputRef.current?.click()}
               >
+                <input 
+                  type="file"
+                  className="hidden"
+                  ref={fileInputRef}
+                  multiple={maxFiles > 1}
+                  onChange={handleFileSelect}
+                />
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Upload className="w-6 h-6 text-white/40" />
                 </div>
@@ -158,10 +268,25 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
                     <span className="text-[#9b1a1a] font-medium hover:underline">Click to upload</span> or drag and drop
                   </p>
                   <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
-                    Max files: {task.submission?.maxFiles || 1} • {task.submission?.fileCategory || "Any format"}
+                    Max files: {maxFiles} • {task.submission?.fileCategory || "Any format"}
                   </p>
                 </div>
               </div>
+              {files.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {files.map((file, i) => (
+                    <div key={i} className="flex items-center justify-between bg-white/5 border border-white/10 p-3 rounded-lg">
+                      <span className="text-sm text-white/80 truncate">{file.name}</span>
+                      <button 
+                        onClick={() => removeFile(i)}
+                        className="text-white/40 hover:text-[#9b1a1a] transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -175,10 +300,11 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
             Cancel
           </button>
           <button 
-            className="px-8 py-4 rounded-xl bg-[#9b1a1a] hover:bg-[#cc0000] text-white shadow-[0_0_20px_rgba(155,26,26,0.2)] hover:shadow-[0_0_30px_rgba(155,26,26,0.4)] uppercase text-[10px] font-bold tracking-[0.2em] transition-all"
-            onClick={() => alert("UI Preview Mode: The form looks great! API integration will be done later.")}
+            disabled={isSubmitting || !applicationId}
+            className="px-8 py-4 rounded-xl bg-[#9b1a1a] hover:bg-[#cc0000] disabled:bg-[#9b1a1a]/50 text-white shadow-[0_0_20px_rgba(155,26,26,0.2)] hover:shadow-[0_0_30px_rgba(155,26,26,0.4)] disabled:shadow-none uppercase text-[10px] font-bold tracking-[0.2em] transition-all flex items-center gap-2"
+            onClick={handleSubmit}
           >
-            Submit Task
+            {isSubmitting ? "Submitting..." : "Submit Task"}
           </button>
         </div>
       </div>

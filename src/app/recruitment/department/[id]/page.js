@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useApi } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, ChevronLeft, CheckCircle2 } from "lucide-react";
@@ -9,17 +9,24 @@ import TaskAccordion from "@/components/TaskAccordion";
 
 export default function DepartmentTasksPage() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const fetchApi = useApi();
+  const initialTaskId = searchParams.get("taskId");
+  const tasksSectionRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [departmentName, setDepartmentName] = useState("");
+  const [submittedTasks, setSubmittedTasks] = useState([]);
 
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const data = await fetchApi("/tasks?year=2026");
+        const [data, appData] = await Promise.all([
+          fetchApi("/tasks?year=2026"),
+          fetchApi("/recruitment/my-application").catch(() => null)
+        ]);
         const allTasks = data.tasks || [];
 
         // Filter tasks by the department code from the URL
@@ -28,6 +35,10 @@ export default function DepartmentTasksPage() {
         );
 
         setTasks(deptTasks);
+
+        if (appData?.myApplication?.submittedTaskIds) {
+          setSubmittedTasks(appData.myApplication.submittedTaskIds);
+        }
 
         if (deptTasks.length > 0) {
           setDepartmentName(deptTasks[0].departmentId.name);
@@ -46,6 +57,18 @@ export default function DepartmentTasksPage() {
       loadTasks();
     }
   }, [id, fetchApi]);
+
+  useEffect(() => {
+    if (!loading && tasksSectionRef.current) {
+      // Scroll down so the accordion is visible after a short delay to ensure rendering
+      setTimeout(() => {
+        tasksSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+    }
+  }, [loading]);
 
   return (
     <div className="min-h-screen bg-[#050505] relative overflow-hidden text-white font-sans selection:bg-[#9b1a1a]/40">
@@ -93,13 +116,16 @@ export default function DepartmentTasksPage() {
       </div>
 
       {/* Tasks List Section */}
-      <div className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32 mt-16 md:mt-32">
+      <div 
+        ref={tasksSectionRef} 
+        className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32 mt-16 md:mt-32 scroll-mt-24"
+      >
         {loading ? (
           <div className="text-center text-white/40 uppercase tracking-widest text-sm py-12">
             Fetching classified tasks...
           </div>
         ) : (
-          <TaskAccordion tasks={tasks} />
+          <TaskAccordion tasks={tasks} initialTaskId={initialTaskId} submittedTasks={submittedTasks} />
         )}
       </div>
     </div>

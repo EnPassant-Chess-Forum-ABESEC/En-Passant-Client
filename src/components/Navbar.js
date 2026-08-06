@@ -8,12 +8,23 @@ import { UserButton, useAuth } from "@clerk/nextjs";
 import { Menu, X, User } from "lucide-react";
 import SpecularButton from "@/components/SpecularButton";
 import { userButtonAppearance } from "@/lib/clerkAppearance";
+import { useApi } from "@/lib/api";
 
 export default function Navbar() {
   const { userId } = useAuth();
   const router = useRouter();
+  const fetchApi = useApi();
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [myApplication, setMyApplication] = useState(null);
+
+  useEffect(() => {
+    if (userId) {
+      fetchApi("/recruitment/my-application")
+        .then((res) => setMyApplication(res.myApplication))
+        .catch(() => {}); // ignore errors (e.g., no application)
+    }
+  }, [userId, fetchApi]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,6 +80,14 @@ export default function Navbar() {
             >
               Recruitment
             </Link>
+            {myApplication && myApplication.status === "ACTIVE" && (
+              <Link
+                href="/recruitment/dashboard"
+                className="text-white/90 font-inter font-semibold text-[14px] tracking-[0.12em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
+              >
+                Dashboard
+              </Link>
+            )}
 
             {/* Subtle vertical divider */}
             <div className="w-px h-5 bg-white/20 mx-2"></div>
@@ -149,6 +168,15 @@ export default function Navbar() {
           >
             Recruitment
           </Link>
+          {myApplication && myApplication.status === "ACTIVE" && (
+            <Link
+              href="/recruitment/dashboard"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-white/90 font-inter font-semibold text-[16px] tracking-[0.08em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
+            >
+              Dashboard
+            </Link>
+          )}
 
           <div className="w-12 h-px bg-white/20 my-4"></div>
 

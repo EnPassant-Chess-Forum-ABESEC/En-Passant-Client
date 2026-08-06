@@ -4,8 +4,12 @@ import { useState } from "react";
 import { Download, CheckCircle2, Send } from "lucide-react";
 import TaskSubmissionModal from "./TaskSubmissionModal";
 
-export default function TaskAccordion({ tasks }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function TaskAccordion({ tasks, initialTaskId, submittedTasks = [] }) {
+  const initialIndex = initialTaskId 
+    ? tasks.findIndex(t => t._id === initialTaskId) 
+    : 0;
+    
+  const [activeIndex, setActiveIndex] = useState(initialIndex !== -1 ? initialIndex : 0);
   const [selectedTaskForSubmit, setSelectedTaskForSubmit] = useState(null);
 
   if (!tasks || tasks.length === 0) {
@@ -17,6 +21,7 @@ export default function TaskAccordion({ tasks }) {
   }
 
   const activeTask = tasks[activeIndex];
+  const isSubmitted = submittedTasks.includes(activeTask._id);
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -57,8 +62,13 @@ export default function TaskAccordion({ tasks }) {
               <div className="h-px bg-[#9b1a1a] flex-grow opacity-30"></div>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white mb-6 flex items-center gap-4 flex-wrap">
               {activeTask.title}
+              {isSubmitted && (
+                <span className="px-3 py-1 text-sm font-bold tracking-widest uppercase bg-green-500/10 text-green-500 border border-green-500/20 rounded-full shrink-0">
+                  Submitted
+                </span>
+              )}
             </h2>
             
             {activeTask.isRequired && (
@@ -136,13 +146,21 @@ export default function TaskAccordion({ tasks }) {
 
           {/* Footer Submit Action */}
           <div className="p-6 sm:p-10 md:p-16 border-t border-white/5 bg-black/40 flex justify-end">
-            <button 
-              onClick={() => setSelectedTaskForSubmit(activeTask)}
-              className="flex items-center gap-3 bg-[#9b1a1a] hover:bg-[#cc0000] text-white px-8 py-4 uppercase font-bold tracking-widest text-xs transition-colors rounded-xl group"
-            >
-              <span>Submit Task</span>
-              <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {isSubmitted ? (
+              <button 
+                disabled
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-green-500/10 text-green-500 rounded-full font-bold uppercase tracking-widest text-sm transition-colors border border-green-500/20 cursor-not-allowed opacity-80"
+              >
+                Task Submitted
+              </button>
+            ) : (
+              <button 
+                onClick={() => setSelectedTaskForSubmit(activeTask)}
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-full font-bold uppercase tracking-widest text-sm transition-colors shadow-[0_0_20px_rgba(155,26,26,0.3)] hover:shadow-[0_0_30px_rgba(155,26,26,0.5)] border border-[#ff3333]/20"
+              >
+                Submit Task <Send className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>
