@@ -1,16 +1,69 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
+import AdminSearchBar from "./AdminSearchBar";
+import {
+  User,
+  Calendar,
+  Briefcase,
+  CreditCard,
+  Eye,
+  Phone,
+  Mail,
+  MapPin,
+  ChevronLeft,
+} from "lucide-react";
+import SpecularButton from "../SpecularButton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+function timeAgo(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now - date) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const weeks = Math.round(days / 7);
+
+  if (seconds < 60) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (hours < 24) return `${hours} hr ago`;
+  if (days < 7) return `${days} days ago`;
+  return `${weeks} weeks ago`;
+}
 
 export default function ApplicationsTab() {
   const fetchApi = useApi();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Search and Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
   // Detail View State
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [appDetails, setAppDetails] = useState(null);
   const [appSubmissions, setAppSubmissions] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const statusOptions = [
+    { label: "Draft", value: "DRAFT" },
+    { label: "Payment Pending", value: "PAYMENT_PENDING" },
+    { label: "Active", value: "ACTIVE" },
+    { label: "Task Submitted", value: "TASK_SUBMITTED" },
+    { label: "Under Review", value: "UNDER_REVIEW" },
+    { label: "Shortlisted", value: "SHORTLISTED" },
+    { label: "Interview", value: "INTERVIEW" },
+    { label: "Selected", value: "SELECTED" },
+    { label: "Rejected", value: "REJECTED" },
+  ];
 
   useEffect(() => {
     loadData();
@@ -31,10 +84,12 @@ export default function ApplicationsTab() {
     try {
       await fetchApi(`/admin/applications/${id}/status`, {
         method: "PATCH",
-        body: { status: newStatus }
+        body: { status: newStatus },
       });
       // Update local state for fast UI
-      setApplications(prev => prev.map(a => a._id === id ? { ...a, status: newStatus } : a));
+      setApplications((prev) =>
+        prev.map((a) => (a._id === id ? { ...a, status: newStatus } : a)),
+      );
       if (selectedAppId === id && appDetails) {
         setAppDetails({ ...appDetails, status: newStatus });
       }
@@ -58,43 +113,104 @@ export default function ApplicationsTab() {
     setLoadingDetails(false);
   };
 
-  if (loading) return <div className="p-8 text-center text-white/40 uppercase">Loading...</div>;
+  // Filter Logic
+  const filteredAndSortedApps = useMemo(() => {
+    let result = [...applications];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (app) =>
+          app._id.toLowerCase().includes(q) ||
+          (app.userId?.userName || "").toLowerCase().includes(q) ||
+          (app.userId?.collegeEmail || "").toLowerCase().includes(q),
+      );
+    }
+
+    // Filter by status
+    if (statusFilter !== "ALL") {
+      result = result.filter((app) => app.status === statusFilter);
+    }
+
+    // Always sort by newest first natively
+    result.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+
+    return result;
+  }, [applications, searchQuery, statusFilter]);
+
+  if (loading)
+    return (
+      <div className="p-8 text-center text-slate-500 uppercase tracking-widest text-xs">
+        Loading Applications...
+      </div>
+    );
 
   if (selectedAppId) {
     return (
-      <div className="bg-[#0a0a0a] border border-white/5 rounded-lg p-8">
-        <button onClick={() => setSelectedAppId(null)} className="mb-6 text-xs uppercase font-bold tracking-widest text-white/50 hover:text-white transition-colors flex items-center gap-2">
-          &larr; Back to Applications
-        </button>
-        
+      <div className="bg-white border border-slate-200 rounded-lg p-8">
+        <div className="mb-6">
+          <button
+            onClick={() => setSelectedAppId(null)}
+            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-full text-xs font-bold transition-colors shadow-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back to List
+          </button>
+        </div>
+
         {loadingDetails ? (
-          <div className="p-8 text-center text-white/40 uppercase">Loading Application...</div>
+          <div className="p-8 text-center text-slate-500 uppercase">
+            Loading Application...
+          </div>
         ) : appDetails ? (
           <div>
-            <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 pb-6 mb-6 gap-6">
               <div>
-                <h2 className="text-2xl font-bold uppercase text-white tracking-widest">{appDetails.userId?.userName || appDetails.userId}</h2>
-                <p className="text-white/60 font-mono text-sm mt-1">{appDetails.userId?.collegeEmail}</p>
-                <p className="text-white/50 mt-1 uppercase text-xs tracking-wider">
-                  Applied for: <span className="text-white font-bold">{appDetails.preferredDepartmentId?.name}</span>
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="mb-2">
-                  <span className="text-xs uppercase text-white/40 mr-2 tracking-widest">Status:</span>
-                  <select 
-                    onChange={(e) => updateApplicationStatus(appDetails._id, e.target.value)}
-                    value={appDetails.status}
-                    className="bg-transparent border-b border-white/20 py-1 text-xs font-bold text-[#9b1a1a] focus:outline-none focus:border-[#9b1a1a] uppercase cursor-pointer"
-                  >
-                    {["DRAFT", "PAYMENT_PENDING", "ACTIVE", "TASK_SUBMITTED", "UNDER_REVIEW", "SHORTLISTED", "INTERVIEW", "SELECTED", "REJECTED"].map(s => (
-                      <option key={s} value={s} className="bg-[#0a0a0a] text-white">{s}</option>
-                    ))}
-                  </select>
+                <h2 className="text-2xl md:text-3xl font-black  text-slate-800 tracking-tight mb-2">{appDetails._id}</h2>
+                <div className="text-slate-500 font-mono text-[10px] md:text-xs mb-4">
+                  {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.collegeEmail || "No Email"}
                 </div>
-                <div>
-                  <span className="text-xs uppercase text-white/50 mr-2 tracking-widest">Payment:</span>
-                  <span className={`text-xs font-mono font-bold ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-400' : 'text-yellow-400'}`}>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px]  tracking-[0.15em] font-bold">
+                  <span className="text-slate-500">Applied For:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">
+                      Primary: <span className="text-slate-600">{appDetails.preferredDepartmentId?.name || "N/A"}</span>
+                    </span>
+                    {appDetails.secondaryDepartmentId && appDetails.secondaryDepartmentId.length > 0 && (
+                      <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">
+                        Secondary: <span className="text-slate-600">{appDetails.secondaryDepartmentId.map(d => d.name).join(", ")}</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 text-right min-w-[200px]">
+                <div className="flex items-center justify-end gap-3">
+                  <span className="text-[10px]  text-slate-500 tracking-[0.2em] font-bold">Status:</span>
+                  <Select 
+                    value={appDetails.status} 
+                    onValueChange={(value) => updateApplicationStatus(appDetails._id, value)}
+                  >
+                    <SelectTrigger className="w-[160px] bg-white border-slate-200 hover:border-slate-300 rounded-lg h-9 text-xs font-black tracking-widest text-blue-600 uppercase shadow-lg focus:ring-blue-500">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-slate-200 text-slate-800">
+                      {statusOptions.map(s => (
+                        <SelectItem key={s.value} value={s.value} className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 focus:text-blue-600">
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-end gap-3 pr-2">
+                  <span className="text-[10px]  text-slate-500 tracking-[0.2em] font-bold">Payment:</span>
+                  <span className={`text-[10px] font-black  tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500' : 'text-yellow-500'}`}>
                     {appDetails.paymentStatus}
                   </span>
                 </div>
@@ -102,44 +218,84 @@ export default function ApplicationsTab() {
             </div>
 
             <div>
-              <h3 className="text-lg font-bold uppercase text-white mb-4 tracking-widest">Task Submissions</h3>
+              <h3 className="text-lg font-bold  text-slate-800 mb-4 tracking-tight">
+                Task Submissions
+              </h3>
               {appSubmissions.length === 0 ? (
-                <p className="text-white/40 p-4 bg-white/5 border border-white/10">No submissions found for this application.</p>
+                <p className="text-slate-500 p-4 bg-slate-100 border border-slate-200 rounded-lg text-sm">
+                  No submissions found for this application.
+                </p>
               ) : (
                 <div className="space-y-6">
                   {appSubmissions.map((sub, index) => (
-                    <div key={sub._id} className="p-6 border border-white/5 bg-[#0a0a0a] rounded-lg">
-                      <h4 className="text-[#9b1a1a] text-sm font-bold uppercase mb-4 tracking-wider border-b border-white/5 pb-2">Submission {index + 1}</h4>
-                      
+                    <div
+                      key={sub._id}
+                      className="p-6 border border-slate-200 bg-white rounded-lg"
+                    >
+                      <h4 className="text-blue-600 text-sm font-bold  mb-4 tracking-tight border-b border-slate-200 pb-2">
+                        Submission {index + 1}
+                      </h4>
+
                       {sub.text && (
                         <div className="mb-4">
-                          <strong className="block text-xs uppercase text-white/50 tracking-widest mb-1">Text Response:</strong>
-                          <div className="p-4 bg-[#050505] rounded-md text-sm text-white/70 whitespace-pre-wrap font-mono border border-white/5">{sub.text}</div>
+                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-1">
+                            Text Response:
+                          </strong>
+                          <div className="p-4 bg-slate-50 rounded-md text-sm text-slate-600 whitespace-pre-wrap font-mono border border-slate-200">
+                            {sub.text}
+                          </div>
                         </div>
                       )}
-                      
+
                       {sub.links && sub.links.length > 0 && (
                         <div className="mb-4">
-                          <strong className="block text-xs uppercase text-white/50 tracking-widest mb-1">Links:</strong>
+                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-1">
+                            Links:
+                          </strong>
                           <ul className="list-disc pl-5">
                             {sub.links.map((link, i) => (
-                              <li key={i}><a href={link} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline break-all">{link}</a></li>
+                              <li key={i}>
+                                <a
+                                  href={link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-blue-400 hover:underline break-all"
+                                >
+                                  {link}
+                                </a>
+                              </li>
                             ))}
                           </ul>
                         </div>
                       )}
-                      
+
                       {sub.files && sub.files.length > 0 && (
                         <div>
-                          <strong className="block text-xs uppercase text-white/50 tracking-widest mb-2">Attached Files:</strong>
+                          <strong className="block text-xs uppercase text-slate-500 tracking-widest mb-2">
+                            Attached Files:
+                          </strong>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {sub.files.map((file, i) => (
-                              <a key={i} href={file.url} target="_blank" rel="noreferrer" className="block p-3 border border-white/10 hover:border-white/30 transition text-center bg-[#111]">
-                                <span className="block text-xs font-mono truncate text-white/80 mb-1">{file.originalName}</span>
-                                {file.resourceType === 'image' && (
-                                  <img src={file.url} alt={file.originalName} className="w-full h-24 object-cover mb-1 border border-white/5 opacity-80 hover:opacity-100 transition" />
+                              <a
+                                key={i}
+                                href={file.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block p-3 border border-slate-200 hover:border-slate-300 transition text-center bg-slate-100"
+                              >
+                                <span className="block text-xs font-mono truncate text-slate-800/80 mb-1">
+                                  {file.originalName}
+                                </span>
+                                {file.resourceType === "image" && (
+                                  <img
+                                    src={file.url}
+                                    alt={file.originalName}
+                                    className="w-full h-24 object-cover mb-1 border border-slate-200 opacity-80 hover:opacity-100 transition"
+                                  />
                                 )}
-                                <span className="block text-[10px] text-white/40 uppercase">{(file.size / 1024).toFixed(1)} KB</span>
+                                <span className="block text-[10px] text-slate-500 ">
+                                  {(file.size / 1024).toFixed(1)} KB
+                                </span>
                               </a>
                             ))}
                           </div>
@@ -152,55 +308,109 @@ export default function ApplicationsTab() {
             </div>
           </div>
         ) : (
-          <div className="p-8 text-center text-red-500 uppercase">Failed to load application details.</div>
+          <div className="p-8 text-center text-red-500 uppercase">
+            Failed to load application details.
+          </div>
         )}
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden">
-      <table className="w-full text-left">
-        <thead className="bg-[#050505] text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white/5">
-          <tr>
-            <th className="p-4 font-normal">App ID</th>
-            <th className="p-4 font-normal">User</th>
-            <th className="p-4 font-normal">Department</th>
-            <th className="p-4 font-normal">Payment</th>
-            <th className="p-4 font-normal">Status</th>
-            <th className="p-4 font-normal text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-white/5 text-white">
-          {applications.length === 0 ? (
-            <tr><td colSpan="6" className="p-8 text-center text-white/40 uppercase">No applications found</td></tr>
-          ) : (
-            applications.map((app) => (
-              <tr key={app._id} className="hover:bg-white/5 transition">
-                <td className="p-4 font-mono text-xs text-white/50">{app._id}</td>
-                <td className="p-4 font-bold">{app.userId?.userName || app.userId}</td>
-                <td className="p-4 text-sm">{app.preferredDepartmentId?.name || "Unknown"}</td>
-                <td className={`p-4 text-xs font-mono font-bold ${app.paymentStatus === 'SUCCESS' ? 'text-green-400' : 'text-yellow-400'}`}>
-                  {app.paymentStatus}
-                </td>
-                <td className="p-4 font-mono text-xs text-[#9b1a1a] font-bold">{app.status}</td>
-                <td className="p-4 text-right space-x-4">
-                  <button onClick={() => viewDetails(app._id)} className="text-[10px] uppercase font-bold text-white/40 hover:text-white tracking-widest transition-colors">Review</button>
-                  <select 
-                    onChange={(e) => updateApplicationStatus(app._id, e.target.value)}
-                    value={app.status}
-                    className="bg-transparent border-b border-white/10 pb-1 text-[10px] uppercase font-bold text-white/70 focus:outline-none focus:border-[#9b1a1a] cursor-pointer"
-                  >
-                    {["DRAFT", "PAYMENT_PENDING", "ACTIVE", "TASK_SUBMITTED", "UNDER_REVIEW", "SHORTLISTED", "INTERVIEW", "SELECTED", "REJECTED"].map(s => (
-                      <option key={s} value={s} className="bg-[#0a0a0a] text-white">{s}</option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div>
+      <AdminSearchBar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        statusOptions={statusOptions}
+      />
+
+      <div className="space-y-4">
+        {filteredAndSortedApps.length === 0 ? (
+          <div className="p-12 text-center border border-slate-200 bg-white rounded-2xl text-slate-500 uppercase tracking-widest text-xs">
+            No applications match your criteria
+          </div>
+        ) : (
+          filteredAndSortedApps.map((app) => {
+            const relativeTime = timeAgo(app.createdAt);
+            const appDate = app.createdAt
+              ? new Date(app.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "Unknown";
+            const shortId = app._id ? `${app._id.substring(0, 8)}` : "";
+
+            return (
+              <div
+                key={app._id}
+                className="bg-white border border-slate-200 rounded-2xl p-6 transition-all hover:bg-slate-50 hover:border-slate-200 group cursor-pointer"
+                onClick={() => viewDetails(app._id)}
+              >
+                <div className="flex flex-col xl:flex-row gap-6 xl:items-center justify-between">
+                  {/* Left: User Info */}
+                  <div className="flex items-center gap-4 xl:w-[30%]">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5 text-slate-500 group-hover:text-slate-800 transition-colors" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold  tracking-tight text-slate-800 text-sm md:text-base truncate max-w-[200px] md:max-w-[300px]">
+                        {app.userId?.userName || "Unknown User"}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-slate-500 font-medium">
+                          {relativeTime}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Middle: Stats Row */}
+                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 flex-1 md:pl-8 md:border-l border-slate-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Applied</span>
+                       <span className="text-sm font-semibold text-slate-800">{appDate}</span>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Status</span>
+                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
+                         {app.status.replace(/_/g, " ")}
+                       </span>
+                    </div>
+                  </div>
+
+                  {/* Right: Actions */}
+                  <div className="flex items-center gap-3 xl:w-[15%] justify-end mt-4 xl:mt-0">
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-full text-xs font-bold transition-colors shadow-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        viewDetails(app._id);
+                      }}
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom Contact Footer */}
+                <div className="mt-6 pt-4 border-t border-slate-200 flex flex-wrap gap-6 text-[10px] md:text-xs text-slate-500  tracking-widest">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-slate-800/30" />
+                    <span className="font-mono lowercase">
+                      {app.userId?.collegeEmail || "no-email@provided"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

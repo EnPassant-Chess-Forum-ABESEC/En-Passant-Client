@@ -38,6 +38,7 @@ export const metadata = {
   description: "Master every move. Join the club.",
 };
 
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import SmoothScroll from "@/components/SmoothScroll";
 
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
             </main>
             <Footer />
           </SmoothScroll>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

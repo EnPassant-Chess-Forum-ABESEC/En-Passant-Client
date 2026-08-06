@@ -1,0 +1,87 @@
+"use client";
+
+import PaymentsTab from "@/components/admin/PaymentsTab";
+import { useAuth } from "@clerk/nextjs";
+import { Download, Loader2 } from "lucide-react";
+import { useState } from "react";
+
+export default function PaymentsPage() {
+  const { getToken } = useAuth();
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportPayments = async () => {
+    setExporting(true);
+    try {
+      const token = await getToken();
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+
+      const response = await fetch(`${API_BASE}/admin/payments/export`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error("Failed to export payments");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `payments_recruitment_${new Date().toISOString().split("T")[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // Keep spinner until the browser save dialog is dismissed (window regains focus)
+      const reset = () => {
+        window.URL.revokeObjectURL(url);
+        setExporting(false);
+      };
+      window.addEventListener("focus", reset, { once: true });
+      const fallback = setTimeout(() => {
+        window.removeEventListener("focus", reset);
+        reset();
+      }, 60000);
+      window.addEventListener("focus", () => clearTimeout(fallback), { once: true });
+
+    } catch (error) {
+      console.error(error);
+      alert("Error exporting payments: " + error.message);
+      setExporting(false);
+    }
+  };
+
+  return (
+    <>
+      <header className="mb-12 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-2">
+            Payments
+          </h1>
+          <p className="text-slate-500 text-xs md:text-sm uppercase tracking-widest font-bold">
+            Recruitment
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportPayments}
+          disabled={exporting}
+          className="shrink-0 self-start mt-2 flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-full transition-all shadow-sm"
+        >
+          {exporting ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="w-3.5 h-3.5" />
+              Export Payments
+            </>
+          )}
+        </button>
+      </header>
+
+      <PaymentsTab />
+    </>
+  );
+}
