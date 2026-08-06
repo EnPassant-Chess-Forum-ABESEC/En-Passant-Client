@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
-import { ExternalLink, Check, X } from "lucide-react";
+import { ExternalLink, Check, X, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function PaymentsTab() {
   const fetchApi = useApi();
@@ -24,24 +35,28 @@ export default function PaymentsTab() {
     setLoading(false);
   };
 
-  const handleVerify = async (paymentId, status) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to mark this payment as ${status}?`,
-      )
-    )
-      return;
+  const [confirmAction, setConfirmAction] = useState(null);
 
+  const handleVerify = (paymentId, status) => {
+    setConfirmAction({ id: paymentId, status });
+  };
+
+  const executeVerify = async () => {
+    if (!confirmAction) return;
+    
+    const { id: paymentId, status } = confirmAction;
     setVerifyingId(paymentId);
+    setConfirmAction(null);
+    
     try {
       await fetchApi(`/admin/payments/${paymentId}/verify`, {
         method: "PATCH",
         body: { status },
       });
-      alert(`Payment marked as ${status}`);
+      toast.success(`Payment marked as ${status}`);
       loadData();
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error("Error: " + err.message);
     }
     setVerifyingId(null);
   };
@@ -163,22 +178,30 @@ export default function PaymentsTab() {
                   <td className="px-6 py-5 text-right">
                     {payment.status === "PENDING" && (
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleVerify(payment._id, "SUCCESS")}
-                          disabled={verifyingId === payment._id}
-                          className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-50"
-                          title="Approve Payment"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleVerify(payment._id, "FAILED")}
-                          disabled={verifyingId === payment._id}
-                          className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
-                          title="Reject Payment"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        {verifyingId === payment._id ? (
+                          <div className="p-2 text-slate-400 flex justify-center items-center">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleVerify(payment._id, "SUCCESS")}
+                              disabled={verifyingId === payment._id}
+                              className="p-2 rounded-lg bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors disabled:opacity-50"
+                              title="Approve Payment"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleVerify(payment._id, "FAILED")}
+                              disabled={verifyingId === payment._id}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-600 hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                              title="Reject Payment"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     )}
                   </td>
@@ -188,6 +211,31 @@ export default function PaymentsTab() {
           </tbody>
         </table>
       </div>
+
+      <AlertDialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
+        <AlertDialogContent className="bg-white border border-slate-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-slate-900 font-bold">Confirm Action</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500">
+              Are you sure you want to mark this payment as <span className="font-bold text-slate-800">{confirmAction?.status}</span>?
+              This action cannot be easily undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={executeVerify}
+              className={`text-white ${
+                confirmAction?.status === "SUCCESS" 
+                  ? "bg-green-600 hover:bg-green-700" 
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
