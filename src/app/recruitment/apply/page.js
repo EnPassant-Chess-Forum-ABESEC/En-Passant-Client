@@ -2,7 +2,14 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { User, Mail, Phone, ChevronLeft, ChevronRight, QrCode } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  ChevronLeft,
+  ChevronRight,
+  QrCode,
+} from "lucide-react";
 import LineSidebar from "@/components/LineSidebar";
 import { useApi } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +28,7 @@ export default function RecruitmentApplyPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    collegeEmail: "",
     phone: "",
     primaryDept: null,
     secondaryDept: null,
@@ -71,7 +79,10 @@ export default function RecruitmentApplyPage() {
             app.status === "SELECTED" ||
             app.status === "REJECTED"
           ) {
-            toast.info("Your application is already submitted! Redirecting...", { id: "app-submitted-toast" });
+            toast.info(
+              "Your application is already submitted! Redirecting...",
+              { id: "app-submitted-toast" },
+            );
             setTimeout(() => {
               window.location.href = "/recruitment"; // Redirect fully processed
             }, 2500);
@@ -116,6 +127,7 @@ export default function RecruitmentApplyPage() {
       return (
         formData.name.trim() !== "" &&
         formData.email.trim() !== "" &&
+        formData.collegeEmail.trim() !== "" &&
         formData.phone.trim() !== ""
       );
     }
@@ -191,11 +203,16 @@ export default function RecruitmentApplyPage() {
           }
         } catch (err) {
           console.error("Auth init failed", err);
-          const msg =
-            err.errors?.[0]?.longMessage ||
-            err.errors?.[0]?.message ||
-            err.message ||
-            JSON.stringify(err);
+          let msg = "An unknown error occurred.";
+          if (err instanceof SyntaxError && err.message.includes("is not valid JSON")) {
+            msg = "Clerk Authentication Service is currently rate-limited or unavailable. Please wait a moment and try again.";
+          } else {
+            msg =
+              err.errors?.[0]?.longMessage ||
+              err.errors?.[0]?.message ||
+              err.message ||
+              JSON.stringify(err);
+          }
           alert(
             `Authentication failed: ${msg}. If OTP is disabled in your Clerk Dashboard, you'll need to enable it or sign in manually.`,
           );
@@ -210,6 +227,17 @@ export default function RecruitmentApplyPage() {
     } else if (currentStep === 2) {
       try {
         setIsSubmitting(true);
+
+        // Save collegeEmail to user profile
+        if (formData.collegeEmail) {
+          await fetchApi("/users/me", {
+            method: "PUT",
+            body: { collegeEmail: formData.collegeEmail },
+          }).catch((err) =>
+            console.error("Failed to update college email", err),
+          );
+        }
+
         const body = {
           preferredDepartmentId: formData.primaryDept,
           secondaryDepartmentId: formData.secondaryDept
@@ -316,12 +344,16 @@ export default function RecruitmentApplyPage() {
       });
 
       if (res.success) {
-        toast.success("Payment submitted successfully! Redirecting...", { id: "payment-toast" });
+        toast.success("Payment submitted successfully! Redirecting...", {
+          id: "payment-toast",
+        });
         setTimeout(() => {
           window.location.href = "/";
         }, 2500);
       } else {
-        toast.error(res.message || "Failed to submit payment", { id: "payment-toast" });
+        toast.error(res.message || "Failed to submit payment", {
+          id: "payment-toast",
+        });
       }
     } catch (err) {
       console.error(err);
@@ -492,6 +524,35 @@ export default function RecruitmentApplyPage() {
                             setFormData({ ...formData, email: e.target.value })
                           }
                           placeholder="grandmaster@example.com"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 group">
+                      <label
+                        htmlFor="collegeEmail"
+                        className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      >
+                        College Email
+                      </label>
+                      <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
+                          <Mail
+                            className="w-[18px] h-[18px]"
+                            strokeWidth={2.5}
+                          />
+                        </div>
+                        <input
+                          id="collegeEmail"
+                          type="email"
+                          className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                          value={formData.collegeEmail}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              collegeEmail: e.target.value,
+                            })
+                          }
+                          placeholder="name.admNo@abes.ac.in"
                         />
                       </div>
                     </div>
@@ -773,6 +834,11 @@ export default function RecruitmentApplyPage() {
 
             {/* Footer / Nav Area */}
             <div className="px-10 pb-10 pt-4 flex flex-col justify-end z-10 relative">
+              {currentStep === 0 && (
+                <p className="text-white/40 text-[10px] text-center mb-3 uppercase tracking-widest font-semibold">
+                  We will create your account upon submission
+                </p>
+              )}
               {currentStep < 3 && (
                 <div className="w-full">
                   <SpecularButton
@@ -788,7 +854,13 @@ export default function RecruitmentApplyPage() {
                     autoAnimate={true}
                   >
                     <div className="flex items-center justify-center gap-3 font-black uppercase tracking-[0.2em] text-[13px]">
-                      {currentStep === 2 ? "Review & Pay" : "Continue"}
+                      {isSubmitting
+                        ? currentStep === 0
+                          ? "Creating Account..."
+                          : "Processing..."
+                        : currentStep === 2
+                        ? "Review & Pay"
+                        : "Continue"}
                       <span className="group-hover:translate-x-1 transition-transform">
                         <ChevronRight className="w-5 h-5" />
                       </span>
