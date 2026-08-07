@@ -164,6 +164,7 @@ export default function RecruitmentApplyPage() {
               emailAddress: formData.email,
               firstName: formData.name.split(" ")[0] || formData.name,
               lastName: formData.name.split(" ").slice(1).join(" ") || "",
+              phoneNumber: formData.phone,
             });
 
             await rawSignUp.prepareEmailAddressVerification({
@@ -282,7 +283,12 @@ export default function RecruitmentApplyPage() {
           setShowOtpModal(false);
           setCurrentStep(1);
         } else {
-          alert(`Sign up status is: ${completeSignUp.status}`);
+          const missingFields = completeSignUp.missingFields
+            ? completeSignUp.missingFields.join(", ")
+            : "unknown";
+          alert(
+            `Sign up status is: ${completeSignUp.status}. Missing requirements: ${missingFields}. Please update your Clerk Dashboard settings (e.g. disable Password requirement if using passwordless).`,
+          );
         }
       } else {
         const attemptWrapper = await clerk.client.signIn.attemptFirstFactor({
