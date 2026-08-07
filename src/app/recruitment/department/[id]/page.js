@@ -6,6 +6,7 @@ import { useApi } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, ChevronLeft, CheckCircle2 } from "lucide-react";
 import TaskAccordion from "@/components/TaskAccordion";
+import Image from "next/image";
 
 export default function DepartmentTasksPage() {
   const { id } = useParams();
@@ -98,9 +99,11 @@ export default function DepartmentTasksPage() {
             maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
           }}
         >
-          <img
+          <Image
             src="/hand.png"
             alt="Hand holding chess piece"
+            width={850}
+            height={850}
             className="scale-x-[-1] w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)] object-left object-contain"
           />
         </div>

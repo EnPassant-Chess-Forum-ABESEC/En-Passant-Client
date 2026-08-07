@@ -192,10 +192,12 @@ export default function AdminSidebar() {
       <div className="mt-auto pt-6 border-t border-slate-100">
         {user && (
           <div className="flex items-center gap-3 px-4 mb-4">
-            <img
+            <Image
               src={user.imageUrl}
               alt="Profile"
-              className="w-9 h-9 rounded-full border border-slate-200"
+              width={36}
+              height={36}
+              className="rounded-full border border-slate-200"
             />
             <div className="flex flex-col overflow-hidden">
               <span className="text-sm font-bold text-slate-800 truncate">

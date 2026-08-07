@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useApi } from "@/lib/api";
 import { UserButton, useUser } from "@clerk/nextjs";
+import Image from "next/image";
 
 /* ─── tiny helpers ─────────────────────────────────────── */
 function Label({ children }) {
@@ -164,7 +165,7 @@ export default function ProfilePage() {
               <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2"
                 style={{ borderColor: "var(--brand-crimson)" }}>
                 {clerkUser?.imageUrl ? (
-                  <img src={clerkUser.imageUrl} alt="avatar"
+                  <Image src={clerkUser.imageUrl} alt="avatar" width={96} height={96}
                     className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-white/5 text-3xl font-black text-white/20">

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useScroll, motion } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Center } from "@react-three/drei";
+import { Suspense } from "react";
 import SpotlightCard from "./SpotlightCard";
 
 function ChessPieceModel({ scrollYProgress }) {
@@ -161,11 +162,13 @@ export default function NumbersSection() {
             transition={{ duration: 1.5 }}
             className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]"
           >
-            <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
+            <Canvas camera={{ position: [0, 0, 12], fov: 45 }} gl={{ alpha: true, antialias: true }}>
               <ambientLight intensity={0.2} />
               <directionalLight position={[10, 10, 5]} intensity={0.5} />
-              <Environment preset="night" />
-              <ChessPieceModel scrollYProgress={scrollYProgress} />
+              <Suspense fallback={null}>
+                <Environment preset="night" />
+                <ChessPieceModel scrollYProgress={scrollYProgress} />
+              </Suspense>
             </Canvas>
           </motion.div>
         </div>

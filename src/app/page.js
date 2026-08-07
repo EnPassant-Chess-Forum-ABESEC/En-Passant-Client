@@ -3,17 +3,23 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
 
-const NumbersSection = dynamic(() => import("@/components/NumbersSection"), { ssr: true });
-const StrategySection = dynamic(() => import("@/components/StrategySection"), { ssr: true });
-const EcosystemSection = dynamic(() => import("@/components/EcosystemSection"), { ssr: true });
-const ClubJournalSection = dynamic(() => import("@/components/ClubJournalSection"), { ssr: true });
+const NumbersSection = dynamic(() => import("@/components/NumbersSection"), {
+  ssr: false,
+});
+const StrategySection = dynamic(() => import("@/components/StrategySection"), {
+  ssr: true,
+});
+const EcosystemSection = dynamic(
+  () => import("@/components/EcosystemSection"),
+  { ssr: true },
+);
+const ClubJournalSection = dynamic(
+  () => import("@/components/ClubJournalSection"),
+  { ssr: true },
+);
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -36,16 +42,19 @@ export default function Home() {
   useEffect(() => {
     const img = new window.Image();
     img.src = "/hero.png";
-    img.decode().then(() => {
-      requestAnimationFrame(() => {
-        setImageReady(true);
+    img
+      .decode()
+      .then(() => {
+        requestAnimationFrame(() => {
+          setImageReady(true);
+        });
+      })
+      .catch(() => {
+        // Fallback: animate anyway
+        requestAnimationFrame(() => {
+          setImageReady(true);
+        });
       });
-    }).catch(() => {
-      // Fallback: animate anyway
-      requestAnimationFrame(() => {
-        setImageReady(true);
-      });
-    });
   }, []);
 
   // Dissolve animation state for each letter — blur → sharp + opacity.
@@ -115,7 +124,9 @@ export default function Home() {
           <motion.div style={{ y: yImage }} className="w-full h-full relative">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
-              animate={imageReady ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+              animate={
+                imageReady ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }
+              }
               transition={{ duration: 1.5, ease: premiumEase }}
               className="w-full h-full relative"
               style={{
@@ -142,7 +153,9 @@ export default function Home() {
           <div className="w-full max-w-7xl flex justify-center md:justify-between items-end">
             <motion.div
               initial={{ x: -20, opacity: 0 }}
-              animate={imageReady ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
+              animate={
+                imageReady ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }
+              }
               transition={{ duration: 1.6, ease: premiumEase }}
               className="max-w-[340px] hidden md:block pointer-events-auto"
             >
@@ -159,7 +172,9 @@ export default function Home() {
 
             <motion.div
               initial={{ x: 20, opacity: 0 }}
-              animate={imageReady ? { x: 0, opacity: 1 } : { x: 20, opacity: 0 }}
+              animate={
+                imageReady ? { x: 0, opacity: 1 } : { x: 20, opacity: 0 }
+              }
               transition={{ duration: 1.6, ease: premiumEase }}
               className="flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto"
             >
