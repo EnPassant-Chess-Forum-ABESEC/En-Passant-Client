@@ -44,7 +44,9 @@ export default function CustomProfileForm() {
     setSuccess(false);
     setError(null);
     try {
-      const endpoint = profile?.isOnboardingComplete ? "/users/me" : "/users/onboard";
+      const endpoint = profile?.isOnboardingComplete
+        ? "/users/me"
+        : "/users/onboard";
       const method = profile?.isOnboardingComplete ? "PUT" : "POST";
       const body = {
         branch,
@@ -76,8 +78,12 @@ export default function CustomProfileForm() {
   return (
     <div className="p-6 max-w-lg">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-white mb-1">En Passant Details</h2>
-        <p className="text-sm text-white/50">Update your club specific information.</p>
+        <h2 className="text-xl font-bold text-white mb-1">
+          En Passant Details
+        </h2>
+        <p className="text-sm text-white/50">
+          Update your club specific information.
+        </p>
       </div>
 
       {error && (
@@ -95,19 +101,23 @@ export default function CustomProfileForm() {
       <form onSubmit={handleSave} className="space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Branch</label>
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+              Branch
+            </label>
             <input
               type="text"
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
               placeholder="e.g. CSE"
               required
-              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
+              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Year</label>
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+              Year
+            </label>
             <input
               type="number"
               min="1"
@@ -115,30 +125,34 @@ export default function CustomProfileForm() {
               value={year}
               onChange={(e) => setYear(e.target.value)}
               required
-              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
+              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">College Email</label>
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+            College Email
+          </label>
           <input
             type="email"
             value={collegeEmail}
             onChange={(e) => setCollegeEmail(e.target.value)}
-            placeholder="name.year@xyz.ac.in"
+            placeholder="name.admNo@abes.ac.in"
             required
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Chess.com Username</label>
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+            Chess.com Username
+          </label>
           <input
             type="text"
             value={chessComUsername}
             onChange={(e) => setChessComUsername(e.target.value)}
-            placeholder="your username"
+            placeholder="Username"
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
           />
         </div>
