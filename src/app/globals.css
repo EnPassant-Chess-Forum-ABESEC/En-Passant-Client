@@ -322,3 +322,128 @@ body {
   background-color: transparent !important;
 }
 
+/* ── Clerk UserProfile Modal – Dark Mode Overrides ──────────────── */
+/* Target the profile page content panel and all nested text */
+.cl-profilePage,
+.cl-profilePage *:not(svg):not(path):not(img) {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Section heading rows (Profile, Email addresses, Connected accounts) */
+.cl-profileSectionTitle,
+.cl-profileSectionTitle *,
+[class*="cl-profileSectionTitle"] {
+  color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Content inside sections — email, username, linked account text */
+.cl-profileSectionContent,
+.cl-profileSectionContent *:not(svg):not(path),
+[class*="cl-profileSectionContent"] {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* The email value text */
+.cl-userPreviewMainIdentifier,
+.cl-userPreviewSecondaryIdentifier,
+[class*="cl-userPreview"] * {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Badge (Primary tag) */
+.cl-badge,
+[class*="cl-badge"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Three-dot menu button */
+.cl-menuButton,
+[class*="cl-menuButton"] {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Three-dot dropdown menu */
+.cl-menuList,
+[class*="cl-menuList"] {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.cl-menuItem,
+.cl-menuItem *,
+[class*="cl-menuItem"] {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* + Add email address / + Connect account rows */
+.cl-formFieldInput,
+[class*="cl-formFieldInput"] {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+.cl-formFieldLabel,
+[class*="cl-formFieldLabel"] {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* Primary action buttons (Update profile, Set password etc.) */
+.cl-formButtonPrimary,
+[class*="cl-formButtonPrimary"] {
+  background: #c21818 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(194, 24, 24, 0.15) !important;
+}
+
+/* Profile section primary button (Update profile) */
+.cl-profileSectionPrimaryButton,
+[class*="cl-profileSectionPrimaryButton"] {
+  color: rgba(255, 255, 255, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Page header title (Profile details, Security) */
+.cl-headerTitle,
+[class*="cl-headerTitle"] {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+.cl-headerSubtitle,
+[class*="cl-headerSubtitle"] {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Active devices, Google etc. */
+.cl-profileSection,
+.cl-profileSection > *:not(svg):not(path) {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Sidebar header — "Account" title and "Manage your account info." */
+/* Use broad selectors since Clerk class names for these are not stable */
+[class*="cl-navbar"] *:not(svg):not(path):not(img),
+[class*="cl-navbarHeader"] *:not(svg):not(path):not(img) {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+/* The subtitle is slightly dimmed */
+[class*="cl-navbar"] p,
+[class*="cl-navbar"] span:not([class*="navbarButton"]) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+/* But nav button labels stay bright */
+[class*="cl-navbarButton"],
+[class*="cl-navbarButton"] * {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+[class*="cl-navbarButton"][data-active="true"],
+[class*="cl-navbarButton"][aria-current] {
+  color: #ffffff !important;
+}
+/* Heading specifically (h1/h2 equivalent — "Account") */
+[class*="cl-navbar"] h1,
+[class*="cl-navbar"] h2,
+[class*="cl-navbar"] h3 {
+  color: #ffffff !important;
+}

@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useApi } from "@/lib/api";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, UserProfile, useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ChevronDown, Edit2, X, ChessPawn } from "lucide-react";
+import ChessRatingCard from "@/components/ChessRatingCard";
+import CustomProfileForm from "@/components/profile/CustomProfileForm";
+import { userProfileAppearance } from "@/lib/clerkAppearance";
 
 /* ─── tiny helpers ─────────────────────────────────────── */
 function Label({ children }) {
@@ -15,9 +21,7 @@ function Label({ children }) {
 }
 
 function Value({ children }) {
-  return (
-    <p className="text-white/90 text-sm font-medium">{children || "—"}</p>
-  );
+  return <p className="text-white/90 text-sm font-medium">{children || "—"}</p>;
 }
 
 function Field({ label, value }) {
@@ -31,9 +35,13 @@ function Field({ label, value }) {
 
 function RatingBadge({ label, value }) {
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-3 border border-white/10"
-      style={{ background: "rgba(255,255,255,0.03)" }}>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">{label}</span>
+    <div
+      className="flex flex-col items-center justify-center px-4 py-3 border border-white/10"
+      style={{ background: "rgba(255,255,255,0.03)" }}
+    >
+      <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">
+        {label}
+      </span>
       <span className="text-2xl font-black text-white">{value ?? "—"}</span>
     </div>
   );
@@ -56,12 +64,21 @@ function FormInput({ label, type = "text", ...props }) {
 
 function SectionCard({ title, accent, action, children }) {
   return (
-    <div className="relative border border-white/10 p-6 md:p-8"
-      style={{ background: "rgba(255,255,255,0.03)" }}>
+    <div
+      className="relative border border-white/10 p-6 md:p-8"
+      style={{ background: "rgba(255,255,255,0.03)" }}
+    >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          {accent && <div className="w-1 h-6" style={{ background: "var(--brand-crimson)" }} />}
-          <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-white">{title}</h2>
+          {accent && (
+            <div
+              className="w-1 h-6"
+              style={{ background: "var(--brand-crimson)" }}
+            />
+          )}
+          <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-white">
+            {title}
+          </h2>
         </div>
         {action}
       </div>
@@ -77,18 +94,35 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
-  // Form state
-  const [branch, setBranch] = useState("CSE");
-  const [year, setYear] = useState(1);
-  const [chessComUsername, setChessComUsername] = useState("");
+  const { scrollY } = useScroll();
+  const scrollIndicatorOpacity = useTransform(scrollY, [0, 150], [1, 0]);
 
   useEffect(() => {
-    if (isLoaded) loadProfile();
+    if (isLoaded && clerkUser) {
+      loadProfile();
+    } else if (isLoaded && !clerkUser) {
+      setLoading(false);
+    }
   }, [isLoaded]);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isEditing || showOnboardingModal) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "unset";
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.documentElement.style.overflow = "unset";
+      document.body.style.overflow = "unset";
+    };
+  }, [isEditing, showOnboardingModal]);
 
   const loadProfile = async () => {
     try {
@@ -96,39 +130,11 @@ export default function ProfilePage() {
       const data = await fetchApi("/users/me");
       if (data.success) {
         setProfile(data.user);
-        if (data.user) {
-          setBranch(data.user.branch || "CSE");
-          setYear(data.user.year || 1);
-          setChessComUsername(data.user.chessAccounts?.chessCom?.username || "");
-        }
       }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const endpoint = profile?.isOnboardingComplete ? "/users/me" : "/users/onboard";
-      const method = profile?.isOnboardingComplete ? "PUT" : "POST";
-      const body = {
-        branch,
-        year: parseInt(year),
-        chessAccounts: { chessCom: { username: chessComUsername } },
-      };
-      const data = await fetchApi(endpoint, { method, body });
-      if (data.success) {
-        setIsEditing(false);
-        loadProfile();
-      }
-    } catch (err) {
-      alert("Error: " + err.message);
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -138,7 +144,9 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-white/10 border-t-[var(--brand-crimson)] rounded-full animate-spin" />
-          <p className="text-white/30 text-xs uppercase tracking-widest">Loading profile…</p>
+          <p className="text-white/30 text-xs uppercase tracking-widest">
+            Loading profile…
+          </p>
         </div>
       </div>
     );
@@ -148,74 +156,63 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans">
-
       {/* ── Hero strip ──────────────────────────────────────── */}
-      <div className="relative pt-32 pb-12 border-b border-white/10 overflow-hidden">
-        {/* subtle diagonal grid bg */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px)",
-          }}
-        />
-        <div className="relative max-w-6xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row md:items-end gap-6">
+      <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-12">
+        <div className="absolute inset-0 z-0 bg-[#050505]">
+          <Image
+            src="/profile_hero.png"
+            alt="Profile Hero"
+            fill
+            style={{
+              objectFit: "cover",
+              objectPosition: "center 15%",
+            }}
+            className="opacity-60 scale-110 origin-top"
+            priority
+          />
+        </div>
 
-            {/* Avatar */}
-            <div className="relative">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2"
-                style={{ borderColor: "var(--brand-crimson)" }}>
-                {clerkUser?.imageUrl ? (
-                  <Image src={clerkUser.imageUrl} alt="avatar" width={96} height={96}
-                    className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white/5 text-3xl font-black text-white/20">
-                    {clerkUser?.firstName?.[0] ?? "?"}
-                  </div>
-                )}
-              </div>
-              {/* Clerk UserButton sits on top as a small badge */}
-              <div className="absolute -bottom-1 -right-1 scale-75">
-                <UserButton afterSignOutUrl="/" />
-              </div>
-            </div>
+        {/* Fade gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a] z-0 pointer-events-none"></div>
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-0 pointer-events-none"></div>
 
-            {/* Name + meta */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-                  {clerkUser?.fullName ?? profile?.userName ?? "Player"}
-                </h1>
-                {profile?.role && (
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1"
-                    style={{ background: "var(--brand-crimson)", color: "white" }}>
-                    {profile.role}
-                  </span>
-                )}
-              </div>
-              <p className="text-white/40 text-sm tracking-wide">
-                {profile?.collegeEmail ?? clerkUser?.primaryEmailAddress?.emailAddress}
-              </p>
+        <div className="relative z-10 text-center px-4 mt-20 flex flex-col items-center">
+          <h1 className="font-pezula text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight flex flex-wrap justify-center items-center gap-x-4 gap-y-2 drop-shadow-2xl">
+            <span className="text-white">WELCOME!!</span>
+            <span className="text-[#ff3333] drop-shadow-[0_0_20px_rgba(255,51,51,0.3)]">
+              {clerkUser?.firstName?.toUpperCase() ?? "PLAYER"}
+            </span>
+          </h1>
 
-              {/* Onboarding status pill */}
-              {profile && !profile.isOnboardingComplete && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 border border-amber-500/40 bg-amber-500/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  <span className="text-amber-400 text-[10px] font-bold uppercase tracking-widest">
-                    Onboarding incomplete
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Quick stats */}
-            {chess && (
-              <div className="flex gap-2 shrink-0">
-                <RatingBadge label="Rapid" value={chess.ratings?.rapid} />
-                <RatingBadge label="Blitz" value={chess.ratings?.blitz} />
+          <div className="flex items-center gap-6 mt-12">
+            <Link href="/leaderboard">
+              <div className="px-8 py-3.5 text-xs md:text-sm font-bold tracking-widest uppercase border border-white/30 text-white/80 hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300">
+                Leaderboard
               </div>
-            )}
+            </Link>
+            <Link href="/recruitment">
+              <div className="bg-[#c21818] border border-[#c21818] text-white px-8 py-3.5 text-xs md:text-sm font-bold tracking-widest uppercase hover:bg-[#ff3333] hover:border-[#ff3333] transition-all duration-300 shadow-2xl">
+                Recruitment
+              </div>
+            </Link>
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          style={{ opacity: scrollIndicatorOpacity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none text-white/30"
+        >
+          <span className="text-[10px] font-bold tracking-[0.3em] uppercase">
+            Scroll
+          </span>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown size={20} />
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* ── Body ────────────────────────────────────────────── */}
@@ -228,131 +225,192 @@ export default function ProfilePage() {
 
         {/* View Mode */}
         {profile && !isEditing && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            {/* Top Bar: Profile Details */}
+            <div className="flex flex-col md:flex-row gap-10 bg-[#111] p-8 border border-white/5">
+              {/* Image Section */}
+              <div className="w-full md:w-64 aspect-square relative border border-white/10 shrink-0">
+                <Image
+                  src={clerkUser?.imageUrl || "/profile_placeholder.jpg"}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                />
+              </div>
 
-            {/* Account details */}
-            <div className="md:col-span-2">
-              <SectionCard
-                title="Account Details"
-                accent
-                action={
-                  profile.isOnboardingComplete && (
+              {/* Details Section */}
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="font-pezula text-5xl md:text-6xl uppercase tracking-tight text-white leading-none">
+                    {profile.userName || clerkUser?.fullName || "PLAYER"}
+                  </h2>
+                  {profile.isOnboardingComplete && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="text-[10px] uppercase tracking-widest font-bold text-white/30
-                                 hover:text-white transition-colors border border-white/10
-                                 hover:border-white/30 px-3 py-1.5"
+                      className="text-white/40 hover:text-white transition-colors"
+                      title="Edit Profile"
                     >
-                      Edit
+                      <Edit2 size={20} />
                     </button>
-                  )
-                }
-              >
-                <div className="grid grid-cols-2 gap-x-8 gap-y-5">
-                  <Field label="Username" value={profile.userName} />
-                  <Field label="Role" value={profile.role} />
-                  <Field label="Branch" value={profile.branch} />
-                  <Field label="Year" value={profile.year ? `Year ${profile.year}` : null} />
-                  <div className="col-span-2">
-                    <Field label="College Email" value={profile.collegeEmail} />
-                  </div>
-                </div>
-              </SectionCard>
-            </div>
-
-            {/* Chess Accounts */}
-            <SectionCard title="Chess Accounts" accent>
-              {chess ? (
-                <div className="space-y-5">
-                  <div>
-                    <Label>Chess.com</Label>
-                    <a
-                      href={`https://chess.com/member/${chess.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white/90 text-sm font-medium hover:text-[var(--brand-crimson)] transition-colors"
-                    >
-                      @{chess.username}
-                    </a>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <RatingBadge label="Rapid" value={chess.ratings?.rapid} />
-                    <RatingBadge label="Blitz" value={chess.ratings?.blitz} />
-                  </div>
-                  {chess.ratings?.bullet && (
-                    <RatingBadge label="Bullet" value={chess.ratings.bullet} />
                   )}
                 </div>
-              ) : (
-                <div className="flex flex-col items-start gap-3">
-                  <p className="text-white/30 text-sm">No account linked yet.</p>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="text-[10px] uppercase tracking-widest font-bold px-3 py-2 border border-white/15 hover:border-[var(--brand-crimson)] hover:text-[var(--brand-crimson)] transition-colors"
-                  >
-                    Link Account
-                  </button>
-                </div>
-              )}
-            </SectionCard>
 
+                <div className="grid grid-cols-2 gap-y-6 gap-x-12">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">
+                      Email
+                    </div>
+                    <div className="text-sm font-medium text-white/90">
+                      {profile.collegeEmail || "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">
+                      Year
+                    </div>
+                    <div className="text-sm font-medium text-white/90">
+                      {profile.year ? `Year ${profile.year}` : "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">
+                      Branch
+                    </div>
+                    <div className="text-sm font-medium text-white/90">
+                      {profile.branch || "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">
+                      Chess.com
+                    </div>
+                    <div className="text-sm font-medium text-white/90">
+                      {chess?.username ? `@${chess.username}` : "Not linked"}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 mt-2 col-span-2">
+                    <div className="text-[10px] font-bold text-[#ff3333] tracking-[0.2em] uppercase">
+                      Leaderboard Rank
+                    </div>
+                    <div className="text-3xl font-black text-white">
+                      {profile.rank || "N/A"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Onboarding Prompt */}
+            {profile && !profile.isOnboardingComplete && (
+              <div className="mt-8 flex flex-col items-center justify-center p-8 bg-[#111] border border-[#ff3333]/20 rounded-lg text-center">
+                <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-wide">
+                  Almost there!
+                </h3>
+                <p className="text-white/60 text-sm mb-6 max-w-md">
+                  Please complete your club specific profile to be featured on
+                  the leaderboard and participate in events.
+                </p>
+                <button
+                  onClick={() => setShowOnboardingModal(true)}
+                  className="bg-[#c21818] border border-[#c21818] text-white px-8 py-3 text-xs font-bold tracking-widest uppercase hover:bg-[#ff3333] hover:border-[#ff3333] transition-all duration-300 shadow-[0_0_15px_rgba(255,51,51,0.2)]"
+                >
+                  Complete Setup
+                </button>
+              </div>
+            )}
+
+            {/* Ratings Section Header */}
+            <div className="pt-8 pb-2">
+              <h3 className="text-xl font-black text-white uppercase tracking-wider">
+                Chess Ratings
+              </h3>
+              <div className="w-12 h-1 bg-[#ff3333] mt-3"></div>
+            </div>
+
+            {/* Bottom Bar: Chess Ratings */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ChessRatingCard
+                username={chess?.username}
+                timeClass="Rapid"
+                currentRating={chess?.ratings?.rapid}
+              />
+              <ChessRatingCard
+                username={chess?.username}
+                timeClass="Blitz"
+                currentRating={chess?.ratings?.blitz}
+              />
+              <ChessRatingCard
+                username={chess?.username}
+                timeClass="Bullet"
+                currentRating={chess?.ratings?.bullet}
+              />
+            </div>
+
+            {!chess?.username && profile.isOnboardingComplete && (
+              <div className="text-center pt-4">
+                <p className="text-white/40 text-sm mb-3">
+                  No Chess.com account linked.
+                </p>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 border border-white/20 hover:border-white hover:text-white text-white/60 transition-colors"
+                >
+                  Link Account
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Edit / Onboard form */}
-        {profile && (isEditing || !profile.isOnboardingComplete) && (
-          <div className="max-w-xl">
-            <SectionCard
-              title={profile.isOnboardingComplete ? "Edit Profile" : "Complete Your Profile"}
-              accent
-              action={
-                profile.isOnboardingComplete && (
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="text-[10px] uppercase tracking-widest font-bold text-white/30 hover:text-white transition-colors"
-                  >
-                    Cancel
-                  </button>
-                )
-              }
-            >
-              <form onSubmit={handleSave} className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormInput
-                    label="Branch"
-                    value={branch}
-                    onChange={e => setBranch(e.target.value)}
-                    placeholder="e.g. CSE"
-                    required
-                  />
-                  <FormInput
-                    label="Year"
-                    type="number"
-                    min="1" max="4"
-                    value={year}
-                    onChange={e => setYear(e.target.value)}
-                    required
-                  />
-                </div>
-                <FormInput
-                  label="Chess.com Username"
-                  value={chessComUsername}
-                  onChange={e => setChessComUsername(e.target.value)}
-                  placeholder="your username"
-                />
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="btn-bracket"
-                  >
-                    <div className="btn-inner">
-                      {saving ? "Saving…" : profile.isOnboardingComplete ? "Update Profile" : "Complete Setup"}
-                    </div>
-                  </button>
-                </div>
-              </form>
-            </SectionCard>
+        {/* Edit / Onboard form modal using Clerk */}
+        {profile && isEditing && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto"
+            data-lenis-prevent="true"
+          >
+            <div className="relative my-auto w-fit flex justify-center">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="absolute top-2 right-3 md:top-4 md:right-5 z-[60] text-gray-400 hover:text-gray-800 p-2 rounded-full hover:bg-black/5 transition-colors"
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+              <UserProfile routing="virtual" appearance={userProfileAppearance}>
+                <UserProfile.Page label="account" />
+                <UserProfile.Page
+                  label="En Passant"
+                  labelIcon={<ChessPawn size={16} />}
+                  url="en-passant"
+                >
+                  <CustomProfileForm />
+                </UserProfile.Page>
+                <UserProfile.Page label="security" />
+              </UserProfile>
+            </div>
+          </div>
+        )}
+
+        {/* Standalone Onboarding Modal */}
+        {showOnboardingModal && (
+          <div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto"
+            data-lenis-prevent="true"
+          >
+            <div className="relative my-auto w-full max-w-[32rem] bg-[#111] rounded-2xl overflow-hidden shadow-2xl">
+              <button
+                onClick={() => setShowOnboardingModal(false)}
+                className="absolute top-4 right-4 z-10 text-white/40 hover:text-white/80 p-2 rounded-full hover:bg-white/5 transition-colors"
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+              <CustomProfileForm />
+            </div>
           </div>
         )}
       </div>

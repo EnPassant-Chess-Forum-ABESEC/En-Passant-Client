@@ -163,7 +163,7 @@ export const userButtonAppearance = {
       background: "transparent !important",
       "&:hover": {
         background: "transparent !important",
-      }
+      },
     },
     // Text label on every row (including Profile custom link)
     userButtonPopoverActionButtonText: {
@@ -174,7 +174,7 @@ export const userButtonAppearance = {
       color: "#ffffff !important",
       "& > svg": {
         color: "#ffffff !important",
-      }
+      },
     },
     // Footer
     userButtonPopoverFooter: {
@@ -184,3 +184,111 @@ export const userButtonAppearance = {
   },
 };
 
+export const userProfileAppearance = {
+  baseTheme: dark,
+  variables: {
+    colorBackground: "#111111",
+    colorText: "#ffffff",
+    colorTextSecondary: "rgba(255, 255, 255, 0.5)",
+    colorInputBackground: "rgba(255, 255, 255, 0.05)",
+    colorInputText: "#ffffff",
+    borderRadius: "0.5rem",
+  },
+  elements: {
+    rootBox: {
+      background: "transparent",
+    },
+    cardBox: {
+      background: "#111111",
+      border: "1px solid rgba(255, 255, 255, 0.08)",
+      boxShadow: "0 24px 60px rgba(0, 0, 0, 0.6)",
+      borderRadius: "16px",
+    },
+    navbar: {
+      background: "#0d0d0d",
+      borderRight: "1px solid rgba(255, 255, 255, 0.07)",
+    },
+    navbarButton: {
+      color: "rgba(255, 255, 255, 0.6) !important",
+      borderRadius: "8px !important",
+    },
+    navbarButtonActive: {
+      background: "rgba(194, 24, 24, 0.15) !important",
+      color: "#ffffff !important",
+      fontWeight: "600 !important",
+    },
+    navbarButtonIcon: {
+      color: "inherit !important",
+    },
+    pageScrollBox: {
+      background: "#111111",
+    },
+    page: {
+      background: "#111111",
+    },
+    profileSectionTitle: {
+      color: "#ffffff !important",
+      borderBottom: "1px solid rgba(255,255,255,0.07) !important",
+    },
+    profileSectionTitleText: {
+      color: "#ffffff !important",
+    },
+    profileSectionContent: {
+      color: "rgba(255,255,255,0.8) !important",
+    },
+    userPreviewMainIdentifier: {
+      color: "#ffffff !important",
+      fontWeight: "600 !important",
+    },
+    userPreviewSecondaryIdentifier: {
+      color: "rgba(255, 255, 255, 0.5) !important",
+    },
+    profileSectionPrimaryButton: {
+      color: "#ffffff !important",
+      border: "1px solid rgba(255,255,255,0.2) !important",
+      background: "transparent !important",
+    },
+    formFieldLabel: {
+      color: "rgba(255, 255, 255, 0.7) !important",
+    },
+    formFieldInput: {
+      background: "rgba(255, 255, 255, 0.05) !important",
+      border: "1px solid rgba(255, 255, 255, 0.15) !important",
+      color: "#ffffff !important",
+    },
+    formButtonPrimary: {
+      background: "#c21818 !important",
+      color: "#ffffff !important",
+      fontWeight: "600 !important",
+      boxShadow: "0 4px 16px rgba(194,24,24,0.35) !important",
+    },
+    formButtonReset: {
+      color: "rgba(255,255,255,0.5) !important",
+    },
+    badge: {
+      background: "rgba(255,255,255,0.07) !important",
+      color: "rgba(255,255,255,0.6) !important",
+      border: "1px solid rgba(255,255,255,0.12) !important",
+    },
+    menuButton: {
+      color: "rgba(255,255,255,0.5) !important",
+    },
+    menuList: {
+      background: "#1a1a1a !important",
+      border: "1px solid rgba(255,255,255,0.1) !important",
+    },
+    menuItem: {
+      color: "rgba(255,255,255,0.8) !important",
+    },
+    footer: {
+      background: "#0d0d0d !important",
+      borderTop: "1px solid rgba(255,255,255,0.06) !important",
+    },
+    footerPagesLink: {
+      color: "rgba(255,255,255,0.3) !important",
+    },
+    logoBox: {
+      filter: "brightness(0) invert(0.4)",
+    },
+  },
+};
