@@ -109,7 +109,6 @@ export default function Navbar() {
                       }
                       href="/profile"
                     />
-                    <UserButton.Action label="manageAccount" />
                     <UserButton.Action label="signOut" />
                   </UserButton.MenuItems>
                 </UserButton>

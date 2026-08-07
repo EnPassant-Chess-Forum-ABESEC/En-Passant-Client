@@ -447,3 +447,9 @@ body {
 [class*="cl-navbar"] h3 {
   color: #ffffff !important;
 }
+
+/* Hide the Manage Account button from UserButton dropdown popover */
+.cl-userButtonPopoverActionButton__manageAccount,
+[class*="cl-userButtonPopoverActionButton__manageAccount"] {
+  display: none !important;
+}
