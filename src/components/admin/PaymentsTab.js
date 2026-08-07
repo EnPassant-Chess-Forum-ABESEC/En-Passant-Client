@@ -107,9 +107,9 @@ export default function PaymentsTab() {
                 >
                   <td className="px-4 py-5 font-mono text-sm text-slate-800/90">
                     {payment.userId?.userName || "Unknown User"}
-                    {payment.userId?.collegeEmail && (
+                    {payment.userId?.email && (
                       <div className="text-[10px] text-slate-500 mt-1">
-                        {payment.userId.collegeEmail}
+                        {payment.userId.email}
                       </div>
                     )}
                   </td>

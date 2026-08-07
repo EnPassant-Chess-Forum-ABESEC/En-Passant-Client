@@ -63,7 +63,7 @@ export default function UsersTab() {
                 <tr key={user._id} className="hover:bg-white/[0.02] transition-colors group">
                   <td className="px-6 py-5 font-mono text-sm text-slate-500">{user._id}</td>
                   <td className="px-6 py-5 font-bold tracking-wide">{user.userName}</td>
-                  <td className="px-6 py-5 text-sm text-slate-600">{user.collegeEmail}</td>
+                  <td className="px-6 py-5 text-sm text-slate-600">{user.email}</td>
                   <td className="px-6 py-5 font-mono text-xs text-blue-600 font-bold tracking-wider uppercase">{user.role}</td>
                   <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                     <Select

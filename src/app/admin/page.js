@@ -281,7 +281,7 @@ export default function AdminDashboard() {
                           {app.userId?.userName || "Unknown"}
                         </div>
                         <div className="text-[10px] text-slate-400 tracking-widest  mt-1">
-                          {app.userId?.collegeEmail || "N/A"}
+                          {app.userId?.email || "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-5 font-mono text-xs text-slate-900/70">

@@ -137,7 +137,7 @@ export default function ApplicationsTab() {
         (app) =>
           app._id.toLowerCase().includes(q) ||
           (app.userId?.userName || "").toLowerCase().includes(q) ||
-          (app.userId?.collegeEmail || "").toLowerCase().includes(q),
+          (app.userId?.email || "").toLowerCase().includes(q),
       );
     }
 
@@ -187,7 +187,7 @@ export default function ApplicationsTab() {
               <div>
                 <h2 className="text-2xl md:text-3xl font-black  text-slate-800 tracking-tight mb-2">{appDetails._id}</h2>
                 <div className="text-slate-500 font-mono text-[10px] md:text-xs mb-4">
-                  {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.collegeEmail || "No Email"}
+                  {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.email || "No Email"}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
                   <span className="text-slate-500">Applied For:</span>
@@ -430,7 +430,7 @@ export default function ApplicationsTab() {
                   <div className="flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-slate-800/30" />
                     <span className="font-mono lowercase">
-                      {app.userId?.collegeEmail || "no-email@provided"}
+                      {app.userId?.email || "no-email@provided"}
                     </span>
                   </div>
                 </div>

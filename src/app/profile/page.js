@@ -173,7 +173,7 @@ export default function ProfilePage() {
                     {profile.userName || clerkUser?.fullName || "PLAYER"}
                   </h2>
                   <p className="text-white/50 text-sm truncate mt-1">
-                    {profile.collegeEmail || "No email provided"}
+                    {profile.email || "No email provided"}
                   </p>
                   
                   {profile.isOnboardingComplete && (
