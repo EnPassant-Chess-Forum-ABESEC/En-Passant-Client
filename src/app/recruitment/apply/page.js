@@ -164,7 +164,6 @@ export default function RecruitmentApplyPage() {
               emailAddress: formData.email,
               firstName: formData.name.split(" ")[0] || formData.name,
               lastName: formData.name.split(" ").slice(1).join(" ") || "",
-              phoneNumber: formData.phone,
             });
 
             await rawSignUp.prepareEmailAddressVerification({
