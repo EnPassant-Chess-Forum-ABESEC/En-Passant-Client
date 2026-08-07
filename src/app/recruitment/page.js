@@ -5,11 +5,23 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import dynamic from "next/dynamic";
+import { ChevronDown } from "lucide-react";
 
-const RecruitmentTimeline = dynamic(() => import("@/components/RecruitmentTimeline"), { ssr: true });
-const WhyJoinSection = dynamic(() => import("@/components/WhyJoinSection"), { ssr: true });
-const DepartmentsSection = dynamic(() => import("@/components/DepartmentsSection"), { ssr: true });
-const RecruitmentCTASection = dynamic(() => import("@/components/RecruitmentCTASection"), { ssr: true });
+const RecruitmentTimeline = dynamic(
+  () => import("@/components/RecruitmentTimeline"),
+  { ssr: true },
+);
+const WhyJoinSection = dynamic(() => import("@/components/WhyJoinSection"), {
+  ssr: true,
+});
+const DepartmentsSection = dynamic(
+  () => import("@/components/DepartmentsSection"),
+  { ssr: true },
+);
+const RecruitmentCTASection = dynamic(
+  () => import("@/components/RecruitmentCTASection"),
+  { ssr: true },
+);
 
 export default function RecruitmentPage() {
   const premiumEase = [0.16, 1, 0.3, 1];
@@ -45,7 +57,10 @@ export default function RecruitmentPage() {
             initial={{ opacity: 0, z: 0 }}
             animate={{ opacity: 1, z: 0 }}
             transition={{ duration: 1.5, ease: premiumEase }}
-            style={{ WebkitTransform: "translateZ(0)", backfaceVisibility: "hidden" }}
+            style={{
+              WebkitTransform: "translateZ(0)",
+              backfaceVisibility: "hidden",
+            }}
             className="w-full h-full relative"
           >
             <Image
@@ -77,7 +92,10 @@ export default function RecruitmentPage() {
                 damping: 20,
                 delay: 0.4,
               }}
-              style={{ WebkitTransform: "translateZ(0)", backfaceVisibility: "hidden" }}
+              style={{
+                WebkitTransform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+              }}
               className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555]
               bg-clip-text text-transparent font-pezula uppercase
               tracking-wider leading-[0.85]
@@ -97,7 +115,10 @@ export default function RecruitmentPage() {
                 damping: 20,
                 delay: 0.6,
               }}
-              style={{ WebkitTransform: "translateZ(0)", backfaceVisibility: "hidden" }}
+              style={{
+                WebkitTransform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+              }}
               className="inline-block text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]"
             >
               2026
@@ -113,7 +134,10 @@ export default function RecruitmentPage() {
             initial={{ opacity: 0, z: 0 }}
             animate={{ opacity: 1, z: 0 }}
             transition={{ duration: 1.5, ease: premiumEase }}
-            style={{ WebkitTransform: "translateZ(0)", backfaceVisibility: "hidden" }}
+            style={{
+              WebkitTransform: "translateZ(0)",
+              backfaceVisibility: "hidden",
+            }}
             className="w-full h-full relative"
           >
             <Image
@@ -127,6 +151,23 @@ export default function RecruitmentPage() {
         </motion.div>
 
         <div className="absolute bottom-0 left-0 w-full h-[15vw] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-40 pointer-events-none"></div>
+
+        <motion.div
+          style={{ opacity }}
+          className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 1 }}
+            className="flex flex-col items-center gap-2"
+          >
+            <span className="text-[12px] uppercase tracking-[0.2em] text-white/40 font-bold">
+              Scroll
+            </span>
+            <ChevronDown className="w-4 h-4 text-white/40 animate-bounce" />
+          </motion.div>
+        </motion.div>
       </section>
 
       <RecruitmentTimeline />

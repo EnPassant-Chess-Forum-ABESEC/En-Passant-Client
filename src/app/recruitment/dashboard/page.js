@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import SpecularButton from "@/components/SpecularButton";
 import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function RecruitmentDashboard() {
   const { userId, isLoaded } = useAuth();
@@ -23,6 +24,9 @@ export default function RecruitmentDashboard() {
   const [loading, setLoading] = useState(true);
   const [application, setApplication] = useState(null);
   const [tasks, setTasks] = useState([]);
+
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 500], ["0%", "15%"]);
 
   useEffect(() => {
     if (isLoaded && !userId) {
@@ -87,10 +91,17 @@ export default function RecruitmentDashboard() {
       .sort((a, b) => a.order - b.order);
   };
 
-  const renderTaskCard = (task) => (
-    <div
+  const renderTaskCard = (task, index = 0) => (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.6,
+        delay: 0.1 * index,
+        ease: [0.16, 1, 0.3, 1],
+      }}
       key={task._id}
-      className="relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300"
+      className="relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300 flex flex-col h-full"
     >
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff3333]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
@@ -106,49 +117,33 @@ export default function RecruitmentDashboard() {
         )}
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-4 items-center">
-        <div className="flex items-center gap-3 text-xs text-white/50">
-          {task.submission?.acceptsText && (
-            <span className="flex items-center gap-1">
-              <FileText className="w-3 h-3" /> Text
-            </span>
-          )}
-          {task.submission?.acceptsLinks && (
-            <span className="flex items-center gap-1">
-              <LinkIcon className="w-3 h-3" /> Link
-            </span>
-          )}
-          {task.submission?.acceptsFiles && (
-            <span className="flex items-center gap-1">
-              <Upload className="w-3 h-3" /> File
-            </span>
-          )}
-        </div>
-
-        <div className="ml-auto">
-          {application?.submittedTaskIds?.includes(task._id) ? (
-            <div className="bg-green-500/10 text-green-500 text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-lg flex items-center justify-center border border-green-500/20 opacity-80 cursor-not-allowed">
-              Task Submitted
+      <div className="mt-auto pt-6 w-full">
+        {application?.submittedTaskIds?.includes(task._id) ? (
+          <div className="w-full bg-green-500/10 text-green-500 text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center border border-green-500/20 opacity-80 cursor-not-allowed">
+            Task Submitted
+          </div>
+        ) : (
+          <Link
+            href={`/recruitment/department/${task.departmentId?.code?.toLowerCase() || ""}?taskId=${task._id}`}
+            className="block w-full"
+          >
+            <div className="w-full bg-white/5 text-white text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center hover:bg-[#ff3333]/20 transition-colors border border-white/10 hover:border-[#ff3333]/50">
+              View Task <ArrowRight className="w-4 h-4 ml-2" />
             </div>
-          ) : (
-            <Link
-              href={`/recruitment/department/${task.departmentId?.code?.toLowerCase() || ""}?taskId=${task._id}`}
-            >
-              <div className="bg-[#444444] text-white text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-lg flex items-center justify-center hover:bg-[#ff3333] transition-colors border border-white/10 hover:border-[#ff3333]/50">
-                View Task <ArrowRight className="w-4 h-4 ml-2" />
-              </div>
-            </Link>
-          )}
-        </div>
+          </Link>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
     <div className="min-h-screen bg-[#050505] pb-24">
       {/* Hero Section */}
       <section className="relative w-full h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-[#050505]">
+        <motion.div
+          style={{ y: backgroundY }}
+          className="absolute inset-x-0 -top-[20%] -bottom-[20%] z-0 bg-[#050505]"
+        >
           <Image
             src="/recruitment_dashboard_hero.png"
             alt="Dashboard Hero"
@@ -160,28 +155,40 @@ export default function RecruitmentDashboard() {
             className="opacity-60 mix-blend-lighten"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505]"></div>
-          <div className="absolute inset-x-0 bottom-0 h-3/2 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
-        </div>
-        <div className="relative z-10 text-center px-4 mt-16">
+        </motion.div>
+
+        {/* Fixed gradients to fade out the moving parallax image */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] z-0 pointer-events-none"></div>
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-0 pointer-events-none"></div>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="relative z-10 text-center px-4 mt-16"
+        >
           <h1 className="font-cinzel text-4xl md:text-6xl font-bold text-white tracking-widest uppercase mb-4 drop-shadow-2xl">
             Recruitment <span className="text-[#ff3333]">Dashboard</span>
           </h1>
           <p className="font-inter text-white/70 max-w-2xl mx-auto text-sm md:text-base tracking-wide">
             Your application is currently{" "}
             <span className="font-bold text-[#ff3333] uppercase">
-              {application.status}
+              {application.status?.replace(/_/g, " ")}
             </span>
             . Complete the designated tasks for your selected departments below.
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* Main Content */}
       <section className="max-w-6xl mx-auto px-4 md:px-8 mt-[-40px] relative z-20 space-y-16">
         {/* Primary Department */}
         {primaryDept && (
-          <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-6"
+          >
             <div className="flex items-center gap-4">
               <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
                 {primaryDept.name}
@@ -203,12 +210,18 @@ export default function RecruitmentDashboard() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Secondary Departments */}
-        {secondaryDepts.map((dept) => (
-          <div key={dept._id} className="space-y-6">
+        {secondaryDepts.map((dept, idx) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
+            key={dept._id}
+            className="space-y-6"
+          >
             <div className="flex items-center gap-4">
               <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
                 {dept.name}
@@ -227,7 +240,7 @@ export default function RecruitmentDashboard() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         ))}
       </section>
     </div>

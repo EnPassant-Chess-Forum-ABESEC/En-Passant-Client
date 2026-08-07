@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import Image from "next/image";
 import { User, Mail, Phone, ChevronLeft, ChevronRight, QrCode } from "lucide-react";
 import LineSidebar from "@/components/LineSidebar";
@@ -17,7 +18,6 @@ import {
 export default function RecruitmentApplyPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -71,7 +71,7 @@ export default function RecruitmentApplyPage() {
             app.status === "SELECTED" ||
             app.status === "REJECTED"
           ) {
-            setToastMessage("Your application is already submitted! Redirecting...");
+            toast.info("Your application is already submitted! Redirecting...", { id: "app-submitted-toast" });
             setTimeout(() => {
               window.location.href = "/recruitment"; // Redirect fully processed
             }, 2500);
@@ -316,18 +316,16 @@ export default function RecruitmentApplyPage() {
       });
 
       if (res.success) {
-        setToastMessage("Payment submitted successfully! Redirecting...");
+        toast.success("Payment submitted successfully! Redirecting...", { id: "payment-toast" });
         setTimeout(() => {
           window.location.href = "/";
         }, 2500);
       } else {
-        setToastMessage(res.message || "Failed to submit payment");
-        setTimeout(() => setToastMessage(""), 4000);
+        toast.error(res.message || "Failed to submit payment", { id: "payment-toast" });
       }
     } catch (err) {
       console.error(err);
-      setToastMessage("Error submitting payment.");
-      setTimeout(() => setToastMessage(""), 4000);
+      toast.error("Error submitting payment.", { id: "payment-toast" });
     } finally {
       setIsSubmitting(false);
     }
@@ -372,20 +370,6 @@ export default function RecruitmentApplyPage() {
 
   return (
     <main className="relative w-full h-screen flex overflow-hidden font-sans bg-black">
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            className="absolute bottom-8 right-4 md:right-8 z-[100] px-6 py-3 bg-[#9b1a1a]/90 backdrop-blur-md border border-[#ff3333]/30 rounded-full shadow-[0_0_40px_rgba(155,26,26,0.5)] flex items-center gap-3"
-          >
-            <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <p className="text-white text-sm font-bold tracking-widest uppercase">{toastMessage}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* ── BACKGROUND LAYER (Gradiented Black) ── */}
       <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#151515] via-black to-[#0a0a0a]" />
 

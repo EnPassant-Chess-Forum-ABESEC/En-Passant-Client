@@ -3,15 +3,18 @@
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner";
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { usePathname } from "next/navigation";
 
 const Toaster = ({
   ...props
 }) => {
   const { theme = "system" } = useTheme()
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
 
   return (
     <Sonner
-      theme={theme}
+      theme={isAdmin ? theme : "dark"}
       className="toaster group"
       icons={{
         success: (
@@ -40,12 +43,18 @@ const Toaster = ({
       }
       toastOptions={{
         classNames: {
-          toast: "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg dark:group-[.toaster]:bg-[#0a0a0a] dark:group-[.toaster]:border-[#9b1a1a]/50 dark:group-[.toaster]:text-white dark:group-[.toaster]:shadow-none dark:group-[.toaster]:rounded-xl font-inter",
-          description: "group-[.toast]:text-muted-foreground dark:group-[.toast]:text-white/70",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground dark:group-[.toast]:bg-[#9b1a1a] dark:group-[.toast]:text-white",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground dark:group-[.toast]:bg-white/10 dark:group-[.toast]:text-white",
+          toast: isAdmin 
+            ? "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg"
+            : "group toast group-[.toaster]:bg-[#0f0f0f] group-[.toaster]:text-white group-[.toaster]:border-[#9b1a1a]/30 group-[.toaster]:shadow-sm group-[.toaster]:rounded-xl font-inter",
+          description: isAdmin
+            ? "group-[.toast]:text-muted-foreground"
+            : "group-[.toast]:text-white/60",
+          actionButton: isAdmin
+            ? "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground"
+            : "group-[.toast]:bg-[#9b1a1a] group-[.toast]:text-white group-[.toast]:hover:bg-[#cc0000]",
+          cancelButton: isAdmin
+            ? "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground"
+            : "group-[.toast]:bg-white/10 group-[.toast]:text-white group-[.toast]:hover:bg-white/20",
         },
       }}
       {...props} />
