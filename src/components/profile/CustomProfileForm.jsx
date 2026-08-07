@@ -140,7 +140,7 @@ export default function CustomProfileForm() {
             onChange={(e) => setCollegeEmail(e.target.value)}
             placeholder="name.admNo@abes.ac.in"
             required
-            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
+            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
         </div>
 
@@ -153,7 +153,7 @@ export default function CustomProfileForm() {
             value={chessComUsername}
             onChange={(e) => setChessComUsername(e.target.value)}
             placeholder="Username"
-            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
+            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
         </div>
 
