@@ -4,8 +4,10 @@ import { X, Upload, Link as LinkIcon, FileText, AlertTriangle } from "lucide-rea
 import { useState, useEffect, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
+import { useLenis } from "lenis/react";
 
 export default function TaskSubmissionModal({ isOpen, onClose, task }) {
+  const lenis = useLenis();
   const [isDragging, setIsDragging] = useState(false);
   const [links, setLinks] = useState([""]);
   const [texts, setTexts] = useState([""]);
@@ -36,17 +38,20 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   // Lock page scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
+      lenis?.stop();
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
     } else {
+      lenis?.start();
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     }
     return () => {
+      lenis?.start();
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [isOpen, lenis]);
 
   if (!isOpen || !task) return null;
 

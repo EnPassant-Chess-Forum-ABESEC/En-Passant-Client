@@ -96,14 +96,7 @@ export default function RecruitmentDashboard() {
 
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-            {task.title}
-            {application?.submittedTaskIds?.includes(task._id) && (
-              <span className="px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase bg-green-500/10 text-green-500 border border-green-500/20 rounded-full shrink-0">
-                Submitted
-              </span>
-            )}
-          </h3>
+          <h3 className="text-xl font-bold text-white mb-2">{task.title}</h3>
           <p className="text-sm text-white/60 line-clamp-2">{task.summary}</p>
         </div>
         {task.isRequired && (

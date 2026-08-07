@@ -62,13 +62,8 @@ export default function TaskAccordion({ tasks, initialTaskId, submittedTasks = [
               <div className="h-px bg-[#9b1a1a] flex-grow opacity-30"></div>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white mb-6 flex items-center gap-4 flex-wrap">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white mb-6">
               {activeTask.title}
-              {isSubmitted && (
-                <span className="px-3 py-1 text-sm font-bold tracking-widest uppercase bg-green-500/10 text-green-500 border border-green-500/20 rounded-full shrink-0">
-                  Submitted
-                </span>
-              )}
             </h2>
             
             {activeTask.isRequired && (
