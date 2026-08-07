@@ -13,6 +13,7 @@ export default function CustomProfileForm() {
 
   const [branch, setBranch] = useState("");
   const [year, setYear] = useState(1);
+  const [collegeEmail, setCollegeEmail] = useState("");
   const [chessComUsername, setChessComUsername] = useState("");
 
   const loadProfile = async () => {
@@ -23,6 +24,7 @@ export default function CustomProfileForm() {
         setProfile(data.user);
         setBranch(data.user.branch || "CSE");
         setYear(data.user.year || 1);
+        setCollegeEmail(data.user.collegeEmail || "");
         setChessComUsername(data.user.chessAccounts?.chessCom?.username || "");
       }
     } catch (err) {
@@ -47,6 +49,7 @@ export default function CustomProfileForm() {
       const body = {
         branch,
         year: parseInt(year),
+        collegeEmail,
         chessAccounts: { chessCom: { username: chessComUsername } },
       };
 
@@ -115,6 +118,18 @@ export default function CustomProfileForm() {
               className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">College Email</label>
+          <input
+            type="email"
+            value={collegeEmail}
+            onChange={(e) => setCollegeEmail(e.target.value)}
+            placeholder="name.year@xyz.ac.in"
+            required
+            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30 transition-all"
+          />
         </div>
 
         <div className="flex flex-col gap-1.5">

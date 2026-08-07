@@ -175,6 +175,11 @@ export default function ProfilePage() {
                   <p className="text-white/50 text-sm truncate mt-1">
                     {profile.email || "No email provided"}
                   </p>
+                  {profile.collegeEmail && (
+                    <p className="text-[#ff3333]/80 text-xs truncate mt-0.5 font-medium tracking-wide">
+                      {profile.collegeEmail}
+                    </p>
+                  )}
                   
                   {profile.isOnboardingComplete && (
                     <button
