@@ -15,6 +15,7 @@ import {
 import SpecularButton from "@/components/SpecularButton";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
+import TaskCountdown from "@/components/TaskCountdown";
 
 export default function RecruitmentDashboard() {
   const { userId, isLoaded } = useAuth();
@@ -24,6 +25,8 @@ export default function RecruitmentDashboard() {
   const [loading, setLoading] = useState(true);
   const [application, setApplication] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [isRevealed, setIsRevealed] = useState(true);
+  const [revealDate, setRevealDate] = useState(null);
 
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], ["0%", "15%"]);
@@ -53,6 +56,13 @@ export default function RecruitmentDashboard() {
         setApplication(appRes.myApplication);
       }
       setTasks(tasksRes.tasks || []);
+      
+      if (tasksRes.isRevealed !== undefined) {
+        setIsRevealed(tasksRes.isRevealed);
+      }
+      if (tasksRes.revealDate) {
+        setRevealDate(tasksRes.revealDate);
+      }
     } catch (err) {
       console.error(err);
       router.push("/recruitment");
@@ -91,50 +101,62 @@ export default function RecruitmentDashboard() {
       .sort((a, b) => a.order - b.order);
   };
 
-  const renderTaskCard = (task, index = 0) => (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.6,
-        delay: 0.1 * index,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      key={task._id}
-      className="relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300 flex flex-col h-full"
-    >
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff3333]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+  const renderTaskCard = (task, index = 0) => {
+    const hidden = !isRevealed;
 
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-white mb-2">{task.title}</h3>
-          <p className="text-sm text-white/60 line-clamp-2">{task.summary}</p>
-        </div>
-        {task.isRequired && (
-          <span className="px-3 py-1 text-[10px] font-bold tracking-widest uppercase bg-[#ff3333]/10 text-[#ff3333] border border-[#ff3333]/20 rounded-full shrink-0">
-            Required
-          </span>
-        )}
-      </div>
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.1 * index,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        key={task._id}
+        className={`relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300 flex flex-col h-full ${hidden ? 'opacity-80' : ''}`}
+      >
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff3333]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-      <div className="mt-auto pt-6 w-full">
-        {application?.submittedTaskIds?.includes(task._id) ? (
-          <div className="w-full bg-green-500/10 text-green-500 text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center border border-green-500/20 opacity-80 cursor-not-allowed">
-            Task Submitted
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {hidden ? "Task Details Hidden" : task.title}
+            </h3>
+            <p className="text-sm text-white/60 line-clamp-2">
+              {hidden ? "This task will be revealed once the designated countdown is over. Prepare yourself." : task.summary}
+            </p>
           </div>
-        ) : (
-          <Link
-            href={`/recruitment/department/${task.departmentId?.code?.toLowerCase() || ""}?taskId=${task._id}`}
-            className="block w-full"
-          >
-            <div className="w-full bg-white/5 text-white text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center hover:bg-[#ff3333]/20 transition-colors border border-white/10 hover:border-[#ff3333]/50">
-              View Task <ArrowRight className="w-4 h-4 ml-2" />
+          {task.isRequired && (
+            <span className="px-3 py-1 text-[10px] font-bold tracking-widest uppercase bg-[#ff3333]/10 text-[#ff3333] border border-[#ff3333]/20 rounded-full shrink-0">
+              Required
+            </span>
+          )}
+        </div>
+
+        <div className="mt-auto pt-6 w-full">
+          {hidden ? (
+            <div className="w-full bg-[#111] text-white/40 text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center border border-white/5 opacity-80 cursor-not-allowed">
+              Locked
             </div>
-          </Link>
-        )}
-      </div>
-    </motion.div>
-  );
+          ) : application?.submittedTaskIds?.includes(task._id) ? (
+            <div className="w-full bg-green-500/10 text-green-500 text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center border border-green-500/20 opacity-80 cursor-not-allowed">
+              Task Submitted
+            </div>
+          ) : (
+            <Link
+              href={`/recruitment/department/${task.departmentId?.code?.toLowerCase() || ""}?taskId=${task._id}`}
+              className="block w-full"
+            >
+              <div className="w-full bg-white/5 text-white text-xs font-semibold tracking-wider uppercase px-4 py-3 rounded-lg flex items-center justify-center hover:bg-[#ff3333]/20 transition-colors border border-white/10 hover:border-[#ff3333]/50">
+                View Task <ArrowRight className="w-4 h-4 ml-2" />
+              </div>
+            </Link>
+          )}
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] pb-24">
@@ -181,8 +203,22 @@ export default function RecruitmentDashboard() {
 
       {/* Main Content */}
       <section className="max-w-6xl mx-auto px-4 md:px-8 mt-[-40px] relative z-20 space-y-16">
+        
+        {/* Global Countdown Timer if tasks are hidden */}
+        {!isRevealed && revealDate && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl"
+          >
+            <h2 className="text-white/60 font-cinzel text-lg md:text-xl uppercase tracking-widest mb-8">Tasks Revealing In</h2>
+            <TaskCountdown targetDate={revealDate} />
+          </motion.div>
+        )}
+
         {/* Primary Department */}
-        {primaryDept && (
+        {isRevealed && primaryDept && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -214,7 +250,7 @@ export default function RecruitmentDashboard() {
         )}
 
         {/* Secondary Departments */}
-        {secondaryDepts.map((dept, idx) => (
+        {isRevealed && secondaryDepts.map((dept, idx) => (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

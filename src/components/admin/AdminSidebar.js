@@ -14,6 +14,7 @@ import {
   ChevronDown,
   LayoutDashboard,
   Briefcase,
+  Settings,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 
@@ -127,6 +128,18 @@ export default function AdminSidebar() {
                 <Building2 className="w-4 h-4" />
                 <span className="text-xs font-medium">Departments</span>
               </Link>
+              <Link
+                href="/admin/recruitment/settings"
+                className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
+                  ${
+                    pathname === "/admin/recruitment/settings"
+                      ? "text-blue-600 bg-blue-50/50"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-xs font-medium">Settings</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -187,6 +200,7 @@ export default function AdminSidebar() {
             </div>
           </div>
         </div>
+
       </nav>
 
       <div className="mt-auto pt-6 border-t border-slate-100">

@@ -7,6 +7,8 @@ export default function TasksPage() {
   const fetchApi = useApi();
   const [application, setApplication] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [isRevealed, setIsRevealed] = useState(true);
+  const [revealDate, setRevealDate] = useState(null);
   const [submissions, setSubmissions] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -34,11 +36,20 @@ export default function TasksPage() {
           if (tasksData.tasks) {
             setTasks(tasksData.tasks);
             
-            // Load submissions for each task
-            for (const task of tasksData.tasks) {
-              const subData = await fetchApi(`/submissions/${appData.myApplication._id}/${task._id}`).catch(() => null);
-              if (subData?.success && subData.submission) {
-                setSubmissions(prev => ({ ...prev, [task._id]: subData.submission }));
+            if (tasksData.isRevealed !== undefined) {
+              setIsRevealed(tasksData.isRevealed);
+            }
+            if (tasksData.revealDate) {
+              setRevealDate(new Date(tasksData.revealDate));
+            }
+            
+            if (tasksData.isRevealed !== false) {
+              // Load submissions for each task
+              for (const task of tasksData.tasks) {
+                const subData = await fetchApi(`/submissions/${appData.myApplication._id}/${task._id}`).catch(() => null);
+                if (subData?.success && subData.submission) {
+                  setSubmissions(prev => ({ ...prev, [task._id]: subData.submission }));
+                }
               }
             }
           }
@@ -100,7 +111,34 @@ export default function TasksPage() {
   }
 
   if (application.paymentStatus !== 'SUCCESS') {
-    return <div className="p-8 mt-24 text-white/50">You must pay the registration fee before accessing tasks. Go to /apply.</div>;
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-white font-sans text-center">
+        <div>
+          <h1 className="text-2xl font-bold uppercase tracking-widest text-[#ff4444] mb-4">Payment Required</h1>
+          <p className="text-white/50 text-sm">You must complete your application payment to view tasks.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isRevealed && revealDate) {
+    return (
+      <main className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-white text-center font-sans">
+        <div className="w-20 h-20 bg-[#9b1a1a]/10 rounded-full flex items-center justify-center mb-6 border border-[#9b1a1a]/30">
+          <svg className="w-8 h-8 text-[#ff4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-4">Tasks Locked</h1>
+        <p className="text-white/60 max-w-md mx-auto text-sm leading-relaxed mb-8">
+          The tasks for this recruitment cycle will be revealed exactly at:
+        </p>
+        <CountdownTimer targetDate={revealDate} />
+        <p className="text-[#ff4444]/60 text-xs font-bold tracking-[0.3em] uppercase">
+          {revealDate.toLocaleString()}
+        </p>
+      </main>
+    );
   }
 
   return (
@@ -198,3 +236,43 @@ export default function TasksPage() {
     </div>
   );
 }
+
+const CountdownTimer = ({ targetDate }) => {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        clearInterval(timer);
+        setTimeLeft("00:00:00:00");
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      setTimeLeft(
+        `${days.toString().padStart(2, '0')} : ${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`
+      );
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  return (
+    <div className="font-mono text-4xl sm:text-5xl tracking-widest font-black text-white mb-6 bg-white/5 p-6 rounded-2xl border border-white/10 shadow-[0_0_50px_rgba(155,26,26,0.1)]">
+      {timeLeft || "..."}
+      <div className="flex justify-between text-[10px] text-white/30 uppercase tracking-[0.3em] font-sans mt-3 px-2">
+        <span>Days</span>
+        <span>Hours</span>
+        <span>Mins</span>
+        <span>Secs</span>
+      </div>
+    </div>
+  );
+};

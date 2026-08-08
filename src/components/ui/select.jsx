@@ -43,7 +43,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full items-center justify-between gap-1.5 rounded-xl border border-slate-200 bg-white py-3 pr-3 pl-4 text-sm font-semibold text-slate-800 transition-all outline-none select-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-slate-400 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex w-full items-center justify-between gap-1.5 rounded-xl border border-slate-200 bg-white py-3 pr-3 pl-4 text-sm font-semibold text-slate-800 transition-all outline-none select-none focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-slate-400 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}>
@@ -79,7 +79,7 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "relative isolate z-50 max-h-[300px] w-(--anchor-width) min-w-[var(--anchor-width)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl bg-white border border-slate-200 text-slate-800 shadow-xl duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "relative isolate z-50 max-h-[300px] w-[var(--anchor-width)] min-w-[var(--anchor-width)] origin-[var(--transform-origin)] overflow-x-hidden overflow-y-auto rounded-xl bg-white border border-slate-200 text-slate-800 shadow-xl duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className
           )}
           {...props}>
@@ -113,7 +113,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center gap-1.5 rounded-lg py-2.5 pr-8 pl-4 text-sm font-semibold outline-none select-none focus:bg-slate-100 focus:text-slate-900 transition-colors data-disabled:pointer-events-none data-disabled:opacity-50",
+        "relative flex w-full cursor-pointer items-center gap-1.5 rounded-lg py-2.5 pr-10 pl-3 text-sm font-semibold outline-none select-none focus:bg-slate-100 focus:text-slate-900 transition-colors data-disabled:pointer-events-none data-disabled:opacity-50",
         className
       )}
       {...props}>

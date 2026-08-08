@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, ChevronLeft, CheckCircle2 } from "lucide-react";
 import TaskAccordion from "@/components/TaskAccordion";
 import Image from "next/image";
+import TaskCountdown from "@/components/TaskCountdown";
+import SpecularButton from "@/components/SpecularButton";
 
 export default function DepartmentTasksPage() {
   const { id } = useParams();
@@ -21,12 +23,16 @@ export default function DepartmentTasksPage() {
   const [departmentName, setDepartmentName] = useState("");
   const [submittedTasks, setSubmittedTasks] = useState([]);
 
+  const [application, setApplication] = useState(null);
+  const [isRevealed, setIsRevealed] = useState(true);
+  const [revealDate, setRevealDate] = useState(null);
+
   useEffect(() => {
     const loadTasks = async () => {
       try {
         const [data, appData] = await Promise.all([
           fetchApi("/tasks?year=2026"),
-          fetchApi("/recruitment/my-application").catch(() => null)
+          fetchApi("/recruitment/my-application").catch(() => null),
         ]);
         const allTasks = data.tasks || [];
 
@@ -37,8 +43,18 @@ export default function DepartmentTasksPage() {
 
         setTasks(deptTasks);
 
-        if (appData?.myApplication?.submittedTaskIds) {
-          setSubmittedTasks(appData.myApplication.submittedTaskIds);
+        if (data.isRevealed !== undefined) {
+          setIsRevealed(data.isRevealed);
+        }
+        if (data.revealDate) {
+          setRevealDate(data.revealDate);
+        }
+
+        if (appData?.myApplication) {
+          setApplication(appData.myApplication);
+          if (appData.myApplication.submittedTaskIds) {
+            setSubmittedTasks(appData.myApplication.submittedTaskIds);
+          }
         }
 
         if (deptTasks.length > 0) {
@@ -90,13 +106,14 @@ export default function DepartmentTasksPage() {
 
       {/* Hero Section */}
       <div className="relative min-h-[60vh] md:min-h-[90vh] pt-20 flex items-center justify-end px-6 md:px-12 lg:px-24 max-w-[1920px] mx-auto z-10">
-        
         {/* Absolute Hand Image anchored to the absolute left of the browser viewport */}
-        <div 
+        <div
           className="absolute left-[calc(50%-50vw)] top-[55%] md:top-[60%] -translate-y-1/2 w-[95vw] md:w-[60vw] lg:w-[45vw] max-w-[850px] z-0 pointer-events-none"
           style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 60%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, black 60%, transparent 100%)",
           }}
         >
           <Image
@@ -119,16 +136,43 @@ export default function DepartmentTasksPage() {
       </div>
 
       {/* Tasks List Section */}
-      <div 
-        ref={tasksSectionRef} 
-        className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32 mt-16 md:mt-32 scroll-mt-24"
+      <div
+        ref={tasksSectionRef}
+        className="relative z-10 w-full max-w-[1920px] mx-auto px-6 lg:px-12 pb-32 mt-16 md:mt-32 scroll-mt-24 flex flex-col"
       >
         {loading ? (
           <div className="text-center text-white/40 uppercase tracking-widest text-sm py-12">
             Fetching classified tasks...
           </div>
+        ) : !application || application.status !== "ACTIVE" ? (
+          <div className="w-full max-w-2xl mx-auto mt-12 bg-black/40 border border-[#ff3333]/20 rounded-2xl p-10 text-center backdrop-blur-md">
+            <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+              Access Restricted
+            </h3>
+            <p className="text-white/60 mb-8 font-inter">
+              You must have an active recruitment application to view tasks.
+              Please ensure you have completed the recruitment form and any
+              pending payments.
+            </p>
+            <div className="flex justify-center">
+              <SpecularButton onClick={() => router.push("/recruitment/apply")}>
+                Complete Application
+              </SpecularButton>
+            </div>
+          </div>
+        ) : !isRevealed && revealDate ? (
+          <div className="flex flex-col items-center justify-center p-12 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-[2rem] shadow-2xl max-w-4xl mx-auto w-full mt-12">
+            <h2 className="text-white/60 font-cinzel text-xl md:text-2xl uppercase tracking-widest mb-10 text-center">
+              Tasks Revealing In
+            </h2>
+            <TaskCountdown targetDate={revealDate} />
+          </div>
         ) : (
-          <TaskAccordion tasks={tasks} initialTaskId={initialTaskId} submittedTasks={submittedTasks} />
+          <TaskAccordion
+            tasks={tasks}
+            initialTaskId={initialTaskId}
+            submittedTasks={submittedTasks}
+          />
         )}
       </div>
     </div>

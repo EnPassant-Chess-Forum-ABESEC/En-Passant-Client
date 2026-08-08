@@ -51,6 +51,25 @@ export default function RecruitmentApplyPage() {
   const [departments, setDepartments] = useState([]);
   const [loadingDepts, setLoadingDepts] = useState(true);
 
+  const [settings, setSettings] = useState(null);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetchApi("/settings/recruitment-phases").catch(() => null);
+        if (res?.data) {
+          setSettings(res.data);
+        }
+      } catch (err) {
+        console.error("Failed to load settings:", err);
+      } finally {
+        setLoadingSettings(false);
+      }
+    }
+    loadSettings();
+  }, [fetchApi]);
+
   // Auto-fill form data if user is already signed in
   useEffect(() => {
     if (clerkUser) {
