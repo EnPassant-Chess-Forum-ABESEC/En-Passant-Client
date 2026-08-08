@@ -57,7 +57,9 @@ export default function RecruitmentApplyPage() {
   useEffect(() => {
     async function loadSettings() {
       try {
-        const res = await fetchApi("/settings/recruitment-phases").catch(() => null);
+        const res = await fetchApi("/settings/recruitment-phases").catch(
+          () => null,
+        );
         if (res?.data) {
           setSettings(res.data);
         }
@@ -99,17 +101,16 @@ export default function RecruitmentApplyPage() {
             app.status === "REJECTED"
           ) {
             toast.info(
-              "Your application is already submitted! Redirecting...",
+              "Your application is already submitted! Redirecting to dashboard...",
               { id: "app-submitted-toast" },
             );
             setTimeout(() => {
-              window.location.href = "/recruitment"; // Redirect fully processed
+              window.location.href = "/recruitment/dashboard";
             }, 2500);
           } else if (
             app.status === "DRAFT" ||
             app.paymentStatus === "PENDING"
           ) {
-            // Already created, jump to payment
             setFormData((prev) => ({
               ...prev,
               name: clerkUser?.fullName || prev.name,
@@ -223,8 +224,12 @@ export default function RecruitmentApplyPage() {
         } catch (err) {
           console.error("Auth init failed", err);
           let msg = "An unknown error occurred.";
-          if (err instanceof SyntaxError && err.message.includes("is not valid JSON")) {
-            msg = "Clerk Authentication Service is currently rate-limited or unavailable. Please wait a moment and try again.";
+          if (
+            err instanceof SyntaxError &&
+            err.message.includes("is not valid JSON")
+          ) {
+            msg =
+              "Clerk Authentication Service is currently rate-limited or unavailable. Please wait a moment and try again.";
           } else {
             msg =
               err.errors?.[0]?.longMessage ||
@@ -883,8 +888,8 @@ export default function RecruitmentApplyPage() {
                           ? "Creating Account..."
                           : "Processing..."
                         : currentStep === 2
-                        ? "Review & Pay"
-                        : "Continue"}
+                          ? "Review & Pay"
+                          : "Continue"}
                       <span className="group-hover:translate-x-1 transition-transform">
                         <ChevronRight className="w-5 h-5" />
                       </span>
