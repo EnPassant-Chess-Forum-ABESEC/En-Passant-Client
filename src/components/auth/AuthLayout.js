@@ -1,11 +1,9 @@
-import Image from "next/image";
-
 export default function AuthLayout({ children }) {
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden flex items-center justify-center">
-      {/* Background Image */}
+      {/* ── Full-screen background (hidden on mobile) ── */}
       <div
-        className="absolute inset-0 z-0 opacity-50"
+        className="hidden md:block absolute inset-0 z-0 opacity-50"
         style={{
           backgroundImage: "url('/signup_login_background.jpeg')",
           backgroundSize: "cover",
@@ -14,27 +12,66 @@ export default function AuthLayout({ children }) {
         }}
       />
 
-      {/* Right Figure Image */}
+      {/* ── Centered split card ── */}
       <div
-        className="hidden lg:block absolute right-0 bottom-0 z-20 w-[50%] max-w-[800px] h-[95%] pointer-events-none"
+        className="relative z-10 flex w-full max-w-5xl mx-4 sm:mx-6 overflow-hidden"
         style={{
-          backgroundImage: "url('/login_signup_figure.png')",
-          backgroundSize: "contain",
-          backgroundPosition: "bottom right",
-          backgroundRepeat: "no-repeat",
+          minHeight: "600px",
+          borderRadius: "2rem",
+          boxShadow:
+            "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
-      />
+      >
+        {/* LEFT — figure image, flipped horizontally */}
+        <div
+          className="hidden lg:block relative flex-1"
+          style={{
+            backgroundColor: "#050505",
+            backgroundImage: "url('/dark_marble_bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          {/* We use an <img> tag so transform applies cleanly */}
+          <img
+            src="/login_signup_figure.png"
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center 15%",
+              transform: "scaleX(-1)",
+              display: "block",
+              mixBlendMode: "screen",
+            }}
+          />
 
-      {/* Content Container */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-screen">
-        {/* Left Text */}
-        <div className="hidden lg:flex flex-col font-black text-[5rem] xl:text-[6rem] leading-[1.05] tracking-tight text-white drop-shadow-xl z-30">
-          <span className="text-gray-100">Think.</span>
-          <span className="text-[#d30000]">Move.</span>
-          <span className="text-gray-100">Conquer.</span>
+          {/* Subtle right-edge fade into form panel */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)",
+              zIndex: 1,
+            }}
+          />
         </div>
 
-        <div className="w-full lg:w-[400px] flex justify-center z-30 lg:absolute lg:left-[45%] xl:left-1/2 lg:-translate-x-1/2">
+        {/* RIGHT — form */}
+        <div
+          className="flex flex-col items-center justify-center w-full lg:w-[55%] flex-shrink-0 px-4 sm:px-8 py-10"
+          style={{
+            background: "rgba(10, 10, 10, 0.92)",
+            backdropFilter: "blur(24px) saturate(150%)",
+            WebkitBackdropFilter: "blur(24px) saturate(150%)",
+          }}
+        >
           {children}
         </div>
       </div>

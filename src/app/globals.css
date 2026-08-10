@@ -453,3 +453,27 @@ body {
 [class*="cl-userButtonPopoverActionButton__manageAccount"] {
   display: none !important;
 }
+
+/* Ensure full width and clean centering of Clerk forms on phone */
+@media (max-width: 640px) {
+  .cl-rootBox,
+  .cl-cardBox,
+  .cl-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .cl-card {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
+
+/* Hide Clerk logo components */
+.cl-logoBox,
+.cl-logoImage,
+[class*="cl-logoBox"],
+[class*="cl-logoImage"] {
+  display: none !important;
+}
+
+
