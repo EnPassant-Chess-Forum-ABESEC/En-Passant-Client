@@ -1,6 +1,9 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaWhatsapp, FaGithub, FaInstagram, FaDiscord } from "react-icons/fa";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const columns = [
   {
@@ -21,199 +24,207 @@ const columns = [
       { label: "Endgames", href: "#" },
     ],
   },
+];
+
+const socials = [
   {
-    heading: "COMPANY",
-    links: [
-      { label: "Contact", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
-    ],
+    label: "WhatsApp",
+    href: "https://chat.whatsapp.com/IoiMk9ru9CpEew7dHJkHve",
+    icon: <FaWhatsapp size={20} />,
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/EnPassant-Chess-Forum-ABESEC",
+    icon: <FaGithub size={20} />,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/enpassant.abesec/",
+    icon: <FaInstagram size={20} />,
+  },
+  {
+    label: "Discord",
+    href: "https://discord.gg/WDF4UXrXC",
+    icon: <FaDiscord size={20} />,
   },
 ];
 
 export default function Footer() {
   const pathname = usePathname();
+  const containerRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end end"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["30%", "0%"]);
+
   if (pathname?.startsWith("/admin")) return null;
 
   return (
     <footer
-      className="w-full relative overflow-hidden"
-      style={{ boxShadow: "0 -10px 40px rgba(196,30,58,0.06)" }}
+      ref={containerRef}
+      className="w-full relative h-[100dvh] overflow-hidden"
+      style={{ backgroundColor: "#080808" }}
     >
-      {/* Gradient glow divider — heated crack in obsidian */}
-      <div
-        className="w-full h-[1px] relative z-20"
-        style={{
-          background: "linear-gradient(to right, transparent 0%, rgba(196,30,58,0.4) 20%, rgba(196,30,58,0.8) 50%, rgba(196,30,58,0.4) 80%, transparent 100%)",
-          boxShadow: "0 1px 20px rgba(196,30,58,0.12), 0 0 40px rgba(196,30,58,0.04)",
-        }}
-      />
-
-      {/* Bevel gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.04) 0%, transparent 8%)" }}
-      />
-
-      {/* Grain texture */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            'url("data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")',
-          transform: "translateZ(0)",
-          willChange: "transform",
-        }}
-      />
-
-      {/* Subliminal chessboard */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-[0.015]"
-        style={{
-          backgroundImage: "repeating-conic-gradient(rgba(255,255,255,0.02) 0% 25%, transparent 0% 50%)",
-          backgroundSize: "64px 64px",
-        }}
-      />
-
-      {/* Main content */}
-      <div
-        className="relative z-10 w-full"
-        style={{ backgroundColor: "#0f0f0f", padding: "48px 60px 24px 60px" }}
+      <motion.div
+        style={{ y }}
+        className="w-full h-full flex flex-col relative z-0"
       >
-        <div className="w-full max-w-[1100px] mx-auto">
 
-          {/* Brand Bar */}
-          <div
-            className="flex items-center justify-between"
-            style={{ paddingBottom: "20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-          >
-            <span
-              className="font-cinzel font-bold text-[24px] text-white uppercase"
-              style={{ letterSpacing: "0.12em", textShadow: "0 0 30px rgba(255,255,255,0.05)" }}
-            >
-              ENPASSANT
-            </span>
-            <div className="flex items-center gap-4">
-              {/* GitHub */}
-              <a href="#" className="text-white opacity-[0.35] hover:opacity-100 hover:text-[#c41e3a] transition-all duration-200">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-              </a>
-              {/* X / Twitter */}
-              <a href="#" className="text-white opacity-[0.35] hover:opacity-100 hover:text-[#c41e3a] transition-all duration-200">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-              </a>
-              {/* LinkedIn */}
-              <a href="#" className="text-white opacity-[0.35] hover:opacity-100 hover:text-[#c41e3a] transition-all duration-200">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-              </a>
-              {/* Discord */}
-              <a href="#" className="text-white opacity-[0.35] hover:opacity-100 hover:text-[#c41e3a] transition-all duration-200">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M18 9a5 5 0 0 0-3.89-1.89l-.61.12A5 5 0 0 0 10.5 7.1l-.61-.12A5 5 0 0 0 6 9"></path><path d="M20.27 16c.93-1.65 1.58-3.44 1.73-5.32a8.46 8.46 0 0 0-3.44-2.18"></path><path d="M3.73 16c-.93-1.65-1.58-3.44-1.73-5.32A8.46 8.46 0 0 1 5.44 8.5"></path><path d="M15 18s0 2-3 2-3-2-3-2"></path><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle></svg>
-              </a>
-            </div>
-          </div>
 
-          {/* Three Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 pt-8" style={{ gap: "0" }}>
-            {columns.map((col, colIdx) => (
-              <div
-                key={col.heading}
-                className="flex flex-col px-6 md:px-10"
+        <div
+          className="absolute top-0 left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(155,26,26,0.12) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* <div className="absolute top-1/2 -translate-y-1/2 right-0 h-[140%] pointer-events-none z-0 opacity-[0.08] mix-blend-luminosity">
+          <img
+            src="/pawn.png"
+            alt=""
+            className="h-full w-auto object-cover object-right lg:object-contain translate-x-1/2 select-none"
+          />
+        </div> */}
+
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.025]"
+          style={{
+            backgroundImage:
+              'url("data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")',
+          }}
+        />
+
+        <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-[120px] lg:pt-[150px] pb-8">
+          <div className="flex items-start justify-between w-full mb-6 md:mb-8">
+            <div>
+              <span
+                className="font-cinzel font-black text-white uppercase"
                 style={{
-                  borderLeft: colIdx > 0 ? "1px solid rgba(255,255,255,0.06)" : "none",
+                  fontSize: "clamp(28px, 4vw, 52px)",
+                  letterSpacing: "0.06em",
+                  lineHeight: 1,
                 }}
               >
-                {/* Chiseled heading — Cinzel */}
-                <h3
-                  className="font-cinzel font-bold text-[14px] uppercase select-none"
-                  style={{
-                    letterSpacing: "0.12em",
-                    color: "rgba(255,255,255,0.45)",
-                    borderBottom: "1px solid rgba(196,30,58,0.3)",
-                    paddingBottom: "12px",
-                    marginBottom: "24px",
-                  }}
-                >
-                  {col.heading}
-                </h3>
-
-                {/* Manuscript links — EB Garamond */}
-                <div className="flex flex-col">
-                  {col.links.map((link) => (
-                    <Link
-                      key={`${colIdx}-${link.label}`}
-                      href={link.href}
-                      className="group font-eb-garamond font-normal text-[16px] block transition-all duration-[250ms] ease-in-out hover:pl-[6px] hover:italic hover:text-[#c41e3a]"
-                      style={{ lineHeight: "2.2", color: "rgba(255,255,255,0.6)", letterSpacing: "0.01em" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.color = "#c41e3a"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
-                    >
-                      <span className="inline-block w-0 overflow-hidden opacity-0 group-hover:w-[14px] group-hover:opacity-100 transition-all duration-200 ease-in-out text-[6px] text-[#c41e3a] align-middle leading-none not-italic">
-                        •
-                      </span>
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Chess Quote Block */}
-          <div className="w-full flex flex-col items-center" style={{ margin: "40px auto" }}>
-            {/* Thin manuscript rule — top */}
-            <div className="w-[120px] mx-auto" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }} />
-
-            <div className="max-w-[600px] text-center mt-6 mb-6">
-              <p
-                className="font-eb-garamond italic font-normal text-[20px]"
-                style={{ lineHeight: "1.6", color: "rgba(255,255,255,0.45)", letterSpacing: "0.02em" }}
-              >
-                The beauty of a move lies not in its appearance but in the thought behind it.
-              </p>
-              <p
-                className="font-cinzel font-medium text-[11px] uppercase"
-                style={{ letterSpacing: "0.16em", color: "rgba(196,30,58,0.6)", marginTop: "16px" }}
-              >
-                — Savielly Tartakower
+                EN<span style={{ color: "#c41e3a" }}>PASSANT</span>
+              </span>
+              <p className="text-white/30 text-sm mt-3 font-inter tracking-widest uppercase">
+                For the game must always go on
               </p>
             </div>
 
-            {/* Thin manuscript rule — bottom */}
-            <div className="w-[120px] mx-auto" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }} />
+            <div className="flex items-center gap-5 mt-2">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/25 hover:text-[#c41e3a] transition-all duration-300 hover:scale-110 cursor-pointer"
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Bottom Copyright Bar */}
+          <div className="flex flex-col justify-center w-full mb-6 lg:mb-10 flex-1">
+            <div
+              className="w-10 h-[2px] mb-8"
+              style={{
+                background: "linear-gradient(to right, #c41e3a, transparent)",
+              }}
+            />
+            <blockquote>
+              <p
+                className="font-eb-garamond italic leading-relaxed text-white/70"
+                style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
+              >
+                "The beauty of a move lies not in its appearance but in the
+                thought behind it."
+              </p>
+              <footer
+                className="font-cinzel text-[11px] uppercase tracking-[0.22em] mt-6"
+                style={{ color: "rgba(196,30,58,0.7)" }}
+              >
+                — Savielly Tartakower
+              </footer>
+            </blockquote>
+          </div>
+
+          <div className="flex w-full justify-start mt-auto pb-4 lg:pl-[58%] xl:pl-[61%] 2xl:pl-[63%]">
+            <div className="grid grid-cols-2 gap-x-24 lg:gap-x-32 gap-y-0 lg:min-w-[500px]">
+              {columns.map((col) => (
+                <div key={col.heading} className="flex flex-col">
+                  <h3
+                    className="font-cinzel font-bold text-[13px] uppercase select-none"
+                    style={{
+                      letterSpacing: "0.15em",
+                      color: "rgba(255,255,255,0.45)",
+                      borderBottom: "1px solid rgba(196,30,58,0.3)",
+                      paddingBottom: "14px",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    {col.heading}
+                  </h3>
+                  <div className="flex flex-col">
+                    {col.links.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center font-eb-garamond font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#c41e3a]"
+                        style={{
+                          lineHeight: "2.4",
+                          letterSpacing: "0.015em",
+                        }}
+                      >
+                        <span className="h-[1px] bg-[#c41e3a] transition-all duration-300 ease-out w-0 group-hover:w-6 group-hover:mr-3" />
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div
-            className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0"
-            style={{
-              borderTop: "1px solid rgba(255,255,255,0.06)",
-              paddingTop: "16px",
-              marginTop: "32px",
-            }}
+            className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-6"
+            style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <span
-              className="font-cinzel font-medium text-[11px] text-white uppercase"
-              style={{ letterSpacing: "0.14em", opacity: "0.4" }}
-            >
-              © 2026 ENPASSANT
+            <span className="font-cinzel text-[10px] text-white/50 uppercase tracking-[0.18em]">
+              © {new Date().getFullYear()} En Passant · ABESEC
             </span>
-            <span
-              className="font-cinzel font-medium text-[11px] text-white uppercase"
-              style={{ letterSpacing: "0.14em", opacity: "0.35" }}
-            >
-              FORGED IN TACTICAL EXCELLENCE
-            </span>
-            <span className="font-eb-garamond font-normal text-[13px] text-white flex items-center gap-2" style={{ letterSpacing: "0.04em", opacity: "0.45" }}>
-              <Link href="#" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Privacy</Link>
-              <span className="opacity-30">·</span>
-              <Link href="#" className="hover:text-[#c41e3a] hover:italic transition-all duration-200">Terms</Link>
-            </span>
+            <span className="font-cinzel text-[10px] text-white/15 uppercase tracking-[0.18em]"></span>
+            <div className="flex items-center gap-4">
+              <Link
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-inter text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+              >
+                Privacy
+              </Link>
+              <span className="text-white/20 pointer-events-none">·</span>
+              <Link
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-inter text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+              >
+                Terms
+              </Link>
+            </div>
           </div>
-
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 }

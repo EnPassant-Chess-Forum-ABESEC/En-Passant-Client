@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
             <NavbarWrapper>
               <Navbar />
             </NavbarWrapper>
-            <main className="flex-1 flex flex-col overflow-x-hidden">
+            <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
               {children}
             </main>
             <Footer />
