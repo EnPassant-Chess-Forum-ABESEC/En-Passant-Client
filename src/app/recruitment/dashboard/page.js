@@ -56,7 +56,7 @@ export default function RecruitmentDashboard() {
         setApplication(appRes.myApplication);
       }
       setTasks(tasksRes.tasks || []);
-      
+
       if (tasksRes.isRevealed !== undefined) {
         setIsRevealed(tasksRes.isRevealed);
       }
@@ -114,7 +114,7 @@ export default function RecruitmentDashboard() {
           ease: [0.16, 1, 0.3, 1],
         }}
         key={task._id}
-        className={`relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300 flex flex-col h-full ${hidden ? 'opacity-80' : ''}`}
+        className={`relative group bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 hover:border-[#ff3333]/30 transition-all duration-300 flex flex-col h-full ${hidden ? "opacity-80" : ""}`}
       >
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff3333]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
@@ -124,7 +124,9 @@ export default function RecruitmentDashboard() {
               {hidden ? "Task Details Hidden" : task.title}
             </h3>
             <p className="text-sm text-white/60 line-clamp-2">
-              {hidden ? "This task will be revealed once the designated countdown is over. Prepare yourself." : task.summary}
+              {hidden
+                ? "This task will be revealed once the designated countdown is over. Prepare yourself."
+                : task.summary}
             </p>
           </div>
           {task.isRequired && (
@@ -160,7 +162,6 @@ export default function RecruitmentDashboard() {
 
   return (
     <div className="min-h-screen bg-[#050505] pb-24">
-      {/* Hero Section */}
       <section className="relative w-full h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <motion.div
           style={{ y: backgroundY }}
@@ -179,7 +180,6 @@ export default function RecruitmentDashboard() {
           />
         </motion.div>
 
-        {/* Fixed gradients to fade out the moving parallax image */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] z-0 pointer-events-none"></div>
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-0 pointer-events-none"></div>
         <motion.div
@@ -196,88 +196,147 @@ export default function RecruitmentDashboard() {
             <span className="font-bold text-[#ff3333] uppercase">
               {application.status?.replace(/_/g, " ")}
             </span>
-            . Complete the designated tasks for your selected departments below.
+            .{" "}
+            {application.status === "ACTIVE"
+              ? "Complete the designated tasks for your selected departments below."
+              : "Complete your application process to unlock access to the designated tasks."}
           </p>
         </motion.div>
       </section>
 
-      {/* Main Content */}
       <section className="max-w-6xl mx-auto px-4 md:px-8 mt-[-40px] relative z-20 space-y-16">
-        
-        {/* Global Countdown Timer if tasks are hidden */}
-        {!isRevealed && revealDate && (
-          <motion.div 
+        {application.status === "ACTIVE" ? (
+          <>
+            {!isRevealed && revealDate && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl"
+              >
+                <h2 className="text-white/60 font-cinzel text-lg md:text-xl uppercase tracking-widest mb-8">
+                  Tasks Revealing In
+                </h2>
+                <TaskCountdown targetDate={revealDate} />
+              </motion.div>
+            )}
+
+            {isRevealed && primaryDept && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="space-y-6"
+              >
+                <div className="flex items-center gap-4">
+                  <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
+                    {primaryDept.name}
+                  </h2>
+                  <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
+                    Primary Choice
+                  </span>
+                </div>
+                {primaryDept.description && (
+                  <p className="text-white/60 text-sm">
+                    {primaryDept.description}
+                  </p>
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                  {getTasksForDept(primaryDept._id).length > 0 ? (
+                    getTasksForDept(primaryDept._id).map(renderTaskCard)
+                  ) : (
+                    <div className="col-span-full p-8 text-center bg-white/[0.02] border border-white/5 rounded-2xl text-white/40 text-sm tracking-widest uppercase">
+                      No tasks assigned for this department yet.
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {isRevealed &&
+              secondaryDepts.map((dept, idx) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
+                  key={dept._id}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-4">
+                    <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
+                      {dept.name}
+                    </h2>
+                    <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
+                      Secondary Choice
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    {getTasksForDept(dept._id).length > 0 ? (
+                      getTasksForDept(dept._id).map(renderTaskCard)
+                    ) : (
+                      <div className="col-span-full p-8 text-center bg-white/[0.02] border border-white/5 rounded-2xl text-white/40 text-sm tracking-widest uppercase">
+                        No tasks assigned for this department yet.
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+          </>
+        ) : (
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl"
+            className="w-full max-w-2xl mx-auto bg-white/[0.02] border border-white/10 rounded-[2rem] p-12 text-center backdrop-blur-xl shadow-2xl mt-12 relative overflow-hidden"
           >
-            <h2 className="text-white/60 font-cinzel text-lg md:text-xl uppercase tracking-widest mb-8">Tasks Revealing In</h2>
-            <TaskCountdown targetDate={revealDate} />
-          </motion.div>
-        )}
-
-        {/* Primary Department */}
-        {isRevealed && primaryDept && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <div className="flex items-center gap-4">
-              <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
-                {primaryDept.name}
-              </h2>
-              <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
-                Primary Choice
-              </span>
-            </div>
-            {primaryDept.description && (
-              <p className="text-white/60 text-sm">{primaryDept.description}</p>
+            <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+            {application.status === "PAYMENT_PENDING" ? (
+              <>
+                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                  Payment Under Review
+                </h3>
+                <p className="text-white/60 max-w-md mx-auto leading-relaxed">
+                  Your payment details have been received and are currently
+                  being verified by our administrators. You will gain access to
+                  the dashboard once your payment is approved.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                  Access Restricted
+                </h3>
+                <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
+                  You must have an active recruitment application to view and
+                  participate in tasks. Please ensure you have filled the
+                  recruitment form.
+                </p>
+                <div className="max-w-[280px] mx-auto">
+                  <SpecularButton
+                    onClick={() => router.push("/recruitment/apply")}
+                    className="w-full h-14 group"
+                    radius={12}
+                    lineColor="#ff4444"
+                    baseColor="#550000"
+                    textColor="#ffffff"
+                    tint="#9b1a1a"
+                    tintOpacity={0.15}
+                    autoAnimate={true}
+                  >
+                    <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
+                      <span>Complete Application</span>
+                      <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                        <ArrowRight className="w-5 h-5" />
+                      </span>
+                    </div>
+                  </SpecularButton>
+                </div>
+              </>
             )}
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-              {getTasksForDept(primaryDept._id).length > 0 ? (
-                getTasksForDept(primaryDept._id).map(renderTaskCard)
-              ) : (
-                <div className="col-span-full p-8 text-center bg-white/[0.02] border border-white/5 rounded-2xl text-white/40 text-sm tracking-widest uppercase">
-                  No tasks assigned for this department yet.
-                </div>
-              )}
-            </div>
           </motion.div>
         )}
-
-        {/* Secondary Departments */}
-        {isRevealed && secondaryDepts.map((dept, idx) => (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
-            key={dept._id}
-            className="space-y-6"
-          >
-            <div className="flex items-center gap-4">
-              <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
-                {dept.name}
-              </h2>
-              <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
-                Secondary Choice
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-              {getTasksForDept(dept._id).length > 0 ? (
-                getTasksForDept(dept._id).map(renderTaskCard)
-              ) : (
-                <div className="col-span-full p-8 text-center bg-white/[0.02] border border-white/5 rounded-2xl text-white/40 text-sm tracking-widest uppercase">
-                  No tasks assigned for this department yet.
-                </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
       </section>
     </div>
   );

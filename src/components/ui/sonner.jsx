@@ -45,7 +45,7 @@ const Toaster = ({
         classNames: {
           toast: isAdmin 
             ? "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg"
-            : "group toast group-[.toaster]:bg-[#0f0f0f] group-[.toaster]:text-white group-[.toaster]:border-[#9b1a1a]/30 group-[.toaster]:shadow-sm group-[.toaster]:rounded-xl font-inter",
+            : "group toast group-[.toaster]:bg-white/[0.03] group-[.toaster]:backdrop-blur-xl group-[.toaster]:text-white group-[.toaster]:border-white/10 group-[.toaster]:shadow-2xl group-[.toaster]:rounded-xl font-inter",
           description: isAdmin
             ? "group-[.toast]:text-muted-foreground"
             : "group-[.toast]:text-white/60",
