@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaWhatsapp, FaGithub, FaInstagram, FaDiscord } from "react-icons/fa";
+import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
+import { SiChessdotcom } from "react-icons/si";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const columns = [
@@ -33,9 +34,9 @@ const socials = [
     icon: <FaWhatsapp size={20} />,
   },
   {
-    label: "GitHub",
-    href: "https://github.com/EnPassant-Chess-Forum-ABESEC",
-    icon: <FaGithub size={20} />,
+    label: "Chess.com",
+    href: "https://www.chess.com/club/en-passant-abesec",
+    icon: <SiChessdotcom size={20} />,
   },
   {
     label: "Instagram",
@@ -80,16 +81,8 @@ export default function Footer() {
           }}
         />
 
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.025]"
-          style={{
-            backgroundImage:
-              'url("data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")',
-          }}
-        />
-
-        <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-[120px] lg:pt-[150px] pb-8">
-          <div className="flex items-start justify-between w-full mb-6 md:mb-8">
+        <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-32 md:pt-[120px] lg:pt-[150px] pb-8">
+          <div className="flex flex-col md:flex-row items-start md:justify-between w-full mb-6 md:mb-8 gap-6 md:gap-0">
             <div>
               <span
                 className="font-cinzel font-black text-white uppercase"
@@ -122,7 +115,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center w-full mb-6 lg:mb-10 flex-1">
+          <div className="hidden md:flex flex-col justify-center w-full mb-6 lg:mb-10 flex-1">
             <div
               className="w-10 h-[2px] mb-8"
               style={{
@@ -146,8 +139,8 @@ export default function Footer() {
             </blockquote>
           </div>
 
-          <div className="flex w-full justify-start mt-auto pb-4 lg:pl-[58%] xl:pl-[61%] 2xl:pl-[63%]">
-            <div className="grid grid-cols-2 gap-x-24 lg:gap-x-32 gap-y-0 lg:min-w-[500px]">
+          <div className="flex w-full justify-center md:justify-start mt-auto pb-4 lg:pl-[58%] xl:pl-[61%] 2xl:pl-[63%]">
+            <div className="flex justify-between w-full md:grid md:grid-cols-2 md:w-auto md:justify-start gap-x-4 md:gap-x-24 lg:gap-x-32 gap-y-0 lg:min-w-[500px]">
               {columns.map((col) => (
                 <div key={col.heading} className="flex flex-col">
                   <h3
@@ -186,14 +179,14 @@ export default function Footer() {
           </div>
 
           <div
-            className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-6"
+            className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 mt-6"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <span className="font-cinzel text-[10px] text-white/50 uppercase tracking-[0.18em]">
+            <span className="font-cinzel text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left">
               © {new Date().getFullYear()} En Passant · ABESEC
             </span>
-            <span className="font-cinzel text-[10px] text-white/15 uppercase tracking-[0.18em]"></span>
-            <div className="flex items-center gap-4">
+            
+            <div className="flex items-center justify-center gap-4">
               <Link
                 href="#"
                 target="_blank"
