@@ -428,7 +428,7 @@ export default function RecruitmentApplyPage() {
       <div
         className="relative z-10 flex w-full max-w-5xl overflow-hidden rounded-[2rem]"
         style={{
-          height: "680px",
+          height: "740px",
           boxShadow:
             "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
@@ -524,7 +524,7 @@ export default function RecruitmentApplyPage() {
             )}
           </div>
 
-          <div className="py-6 flex-1 flex flex-col justify-center relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10">
+          <div className="py-6 flex-1 min-h-0 flex flex-col relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10">
             <AnimatePresence mode="wait">
               {currentStep === 0 && (
                 <motion.div

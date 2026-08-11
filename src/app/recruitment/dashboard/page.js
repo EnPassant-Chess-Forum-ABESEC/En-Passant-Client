@@ -50,11 +50,7 @@ export default function RecruitmentDashboard() {
         fetchApi("/tasks?year=2026").catch(() => ({ tasks: [] })),
       ]);
 
-      if (appRes?.myApplication?.status !== "ACTIVE") {
-        setApplication(appRes?.myApplication || {});
-      } else {
-        setApplication(appRes.myApplication);
-      }
+      setApplication(appRes?.myApplication || null);
       setTasks(tasksRes.tasks || []);
 
       if (tasksRes.isRevealed !== undefined) {
@@ -91,6 +87,16 @@ export default function RecruitmentDashboard() {
       </div>
     );
   }
+
+  const isActiveOrFurther = [
+    "ACTIVE",
+    "TASK_SUBMITTED",
+    "SHORTLISTED",
+    "UNDER_REVIEW",
+    "INTERVIEW",
+    "SELECTED",
+    "REJECTED",
+  ].includes(application.status);
 
   const primaryDept = application.preferredDepartmentId;
   const secondaryDepts = application.secondaryDepartmentId || [];
@@ -196,8 +202,7 @@ export default function RecruitmentDashboard() {
             <span className="font-bold text-[#ff3333] uppercase">
               {application.status?.replace(/_/g, " ")}
             </span>
-            .{" "}
-            {application.status === "ACTIVE"
+            {isActiveOrFurther
               ? "Complete the designated tasks for your selected departments below."
               : "Complete your application process to unlock access to the designated tasks."}
           </p>
@@ -205,7 +210,7 @@ export default function RecruitmentDashboard() {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 md:px-8 mt-[-40px] relative z-20 space-y-16">
-        {application.status === "ACTIVE" ? (
+        {isActiveOrFurther ? (
           <>
             {!isRevealed && revealDate && (
               <motion.div

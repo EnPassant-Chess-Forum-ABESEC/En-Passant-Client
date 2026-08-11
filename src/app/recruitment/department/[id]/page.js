@@ -83,6 +83,16 @@ export default function DepartmentTasksPage() {
     }
   }, [loading]);
 
+  const isActiveOrFurther = application && [
+    "ACTIVE",
+    "TASK_SUBMITTED",
+    "SHORTLISTED",
+    "UNDER_REVIEW",
+    "INTERVIEW",
+    "SELECTED",
+    "REJECTED",
+  ].includes(application.status);
+
   return (
     <div className="min-h-screen bg-[#050505] relative overflow-hidden text-white font-sans selection:bg-[#9b1a1a]/40">
       <div
@@ -135,7 +145,7 @@ export default function DepartmentTasksPage() {
           <div className="text-center text-white/40 uppercase tracking-widest text-sm py-12">
             Fetching classified tasks...
           </div>
-        ) : !application || application.status !== "ACTIVE" ? (
+        ) : !isActiveOrFurther ? (
           <div className="w-full max-w-2xl mx-auto mt-12 bg-white/[0.02] border border-white/10 rounded-[2rem] p-12 text-center backdrop-blur-xl shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
             {application?.status === "PAYMENT_PENDING" ? (

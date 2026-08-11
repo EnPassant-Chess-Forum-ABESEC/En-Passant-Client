@@ -75,22 +75,18 @@ export default function Navbar() {
               Leaderboard
             </Link>
             <Link
-              href="/recruitment"
+              href={
+                myApplication &&
+                !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
+                  myApplication.status,
+                )
+                  ? "/recruitment/dashboard"
+                  : "/recruitment"
+              }
               className="text-white/90 font-inter font-semibold text-[14px] tracking-[0.12em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
             >
               Recruitment
             </Link>
-            {myApplication &&
-              !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
-                myApplication.status,
-              ) && (
-                <Link
-                  href="/recruitment/dashboard"
-                  className="text-white/90 font-inter font-semibold text-[14px] tracking-[0.12em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
-                >
-                  Dashboard
-                </Link>
-              )}
 
             {/* Subtle vertical divider */}
             <div className="w-px h-5 bg-white/20 mx-2"></div>
@@ -166,24 +162,19 @@ export default function Navbar() {
             Leaderboard
           </Link>
           <Link
-            href="/recruitment"
+            href={
+              myApplication &&
+              !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
+                myApplication.status,
+              )
+                ? "/recruitment/dashboard"
+                : "/recruitment"
+            }
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-white/90 font-inter font-semibold text-[16px] tracking-[0.08em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
           >
             Recruitment
           </Link>
-          {myApplication &&
-            !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
-              myApplication.status,
-            ) && (
-              <Link
-                href="/recruitment/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white/90 font-inter font-semibold text-[16px] tracking-[0.08em] uppercase hover:text-[#9b1a1a] hover:font-bold hover:tracking-[0.14em] transition-all duration-150 ease-in-out"
-              >
-                Dashboard
-              </Link>
-            )}
 
           <div className="w-12 h-px bg-white/20 my-4"></div>
 
