@@ -203,8 +203,8 @@ export default function RecruitmentDashboard() {
               {application.status?.replace(/_/g, " ")}
             </span>
             {isActiveOrFurther
-              ? "Complete the designated tasks for your selected departments below."
-              : "Complete your application process to unlock access to the designated tasks."}
+              ? ". Complete the designated tasks for your selected departments below."
+              : ". Complete your application process to unlock access to the designated tasks."}
           </p>
         </motion.div>
       </section>
