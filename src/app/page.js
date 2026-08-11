@@ -9,13 +9,12 @@ import dynamic from "next/dynamic";
 const NumbersSection = dynamic(() => import("@/components/NumbersSection"), {
   ssr: false,
 });
-const StrategySection = dynamic(() => import("@/components/StrategySection"), {
+const StrategySection = dynamic(() => import("@/components/CommunityDesc"), {
   ssr: true,
 });
-const EcosystemSection = dynamic(
-  () => import("@/components/EcosystemSection"),
-  { ssr: true },
-);
+const EcosystemSection = dynamic(() => import("@/components/AboutClub"), {
+  ssr: true,
+});
 const ClubJournalSection = dynamic(
   () => import("@/components/ClubJournalSection"),
   { ssr: true },
@@ -160,13 +159,11 @@ export default function Home() {
               className="max-w-[340px] hidden md:block pointer-events-auto"
             >
               <p className="text-[#cccccc] font-inter font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
-                Strategic Mastery And
+                Whether you're making
                 <br />
-                Performance-Driven Growth
+                your first move or your thousandth,
                 <br />
-                For Ambitious Players
-                <br />
-                Ready To Scale
+                there's a place for you here
               </p>
             </motion.div>
 
@@ -180,15 +177,15 @@ export default function Home() {
             >
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
                 <span className="text-[#cccccc] font-inter font-medium text-[13px] tracking-[0.1em] opacity-80">
-                  [chess community]
+                  Chess forum
                 </span>
                 <br />
-                that creates elite grandmaster systems
+                Dedicated to spread the game of chess
               </div>
               <div className="group relative w-full sm:w-auto flex justify-center">
                 <Link href="/sign-up" className="btn-bracket group">
                   <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
-                    Book A Strategy Call
+                    Sign up here
                   </div>
                 </Link>
               </div>

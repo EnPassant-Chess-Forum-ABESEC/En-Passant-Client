@@ -21,36 +21,41 @@ export default function EcosystemSection() {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 60, damping: 20, delay: custom * 0.15 },
+      transition: {
+        type: "spring",
+        stiffness: 60,
+        damping: 20,
+        delay: custom * 0.15,
+      },
     }),
   };
 
   const cards = [
     {
-      notation: "A1",
+      notation: "e4",
       title: "COMPETE",
       items: [
-        "Weekly tournaments",
-        "Campus leagues",
-        "Intercollege events",
-        "Arena nights",
+        "Monthly Tournaments",
+        "Campus Leagues",
+        "Intercollege Events",
+        "Arena Nights",
       ],
       position: "top-[60vw] md:top-[12vw] left-0 md:left-[2vw]",
     },
     {
-      notation: "B2",
+      notation: "e5",
       title: "LEARN",
-      items: ["Workshops", "Game reviews", "Opening theory", "Masterclasses"],
+      items: ["Workshops", "Game reviews", "Opening theory", "Daily Puzzles"],
       position: "top-[110vw] md:top-[24vw] left-[50vw] md:left-[50vw]",
     },
     {
-      notation: "C3",
+      notation: "d4",
       title: "CONNECT",
       items: ["Community", "Club nights", "Casual games", "Collaborations"],
       position: "top-[160vw] md:top-[60vw] left-0 md:left-[14vw]",
     },
     {
-      notation: "D4",
+      notation: "D5",
       title: "LEAD",
       items: [
         "Organize events",
@@ -63,7 +68,7 @@ export default function EcosystemSection() {
   ];
 
   return (
-    <section className="relative w-full bg-[#050505] overflow-hidden font-sans">
+    <section className="relative w-full bg-[#050505] overflow-hidden font-sans pt-20">
       {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
@@ -142,7 +147,7 @@ export default function EcosystemSection() {
         {/* ─── Header: THE CLUB IN ACTION ─── */}
         <div className="absolute top-[6vw] md:top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
           <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
-            <motion.span 
+            <motion.span
               custom={0}
               initial="hidden"
               whileInView="visible"
@@ -153,7 +158,7 @@ export default function EcosystemSection() {
               THE CLUB
             </motion.span>
             <span className="text-[12vw] md:text-[7vw]">
-              <motion.span 
+              <motion.span
                 custom={1}
                 initial="hidden"
                 whileInView="visible"
@@ -163,7 +168,7 @@ export default function EcosystemSection() {
               >
                 IN
               </motion.span>{" "}
-              <motion.span 
+              <motion.span
                 custom={2}
                 initial="hidden"
                 whileInView="visible"

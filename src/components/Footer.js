@@ -52,10 +52,10 @@ const socials = [
 export default function Footer() {
   const pathname = usePathname();
   const containerRef = useRef(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end end"]
+    offset: ["start end", "end end"],
   });
 
   const y = useTransform(scrollYProgress, [0, 1], ["30%", "0%"]);
@@ -72,8 +72,6 @@ export default function Footer() {
         style={{ y }}
         className="w-full h-full flex flex-col relative z-0"
       >
-
-
         <div
           className="absolute top-0 left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none"
           style={{
@@ -81,14 +79,6 @@ export default function Footer() {
               "radial-gradient(circle, rgba(155,26,26,0.12) 0%, transparent 70%)",
           }}
         />
-
-        {/* <div className="absolute top-1/2 -translate-y-1/2 right-0 h-[140%] pointer-events-none z-0 opacity-[0.08] mix-blend-luminosity">
-          <img
-            src="/pawn.png"
-            alt=""
-            className="h-full w-auto object-cover object-right lg:object-contain translate-x-1/2 select-none"
-          />
-        </div> */}
 
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.025]"

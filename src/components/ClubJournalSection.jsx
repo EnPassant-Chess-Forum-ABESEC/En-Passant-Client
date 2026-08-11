@@ -19,7 +19,11 @@ function W() {
   return <div className="aspect-square border border-black/10" style={light} />;
 }
 
-function JournalImage({ src }) {
+function JournalImage({ src, fit = "cover" }) {
+  let fitClass = "bg-cover bg-center";
+  if (fit === "contain") fitClass = "bg-contain bg-no-repeat bg-center";
+  if (fit === "cover-top") fitClass = "bg-cover bg-top";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -29,7 +33,7 @@ function JournalImage({ src }) {
       className="aspect-square relative overflow-hidden group cursor-pointer bg-[#0a0a0a]"
     >
       <div
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] grayscale opacity-50 mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.03]"
+        className={`absolute inset-0 ${fitClass} transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] grayscale opacity-50 mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.03]`}
         style={{ backgroundImage: `url(${src})` }}
       />
       <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none" />
@@ -44,25 +48,76 @@ function JournalText({ date, title, text, align }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 1.2, ease: premiumEase }}
-      className="aspect-square flex flex-col justify-center p-4 sm:p-6 md:p-10 border border-black/10 group cursor-pointer"
+      className="aspect-square flex flex-col justify-center p-4 sm:p-6 md:p-10 border border-black/10 group cursor-pointer overflow-hidden"
       style={light}
     >
       <div
         className={`flex flex-col ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
       >
-        <span className="text-[#9b1a1a] font-inter font-medium text-[11px] tracking-[0.15em] uppercase mb-1 sm:mb-2 md:mb-4">
+        <span className="text-[#9b1a1a] font-inter font-medium text-[2.5vw] sm:text-[11px] tracking-[0.15em] uppercase mb-1 sm:mb-2 md:mb-4">
           {date}
         </span>
-        <h3 className="text-[#0a0a0a] font-cinzel font-bold group-hover:font-black text-[18px] tracking-[0.05em] uppercase mb-1 sm:mb-2 md:mb-4 leading-none transition-all duration-200 ease-in-out">
+        <h3 className="text-[#0a0a0a] font-cinzel font-bold group-hover:font-black text-[4vw] sm:text-[18px] tracking-[0.05em] uppercase mb-1 sm:mb-2 md:mb-4 leading-tight transition-all duration-200 ease-in-out">
           {title}
         </h3>
-        <p className="text-[#0a0a0a]/80 font-inter font-normal text-[13px] leading-[1.7]">
+        <p className="text-[#0a0a0a]/80 font-inter font-normal text-[3vw] sm:text-[13px] leading-[1.5] sm:leading-[1.7] line-clamp-4 sm:line-clamp-none">
           {text}
         </p>
       </div>
     </motion.div>
   );
 }
+
+const journalEntries = [
+  {
+    date: "FEBRUARY, 2026",
+    title: "RANN — SPORTS FEST",
+    text: "En Passant team showcased their brilliance at Inter College Sports Fest — RANN 26 hosted by KIET, secruing 1st runner up in the event.",
+    image: "/journal/rann2026.png",
+    fit: "cover",
+    desktopLayout: ["D", "T-right", "I", "W"],
+  },
+  {
+    date: "APRIL 10, 2025",
+    title: "Grandmaster Simul",
+    text: "Top 5 candidates from the En-Passant Chess Community took on the ultimate challenge — a 5-board simul against a Grandmaster!",
+    image: "/journal/gm_interaction.webp",
+    fit: "cover",
+    desktopLayout: ["W", "D", "T-right", "I"],
+  },
+  {
+    date: "APRIL 27, 2025",
+    title: "Queens Duel At ACC",
+    text: "During ACC 2025, En Passant saw its highest count in female participation.",
+    image: "/journal/queens.png",
+    fit: "cover-top",
+    desktopLayout: ["I", "T-left", "D", "W"],
+  },
+  {
+    date: "APRIL 22, 2025",
+    title: "ABES Chess Championship 2025",
+    text: "En Passant's flagship solo tournament that would crown the best chess player in the campus.",
+    image: "/journal/acc_poster.webp",
+    fit: "cover",
+    desktopLayout: ["T-right", "I", "W", "D"],
+  },
+  {
+    date: "NOVEMBER 8, 2026",
+    title: "KNIGHTMARES 2.0",
+    text: "En Passant's flagship team tournament which honoured the knights of the garrison.",
+    image: "/journal/knightmares_2026.png",
+    fit: "cover",
+    desktopLayout: ["D", "W", "I", "T-left"],
+  },
+  {
+    date: "August 17, 2026",
+    title: "CLUB RECRUITMENT",
+    text: "Ready to make your move? Join the En Passant community! Tryouts, orientations, and casual game nights begin soon.",
+    image: "/journal/recruitment.png",
+    fit: "cover-top",
+    desktopLayout: ["T-right", "I", "W", "D"],
+  },
+];
 
 export default function ClubJournalSection() {
   return (
@@ -96,54 +151,42 @@ export default function ClubJournalSection() {
         </div>
       </div>
 
+      {/* MOBILE GRID */}
       <div className="relative grid grid-cols-2 md:hidden w-full overflow-hidden">
-        <JournalImage src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <JournalText
-          align="left"
-          date="OCTOBER 12, 2026"
-          title="The Sicilian Defense"
-          text="Exploring the hyper-aggressive lines of the Najdorf variation and how it reshapes mid-game pressure."
-        />
+        {journalEntries.map((entry, idx) => {
+          const ImageBlock = (
+            <JournalImage
+              key={`m-img-${idx}`}
+              src={entry.image}
+              fit={entry.fit}
+            />
+          );
+          const TextBlock = (
+            <JournalText
+              key={`m-txt-${idx}`}
+              align="left"
+              date={entry.date}
+              title={entry.title}
+              text={entry.text}
+            />
+          );
 
-        <JournalText
-          align="left"
-          date="OCTOBER 28, 2026"
-          title="Grandmaster Mindset"
-          text="Psychological warfare over the board. Maintaining composure when time trouble hits the clock."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1580541832626-2a7151e6fd44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-
-        <JournalImage src="https://images.unsplash.com/photo-1560174038-da43ac74f01b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <JournalText
-          align="left"
-          date="NOVEMBER 05, 2026"
-          title="Endgame Patterns"
-          text="Why pawn structure dictates the flow of the final 20 moves, and how to spot winning lines."
-        />
-
-        <JournalText
-          align="left"
-          date="NOVEMBER 15, 2026"
-          title="The King's Indian"
-          text="Breaking down the complex center tensions and understanding when to launch the kingside attack."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-
-        <JournalImage src="https://images.unsplash.com/photo-1610631066894-0d7714a51eb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <JournalText
-          align="left"
-          date="DECEMBER 02, 2026"
-          title="Tactical Vision"
-          text="Training exercises to improve calculation depth and eliminate blunders from your tournament play."
-        />
-
-        <JournalText
-          align="left"
-          date="DECEMBER 14, 2026"
-          title="Tournament Prep"
-          text="Physical and mental conditioning routines utilized by the world's elite players before major events."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1552554761-46c57f2017c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
+          return (
+            <React.Fragment key={`m-${idx}`}>
+              {idx % 2 === 0 ? (
+                <>
+                  {ImageBlock}
+                  {TextBlock}
+                </>
+              ) : (
+                <>
+                  {TextBlock}
+                  {ImageBlock}
+                </>
+              )}
+            </React.Fragment>
+          );
+        })}
 
         <div
           className="absolute inset-x-0 top-0 pointer-events-none h-[12vw] z-10"
@@ -159,66 +202,45 @@ export default function ClubJournalSection() {
         />
       </div>
 
+      {/* DESKTOP GRID */}
       <div className="relative hidden md:grid grid-cols-4 w-full overflow-hidden">
-        <D />
-        <JournalText
-          align="right"
-          date="OCTOBER 12, 2026"
-          title="The Sicilian Defense"
-          text="Exploring the hyper-aggressive lines of the Najdorf variation and how it reshapes mid-game pressure."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <W />
-
-        <W />
-        <D />
-        <JournalText
-          align="right"
-          date="OCTOBER 28, 2026"
-          title="Grandmaster Mindset"
-          text="Psychological warfare over the board. Maintaining composure when time trouble hits the clock."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1580541832626-2a7151e6fd44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-
-        <JournalImage src="https://images.unsplash.com/photo-1560174038-da43ac74f01b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <JournalText
-          align="left"
-          date="NOVEMBER 05, 2026"
-          title="Endgame Patterns"
-          text="Why pawn structure dictates the flow of the final 20 moves, and how to spot winning lines."
-        />
-        <D />
-        <W />
-
-        <JournalText
-          align="right"
-          date="NOVEMBER 15, 2026"
-          title="The King's Indian"
-          text="Breaking down the complex center tensions and understanding when to launch the kingside attack."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <W />
-        <D />
-
-        <D />
-        <W />
-        <JournalImage src="https://images.unsplash.com/photo-1610631066894-0d7714a51eb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <JournalText
-          align="left"
-          date="DECEMBER 02, 2026"
-          title="Tactical Vision"
-          text="Training exercises to improve calculation depth and eliminate blunders from your tournament play."
-        />
-
-        <JournalText
-          align="right"
-          date="DECEMBER 14, 2026"
-          title="Tournament Prep"
-          text="Physical and mental conditioning routines utilized by the world's elite players before major events."
-        />
-        <JournalImage src="https://images.unsplash.com/photo-1552554761-46c57f2017c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
-        <W />
-        <D />
+        {journalEntries.map((entry, idx) => (
+          <React.Fragment key={`d-${idx}`}>
+            {entry.desktopLayout.map((type, i) => {
+              if (type === "D") return <D key={`d-${idx}-${i}`} />;
+              if (type === "W") return <W key={`d-${idx}-${i}`} />;
+              if (type === "I")
+                return (
+                  <JournalImage
+                    key={`d-${idx}-${i}`}
+                    src={entry.image}
+                    fit={entry.fit}
+                  />
+                );
+              if (type === "T-left")
+                return (
+                  <JournalText
+                    key={`d-${idx}-${i}`}
+                    align="left"
+                    date={entry.date}
+                    title={entry.title}
+                    text={entry.text}
+                  />
+                );
+              if (type === "T-right")
+                return (
+                  <JournalText
+                    key={`d-${idx}-${i}`}
+                    align="right"
+                    date={entry.date}
+                    title={entry.title}
+                    text={entry.text}
+                  />
+                );
+              return null;
+            })}
+          </React.Fragment>
+        ))}
 
         <div
           className="absolute inset-x-0 top-0 pointer-events-none h-[6vw] z-10"

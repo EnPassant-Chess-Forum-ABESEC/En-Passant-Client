@@ -58,7 +58,6 @@ export default function NumbersSection() {
       ref={containerRef}
       className="relative w-full bg-[#050505] font-prfaExtrabold border-none overflow-hidden"
     >
-      {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
@@ -69,11 +68,9 @@ export default function NumbersSection() {
       ></div>
       <div className="absolute inset-0 z-0 bg-black/40 pointer-events-none"></div>
 
-      {/* Top Fade — blends seamlessly with hero section below */}
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative w-full h-[240vw] md:h-[96vw]">
-        {/* ─── Desktop Faint Chess Board Grid Background ─── */}
         <div
           className="absolute inset-0 z-0 opacity-10 pointer-events-none hidden md:block"
           style={{
@@ -90,7 +87,6 @@ export default function NumbersSection() {
           }}
         ></div>
 
-        {/* ─── Mobile 2x4 Grid Borders ─── */}
         <div className="absolute top-[40vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(8)].map((_, i) => (
             <div
@@ -100,7 +96,6 @@ export default function NumbersSection() {
           ))}
         </div>
 
-        {/* Grid Coordinates (Desktop only) */}
         <div className="absolute top-0 w-full px-[2vw] hidden md:flex text-white/30 text-[10px] font-mono pt-2 z-0">
           {["A", "B", "C", "D", "E", "F", "G", "H"].map((col) => (
             <div key={col} className="w-[12vw] text-center">
@@ -109,7 +104,6 @@ export default function NumbersSection() {
           ))}
         </div>
 
-        {/* Thin Left Gutter (Desktop only) */}
         <div className="absolute top-0 left-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pr-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -121,7 +115,6 @@ export default function NumbersSection() {
           ))}
         </div>
 
-        {/* Thin Right Gutter (Desktop only) */}
         <div className="absolute top-0 right-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pl-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -134,7 +127,6 @@ export default function NumbersSection() {
         </div>
 
         <div className="relative w-full h-full max-w-screen-2xl mx-auto">
-          {/* Section Header */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -145,16 +137,15 @@ export default function NumbersSection() {
             <div className="relative inline-block">
               <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
                 <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] text-[10vw] md:text-[100px]">
-                  PROVEN
+                  Jewels of
                 </span>
                 <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] text-[10vw] md:text-[100px]">
-                  PERFORMANCE
+                  Crown
                 </span>
               </h2>
             </div>
           </motion.div>
 
-          {/* ─── Center Chess Piece 3D Model ─── */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -162,7 +153,10 @@ export default function NumbersSection() {
             transition={{ duration: 1.5 }}
             className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]"
           >
-            <Canvas camera={{ position: [0, 0, 12], fov: 45 }} gl={{ alpha: true, antialias: true }}>
+            <Canvas
+              camera={{ position: [0, 0, 12], fov: 45 }}
+              gl={{ alpha: true, antialias: true }}
+            >
               <ambientLight intensity={0.2} />
               <directionalLight position={[10, 10, 5]} intensity={0.5} />
               <Suspense fallback={null}>
@@ -173,9 +167,6 @@ export default function NumbersSection() {
           </motion.div>
         </div>
 
-        {/* ─── Stats Boxes ─── */}
-
-        {/* Box 1 (-35%): Row 1, Col 1 on mobile */}
         <motion.div
           custom={0}
           initial="hidden"
@@ -186,15 +177,14 @@ export default function NumbersSection() {
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
             <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
-              -35%
+              15+
             </span>
             <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
-              CAC Reduction After Optimization
+              Podium Finishes
             </span>
           </SpotlightCard>
         </motion.div>
 
-        {/* Box 2 (120+): Row 2, Col 2 on mobile */}
         <motion.div
           custom={1}
           initial="hidden"
@@ -205,15 +195,14 @@ export default function NumbersSection() {
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
             <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
-              120+
+              350+
             </span>
             <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
-              Successful Projects Delivered
+              Community Members
             </span>
           </SpotlightCard>
         </motion.div>
 
-        {/* Box 3 (8+): Row 3, Col 1 on mobile */}
         <motion.div
           custom={2}
           initial="hidden"
@@ -224,15 +213,14 @@ export default function NumbersSection() {
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
             <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
-              8+
+              6
             </span>
             <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
-              Years experience in Digital Growth
+              Successful Events Hosted
             </span>
           </SpotlightCard>
         </motion.div>
 
-        {/* Box 4 (3x): Row 4, Col 2 on mobile */}
         <motion.div
           custom={3}
           initial="hidden"
@@ -243,16 +231,15 @@ export default function NumbersSection() {
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
             <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
-              3X
+              3+
             </span>
             <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
-              Average Lead Growth
+              Years Across 64 Squares
             </span>
           </SpotlightCard>
         </motion.div>
       </div>
 
-      {/* Bottom Fade — blends seamlessly into EcosystemSection */}
       <div className="absolute bottom-0 left-0 w-full h-[30vw] bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
     </section>
   );
