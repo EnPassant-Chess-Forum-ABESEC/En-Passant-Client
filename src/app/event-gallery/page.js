@@ -206,9 +206,9 @@ export default function EventGalleryPage() {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex items-center justify-center h-64 border border-dashed border-white/10 rounded-2xl bg-white/[0.02]"
+                className="flex items-center justify-center h-64 border border-dashed border-white/10 rounded-2xl bg-white/[0.02] mx-4 md:mx-0"
               >
-                <p className="text-white/40 font-inter tracking-widest uppercase text-sm">
+                <p className="text-white/40 font-inter tracking-widest uppercase text-sm px-6 text-center">
                   Click on an event above to view its gallery
                 </p>
               </motion.div>
