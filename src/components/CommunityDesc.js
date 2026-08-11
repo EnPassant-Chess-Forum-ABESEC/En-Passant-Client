@@ -110,7 +110,10 @@ export default function StrategySection() {
             variants={textLeftVariants}
             className="absolute top-[45%] md:top-[55%] lg:top-[40%] left-6 md:left-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[18px] leading-[1.75] text-white/90 text-left pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
           >
-            <p>For players driven by the need to outplay</p>
+            <p>
+              For those searching for their own circle, among those who speak
+              the language of the game
+            </p>
           </motion.div>
 
           <motion.div

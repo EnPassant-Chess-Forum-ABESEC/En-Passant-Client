@@ -6,6 +6,7 @@ import { useApi } from "@/lib/api";
 import { motion } from "framer-motion";
 
 const premiumEase = [0.16, 1, 0.3, 1];
+const CHESS_SQUARES = ["E4", "D4", "C5", "F6", "G7", "A8", "H1", "B3", "E5", "C4", "F3", "G6"];
 
 const getGridSlot = (deptName, fallbackIndex) => {
   const name = deptName.toLowerCase();
@@ -19,7 +20,7 @@ const getGridSlot = (deptName, fallbackIndex) => {
   if (name.includes("graphic") || name.includes("design"))
     return { top: "36vw", left: "14vw", size: "24vw" };
 
-  if (name.includes("web") || name.includes("site"))
+  if (name.includes("web") || name.includes("site") || name.includes("technical"))
     return { top: "48vw", right: "2vw", size: "24vw" };
 
   if (name.includes("event")) return { top: "72vw", left: "2vw", size: "24vw" };
@@ -109,7 +110,7 @@ export default function DepartmentsSection() {
                       <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out group-hover:opacity-0 group-hover:-translate-y-4">
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                           <span className="text-[#9b1a1a] opacity-40 text-[20vw] font-serif leading-none tracking-tighter -mt-[6vw]">
-                            {String(i + 1).padStart(2, "0")}
+                            {CHESS_SQUARES[i % CHESS_SQUARES.length]}
                           </span>
                         </div>
                         <span className="text-white font-black text-[4.5vw] tracking-tight uppercase leading-[0.9] relative z-10 text-center mt-[6vw]">
@@ -235,7 +236,7 @@ export default function DepartmentsSection() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out group-hover:opacity-0 group-hover:-translate-y-4">
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <span className="text-[#9b1a1a] opacity-40 text-[12vw] font-serif leading-none tracking-tighter -mt-[4vw]">
-                          {String(i + 1).padStart(2, "0")}
+                          {CHESS_SQUARES[i % CHESS_SQUARES.length]}
                         </span>
                       </div>
                       <span className="text-white font-black text-[3.2vw] tracking-tight uppercase leading-[0.9] relative z-10 text-center mt-[4vw]">

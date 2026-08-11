@@ -17,7 +17,7 @@ export default function DepartmentsTab() {
   const fetchApi = useApi();
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
@@ -44,18 +44,21 @@ export default function DepartmentsTab() {
     try {
       if (editId) {
         await fetchApi(`/admin/departments/${editId}`, {
-          method: "PUT",
-          body: { name, code, description }
+          method: "PATCH",
+          body: { name, code, description },
         });
         toast.success("Department updated successfully!");
       } else {
         await fetchApi("/admin/departments", {
           method: "POST",
-          body: { name, code, description }
+          body: { name, code, description },
         });
         toast.success("Department created successfully!");
       }
-      setName(""); setCode(""); setDescription(""); setEditId(null);
+      setName("");
+      setCode("");
+      setDescription("");
+      setEditId(null);
       loadData();
     } catch (err) {
       toast.error("Error: " + err.message);
@@ -67,7 +70,7 @@ export default function DepartmentsTab() {
     setName(dept.name);
     setCode(dept.code);
     setDescription(dept.description);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const [deletingId, setDeletingId] = useState(null);
@@ -89,20 +92,36 @@ export default function DepartmentsTab() {
     }
   };
 
-  if (loading) return <div className="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">Loading Data...</div>;
+  if (loading)
+    return (
+      <div className="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
+        Loading Data...
+      </div>
+    );
 
   return (
     <div className="space-y-12">
-      {/* ─── Department Form ─── */}
-      <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
+      <form
+        onSubmit={handleSave}
+        className="bg-white border border-slate-200 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden"
+      >
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-600/50 to-transparent" />
-        
+
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold  tracking-tight text-slate-800">
-            {editId ? 'Edit Department' : 'Create Department'}
+            {editId ? "Edit Department" : "Create Department"}
           </h2>
           {editId && (
-            <button type="button" onClick={() => {setEditId(null); setName(""); setCode(""); setDescription("");}} className="text-xs tracking-tight text-slate-500 hover:text-slate-800 transition-colors">
+            <button
+              type="button"
+              onClick={() => {
+                setEditId(null);
+                setName("");
+                setCode("");
+                setDescription("");
+              }}
+              className="text-xs tracking-tight text-slate-500 hover:text-slate-800 transition-colors"
+            >
               Cancel Edit
             </button>
           )}
@@ -110,22 +129,48 @@ export default function DepartmentsTab() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">Name</label>
-            <input required value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Media & Videography" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400" />
+            <label className="block text-xs font-bold tracking-normal text-slate-500">
+              Name
+            </label>
+            <input
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Media & Videography"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+            />
           </div>
           <div className="space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">Code</label>
-            <input required value={code} onChange={e=>setCode(e.target.value)} placeholder="e.g. MEDIA" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400" />
+            <label className="block text-xs font-bold tracking-normal text-slate-500">
+              Code
+            </label>
+            <input
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="e.g. MEDIA"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+            />
           </div>
           <div className="md:col-span-2 space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">Description</label>
-            <input value={description} onChange={e=>setDescription(e.target.value)} placeholder="Brief description of the department's role..." className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400" />
+            <label className="block text-xs font-bold tracking-normal text-slate-500">
+              Description
+            </label>
+            <input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description of the department's role..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+            />
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-slate-200 flex justify-end">
-          <button type="submit" className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md">
-            {editId ? 'Update Department' : 'Create Department'}
+          <button
+            type="submit"
+            className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md"
+          >
+            {editId ? "Update Department" : "Create Department"}
           </button>
         </div>
       </form>
@@ -145,25 +190,43 @@ export default function DepartmentsTab() {
             </thead>
             <tbody className="divide-y divide-white/5 text-slate-800">
               {departments.length === 0 && (
-                <tr><td colSpan="5" className="p-12 text-center text-slate-500 uppercase tracking-widest text-xs">No departments found</td></tr>
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="p-12 text-center text-slate-500 uppercase tracking-widest text-xs"
+                  >
+                    No departments found
+                  </td>
+                </tr>
               )}
               {departments.map((dept) => (
-                <tr key={dept._id} className="hover:bg-white/[0.02] transition-colors group">
-                  <td className="px-6 py-5 font-mono text-sm text-slate-500">{dept._id}</td>
-                  <td className="px-6 py-5 font-mono text-xs text-blue-600 font-bold tracking-wider">{dept.code}</td>
-                  <td className="px-6 py-5 font-bold tracking-wide">{dept.name}</td>
-                  <td className="px-6 py-5 text-xs text-slate-500">{dept.description}</td>
+                <tr
+                  key={dept._id}
+                  className="hover:bg-white/[0.02] transition-colors group"
+                >
+                  <td className="px-6 py-5 font-mono text-sm text-slate-500">
+                    {dept._id}
+                  </td>
+                  <td className="px-6 py-5 font-mono text-xs text-blue-600 font-bold tracking-wider">
+                    {dept.code}
+                  </td>
+                  <td className="px-6 py-5 font-bold tracking-wide">
+                    {dept.name}
+                  </td>
+                  <td className="px-6 py-5 text-xs text-slate-500 whitespace-normal min-w-[200px] max-w-md">
+                    {dept.description}
+                  </td>
                   <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="flex items-center justify-end gap-3">
-                      <button 
-                        onClick={() => handleEdit(dept)} 
+                      <button
+                        onClick={() => handleEdit(dept)}
                         title="Edit Department"
                         className="text-slate-400 hover:text-blue-600 transition-colors p-1"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button 
-                        onClick={() => confirmDelete(dept._id)} 
+                      <button
+                        onClick={() => confirmDelete(dept._id)}
                         title="Delete Department"
                         className="text-slate-400 hover:text-red-500 transition-colors p-1"
                       >
@@ -178,17 +241,24 @@ export default function DepartmentsTab() {
         </div>
       </div>
 
-      <AlertDialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
+      <AlertDialog
+        open={!!deletingId}
+        onOpenChange={(open) => !open && setDeletingId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this department.
+              This action cannot be undone. This will permanently delete this
+              department.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={executeDelete} className="bg-red-600 hover:bg-red-700 text-white">
+            <AlertDialogAction
+              onClick={executeDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
               Delete Department
             </AlertDialogAction>
           </AlertDialogFooter>

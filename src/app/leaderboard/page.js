@@ -285,8 +285,8 @@ export default function LeaderboardPage() {
             >
               {/* Profile Image Area (2x2) */}
               <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[0].border} relative overflow-hidden group`}>
-                {top3[0].profilePic ? (
-                  <img src={top3[0].profilePic} alt={top3[0].username} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                {(top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl) ? (
+                  <img src={top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl} alt={top3[0].username || top3[0].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none`}>
@@ -297,18 +297,18 @@ export default function LeaderboardPage() {
                     </span>
                   </div>
                 )}
-                {top3[0].profilePic && (
+                {(top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl) && (
                   <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none z-10`}>
                     #1
                   </div>
                 )}
               </div>
               {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-white flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-black font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[0].username}
+              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
+                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
+                  {top3[0].username || top3[0].userName}
                 </h3>
-                <p className="text-black/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
+                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
                   {top3[0].branch}{top3[0].year ? ` · Y${top3[0].year}` : ""}
                 </p>
               </div>
@@ -327,8 +327,8 @@ export default function LeaderboardPage() {
             >
               {/* Profile Image Area (2x2) */}
               <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[1].border} relative overflow-hidden group`}>
-                {top3[1].profilePic ? (
-                  <img src={top3[1].profilePic} alt={top3[1].username} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                {(top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl) ? (
+                  <img src={top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl} alt={top3[1].username || top3[1].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none`}>
@@ -339,18 +339,18 @@ export default function LeaderboardPage() {
                     </span>
                   </div>
                 )}
-                {top3[1].profilePic && (
+                {(top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl) && (
                   <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none z-10`}>
                     #2
                   </div>
                 )}
               </div>
               {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-white flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-black font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[1].username}
+              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
+                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
+                  {top3[1].username || top3[1].userName}
                 </h3>
-                <p className="text-black/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
+                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
                   {top3[1].branch}{top3[1].year ? ` · Y${top3[1].year}` : ""}
                 </p>
               </div>
@@ -369,8 +369,8 @@ export default function LeaderboardPage() {
             >
               {/* Profile Image Area (2x2) */}
               <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[2].border} relative overflow-hidden group`}>
-                {top3[2].profilePic ? (
-                  <img src={top3[2].profilePic} alt={top3[2].username} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                {(top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl) ? (
+                  <img src={top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl} alt={top3[2].username || top3[2].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none`}>
@@ -381,18 +381,18 @@ export default function LeaderboardPage() {
                     </span>
                   </div>
                 )}
-                {top3[2].profilePic && (
+                {(top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl) && (
                   <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none z-10`}>
                     #3
                   </div>
                 )}
               </div>
               {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-white flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-black font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[2].username}
+              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
+                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
+                  {top3[2].username || top3[2].userName}
                 </h3>
-                <p className="text-black/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
+                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
                   {top3[2].branch}{top3[2].year ? ` · Y${top3[2].year}` : ""}
                 </p>
               </div>
@@ -455,12 +455,21 @@ export default function LeaderboardPage() {
                       <td className="p-4 font-mono text-white/20 font-bold text-sm group-hover:text-[#9b1a1a] transition-colors">
                         #{i + 4}
                       </td>
-                      <td className="p-4">
-                        <div className="font-cinzel font-bold text-sm text-white/70 group-hover:text-white transition-colors">
-                          {player.username}
+                      <td className="p-4 flex items-center gap-3">
+                        <div className="w-9 h-9 md:w-10 md:h-10 bg-[#111] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
+                          {(player.profilePictureUrl || player.profilePic || player.imageUrl) ? (
+                            <img src={player.profilePictureUrl || player.profilePic || player.imageUrl} alt={player.username || player.userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" />
+                          ) : (
+                            <span className="text-white/20 font-cinzel font-bold text-xs">{player.username?.[0] || player.userName?.[0] || "?"}</span>
+                          )}
                         </div>
-                        <div className="text-[10px] text-white/20 font-mono mt-0.5">
-                          {player.chessComUsername || "—"}
+                        <div>
+                          <div className="font-cinzel font-bold text-sm text-white/70 group-hover:text-white transition-colors">
+                            {player.username || player.userName}
+                          </div>
+                          <div className="text-[10px] text-white/20 font-mono mt-0.5">
+                            {player.chessComUsername || "—"}
+                          </div>
                         </div>
                       </td>
                       <td className="p-4 text-xs text-white/25 font-mono hidden md:table-cell">

@@ -99,7 +99,7 @@ export default function Footer() {
                   lineHeight: 1,
                 }}
               >
-                EN<span style={{ color: "#c41e3a" }}>PASSANT</span>
+                Vive L' EN<span style={{ color: "#c41e3a" }}>PASSANT</span>
               </span>
               <p className="text-white/30 text-sm mt-3 font-inter tracking-widest uppercase">
                 For the game must always go on
