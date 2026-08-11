@@ -133,7 +133,7 @@ export default function EventGalleryPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16"
+          className="text-center mb-2 md:mb-16"
         >
           <h1 className="font-cinzel text-4xl md:text-6xl font-bold tracking-widest uppercase mb-4 text-white drop-shadow-2xl">
             Events <span className="text-[#9b1a1a]">Gallery</span>
@@ -161,13 +161,13 @@ export default function EventGalleryPage() {
           </div>
 
           {/* Mobile View */}
-          <div className="block md:hidden h-[450px]">
+          <div className="block md:hidden h-[450px] -mt-6">
             <DepthCarousel 
               items={EVENTS}
               onChange={(index, item) => handleItemSelect(item)}
               onCardClick={(index, item) => handleItemClick(item)}
-              cardWidth={260}
-              cardHeight={340}
+              cardWidth={300}
+              cardHeight={400}
               autoplay={false}
               showControls={true}
               showIndicators={true}
