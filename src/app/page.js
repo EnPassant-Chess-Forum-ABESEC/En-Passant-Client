@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
+import { useAuth } from "@clerk/nextjs";
 
 const NumbersSection = dynamic(() => import("@/components/NumbersSection"), {
   ssr: false,
@@ -21,6 +22,7 @@ const ClubJournalSection = dynamic(
 );
 
 export default function Home() {
+  const { userId } = useAuth();
   const containerRef = useRef(null);
   const [imageReady, setImageReady] = useState(false);
 
@@ -183,9 +185,9 @@ export default function Home() {
                 Dedicated to spread the game of chess
               </div>
               <div className="group relative w-full sm:w-auto flex justify-center">
-                <Link href="/sign-up" className="btn-bracket group">
+                <Link href={userId ? "/recruitment" : "/sign-up"} className="btn-bracket group">
                   <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
-                    Sign up here
+                    {userId ? "Go To Recruitment" : "Sign up here"}
                   </div>
                 </Link>
               </div>
