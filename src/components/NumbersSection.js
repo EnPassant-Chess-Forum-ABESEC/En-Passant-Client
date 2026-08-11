@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useScroll, motion } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Center } from "@react-three/drei";
@@ -28,6 +28,19 @@ function ChessPieceModel({ scrollYProgress }) {
 
 export default function NumbersSection() {
   const containerRef = useRef(null);
+  const gridRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mouseInGrid, setMouseInGrid] = useState(false);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -56,6 +69,9 @@ export default function NumbersSection() {
   return (
     <section
       ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setMouseInGrid(true)}
+      onMouseLeave={() => setMouseInGrid(false)}
       className="relative w-full bg-[#050505] font-prfaExtrabold border-none overflow-hidden"
     >
       <div
@@ -71,27 +87,55 @@ export default function NumbersSection() {
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative w-full h-[240vw] md:h-[96vw]">
+        {/* Grid lines + mouse glow (pointer-events-none so clicks pass through) */}
         <div
-          className="absolute inset-0 z-0 opacity-10 pointer-events-none hidden md:block"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #ffffff 1px, transparent 1px),
-              linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-            `,
-            backgroundSize: "12vw 12vw",
-            backgroundPosition: "2vw 0",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-            maskImage:
-              "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-          }}
-        ></div>
+          ref={gridRef}
+          className="absolute inset-0 z-[1] pointer-events-none"
+        >
+          {/* Base grid lines (desktop) — soft and diffused to match card borders */}
+          <div
+            className="absolute inset-0 opacity-[0.06] pointer-events-none hidden md:block"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.3) 1px, transparent 2px),
+                linear-gradient(to bottom, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.3) 1px, transparent 2px)
+              `,
+              backgroundSize: "12vw 12vw",
+              backgroundPosition: "2vw 0",
+              filter: "blur(0.4px)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+              maskImage:
+                "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+            }}
+          />
+
+          {/* Mouse-following glow grid (desktop) */}
+          {mouseInGrid && (
+            <div
+              className="absolute inset-0 pointer-events-none hidden md:block transition-opacity duration-200"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 1px, transparent 1px)
+                `,
+                backgroundSize: "12vw 12vw",
+                backgroundPosition: "2vw 0",
+                WebkitMaskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+                maskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+                WebkitMaskComposite: "source-in",
+                maskComposite: "intersect",
+              }}
+            />
+          )}
+        </div>
 
         <div className="absolute top-[40vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="w-[50vw] h-[50vw] border border-white/[0.05]"
+              className="w-[50vw] h-[50vw] border border-white/[0.04]"
+              style={{ boxShadow: "0 0 1px rgba(255,255,255,0.03)" }}
             ></div>
           ))}
         </div>

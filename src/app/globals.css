@@ -102,6 +102,50 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Hero letter dissolve — pure CSS, fully GPU-composited (no blur) */
+@keyframes heroDissolveIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) translateZ(0);
+  }
+}
+
+.hero-letter {
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: heroDissolveIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hero image — fades up in sync with letters */
+.hero-image {
+  opacity: 0;
+  transform: translateY(16px) translateZ(0);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.hero-image--visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+/* Hero bottom text — slides in from a configurable direction */
+.hero-bottom-text {
+  opacity: 0;
+  transform: translateX(var(--hero-slide-from, 0)) translateZ(0);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  will-change: opacity, transform;
+}
+.hero-bottom-text--visible {
+  opacity: 1;
+  transform: translateX(0) translateZ(0);
+}
+
 .btn-bracket {
   position: relative;
   display: inline-flex;

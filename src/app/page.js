@@ -16,6 +16,9 @@ const StrategySection = dynamic(() => import("@/components/CommunityDesc"), {
 const EcosystemSection = dynamic(() => import("@/components/AboutClub"), {
   ssr: true,
 });
+const DriftWallSection = dynamic(() => import("@/components/DriftWallSection"), {
+  ssr: true,
+});
 const ClubJournalSection = dynamic(
   () => import("@/components/ClubJournalSection"),
   { ssr: true },
@@ -46,27 +49,21 @@ export default function Home() {
     img
       .decode()
       .then(() => {
+        // Double-rAF ensures state flip lands at the exact start of a paint frame
         requestAnimationFrame(() => {
-          setImageReady(true);
+          requestAnimationFrame(() => {
+            setImageReady(true);
+          });
         });
       })
       .catch(() => {
-        // Fallback: animate anyway
         requestAnimationFrame(() => {
-          setImageReady(true);
+          requestAnimationFrame(() => {
+            setImageReady(true);
+          });
         });
       });
   }, []);
-
-  // Dissolve animation state for each letter — blur → sharp + opacity.
-  // Applied per-letter across both "EN" and "PASSANT" as one continuous stagger.
-  const dissolveIn = (delay) => ({
-    initial: { opacity: 0, filter: "blur(16px)", y: 10 },
-    animate: imageReady
-      ? { opacity: 1, filter: "blur(0px)", y: 0 }
-      : { opacity: 0, filter: "blur(16px)", y: 10 },
-    transition: { duration: 1.4, delay, ease: premiumEase },
-  });
 
   return (
     <>
@@ -91,27 +88,33 @@ export default function Home() {
         >
           <div className="relative w-full max-w-7xl flex justify-center">
             <div className="relative flex items-baseline justify-center uppercase leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
-              {/* EN — dissolves letter by letter */}
+              {/* EN — dissolves letter by letter via CSS */}
               {["E", "N"].map((letter, index) => (
-                <motion.span
+                <span
                   key={`en-${index}`}
-                  className="inline-block text-[#c41e3a] font-cinzel font-bold tracking-[0.12em]"
-                  {...dissolveIn(0.05 * index)}
+                  className="inline-block text-[#c41e3a] font-cinzel font-bold tracking-[0.12em] hero-letter"
+                  style={{
+                    animationDelay: `${imageReady ? 0.05 * index : 99}s`,
+                    animationPlayState: imageReady ? "running" : "paused",
+                  }}
                 >
                   {letter}
-                </motion.span>
+                </span>
               ))}
 
               {/* PASSANT — dissolves letter by letter, continues stagger from EN */}
               <span className="inline-flex ml-[0.15em]">
                 {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
-                  <motion.span
+                  <span
                     key={`p-${index}`}
-                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em]"
-                    {...dissolveIn(0.1 + 0.05 * index)}
+                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em] hero-letter"
+                    style={{
+                      animationDelay: `${imageReady ? 0.1 + 0.05 * index : 99}s`,
+                      animationPlayState: imageReady ? "running" : "paused",
+                    }}
                   >
                     {letter}
-                  </motion.span>
+                  </span>
                 ))}
               </span>
             </div>
@@ -123,13 +126,8 @@ export default function Home() {
           style={{ contain: "layout style paint" }}
         >
           <motion.div style={{ y: yImage }} className="w-full h-full relative">
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={
-                imageReady ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }
-              }
-              transition={{ duration: 1.5, ease: premiumEase }}
-              className="w-full h-full relative"
+            <div
+              className={`w-full h-full relative hero-image ${imageReady ? "hero-image--visible" : ""}`}
               style={{
                 transformOrigin: "bottom center",
                 backfaceVisibility: "hidden",
@@ -143,7 +141,7 @@ export default function Home() {
                 priority
                 className="object-contain object-bottom"
               />
-            </motion.div>
+            </div>
           </motion.div>
         </div>
 
@@ -152,13 +150,9 @@ export default function Home() {
           className="absolute bottom-10 md:bottom-14 left-0 w-full px-6 md:px-12 z-40 flex justify-center pointer-events-none"
         >
           <div className="w-full max-w-7xl flex justify-center md:justify-between items-end">
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={
-                imageReady ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }
-              }
-              transition={{ duration: 1.6, ease: premiumEase }}
-              className="max-w-[340px] hidden md:block pointer-events-auto"
+            <div
+              className={`max-w-[340px] hidden md:block pointer-events-auto hero-bottom-text ${imageReady ? "hero-bottom-text--visible" : ""}`}
+              style={{ "--hero-slide-from": "-20px" }}
             >
               <p className="text-[#cccccc] font-inter font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
                 Whether you're making
@@ -167,15 +161,11 @@ export default function Home() {
                 <br />
                 there's a place for you here
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ x: 20, opacity: 0 }}
-              animate={
-                imageReady ? { x: 0, opacity: 1 } : { x: 20, opacity: 0 }
-              }
-              transition={{ duration: 1.6, ease: premiumEase }}
-              className="flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto"
+            <div
+              className={`flex flex-col items-center md:items-end text-center md:text-right gap-4 pointer-events-auto mx-auto md:ml-auto md:mr-0 w-full md:w-auto hero-bottom-text ${imageReady ? "hero-bottom-text--visible" : ""}`}
+              style={{ "--hero-slide-from": "20px" }}
             >
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
                 <span className="text-[#cccccc] font-inter font-medium text-[13px] tracking-[0.1em] opacity-80">
@@ -184,14 +174,7 @@ export default function Home() {
                 <br />
                 Dedicated to spread the game of chess
               </div>
-              <div className="group relative w-full sm:w-auto flex justify-center">
-                <Link href={userId ? "/recruitment" : "/sign-up"} className="btn-bracket group">
-                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
-                    {userId ? "Go To Recruitment" : "Sign up here"}
-                  </div>
-                </Link>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
 
@@ -200,6 +183,7 @@ export default function Home() {
       <NumbersSection />
       <StrategySection />
       <EcosystemSection />
+      <DriftWallSection />
       <ClubJournalSection />
     </>
   );

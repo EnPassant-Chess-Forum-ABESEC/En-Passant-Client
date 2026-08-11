@@ -1,9 +1,23 @@
 "use client";
 
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import SpotlightCard from "./SpotlightCard";
 
 export default function EcosystemSection() {
+  const sectionRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mouseInSection, setMouseInSection] = useState(false);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  }, []);
+
   const premiumEase = [0.16, 1, 0.3, 1];
 
   const headerVariants = {
@@ -68,7 +82,13 @@ export default function EcosystemSection() {
   ];
 
   return (
-    <section className="relative w-full bg-[#050505] overflow-hidden font-sans pt-20">
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setMouseInSection(true)}
+      onMouseLeave={() => setMouseInSection(false)}
+      className="relative w-full bg-[#050505] overflow-hidden font-sans pt-20"
+    >
       {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
@@ -84,22 +104,44 @@ export default function EcosystemSection() {
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative w-full h-[300vw] md:h-[104vw]">
-        {/* ─── Faint Chess Board Grid Background ─── */}
-        <div
-          className="absolute inset-0 z-0 opacity-[0.07] pointer-events-none hidden md:block"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #ffffff 1px, transparent 1px),
-              linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-            `,
-            backgroundSize: "12vw 12vw",
-            backgroundPosition: "2vw 0",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-            maskImage:
-              "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-          }}
-        ></div>
+        {/* ─── Faint Chess Board Grid Background (soft) ─── */}
+        <div className="absolute inset-0 z-[1] pointer-events-none">
+          <div
+            className="absolute inset-0 opacity-[0.06] pointer-events-none hidden md:block"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.3) 1px, transparent 2px),
+                linear-gradient(to bottom, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.3) 1px, transparent 2px)
+              `,
+              backgroundSize: "12vw 12vw",
+              backgroundPosition: "2vw 0",
+              filter: "blur(0.4px)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+              maskImage:
+                "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+            }}
+          />
+
+          {/* Mouse-following red glow grid (desktop) */}
+          {mouseInSection && (
+            <div
+              className="absolute inset-0 pointer-events-none hidden md:block transition-opacity duration-200"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(155, 26, 26, 0.5) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(155, 26, 26, 0.5) 1px, transparent 1px)
+                `,
+                backgroundSize: "12vw 12vw",
+                backgroundPosition: "2vw 0",
+                WebkitMaskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+                maskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+                WebkitMaskComposite: "source-in",
+                maskComposite: "intersect",
+              }}
+            />
+          )}
+        </div>
 
         {/* ─── Mobile 2x4 Grid Borders ─── */}
         <div className="absolute top-[60vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
@@ -221,8 +263,8 @@ export default function EcosystemSection() {
             </SpotlightCard>
           </motion.div>
         ))}
-        {/* Bottom Fade — sits in the gap below D4 */}
-        <div className="absolute bottom-0 left-0 w-full h-[30vw] md:h-[10vw] bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />
+        {/* Bottom Fade — blends seamlessly into DriftWallSection */}
+        <div className="absolute bottom-0 left-0 w-full h-[30vw] md:h-[10vw] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-30 pointer-events-none" />
       </div>
     </section>
   );

@@ -188,12 +188,7 @@ export default function ClubJournalSection() {
           );
         })}
 
-        <div
-          className="absolute inset-x-0 top-0 pointer-events-none h-[12vw] z-10"
-          style={{
-            background: "linear-gradient(to bottom, #0a0a0a, transparent)",
-          }}
-        />
+        {/* Removed overlapping top shadow */}
         <div
           className="absolute inset-x-0 bottom-0 pointer-events-none h-[30vw] z-10"
           style={{
@@ -242,12 +237,7 @@ export default function ClubJournalSection() {
           </React.Fragment>
         ))}
 
-        <div
-          className="absolute inset-x-0 top-0 pointer-events-none h-[6vw] z-10"
-          style={{
-            background: "linear-gradient(to bottom, #0a0a0a, transparent)",
-          }}
-        />
+        {/* Removed overlapping top shadow */}
         <div
           className="absolute inset-x-0 bottom-0 pointer-events-none h-[20vw] z-10"
           style={{
