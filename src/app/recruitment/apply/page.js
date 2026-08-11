@@ -550,14 +550,22 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="name"
                         type="text"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                          isSignedIn ? "opacity-60 cursor-not-allowed" : ""
+                        }`}
                         value={formData.name}
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
                         placeholder="Your Name"
+                        disabled={isSignedIn}
                       />
                     </div>
+                    {isSignedIn && (
+                      <p className="text-[10px] text-white/40 mt-1 pl-1">
+                        * You are logged in. Update this from your profile.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
@@ -573,14 +581,22 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="email"
                         type="email"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                          isSignedIn ? "opacity-60 cursor-not-allowed" : ""
+                        }`}
                         value={formData.email}
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
                         placeholder="youremail@gmail.com"
+                        disabled={isSignedIn}
                       />
                     </div>
+                    {isSignedIn && (
+                      <p className="text-[10px] text-white/40 mt-1 pl-1">
+                        * You are logged in. Update this from your profile.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
