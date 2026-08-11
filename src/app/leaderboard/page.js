@@ -269,9 +269,6 @@ export default function LeaderboardPage() {
                 >
                   {type}
                 </span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-[2px] bg-[#9b1a1a] transition-all duration-500 ${timeControl === type ? "opacity-100" : "opacity-0"}`}
-                />
               </button>
             ))}
           </motion.div>
@@ -378,6 +375,7 @@ export default function LeaderboardPage() {
                 )}
 
                 {/* Details Overlay */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-0" />
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
                   <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[0].username || top3[0].userName || "").split(" ")[0]}
@@ -448,6 +446,7 @@ export default function LeaderboardPage() {
                 )}
 
                 {/* Details Overlay */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-0" />
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
                   <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[1].username || top3[1].userName || "").split(" ")[0]}
@@ -518,6 +517,7 @@ export default function LeaderboardPage() {
                 )}
 
                 {/* Details Overlay */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-0" />
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
                   <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[2].username || top3[2].userName || "").split(" ")[0]}
