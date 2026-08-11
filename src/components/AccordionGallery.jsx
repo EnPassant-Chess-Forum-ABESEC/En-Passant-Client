@@ -252,10 +252,10 @@ const AccordionGallery = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={e => e.stopPropagation()}
-                    className="pointer-events-auto ml-auto p-2.5 bg-black/50 hover:bg-[#c41e3a] transition-colors rounded-full backdrop-blur-md opacity-0 flex items-center justify-center border border-white/20 shrink-0"
+                    className="pointer-events-auto ml-auto p-3 bg-white/10 hover:bg-[#9b1a1a]/80 transition-colors rounded-full backdrop-blur-md opacity-0 flex items-center justify-center shrink-0 shadow-lg"
                     aria-label="Open Drive Link"
                   >
-                    <ExternalLink className="w-5 h-5 text-white" />
+                    <ExternalLink className="w-5 h-5 text-white" strokeWidth={2} />
                   </a>
                 )}
               </span>

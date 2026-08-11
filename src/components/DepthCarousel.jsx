@@ -362,10 +362,10 @@ const DepthCarousel = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={e => e.stopPropagation()}
-                className="pointer-events-auto absolute top-4 right-4 p-2 bg-black/50 hover:bg-[#c41e3a] transition-colors rounded-full backdrop-blur-md flex items-center justify-center border border-white/20"
+                className="pointer-events-auto absolute top-4 right-4 p-3 bg-white/10 hover:bg-[#9b1a1a]/80 transition-colors rounded-full backdrop-blur-md flex items-center justify-center shadow-lg"
                 aria-label="Open Drive Link"
               >
-                <ExternalLink className="w-4 h-4 text-white" />
+                <ExternalLink className="w-5 h-5 text-white" strokeWidth={2} />
               </a>
             )}
           </div>
