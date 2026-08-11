@@ -4,25 +4,27 @@ import { useEffect, useState } from "react";
 import { useApi } from "@/lib/api";
 import SpotlightCard from "@/components/SpotlightCard";
 import { motion } from "framer-motion";
+import AnimatedList from "@/components/AnimatedList";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const MEDAL_COLORS = [
   {
-    color: "text-[#eab308]",
-    glow: "drop-shadow-[0_0_16px_rgba(234,179,8,0.6)]",
-    border: "border-[#eab308]/30",
-    ring: "rgba(234,179,8,0.15)",
+    color: "text-white",
+    glow: "drop-shadow-[0_0_16px_rgba(255,255,255,0.6)]",
+    border: "border-white/30",
+    ring: "rgba(255,255,255,0.15)",
   },
   {
-    color: "text-[#94a3b8]",
-    glow: "drop-shadow-[0_0_12px_rgba(148,163,184,0.5)]",
-    border: "border-[#94a3b8]/30",
-    ring: "rgba(148,163,184,0.1)",
+    color: "text-white",
+    glow: "drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]",
+    border: "border-white/30",
+    ring: "rgba(255,255,255,0.1)",
   },
   {
-    color: "text-[#cd7c3c]",
-    glow: "drop-shadow-[0_0_12px_rgba(205,124,60,0.5)]",
-    border: "border-[#cd7c3c]/30",
-    ring: "rgba(205,124,60,0.1)",
+    color: "text-white",
+    glow: "drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]",
+    border: "border-white/30",
+    ring: "rgba(255,255,255,0.1)",
   },
 ];
 
@@ -32,8 +34,11 @@ export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [myRank, setMyRank] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
+    setCurrentPage(1);
     loadLeaderboard();
   }, [timeControl]);
 
@@ -45,7 +50,7 @@ export default function LeaderboardPage() {
     try {
       setLoading(true);
       const data = await fetchApi(
-        `/leaderboard?timeControl=${timeControl}&limit=20`,
+        `/leaderboard?timeControl=${timeControl}&limit=100`,
       );
       if (data.success) {
         setLeaderboard(data.data);
@@ -71,6 +76,12 @@ export default function LeaderboardPage() {
   const top3 = leaderboard.slice(0, 3);
   const rest = leaderboard.slice(3);
 
+  const totalPages = Math.ceil(rest.length / itemsPerPage);
+  const paginatedRest = rest.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 30 },
     visible: (i) => ({
@@ -81,89 +92,63 @@ export default function LeaderboardPage() {
     }),
   };
 
-  return (
-    <div className="relative w-full bg-[#050505] font-sans overflow-hidden">
-      {/* ──────────────────────────────────────────
-          ABOVE-GRID HEADER — normal flow, right-aligned
-          Sits above the chess board section
-         ────────────────────────────────────────── */}
-      <div className="relative z-30 w-full pt-32 pb-0 px-6 md:px-[4vw] flex flex-col items-end text-right">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h1 className="uppercase font-cinzel font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.06em]">
-            <span className="inline-block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] text-[12vw] md:text-[80px]">
-              LEADER
-            </span>
-            <span className="inline-block text-[#9b1a1a] drop-shadow-[0_0_30px_rgba(155,26,26,0.6)] text-[12vw] md:text-[80px] ml-4 md:ml-6">
-              BOARD
-            </span>
-          </h1>
-        </motion.div>
-
-        {/* Time controls + My Rank in one row below title, right aligned */}
-        {/* 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap items-center justify-end gap-4 mt-6 mb-0"
-        >
-          {myRank && (
-            <div className="flex flex-wrap gap-5 text-xs uppercase tracking-widest font-mono text-white/50 border-r border-white/10 pr-4">
-              <span>
-                Rapid:{" "}
-                <span className="text-[#9b1a1a]">
-                  {myRank.rapid?.rank ? `#${myRank.rapid.rank}` : "—"}
-                </span>{" "}
-                ({myRank.rapid?.rating ?? "—"})
-              </span>
-              <span>
-                Blitz:{" "}
-                <span className="text-[#9b1a1a]">
-                  {myRank.blitz?.rank ? `#${myRank.blitz.rank}` : "—"}
-                </span>{" "}
-                ({myRank.blitz?.rating ?? "—"})
-              </span>
-              <span>
-                Bullet:{" "}
-                <span className="text-[#9b1a1a]">
-                  {myRank.bullet?.rank ? `#${myRank.bullet.rank}` : "—"}
-                </span>{" "}
-                ({myRank.bullet?.rating ?? "—"})
-              </span>
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            {["rapid", "blitz", "bullet"].map((tc) => (
-              <button
-                key={tc}
-                onClick={() => setTimeControl(tc)}
-                className={`px-5 py-2 uppercase font-cinzel font-bold tracking-widest text-xs transition-all duration-300 border ${
-                  timeControl === tc
-                    ? "bg-[#9b1a1a] text-white border-transparent shadow-[0_0_20px_rgba(155,26,26,0.4)]"
-                    : "bg-transparent text-white/40 border-white/10 hover:text-white hover:border-white/30"
-                }`}
-              >
-                {tc}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-        */}
+  const tableItems = paginatedRest.map((player, i) => (
+    <div
+      className="flex w-full items-center text-left group border-b border-white/[0.03] last:border-0"
+      key={player.userId}
+    >
+      {/* Rank */}
+      <div className="py-3 px-2 md:py-6 md:px-8 font-mono text-white/20 font-bold text-xs md:text-lg group-hover:text-[#9b1a1a] transition-colors w-8 md:w-32 shrink-0 text-center md:text-left">
+        #{i + 4 + (currentPage - 1) * itemsPerPage}
       </div>
 
-      {/* ──────────────────────────────────────────
-          CHESS GRID SECTION
-          Same system as NumbersSection.
-          Grid cells: 12vw × 12vw, offset 2vw from left.
-          Col positions: A=2vw, B=14vw, C=26vw, D=38vw, E=50vw, F=62vw, G=74vw, H=86vw
-          Each 2×2 card = w-[24vw] h-[24vw]
-         ────────────────────────────────────────── */}
-      <div className="relative w-full h-[340vw] md:h-[96vw]">
+      {/* Avatar — desktop only */}
+      <div className="hidden md:flex py-6 px-8 items-center gap-4">
+        <div className="w-12 h-12 bg-[#111] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center rounded-full">
+          {player.profilePictureUrl || player.profilePic || player.imageUrl ? (
+            <img
+              src={
+                player.profilePictureUrl || player.profilePic || player.imageUrl
+              }
+              alt={player.username || player.userName}
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+            />
+          ) : (
+            <span className="text-white/20 font-cinzel font-bold text-sm">
+              {player.username?.[0] || player.userName?.[0] || "?"}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Name — flex-1 */}
+      <div className="py-3 px-2 md:py-6 md:px-4 flex-1 min-w-0">
+        <div className="font-cinzel font-bold text-xs md:text-lg text-white/70 group-hover:text-white transition-colors truncate">
+          {player.username || player.userName}
+        </div>
+        <div className="text-[9px] md:text-xs text-white/20 font-mono mt-0.5 truncate hidden md:block">
+          {player.chessComUsername || "—"}
+        </div>
+      </div>
+
+      {/* Branch / Year — desktop only */}
+      <div className="py-6 px-8 text-xs md:text-sm text-white/25 font-mono hidden md:block shrink-0 md:w-48 lg:w-64">
+        {player.branch}
+        {player.year ? ` · Y${player.year}` : ""}
+      </div>
+
+      {/* Rating */}
+      <div className="py-3 px-3 md:py-6 md:px-8 text-right shrink-0 w-16 md:w-32">
+        <span className="font-cinzel font-bold text-sm md:text-xl text-white/60 group-hover:text-white transition-colors tabular-nums">
+          {player.rating}
+        </span>
+      </div>
+    </div>
+  ));
+
+  return (
+    <div className="relative w-full bg-[#050505] font-sans overflow-hidden">
+      <div className="relative w-full h-[255vw] md:h-[96vw] mt-24 md:mt-32">
         {/* Dark Marble Texture */}
         <div
           className="absolute inset-0 z-0 opacity-30 pointer-events-none"
@@ -192,22 +177,13 @@ export default function LeaderboardPage() {
           }}
         />
 
-        {/* Mobile 2×4 grid borders */}
+        {/* Mobile 2×6 grid borders */}
         <div className="absolute top-0 left-0 w-full h-full z-0 md:hidden flex flex-wrap pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
               className="w-[50vw] h-[42.5vw] border border-white/[0.05]"
             />
-          ))}
-        </div>
-
-        {/* Column Labels A–H (Desktop) */}
-        <div className="absolute top-0 w-full px-[2vw] hidden md:flex text-white/20 text-[10px] font-mono pt-2 z-10">
-          {["A", "B", "C", "D", "E", "F", "G", "H"].map((col) => (
-            <div key={col} className="w-[12vw] text-center">
-              {col}
-            </div>
           ))}
         </div>
 
@@ -236,44 +212,115 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Inner grid content */}
-        <div className="relative w-full h-full">
-          {/* ── LEFT TEXT BLOCK — Cols A–B, Ranks 2–4 (w=24vw h=36vw from left=2vw top=12vw) ── */}
+        <div className="relative w-full h-full pt-20 md:pt-0">
+          {/* Title on the 1st row right side */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="relative md:absolute md:right-[2vw] md:top-[2vw] z-30 w-full px-6 md:px-0 text-right md:flex md:items-center"
+          >
+            <h1 className="uppercase font-cinzel font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.06em] w-full">
+              <span className="inline-block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] text-[12vw] md:text-[6vw]">
+                LEADER
+              </span>
+              <span className="inline-block text-[#9b1a1a] drop-shadow-[0_0_30px_rgba(155,26,26,0.6)] text-[12vw] md:text-[6vw] ml-2 md:ml-4">
+                BOARD
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* Time Control Filters (Mobile) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden flex flex-row items-center justify-center w-full px-6 mt-6 z-30 relative gap-2"
+          >
+            {["bullet", "blitz", "rapid"].map((type) => (
+              <button
+                key={`${type}-mobile`}
+                onClick={() => setTimeControl(type)}
+                className={`flex-1 py-3 border transition-all duration-300 font-cinzel text-xs tracking-wider uppercase ${timeControl === type ? "border-[#9b1a1a] bg-[#9b1a1a]/10 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" : "border-white/10 text-white/40 hover:text-white/80"}`}
+              >
+                {type}
+              </button>
+            ))}
+          </motion.div>
+
+          {/* ── TIME CONTROL FILTERS — Cols F–H, Row 2 (w=36vw h=12vw from left=62vw top=12vw) ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden md:grid absolute left-[62vw] top-[12vw] w-[36vw] h-[12vw] z-30 grid-cols-3"
+          >
+            {["bullet", "blitz", "rapid"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setTimeControl(type)}
+                className={`group w-full h-full flex flex-col items-center justify-center transition-all duration-500 relative overflow-hidden ${timeControl === type ? "text-white" : "text-white/30 hover:text-white/70"}`}
+              >
+                <div
+                  className={`absolute inset-0 transition-opacity duration-500 ${timeControl === type ? "bg-gradient-to-b from-[#9b1a1a]/20 to-transparent opacity-100" : "bg-white/[0.03] opacity-0 group-hover:opacity-100"}`}
+                />
+                <span
+                  className={`font-cinzel font-bold text-[1.4vw] uppercase tracking-[0.1em] relative z-10 transition-all duration-500 ${timeControl === type ? "drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]" : ""}`}
+                >
+                  {type}
+                </span>
+                <div
+                  className={`absolute bottom-0 left-0 w-full h-[2px] bg-[#9b1a1a] transition-all duration-500 ${timeControl === type ? "opacity-100" : "opacity-0"}`}
+                />
+              </button>
+            ))}
+          </motion.div>
+
+          {/* ── LEFT TEXT BLOCK — Cols A–B, Rows 1-2 (w=24vw h=24vw from left=2vw top=0vw) ── */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute left-0 md:left-[2vw] top-[6vw] md:top-[12vw] w-[100vw] md:w-[24vw] h-auto md:h-[36vw] z-20 flex flex-col justify-center px-6 py-[4vw] md:p-[3vw] md:border-r border-white/[0.06]"
+            className="absolute left-0 md:left-[2vw] top-[85vw] md:top-0 w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20"
           >
-            <p className="font-cinzel font-bold uppercase text-[8vw] md:text-[2.2vw] tracking-[0.05em] text-white leading-[1.1] mb-6 break-words w-full">
-              TOP
-              <br />
-              PLAYERS
-              <br />
-              OF THE
-              <br />
-              COMMUNITY
-            </p>
-            <div className="w-8 h-px bg-[#9b1a1a] mb-3" />
-            <p className="text-white/40 font-mono text-[3vw] md:text-[0.7vw] uppercase tracking-widest leading-[1.8]">
-              Ranked by
-              <br />
-              {timeControl.charAt(0).toUpperCase() + timeControl.slice(1)}{" "}
-              Rating
-            </p>
-            {loading && (
-              <p className="text-white/20 font-mono text-[2.5vw] md:text-[0.6vw] uppercase tracking-widest mt-4">
-                Loading...
-              </p>
-            )}
-            {!loading && leaderboard.length === 0 && (
-              <p className="text-white/20 font-mono text-[2.5vw] md:text-[0.6vw] uppercase tracking-widest mt-4">
-                No players found
-              </p>
-            )}
+            <SpotlightCard
+              spotlightColor="rgba(255, 255, 255, 0.08)"
+              className="w-full h-full flex flex-col justify-center px-4 md:px-6 py-[4vw] md:p-[3vw] border border-white/[0.06] bg-[#050505]"
+            >
+              <div className="relative z-10">
+                <p className="font-cinzel font-bold uppercase text-[5vw] md:text-[2.2vw] tracking-[0.05em] text-white leading-[1.1] mb-4 md:mb-6 break-words w-full">
+                  TOP
+                  <br />
+                  PLAYERS
+                  <br />
+                  OF THE
+                  <br />
+                  COMMUNITY
+                </p>
+                <div className="w-6 md:w-8 h-px bg-[#9b1a1a] mb-2 md:mb-3" />
+                <p className="text-white/40 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest leading-[1.8]">
+                  Ranked by
+                  <br />
+                  {timeControl.charAt(0).toUpperCase() +
+                    timeControl.slice(1)}{" "}
+                  Rating
+                </p>
+                {loading && (
+                  <p className="text-white/20 font-mono text-[2.5vw] md:text-[0.6vw] uppercase tracking-widest mt-4">
+                    Loading...
+                  </p>
+                )}
+                {!loading && leaderboard.length === 0 && (
+                  <p className="text-white/20 font-mono text-[2.5vw] md:text-[0.6vw] uppercase tracking-widest mt-4">
+                    No players found
+                  </p>
+                )}
+              </div>
+            </SpotlightCard>
           </motion.div>
 
-          {/* ── PLAYER #1 — Cols C–D (left-[26vw]), Rows 3–5 (top-[24vw]) ── */}
+          {/* ── PLAYER #1 — Cols C–D (left-[26vw]), Rows 3–4 (top-[24vw]) ── */}
           {top3[0] && (
             <motion.div
               custom={0}
@@ -281,41 +328,69 @@ export default function LeaderboardPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
               variants={cardVariants}
-              className="absolute top-[50vw] md:top-[24vw] left-0 md:left-[26vw] w-[50vw] md:w-[24vw] h-[75vw] md:h-[36vw] z-20 flex flex-col"
+              className="absolute top-[127.5vw] md:top-[24vw] left-[50vw] md:left-[26vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
               {/* Profile Image Area (2x2) */}
-              <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[0].border} relative overflow-hidden group`}>
-                {(top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl) ? (
-                  <img src={top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl} alt={top3[0].username || top3[0].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+                {top3[0].profilePic ||
+                top3[0].imageUrl ||
+                top3[0].profilePictureUrl ? (
+                  <img
+                    src={
+                      top3[0].profilePic ||
+                      top3[0].imageUrl ||
+                      top3[0].profilePictureUrl
+                    }
+                    alt={top3[0].username || top3[0].userName}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
-                    <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none`}>
+                    <span
+                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none`}
+                    >
                       #1
-                    </span>
-                    <span className="font-mono text-[3vw] md:text-[1vw] uppercase tracking-widest text-white/40 mt-2">
-                      {top3[0].rating}
                     </span>
                   </div>
                 )}
-                {(top3[0].profilePic || top3[0].imageUrl || top3[0].profilePictureUrl) && (
-                  <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none z-10`}>
+
+                {/* Progressive Blur Overlay (Fixed Masking) */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0"
+                  style={{
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                  }}
+                >
+                  <div className="absolute inset-0 backdrop-blur-xl bg-black/30" />
+                </div>
+
+                {(top3[0].profilePic ||
+                  top3[0].imageUrl ||
+                  top3[0].profilePictureUrl) && (
+                  <div
+                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none z-10`}
+                  >
                     #1
                   </div>
                 )}
-              </div>
-              {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[0].username || top3[0].userName}
-                </h3>
-                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
-                  {top3[0].branch}{top3[0].year ? ` · Y${top3[0].year}` : ""}
-                </p>
+
+                {/* Details Overlay */}
+                <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
+                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                    {(top3[0].username || top3[0].userName || "").split(" ")[0]}
+                  </h3>
+                  <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
+                    {top3[0].rating}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}
 
-          {/* ── PLAYER #2 — Cols G–H (left-[74vw]), Rows 4–6 (top-[36vw]) ── */}
+          {/* ── PLAYER #2 — Cols E–F (left-[50vw]), Rows 5–6 (top-[48vw]) ── */}
           {top3[1] && (
             <motion.div
               custom={1}
@@ -323,41 +398,69 @@ export default function LeaderboardPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
               variants={cardVariants}
-              className="absolute top-[125vw] md:top-[36vw] left-[50vw] md:left-[74vw] w-[50vw] md:w-[24vw] h-[75vw] md:h-[36vw] z-20 flex flex-col"
+              className="absolute top-[170vw] md:top-[48vw] left-0 md:left-[50vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
               {/* Profile Image Area (2x2) */}
-              <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[1].border} relative overflow-hidden group`}>
-                {(top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl) ? (
-                  <img src={top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl} alt={top3[1].username || top3[1].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+                {top3[1].profilePic ||
+                top3[1].imageUrl ||
+                top3[1].profilePictureUrl ? (
+                  <img
+                    src={
+                      top3[1].profilePic ||
+                      top3[1].imageUrl ||
+                      top3[1].profilePictureUrl
+                    }
+                    alt={top3[1].username || top3[1].userName}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
-                    <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none`}>
+                    <span
+                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none`}
+                    >
                       #2
-                    </span>
-                    <span className="font-mono text-[3vw] md:text-[1vw] uppercase tracking-widest text-white/40 mt-2">
-                      {top3[1].rating}
                     </span>
                   </div>
                 )}
-                {(top3[1].profilePic || top3[1].imageUrl || top3[1].profilePictureUrl) && (
-                  <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none z-10`}>
+
+                {/* Progressive Blur Overlay (Fixed Masking) */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0"
+                  style={{
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                  }}
+                >
+                  <div className="absolute inset-0 backdrop-blur-xl bg-black/30" />
+                </div>
+
+                {(top3[1].profilePic ||
+                  top3[1].imageUrl ||
+                  top3[1].profilePictureUrl) && (
+                  <div
+                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none z-10`}
+                  >
                     #2
                   </div>
                 )}
-              </div>
-              {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[1].username || top3[1].userName}
-                </h3>
-                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
-                  {top3[1].branch}{top3[1].year ? ` · Y${top3[1].year}` : ""}
-                </p>
+
+                {/* Details Overlay */}
+                <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
+                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                    {(top3[1].username || top3[1].userName || "").split(" ")[0]}
+                  </h3>
+                  <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
+                    {top3[1].rating}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}
 
-          {/* ── PLAYER #3 — Cols A–B (left-[2vw]), Rows 6–8 (top-[60vw]) ── */}
+          {/* ── PLAYER #3 — Cols G–H (left-[74vw]), Rows 7–8 (top-[72vw]) ── */}
           {top3[2] && (
             <motion.div
               custom={2}
@@ -365,39 +468,79 @@ export default function LeaderboardPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
               variants={cardVariants}
-              className="absolute top-[200vw] md:top-[60vw] left-0 md:left-[2vw] w-[50vw] md:w-[24vw] h-[75vw] md:h-[36vw] z-20 flex flex-col"
+              className="absolute top-[212.5vw] md:top-[72vw] left-[50vw] md:left-[74vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
               {/* Profile Image Area (2x2) */}
-              <div className={`w-full h-[50vw] md:h-[24vw] bg-[#050505] border ${MEDAL_COLORS[2].border} relative overflow-hidden group`}>
-                {(top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl) ? (
-                  <img src={top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl} alt={top3[2].username || top3[2].userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+                {top3[2].profilePic ||
+                top3[2].imageUrl ||
+                top3[2].profilePictureUrl ? (
+                  <img
+                    src={
+                      top3[2].profilePic ||
+                      top3[2].imageUrl ||
+                      top3[2].profilePictureUrl
+                    }
+                    alt={top3[2].username || top3[2].userName}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
-                    <span className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none`}>
+                    <span
+                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none`}
+                    >
                       #3
-                    </span>
-                    <span className="font-mono text-[3vw] md:text-[1vw] uppercase tracking-widest text-white/40 mt-2">
-                      {top3[2].rating}
                     </span>
                   </div>
                 )}
-                {(top3[2].profilePic || top3[2].imageUrl || top3[2].profilePictureUrl) && (
-                  <div className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none z-10`}>
+
+                {/* Progressive Blur Overlay (Fixed Masking) */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0"
+                  style={{
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 60%)",
+                  }}
+                >
+                  <div className="absolute inset-0 backdrop-blur-xl bg-black/30" />
+                </div>
+
+                {(top3[2].profilePic ||
+                  top3[2].imageUrl ||
+                  top3[2].profilePictureUrl) && (
+                  <div
+                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none z-10`}
+                  >
                     #3
                   </div>
                 )}
-              </div>
-              {/* Details Area (1x2) */}
-              <div className="w-full flex-1 bg-[#0a0a0a] border-t border-white/5 flex flex-col justify-center px-[4vw] md:px-[2vw]">
-                <h3 className="text-white font-cinzel font-bold text-[5vw] md:text-[1.8vw] leading-tight truncate">
-                  {top3[2].username || top3[2].userName}
-                </h3>
-                <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.7vw] uppercase tracking-widest truncate mt-1">
-                  {top3[2].branch}{top3[2].year ? ` · Y${top3[2].year}` : ""}
-                </p>
+
+                {/* Details Overlay */}
+                <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
+                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                    {(top3[2].username || top3[2].userName || "").split(" ")[0]}
+                  </h3>
+                  <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
+                    {top3[2].rating}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}
+          {/* ── RANKS INFO — Col A (left-[2vw]), Row 8 (top-[84vw]) ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="hidden md:flex absolute top-[84vw] left-[2vw] w-[24vw] h-[12vw] z-20 flex-col items-start justify-center px-[2vw] text-white/20 font-cinzel font-bold text-[1.2vw] uppercase tracking-[0.2em]"
+          >
+            <span>Ranks</span>
+            <span className="text-[1.5vw] text-white/40">
+              1 — {leaderboard.length}
+            </span>
+          </motion.div>
         </div>
 
         {/* Bottom Fade */}
@@ -408,83 +551,69 @@ export default function LeaderboardPage() {
           RANK 4+ TABLE
          ────────────────────────────────────────── */}
       {rest.length > 0 && (
-        <div className="relative w-full bg-[#050505] z-20 px-4 md:px-[4vw] pb-24">
-          {/* Faint continuing grid */}
-          <div
-            className="absolute inset-0 z-0 opacity-[0.035] pointer-events-none hidden md:block"
-            style={{
-              backgroundImage: `
-                linear-gradient(to right, #ffffff 1px, transparent 1px),
-                linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-              `,
-              backgroundSize: "12vw 12vw",
-              backgroundPosition: "2vw 0",
-            }}
-          />
+        <div className="relative w-full z-20 px-4 md:px-[4vw] mt-12 md:mt-16 pb-32">
+          <div className="relative z-10 w-full mx-auto">
+            <div className="border border-white/[0.07] overflow-hidden relative bg-[#050505]/40 backdrop-blur-2xl rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+              <div
+                className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-screen"
+                style={{
+                  backgroundImage: 'url("/white_marble_texture.png")',
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <div className="w-full text-left relative z-10 flex flex-col">
+                <div className="flex w-full bg-white/[0.05] border-b border-white/[0.1] text-white/60 text-[10px] md:text-xs uppercase tracking-[0.15em] font-mono backdrop-blur-xl">
+                  <div className="py-4 px-2 md:py-6 md:px-8 font-semibold w-8 md:w-32 shrink-0 text-center md:text-left">
+                    Rank
+                  </div>
+                  <div className="py-4 px-2 md:py-6 md:px-4 font-semibold flex-1 min-w-0">
+                    Player
+                  </div>
+                  <div className="py-6 px-8 font-semibold hidden md:block shrink-0 md:w-48 lg:w-64">
+                    Branch / Year
+                  </div>
+                  <div className="py-4 px-3 md:py-6 md:px-8 font-semibold text-right shrink-0 w-16 md:w-32">
+                    Rating
+                  </div>
+                </div>
+                <div className="w-full relative min-h-[300px]">
+                  <AnimatedList
+                    items={tableItems}
+                    showGradients={false}
+                    enableArrowNavigation={false}
+                    displayScrollbar={false}
+                    className="w-full"
+                    itemClassName="!p-0"
+                  />
+                </div>
+              </div>
 
-          <div className="relative z-10 max-w-5xl mx-auto">
-            <div className="flex items-center gap-4 mb-6 border-b border-white/[0.06] pb-4">
-              <span className="text-white/15 font-cinzel font-bold text-[10px] uppercase tracking-[0.2em]">
-                Rank 4 — {leaderboard.length}
-              </span>
-              <div className="flex-1 h-px bg-white/[0.04]" />
-            </div>
-
-            <div className="border border-white/[0.07] overflow-hidden">
-              <table className="w-full text-left">
-                <thead className="bg-[#0a0a0a] text-white/20 text-[10px] uppercase tracking-widest font-mono">
-                  <tr>
-                    <th className="p-4 font-normal w-16">Rank</th>
-                    <th className="p-4 font-normal">Player</th>
-                    <th className="p-4 font-normal hidden md:table-cell">
-                      Branch / Year
-                    </th>
-                    <th className="p-4 font-normal text-right">Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {rest.map((player, i) => (
-                    <motion.tr
-                      key={player.userId}
-                      initial={{ opacity: 0, x: -6 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: i * 0.025 }}
-                      className="hover:bg-white/[0.025] transition-colors group"
+              {totalPages > 1 && (
+                <div className="flex flex-row items-center justify-between border-t border-white/[0.07] px-4 md:px-8 py-4 bg-white/[0.01] backdrop-blur-xl">
+                  <span className="text-white/30 font-mono text-xs uppercase tracking-wider">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md text-white/50 hover:text-white hover:border-white/30 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] disabled:opacity-30 disabled:pointer-events-none transition-all duration-300"
                     >
-                      <td className="p-4 font-mono text-white/20 font-bold text-sm group-hover:text-[#9b1a1a] transition-colors">
-                        #{i + 4}
-                      </td>
-                      <td className="p-4 flex items-center gap-3">
-                        <div className="w-9 h-9 md:w-10 md:h-10 bg-[#111] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
-                          {(player.profilePictureUrl || player.profilePic || player.imageUrl) ? (
-                            <img src={player.profilePictureUrl || player.profilePic || player.imageUrl} alt={player.username || player.userName} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" />
-                          ) : (
-                            <span className="text-white/20 font-cinzel font-bold text-xs">{player.username?.[0] || player.userName?.[0] || "?"}</span>
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-cinzel font-bold text-sm text-white/70 group-hover:text-white transition-colors">
-                            {player.username || player.userName}
-                          </div>
-                          <div className="text-[10px] text-white/20 font-mono mt-0.5">
-                            {player.chessComUsername || "—"}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4 text-xs text-white/25 font-mono hidden md:table-cell">
-                        {player.branch}
-                        {player.year ? ` · Y${player.year}` : ""}
-                      </td>
-                      <td className="p-4 text-right">
-                        <span className="font-cinzel font-bold text-base text-white/60 group-hover:text-white transition-colors tabular-nums">
-                          {player.rating}
-                        </span>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((p) => Math.min(totalPages, p + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md text-white/50 hover:text-white hover:border-white/30 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] disabled:opacity-30 disabled:pointer-events-none transition-all duration-300"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
