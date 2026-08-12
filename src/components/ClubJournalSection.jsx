@@ -236,14 +236,6 @@ export default function ClubJournalSection() {
             })}
           </React.Fragment>
         ))}
-
-        {/* Removed overlapping top shadow */}
-        <div
-          className="absolute inset-x-0 bottom-0 pointer-events-none h-[20vw] z-10"
-          style={{
-            background: "linear-gradient(to top, #0a0a0a 0%, transparent 100%)",
-          }}
-        />
       </div>
     </section>
   );
