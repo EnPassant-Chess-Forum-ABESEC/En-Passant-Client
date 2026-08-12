@@ -17,6 +17,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
+import ThemeToggle from "./ThemeToggle";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -32,7 +33,7 @@ export default function AdminSidebar() {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(isPaymentsActive);
 
   return (
-    <aside className="w-[280px] h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-6 border-r border-slate-200 bg-white z-20">
+    <aside className="w-[280px] h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-6 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] z-20 transition-colors duration-500">
       <div className="mb-14 px-4">
         <Link href="/admin" className="flex items-center gap-3 group">
           <Image
@@ -42,7 +43,7 @@ export default function AdminSidebar() {
             height={32}
             className="object-contain"
           />
-          <h2 className="text-xl font-black tracking-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
             EN PASSANT
           </h2>
         </Link>
@@ -55,8 +56,8 @@ export default function AdminSidebar() {
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
             ${
               pathname === "/admin"
-                ? "bg-blue-50 text-blue-600"
-                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
             }`}
         >
           <LayoutDashboard
@@ -75,8 +76,8 @@ export default function AdminSidebar() {
             className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
               ${
                 isRecruitmentActive && !isRecruitmentOpen
-                  ? "bg-blue-50/50 text-blue-600"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               }`}
           >
             <Briefcase className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
@@ -89,14 +90,14 @@ export default function AdminSidebar() {
           <div
             className={`overflow-hidden transition-all duration-500 ease-in-out ${isRecruitmentOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
           >
-            <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 ml-6">
+            <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
               <Link
                 href="/admin/recruitment/applications"
                 className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
                   ${
                     pathname === "/admin/recruitment/applications"
-                      ? "text-blue-600 bg-blue-50/50"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
                   }`}
               >
                 <FileText className="w-4 h-4" />
@@ -108,8 +109,8 @@ export default function AdminSidebar() {
                 className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
                   ${
                     pathname === "/admin/recruitment/tasks"
-                      ? "text-blue-600 bg-blue-50/50"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
                   }`}
               >
                 <CheckSquare className="w-4 h-4" />
@@ -121,8 +122,8 @@ export default function AdminSidebar() {
                 className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
                   ${
                     pathname === "/admin/recruitment/departments"
-                      ? "text-blue-600 bg-blue-50/50"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
                   }`}
               >
                 <Building2 className="w-4 h-4" />
@@ -133,8 +134,8 @@ export default function AdminSidebar() {
                 className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
                   ${
                     pathname === "/admin/recruitment/settings"
-                      ? "text-blue-600 bg-blue-50/50"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
                   }`}
               >
                 <Settings className="w-4 h-4" />
@@ -150,8 +151,8 @@ export default function AdminSidebar() {
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
             ${
               pathname === "/admin/users"
-                ? "bg-blue-50 text-blue-600"
-                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
             }`}
         >
           <Users
@@ -170,8 +171,8 @@ export default function AdminSidebar() {
             className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
               ${
                 isPaymentsActive && !isPaymentsOpen
-                  ? "bg-blue-50/50 text-blue-600"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               }`}
           >
             <CreditCard className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
@@ -184,14 +185,14 @@ export default function AdminSidebar() {
           <div
             className={`overflow-hidden transition-all duration-500 ease-in-out ${isPaymentsOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
           >
-            <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 ml-6">
+            <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
               <Link
                 href="/admin/payments/recruitment"
                 className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
                   ${
                     pathname === "/admin/payments/recruitment"
-                      ? "text-blue-600 bg-blue-50/50"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
                   }`}
               >
                 <Briefcase className="w-4 h-4" />
@@ -203,7 +204,7 @@ export default function AdminSidebar() {
 
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-slate-100">
+      <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
         {user && (
           <div className="flex items-center gap-3 px-4 mb-4">
             <Image
@@ -211,21 +212,23 @@ export default function AdminSidebar() {
               alt="Profile"
               width={36}
               height={36}
-              className="rounded-full border border-slate-200"
+              className="rounded-full border border-slate-200 dark:border-slate-700"
             />
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-800 truncate">
+              <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
                 {user.fullName || "Admin"}
               </span>
-              <span className="text-xs text-slate-500 truncate">
+              <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
                 {user.primaryEmailAddress?.emailAddress}
               </span>
             </div>
           </div>
         )}
+        <ThemeToggle />
+        
         <button
           onClick={() => signOut({ redirectUrl: "/" })}
-          className="flex items-center gap-4 px-4 py-3 w-full text-left text-slate-500 hover:text-red-600 transition-colors rounded-xl hover:bg-red-50"
+          className="flex items-center gap-4 px-4 py-3 mt-4 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
         >
           <LogOut className="w-5 h-5" />
           <span className="text-sm font-semibold">Sign Out</span>

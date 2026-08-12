@@ -94,7 +94,7 @@ export default function DepartmentsTab() {
 
   if (loading)
     return (
-      <div className="p-12 text-center text-slate-500 uppercase tracking-widest text-sm">
+      <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">
         Loading Data...
       </div>
     );
@@ -103,12 +103,12 @@ export default function DepartmentsTab() {
     <div className="space-y-12">
       <form
         onSubmit={handleSave}
-        className="bg-white border border-slate-200 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden"
+        className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden transition-colors"
       >
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-600/50 to-transparent" />
 
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold  tracking-tight text-slate-800">
+          <h2 className="text-xl font-bold  tracking-tight text-slate-800 dark:text-slate-50">
             {editId ? "Edit Department" : "Create Department"}
           </h2>
           {editId && (
@@ -120,7 +120,7 @@ export default function DepartmentsTab() {
                 setCode("");
                 setDescription("");
               }}
-              className="text-xs tracking-tight text-slate-500 hover:text-slate-800 transition-colors"
+              className="text-xs tracking-tight text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
             >
               Cancel Edit
             </button>
@@ -129,7 +129,7 @@ export default function DepartmentsTab() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">
+            <label className="block text-xs font-bold tracking-normal text-slate-500 dark:text-slate-400">
               Name
             </label>
             <input
@@ -137,11 +137,11 @@ export default function DepartmentsTab() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Media & Videography"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">
+            <label className="block text-xs font-bold tracking-normal text-slate-500 dark:text-slate-400">
               Code
             </label>
             <input
@@ -149,23 +149,23 @@ export default function DepartmentsTab() {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="e.g. MEDIA"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
           <div className="md:col-span-2 space-y-2">
-            <label className="block text-xs font-bold tracking-normal text-slate-500">
+            <label className="block text-xs font-bold tracking-normal text-slate-500 dark:text-slate-400">
               Description
             </label>
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description of the department's role..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-400"
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-slate-200 flex justify-end">
+        <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex justify-end">
           <button
             type="submit"
             className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md"
@@ -176,10 +176,10 @@ export default function DepartmentsTab() {
       </form>
 
       {/* ─── Department List Table ─── */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl">
+      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left whitespace-nowrap">
-            <thead className="bg-slate-50 text-slate-500 text-[10px] font-bold tracking-wider border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-6 py-4 font-normal">Dept ID</th>
                 <th className="px-6 py-4 font-normal">Code</th>
@@ -188,12 +188,12 @@ export default function DepartmentsTab() {
                 <th className="px-6 py-4 font-normal text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
               {departments.length === 0 && (
                 <tr>
                   <td
                     colSpan="5"
-                    className="p-12 text-center text-slate-500 uppercase tracking-widest text-xs"
+                    className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
                   >
                     No departments found
                   </td>
@@ -202,18 +202,18 @@ export default function DepartmentsTab() {
               {departments.map((dept) => (
                 <tr
                   key={dept._id}
-                  className="hover:bg-white/[0.02] transition-colors group"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                 >
-                  <td className="px-6 py-5 font-mono text-sm text-slate-500">
+                  <td className="px-6 py-5 font-mono text-sm text-slate-500 dark:text-slate-400">
                     {dept._id}
                   </td>
-                  <td className="px-6 py-5 font-mono text-xs text-blue-600 font-bold tracking-wider">
+                  <td className="px-6 py-5 font-mono text-xs text-blue-600 dark:text-blue-400 font-bold tracking-wider">
                     {dept.code}
                   </td>
-                  <td className="px-6 py-5 font-bold tracking-wide">
+                  <td className="px-6 py-5 font-bold tracking-wide text-slate-900 dark:text-slate-50">
                     {dept.name}
                   </td>
-                  <td className="px-6 py-5 text-xs text-slate-500 whitespace-normal min-w-[200px] max-w-md">
+                  <td className="px-6 py-5 text-xs text-slate-500 dark:text-slate-400 whitespace-normal min-w-[200px] max-w-md">
                     {dept.description}
                   </td>
                   <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">

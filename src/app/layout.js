@@ -8,6 +8,7 @@ import {
 import Navbar from "@/components/Navbar";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -52,18 +53,25 @@ export default function RootLayout({ children }) {
       <html
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${inter.variable} ${ebGaramond.variable}`}
+        suppressHydrationWarning
       >
-        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white antialiased overflow-x-hidden">
-          <SmoothScroll>
-            <NavbarWrapper>
-              <Navbar />
-            </NavbarWrapper>
-            <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
-              {children}
-            </main>
-            <Footer />
-          </SmoothScroll>
-          <Toaster />
+        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white antialiased overflow-x-hidden transition-colors duration-500">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+          >
+            <SmoothScroll>
+              <NavbarWrapper>
+                <Navbar />
+              </NavbarWrapper>
+              <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
+                {children}
+              </main>
+              <Footer />
+            </SmoothScroll>
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

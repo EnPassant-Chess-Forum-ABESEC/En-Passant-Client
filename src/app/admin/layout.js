@@ -37,9 +37,9 @@ export default async function AdminLayout({ children }) {
     }
 
     return (
-      <div className="flex min-h-screen bg-slate-50 font-inter text-slate-800">
+      <div className="flex min-h-screen bg-slate-50 dark:bg-[#020617] font-inter text-slate-800 dark:text-slate-200 transition-colors duration-500">
         <AdminSidebar />
-        <main className="flex-1 relative bg-slate-50 min-h-screen ml-[280px]">
+        <main className="flex-1 relative bg-slate-50 dark:bg-[#020617] min-h-screen ml-[280px] transition-colors duration-500">
           <div className="relative z-10 px-10 py-16 md:px-16 md:py-20 lg:px-24 max-w-[1800px] mx-auto w-full min-h-full">
             {children}
           </div>

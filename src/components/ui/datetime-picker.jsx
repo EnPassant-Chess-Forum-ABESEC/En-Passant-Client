@@ -79,9 +79,9 @@ export function DateTimePicker({ date, setDate }) {
         <button
           type="button"
           className={cn(
-            "w-full flex items-center justify-start text-left bg-slate-50 border rounded-xl px-4 h-[50px] text-sm outline-none transition-colors font-medium text-slate-700 hover:bg-slate-100",
-            isOpen ? "border-blue-500" : "border-slate-200",
-            !date && "text-slate-400"
+            "w-full flex items-center justify-start text-left bg-slate-50 dark:bg-[#020617] border rounded-xl px-4 h-[50px] text-sm outline-none transition-colors font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800",
+            isOpen ? "border-blue-500" : "border-slate-200 dark:border-slate-800",
+            !date && "text-slate-400 dark:text-slate-500"
           )}
         >
           <CalendarIcon className="mr-2 h-5 w-5 text-blue-600/70 shrink-0" />
@@ -89,7 +89,7 @@ export function DateTimePicker({ date, setDate }) {
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-0 ring-0 border border-slate-200 shadow-lg overflow-hidden"
+        className="p-0 ring-0 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-lg overflow-hidden"
         style={{ width: "290px" }}
         align="start"
       >
@@ -99,45 +99,45 @@ export function DateTimePicker({ date, setDate }) {
             selected={selectedDate}
             onSelect={handleDateSelect}
             initialFocus
-            className="w-full"
+            className="w-full bg-transparent dark:bg-transparent"
           />
         </div>
-        <div className="px-3 py-2.5 border-t border-slate-100 flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-sm text-slate-600 font-medium shrink-0">
+        <div className="px-3 py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+          <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 font-medium shrink-0">
             <Clock className="w-4 h-4" />
             Time
           </div>
           <div className="flex items-center gap-1 ml-auto">
             <Select value={timeValue.split(" ")[0].split(":")[0]} onValueChange={(v) => handleTimeChange("hour", v)}>
-              <SelectTrigger className="w-[56px] px-1.5 h-8 bg-white focus:ring-0 border-slate-200">
+              <SelectTrigger className="w-[56px] px-1.5 h-8 bg-white dark:bg-[#020617] text-slate-800 dark:text-slate-200 focus:ring-0 border-slate-200 dark:border-slate-800">
                 <SelectValue placeholder="HH" />
               </SelectTrigger>
-              <SelectContent className="min-w-[80px]">
+              <SelectContent className="min-w-[80px] bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                 {Array.from({ length: 12 }, (_, i) => {
                   const val = (i + 1).toString().padStart(2, "0");
-                  return <SelectItem key={val} value={val}>{val}</SelectItem>;
+                  return <SelectItem key={val} value={val} className="focus:bg-slate-100 dark:focus:bg-slate-800">{val}</SelectItem>;
                 })}
               </SelectContent>
             </Select>
-            <span className="text-slate-400 font-bold text-sm">:</span>
+            <span className="text-slate-400 dark:text-slate-500 font-bold text-sm">:</span>
             <Select value={timeValue.split(" ")[0].split(":")[1]} onValueChange={(v) => handleTimeChange("minute", v)}>
-              <SelectTrigger className="w-[56px] px-1.5 h-8 bg-white focus:ring-0 border-slate-200">
+              <SelectTrigger className="w-[56px] px-1.5 h-8 bg-white dark:bg-[#020617] text-slate-800 dark:text-slate-200 focus:ring-0 border-slate-200 dark:border-slate-800">
                 <SelectValue placeholder="MM" />
               </SelectTrigger>
-              <SelectContent className="min-w-[80px]">
+              <SelectContent className="min-w-[80px] bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                 {Array.from({ length: 60 }, (_, i) => {
                   const val = i.toString().padStart(2, "0");
-                  return <SelectItem key={val} value={val}>{val}</SelectItem>;
+                  return <SelectItem key={val} value={val} className="focus:bg-slate-100 dark:focus:bg-slate-800">{val}</SelectItem>;
                 })}
               </SelectContent>
             </Select>
             <Select value={timeValue.split(" ")[1]} onValueChange={(v) => handleTimeChange("period", v)}>
-              <SelectTrigger className="w-[62px] px-1.5 h-8 bg-white focus:ring-0 border-slate-200">
+              <SelectTrigger className="w-[62px] px-1.5 h-8 bg-white dark:bg-[#020617] text-slate-800 dark:text-slate-200 focus:ring-0 border-slate-200 dark:border-slate-800">
                 <SelectValue placeholder="AM" />
               </SelectTrigger>
-              <SelectContent className="min-w-[80px]">
-                <SelectItem value="AM">AM</SelectItem>
-                <SelectItem value="PM">PM</SelectItem>
+              <SelectContent className="min-w-[80px] bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+                <SelectItem value="AM" className="focus:bg-slate-100 dark:focus:bg-slate-800">AM</SelectItem>
+                <SelectItem value="PM" className="focus:bg-slate-100 dark:focus:bg-slate-800">PM</SelectItem>
               </SelectContent>
             </Select>
           </div>

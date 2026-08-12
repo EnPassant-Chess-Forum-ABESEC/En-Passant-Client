@@ -81,24 +81,24 @@ export default function AdminSettingsPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-2">
           Recruitment Settings
         </h1>
-        <p className="text-slate-500">
+        <p className="text-slate-500 dark:text-slate-400">
           Configure global settings and recruitment phases.
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+      <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8 transition-colors">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
             <CalendarIcon className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
               Recruitment Phases
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Manage when application windows open and close.
             </p>
           </div>
@@ -107,60 +107,70 @@ export default function AdminSettingsPage() {
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 flex flex-col">
-              <label className="text-sm font-bold text-slate-700 block">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200 block">
                 Application Start Date
               </label>
               <DateTimePicker
                 date={settings.applicationStartDate}
-                setDate={(newDate) => setSettings({ ...settings, applicationStartDate: newDate })}
+                setDate={(newDate) =>
+                  setSettings({ ...settings, applicationStartDate: newDate })
+                }
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 When the application form opens for candidates.
               </p>
             </div>
 
             <div className="space-y-2 flex flex-col">
-              <label className="text-sm font-bold text-slate-700 block">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200 block">
                 Application End Date
               </label>
               <DateTimePicker
                 date={settings.applicationEndDate}
-                setDate={(newDate) => setSettings({ ...settings, applicationEndDate: newDate })}
+                setDate={(newDate) =>
+                  setSettings({ ...settings, applicationEndDate: newDate })
+                }
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 When the application form closes.
               </p>
             </div>
 
             <div className="space-y-2 flex flex-col">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                Task Reveal Date <Lock className="w-3 h-3 text-slate-400" />
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                Task Reveal Date{" "}
+                <Lock className="w-3 h-3 text-slate-400 dark:text-slate-500" />
               </label>
               <DateTimePicker
                 date={settings.taskRevealDate}
-                setDate={(newDate) => setSettings({ ...settings, taskRevealDate: newDate })}
+                setDate={(newDate) =>
+                  setSettings({ ...settings, taskRevealDate: newDate })
+                }
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 When candidates can see task descriptions.
               </p>
             </div>
 
             <div className="space-y-2 flex flex-col">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                Submission End Date <Clock className="w-3 h-3 text-slate-400" />
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                Submission End Date{" "}
+                <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500" />
               </label>
               <DateTimePicker
                 date={settings.submissionEndDate}
-                setDate={(newDate) => setSettings({ ...settings, submissionEndDate: newDate })}
+                setDate={(newDate) =>
+                  setSettings({ ...settings, submissionEndDate: newDate })
+                }
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 When the submission window closes.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-[#020617] border-t border-slate-100 dark:border-slate-800 flex justify-end">
           <button
             onClick={handleSave}
             disabled={saving}

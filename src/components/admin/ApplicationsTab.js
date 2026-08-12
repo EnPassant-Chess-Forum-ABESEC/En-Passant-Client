@@ -158,7 +158,7 @@ export default function ApplicationsTab() {
 
   if (loading)
     return (
-      <div className="p-8 text-center text-slate-500 uppercase tracking-widest text-xs">
+      <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
         Loading Applications...
       </div>
     );
@@ -166,11 +166,11 @@ export default function ApplicationsTab() {
   if (selectedAppId) {
     return (
       <div className="space-y-6">
-        <div className="bg-white border border-slate-200 rounded-lg p-8">
+        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg p-8 transition-colors">
           <div className="mb-6">
             <button
               onClick={() => setSelectedAppId(null)}
-              className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-full text-xs font-bold transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#020617] hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-full text-xs font-bold transition-colors shadow-sm"
             >
               <ChevronLeft className="w-4 h-4" />
               Back to List
@@ -178,26 +178,26 @@ export default function ApplicationsTab() {
           </div>
 
         {loadingDetails ? (
-          <div className="p-8 text-center text-slate-500 uppercase">
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase">
             Loading Application...
           </div>
         ) : appDetails ? (
           <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 pb-6 mb-6 gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 dark:border-slate-800 pb-6 mb-6 gap-6">
               <div>
-                <h2 className="text-2xl md:text-3xl font-black  text-slate-800 tracking-tight mb-2">{appDetails._id}</h2>
-                <div className="text-slate-500 font-mono text-[10px] md:text-xs mb-4">
+                <h2 className="text-2xl md:text-3xl font-black  text-slate-800 dark:text-slate-50 tracking-tight mb-2">{appDetails._id}</h2>
+                <div className="text-slate-500 dark:text-slate-400 font-mono text-[10px] md:text-xs mb-4">
                   {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.email || "No Email"}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
-                  <span className="text-slate-500">Applied For:</span>
+                  <span className="text-slate-500 dark:text-slate-400">Applied For:</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">
-                      Primary: <span className="text-slate-600">{appDetails.preferredDepartmentId?.name || "N/A"}</span>
+                    <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
+                      Primary: <span className="text-slate-600 dark:text-slate-400">{appDetails.preferredDepartmentId?.name || "N/A"}</span>
                     </span>
                     {appDetails.secondaryDepartmentId && appDetails.secondaryDepartmentId.length > 0 && (
-                      <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">
-                        Secondary: <span className="text-slate-600">{appDetails.secondaryDepartmentId.map(d => d.name).join(", ")}</span>
+                      <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
+                        Secondary: <span className="text-slate-600 dark:text-slate-400">{appDetails.secondaryDepartmentId.map(d => d.name).join(", ")}</span>
                       </span>
                     )}
                   </div>
@@ -205,17 +205,17 @@ export default function ApplicationsTab() {
               </div>
               <div className="flex flex-col gap-4 text-right min-w-[200px]">
                 <div className="flex items-center justify-end gap-3">
-                  <span className="text-[10px] text-slate-500 font-bold">Status:</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Status:</span>
                   <Select 
                     value={appDetails.status} 
                     onValueChange={(value) => updateApplicationStatus(appDetails._id, value)}
                   >
-                    <SelectTrigger className="w-[190px] bg-white border-slate-200 hover:border-slate-300 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 uppercase shadow-lg focus:ring-blue-500">
+                    <SelectTrigger className="w-[190px] bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase shadow-lg focus:ring-blue-500 dark:focus:ring-blue-500/50">
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200 text-slate-800">
+                    <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                       {statusOptions.map(s => (
-                        <SelectItem key={s.value} value={s.value} className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 focus:text-blue-600">
+                        <SelectItem key={s.value} value={s.value} className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 dark:focus:bg-slate-800/50 focus:text-blue-600 dark:focus:text-blue-400">
                           {s.label}
                         </SelectItem>
                       ))}
@@ -223,8 +223,8 @@ export default function ApplicationsTab() {
                   </Select>
                 </div>
                 <div className="flex items-center justify-end gap-3 pr-2">
-                  <span className="text-[10px] text-slate-500 font-bold">Payment:</span>
-                  <span className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500' : 'text-yellow-500'}`}>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Payment:</span>
+                  <span className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
                     {appDetails.paymentStatus}
                   </span>
                 </div>
@@ -241,32 +241,32 @@ export default function ApplicationsTab() {
 
         {appDetails && (
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-slate-800 tracking-tight px-2">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-50 tracking-tight px-2">
               Task Submissions
             </h3>
             {Object.keys(groupedSubmissions).length === 0 ? (
-              <p className="text-slate-500 p-4 bg-slate-100 border border-slate-200 rounded-lg text-sm">
+              <p className="text-slate-500 dark:text-slate-400 p-4 bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-lg text-sm">
                 No submissions found for this application.
               </p>
             ) : (
               Object.entries(groupedSubmissions).map(([deptName, subs]) => (
-                <div key={deptName} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                  <div className="bg-slate-50 border-b border-slate-200 px-6 py-4">
-                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest">{deptName}</h4>
+                <div key={deptName} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
+                  <div className="bg-slate-50 dark:bg-[#020617] border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+                    <h4 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">{deptName}</h4>
                   </div>
-                  <div className="divide-y divide-slate-100">
+                  <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {subs.map((sub, index) => (
-                      <div key={sub._id} className="p-6 hover:bg-slate-50/50 transition-colors">
-                        <h5 className="text-blue-600 text-sm font-bold tracking-tight mb-4">
+                      <div key={sub._id} className="p-6 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                        <h5 className="text-blue-600 dark:text-blue-400 text-sm font-bold tracking-tight mb-4">
                           {sub.taskId?.title || `Task ${index + 1}`}
                         </h5>
 
                         {sub.text && (
                           <div className="mb-4">
-                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-1.5">
+                            <strong className="block text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-widest mb-1.5">
                               Text Response:
                             </strong>
-                            <div className="p-4 bg-white rounded-md text-sm text-slate-600 whitespace-pre-wrap font-mono border border-slate-200 shadow-sm">
+                            <div className="p-4 bg-white dark:bg-[#020617] rounded-md text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap font-mono border border-slate-200 dark:border-slate-800 shadow-sm">
                               {sub.text}
                             </div>
                           </div>
@@ -274,7 +274,7 @@ export default function ApplicationsTab() {
 
                         {sub.links && sub.links.length > 0 && (
                           <div className="mb-4">
-                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-1.5">
+                            <strong className="block text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-widest mb-1.5">
                               Links:
                             </strong>
                             <ul className="flex flex-wrap gap-2">
@@ -284,7 +284,7 @@ export default function ApplicationsTab() {
                                     href={link}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-md hover:bg-blue-100 transition-colors border border-blue-100"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors border border-blue-100 dark:border-blue-500/20"
                                   >
                                     {link}
                                   </a>
@@ -296,7 +296,7 @@ export default function ApplicationsTab() {
 
                         {sub.files && sub.files.length > 0 && (
                           <div>
-                            <strong className="block text-[10px] uppercase text-slate-500 tracking-widest mb-2">
+                            <strong className="block text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-widest mb-2">
                               Attached Files:
                             </strong>
                             <div className="flex flex-wrap gap-4">
@@ -306,24 +306,24 @@ export default function ApplicationsTab() {
                                   href={file.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all min-w-[200px]"
+                                  className="flex items-center gap-3 p-3 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-lg hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-sm transition-all min-w-[200px]"
                                 >
                                   {file.resourceType === "image" ? (
                                     <img
                                       src={file.url}
                                       alt={file.originalName}
-                                      className="w-10 h-10 object-cover rounded shadow-sm border border-slate-100"
+                                      className="w-10 h-10 object-cover rounded shadow-sm border border-slate-100 dark:border-slate-800"
                                     />
                                   ) : (
-                                    <div className="w-10 h-10 rounded bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-[10px]">
+                                    <div className="w-10 h-10 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 font-bold text-[10px]">
                                       FILE
                                     </div>
                                   )}
                                   <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-semibold text-slate-700 truncate">
+                                    <div className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
                                       {file.originalName}
                                     </div>
-                                    <div className="text-[10px] text-slate-500 font-medium">
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                                       {(file.size / 1024).toFixed(1)} KB
                                     </div>
                                   </div>
@@ -356,7 +356,7 @@ export default function ApplicationsTab() {
 
       <div className="space-y-4">
         {filteredAndSortedApps.length === 0 ? (
-          <div className="p-12 text-center border border-slate-200 bg-white rounded-2xl text-slate-500 uppercase tracking-widest text-xs">
+          <div className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
             No applications match your criteria
           </div>
         ) : (
@@ -374,21 +374,21 @@ export default function ApplicationsTab() {
             return (
               <div
                 key={app._id}
-                className="bg-white border border-slate-200 rounded-2xl p-6 transition-all hover:bg-slate-50 hover:border-slate-200 group cursor-pointer"
+                className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 group cursor-pointer"
                 onClick={() => viewDetails(app._id)}
               >
                 <div className="flex flex-col xl:flex-row gap-6 xl:items-center justify-between">
                   {/* Left: User Info */}
                   <div className="flex items-center gap-4 xl:w-[30%]">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
-                      <User className="w-5 h-5 text-slate-500 group-hover:text-slate-800 transition-colors" />
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors" />
                     </div>
                     <div>
-                      <h3 className="font-bold  tracking-tight text-slate-800 text-sm md:text-base truncate max-w-[200px] md:max-w-[300px]">
+                      <h3 className="font-bold  tracking-tight text-slate-800 dark:text-slate-50 text-sm md:text-base truncate max-w-[200px] md:max-w-[300px]">
                         {app.userId?.userName || "Unknown User"}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-slate-500 font-medium">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                           {relativeTime}
                         </span>
                       </div>
@@ -396,15 +396,15 @@ export default function ApplicationsTab() {
                   </div>
 
                   {/* Middle: Stats Row */}
-                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 flex-1 md:pl-8 md:border-l border-slate-100">
+                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 flex-1 md:pl-8 md:border-l border-slate-100 dark:border-slate-800">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Applied</span>
-                       <span className="text-sm font-semibold text-slate-800">{appDate}</span>
+                       <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">Applied</span>
+                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{appDate}</span>
                     </div>
                     
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Status</span>
-                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
+                       <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">Status</span>
+                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === 'ACTIVE' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : 'bg-slate-100 text-slate-700 dark:bg-[#020617] dark:text-slate-300 dark:border dark:border-slate-700'}`}>
                          {app.status.replace(/_/g, " ")}
                        </span>
                     </div>
@@ -413,7 +413,7 @@ export default function ApplicationsTab() {
                   {/* Right: Actions */}
                   <div className="flex items-center gap-3 xl:w-[15%] justify-end mt-4 xl:mt-0">
                     <button
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-full text-xs font-bold transition-colors shadow-sm"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         viewDetails(app._id);
@@ -426,9 +426,9 @@ export default function ApplicationsTab() {
                 </div>
 
                 {/* Bottom Contact Footer */}
-                <div className="mt-6 pt-4 border-t border-slate-200 flex flex-wrap gap-6 text-[10px] md:text-xs text-slate-500  tracking-widest">
+                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-6 text-[10px] md:text-xs text-slate-500 dark:text-slate-400 tracking-widest">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-slate-800/30" />
+                    <Mail className="w-3.5 h-3.5 text-slate-800/30 dark:text-slate-400/50" />
                     <span className="font-mono lowercase">
                       {app.userId?.email || "no-email@provided"}
                     </span>

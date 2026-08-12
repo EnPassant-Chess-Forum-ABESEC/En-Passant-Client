@@ -54,10 +54,10 @@ export default function PaymentsPage() {
     <>
       <header className="mb-12 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-2">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             Payments
           </h1>
-          <p className="text-slate-500 text-xs md:text-sm uppercase tracking-widest font-bold">
+          <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm uppercase tracking-widest font-bold">
             Recruitment
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function PaymentsPage() {
         <button
           onClick={handleExportPayments}
           disabled={exporting}
-          className="shrink-0 self-start mt-2 flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-full transition-all shadow-sm"
+          className="shrink-0 self-start mt-2 flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-full transition-all shadow-sm"
         >
           {exporting ? (
             <>
