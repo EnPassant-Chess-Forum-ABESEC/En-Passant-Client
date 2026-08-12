@@ -110,24 +110,11 @@ const DepthCarousel = ({
       let opacity = d < 0 ? Math.max(0, 1 + d) : 1;
       if (!shown) opacity = 0;
 
-      const brightness = Math.max(0.15, 1 - back * cfg.falloff);
-      const blurPx =
-        cfg.blur > 0
-          ? Math.min(
-              cfg.blur,
-              (back / Math.max(1, cfg.visibleCards)) * cfg.blur,
-            )
-          : 0;
       const zi = Math.round(2000 - d * 20);
 
       el.style.transform = `translate(-50%, -50%) scale(${sc}) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
       el.style.opacity = opacity.toFixed(3);
 
-      let filterStr = `brightness(${brightness.toFixed(3)})`;
-      if (blurPx > 0) {
-        filterStr += ` blur(${blurPx.toFixed(2)}px)`;
-      }
-      el.style.filter = filterStr;
       el.style.zIndex = String(zi);
       el.style.pointerEvents = shown && opacity > 0.05 ? "auto" : "none";
 
@@ -400,7 +387,7 @@ const DepthCarousel = ({
         {data.map((item, i) => (
           <div
             key={i}
-            className="absolute left-1/2 top-1/2 cursor-pointer overflow-hidden bg-[#0b0d12] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.65),0_8px_20px_-10px_rgba(0,0,0,0.5)] [transform:translate(-50%,-50%)] [transform-origin:center] [will-change:transform,opacity,filter]"
+            className="absolute left-1/2 top-1/2 cursor-pointer overflow-hidden bg-[#0b0d12] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.65),0_8px_20px_-10px_rgba(0,0,0,0.5)] [transform:translate(-50%,-50%)] [transform-origin:center] [will-change:transform,opacity]"
             ref={(el) => (cardRefs.current[i] = el)}
             style={{
               width: cardWidth,
