@@ -16,9 +16,12 @@ const StrategySection = dynamic(() => import("@/components/CommunityDesc"), {
 const EcosystemSection = dynamic(() => import("@/components/AboutClub"), {
   ssr: true,
 });
-const DriftWallSection = dynamic(() => import("@/components/DriftWallSection"), {
-  ssr: true,
-});
+const DriftWallSection = dynamic(
+  () => import("@/components/DriftWallSection"),
+  {
+    ssr: true,
+  },
+);
 const ClubJournalSection = dynamic(
   () => import("@/components/ClubJournalSection"),
   { ssr: true },
@@ -173,6 +176,13 @@ export default function Home() {
                 </span>
                 <br />
                 Dedicated to spread the game of chess
+              </div>
+              <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
+                <Link href={userId ? "/recruitment" : "/sign-up"} className="btn-bracket group">
+                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
+                    {userId ? "Go to Recruitment" : "Sign Up Here"}
+                  </div>
+                </Link>
               </div>
             </div>
           </div>

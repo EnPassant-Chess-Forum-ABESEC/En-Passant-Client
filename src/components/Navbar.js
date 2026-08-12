@@ -9,7 +9,12 @@ import { Menu, X, User } from "lucide-react";
 
 import { userButtonAppearance } from "@/lib/clerkAppearance";
 import { useApi } from "@/lib/api";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+} from "framer-motion";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -64,7 +69,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Leaderboard", path: "/leaderboard" },
-    { name: "Gallery", path: "/gallery" },
+    { name: "Gallery", path: "/event-gallery" },
     { name: "Team", path: "/team" },
     { name: "Recruitment", path: recruitmentPath },
   ];
@@ -82,9 +87,7 @@ export default function Navbar() {
           transition: "opacity 0.35s ease-out",
         }}
       >
-        <div
-          className="w-full transition-all duration-500 ease-out bg-transparent"
-        >
+        <div className="w-full transition-all duration-500 ease-out bg-transparent">
           <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 h-16 md:h-20">
             {/* Logo */}
             <Link
@@ -92,12 +95,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="relative z-50 flex items-center hover:opacity-70 transition-opacity"
             >
-              <Image
-                src="/logo.png"
-                alt="EnPassant"
-                width={26}
-                height={26}
-              />
+              <Image src="/logo.png" alt="EnPassant" width={26} height={26} />
             </Link>
 
             {/* Desktop Nav */}
@@ -109,22 +107,14 @@ export default function Navbar() {
                   className={`
                     group relative font-inter font-semibold text-[13px] tracking-[0.14em] uppercase
                     transition-colors duration-200 py-1
-                    ${isActive(link.path)
-                      ? "text-[#c41e3a]"
-                      : "text-[#a0a0a0] group-hover:text-white"
+                    ${
+                      isActive(link.path)
+                        ? "text-[#c41e3a]"
+                        : "text-[#a0a0a0] hover:text-white"
                     }
                   `}
                 >
-                  {/* Light Flair Background */}
-                  <div
-                    className={`
-                      absolute inset-0 top-1/2 -translate-y-1/2 -z-10
-                      bg-[radial-gradient(ellipse_at_center,rgba(196,30,58,0.35)_0%,transparent_70%)]
-                      blur-[4px] scale-150 transition-all duration-300 ease-out pointer-events-none
-                      ${isActive(link.path) ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
-                    `}
-                  />
-                  <span className={`relative z-10 transition-all duration-300 ${isActive(link.path) ? "drop-shadow-[0_0_8px_rgba(196,30,58,0.8)]" : "group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"}`}>
+                  <span className="relative z-10 transition-colors duration-300">
                     {link.name}
                   </span>
                 </Link>
@@ -142,7 +132,9 @@ export default function Navbar() {
                   <UserButton.MenuItems>
                     <UserButton.Link
                       label="Profile"
-                      labelIcon={<User size={15} color="#ffffff" strokeWidth={2} />}
+                      labelIcon={
+                        <User size={15} color="#ffffff" strokeWidth={2} />
+                      }
                       href="/profile"
                     />
                     <UserButton.Action label="signOut" />
@@ -215,7 +207,11 @@ export default function Navbar() {
                   key={link.name}
                   initial={{ y: 16, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.05 * i, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{
+                    delay: 0.05 * i,
+                    duration: 0.3,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                 >
                   <Link
                     href={link.path}
@@ -223,22 +219,14 @@ export default function Navbar() {
                     className={`
                       group relative font-inter font-semibold text-[15px] tracking-[0.12em] uppercase
                       transition-colors duration-200 py-1
-                      ${isActive(link.path)
-                        ? "text-[#c41e3a]"
-                        : "text-white/60 hover:text-white/90"
+                      ${
+                        isActive(link.path)
+                          ? "text-[#c41e3a]"
+                          : "text-white/60 hover:text-white/90"
                       }
                     `}
                   >
-                    {/* Light Flair Background */}
-                    <div
-                      className={`
-                        absolute inset-0 top-1/2 -translate-y-1/2 -z-10
-                        bg-[radial-gradient(ellipse_at_center,rgba(196,30,58,0.35)_0%,transparent_70%)]
-                        blur-[4px] scale-150 transition-all duration-300 ease-out pointer-events-none
-                        ${isActive(link.path) ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
-                      `}
-                    />
-                    <span className={`relative z-10 transition-all duration-300 ${isActive(link.path) ? "drop-shadow-[0_0_8px_rgba(196,30,58,0.8)]" : "group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"}`}>
+                    <span className="relative z-10 transition-colors duration-300">
                       {link.name}
                     </span>
                   </Link>
@@ -248,25 +236,38 @@ export default function Navbar() {
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                transition={{
+                  delay: 0.2,
+                  duration: 0.4,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 className="w-10 h-px bg-white/15 my-2"
               />
 
               <motion.div
                 initial={{ y: 16, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.25, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={{
+                  delay: 0.25,
+                  duration: 0.3,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
               >
                 {userId ? (
                   <div className="flex flex-col items-center gap-3">
                     <span className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-inter">
                       Account
                     </span>
-                    <UserButton afterSignOutUrl="/" appearance={userButtonAppearance}>
+                    <UserButton
+                      afterSignOutUrl="/"
+                      appearance={userButtonAppearance}
+                    >
                       <UserButton.MenuItems>
                         <UserButton.Link
                           label="Profile"
-                          labelIcon={<User size={15} color="#ffffff" strokeWidth={2} />}
+                          labelIcon={
+                            <User size={15} color="#ffffff" strokeWidth={2} />
+                          }
                           href="/profile"
                         />
                         <UserButton.Action label="manageAccount" />
