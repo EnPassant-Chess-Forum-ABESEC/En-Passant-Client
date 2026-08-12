@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import SpotlightCard from "./SpotlightCard";
 
-export default function EcosystemSection() {
+export default function AboutClub() {
   const sectionRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [mouseInSection, setMouseInSection] = useState(false);

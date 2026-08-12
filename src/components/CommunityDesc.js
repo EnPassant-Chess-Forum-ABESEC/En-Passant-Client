@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-export default function StrategySection() {
+export default function CommunityDesc() {
   const premiumEase = [0.16, 1, 0.3, 1];
 
   const headerVariants = {

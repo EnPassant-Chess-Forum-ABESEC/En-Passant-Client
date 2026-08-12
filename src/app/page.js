@@ -10,10 +10,10 @@ import { useAuth } from "@clerk/nextjs";
 const NumbersSection = dynamic(() => import("@/components/NumbersSection"), {
   ssr: false,
 });
-const StrategySection = dynamic(() => import("@/components/CommunityDesc"), {
+const CommunityDesc = dynamic(() => import("@/components/CommunityDesc"), {
   ssr: true,
 });
-const EcosystemSection = dynamic(() => import("@/components/AboutClub"), {
+const AboutClub = dynamic(() => import("@/components/AboutClub"), {
   ssr: true,
 });
 const DriftWallSection = dynamic(
@@ -41,18 +41,12 @@ export default function Home() {
   const yImage = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const premiumEase = [0.16, 1, 0.3, 1];
-
-  // Pre-decode the hero image before triggering any animation.
-  // img.decode() guarantees the bitmap is ready in GPU memory —
-  // unlike onLoad which fires before decode on priority images.
   useEffect(() => {
     const img = new window.Image();
     img.src = "/hero.png";
     img
       .decode()
       .then(() => {
-        // Double-rAF ensures state flip lands at the exact start of a paint frame
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setImageReady(true);
@@ -91,7 +85,6 @@ export default function Home() {
         >
           <div className="relative w-full max-w-7xl flex justify-center">
             <div className="relative flex items-baseline justify-center uppercase leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
-              {/* EN — dissolves letter by letter via CSS */}
               {["E", "N"].map((letter, index) => (
                 <span
                   key={`en-${index}`}
@@ -105,7 +98,6 @@ export default function Home() {
                 </span>
               ))}
 
-              {/* PASSANT — dissolves letter by letter, continues stagger from EN */}
               <span className="inline-flex ml-[0.15em]">
                 {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
                   <span
@@ -178,7 +170,10 @@ export default function Home() {
                 Dedicated to spread the game of chess
               </div>
               <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
-                <Link href={userId ? "/recruitment" : "/sign-up"} className="btn-bracket group">
+                <Link
+                  href={userId ? "/recruitment" : "/sign-up"}
+                  className="btn-bracket group"
+                >
                   <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
                     {userId ? "Go to Recruitment" : "Sign Up Here"}
                   </div>
@@ -191,8 +186,8 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 w-full h-32 md:h-56 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-30 pointer-events-none"></div>
       </section>
       <NumbersSection />
-      <StrategySection />
-      <EcosystemSection />
+      <CommunityDesc />
+      <AboutClub />
       <DriftWallSection />
       <ClubJournalSection />
     </>
