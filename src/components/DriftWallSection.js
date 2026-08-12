@@ -81,7 +81,9 @@ export default function DriftWallSection() {
           variants={headerVariants}
           className="mt-6 text-[#888888] font-inter max-w-lg text-sm md:text-base leading-relaxed"
         >
-          Explore moments captured across our history. From intense tournament battles to late-night strategy sessions, these are the memories that define us.
+          Explore moments captured across our history. From intense tournament
+          battles to late-night strategy sessions, these are the memories that
+          define us.
         </motion.p>
       </div>
 

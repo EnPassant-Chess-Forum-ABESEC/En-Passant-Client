@@ -89,7 +89,6 @@ export default function AboutClub() {
       onMouseLeave={() => setMouseInSection(false)}
       className="relative w-full bg-[#050505] overflow-hidden font-sans pt-20"
     >
-      {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
@@ -100,11 +99,9 @@ export default function AboutClub() {
       ></div>
       <div className="absolute inset-0 z-0 bg-black/40 pointer-events-none"></div>
 
-      {/* Top Fade — blends seamlessly from NumbersSection */}
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative w-full h-[300vw] md:h-[104vw]">
-        {/* ─── Faint Chess Board Grid Background (soft) ─── */}
         <div className="absolute inset-0 z-[1] pointer-events-none">
           <div
             className="absolute inset-0 opacity-[0.06] pointer-events-none hidden md:block"
@@ -123,7 +120,6 @@ export default function AboutClub() {
             }}
           />
 
-          {/* Mouse-following red glow grid (desktop) */}
           {mouseInSection && (
             <div
               className="absolute inset-0 pointer-events-none hidden md:block transition-opacity duration-200"
@@ -143,7 +139,6 @@ export default function AboutClub() {
           )}
         </div>
 
-        {/* ─── Mobile 2x4 Grid Borders ─── */}
         <div className="absolute top-[60vw] left-0 w-full h-[200vw] z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(8)].map((_, i) => (
             <div
@@ -153,7 +148,6 @@ export default function AboutClub() {
           ))}
         </div>
 
-        {/* Grid Coordinates — Columns (A–H) */}
         <div className="absolute top-0 w-full px-[2vw] hidden md:flex text-white/20 text-[10px] font-mono pt-2 z-0">
           {["A", "B", "C", "D", "E", "F", "G", "H"].map((col) => (
             <div key={col} className="w-[12vw] text-center">
@@ -162,7 +156,6 @@ export default function AboutClub() {
           ))}
         </div>
 
-        {/* Thin Left Gutter */}
         <div className="absolute top-0 left-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pr-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -174,7 +167,6 @@ export default function AboutClub() {
           ))}
         </div>
 
-        {/* Thin Right Gutter */}
         <div className="absolute top-0 right-0 h-full hidden md:flex flex-col text-[#555555] text-[9px] font-mono pl-2 z-0">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -186,7 +178,6 @@ export default function AboutClub() {
           ))}
         </div>
 
-        {/* ─── Header: THE CLUB IN ACTION ─── */}
         <div className="absolute top-[6vw] md:top-[2vw] right-[4vw] z-30 text-right pointer-events-none leading-[0.85]">
           <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
             <motion.span
@@ -224,7 +215,6 @@ export default function AboutClub() {
           </h2>
         </div>
 
-        {/* ─── Cards (snapped to grid) ─── */}
         {cards.map((card, index) => (
           <motion.div
             key={card.notation}
@@ -237,25 +227,27 @@ export default function AboutClub() {
           >
             <SpotlightCard
               spotlightColor="rgba(155, 26, 26, 0.35)"
-              className="w-full h-full p-[4vw] md:p-[2vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300"
+              className="relative w-full h-full p-[6vw] md:p-[3.5vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300 shadow-2xl overflow-hidden group"
             >
-              {/* Notation label — large, bold, red, top-right */}
-              <div className="flex justify-between items-start">
-                <h3 className="text-white font-cinzel font-bold text-[16px] tracking-[0.1em] uppercase pt-[1vw] md:pt-[0.5vw] bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
-                  {card.title}
-                </h3>
-                <span className="text-[#9b1a1a] font-cinzel font-black text-[28px] leading-none tracking-tighter">
-                  {card.notation}
-                </span>
+              <div className="absolute right-[5%] bottom-[0%] text-[30vw] md:text-[18vw] font-cinzel font-black text-white/[0.02] group-hover:text-white/[0.04] transition-colors duration-500 select-none pointer-events-none leading-none z-0">
+                {card.notation}
               </div>
 
-              <ul className="space-y-[1.5vw] md:space-y-[0.6vw] mb-[1vw] md:mb-[0.5vw]">
+              <div className="flex justify-between items-start relative z-10">
+                <h3 className="text-white font-cinzel font-bold text-[22px] md:text-[28px] tracking-[0.15em] uppercase pt-1 bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent drop-shadow-md">
+                  {card.title}
+                </h3>
+              </div>
+
+              <ul className="flex flex-col gap-[3vw] md:gap-[1.2vw] mt-auto relative z-10 pb-[2vw] md:pb-[1vw]">
                 {card.items.map((item) => (
                   <li
                     key={item}
-                    className="text-white/80 font-inter font-normal text-[14px] leading-[1.8] tracking-[0.02em] flex items-center gap-[1.5vw] md:gap-[0.5vw]"
+                    className="text-white/70 group-hover:text-white font-inter font-light text-[15px] md:text-[18px] tracking-[0.05em] flex items-center gap-[4vw] md:gap-[1.5vw] transition-colors duration-300"
                   >
-                    <span className="text-white/30">—</span>
+                    <span className="text-white/50 font-inter text-[14px] md:text-[16px]">
+                      —
+                    </span>
                     {item}
                   </li>
                 ))}
@@ -263,7 +255,7 @@ export default function AboutClub() {
             </SpotlightCard>
           </motion.div>
         ))}
-        {/* Bottom Fade — blends seamlessly into DriftWallSection */}
+
         <div className="absolute bottom-0 left-0 w-full h-[30vw] md:h-[10vw] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-30 pointer-events-none" />
       </div>
     </section>
