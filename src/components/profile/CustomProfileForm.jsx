@@ -43,6 +43,15 @@ export default function CustomProfileForm() {
     setSaving(true);
     setSuccess(false);
     setError(null);
+
+    const sanitizedCollegeEmail = collegeEmail.trim().toLowerCase();
+
+    if (sanitizedCollegeEmail && !sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
+      setError("College email must end with @abes.ac.in");
+      setSaving(false);
+      return;
+    }
+
     try {
       const endpoint = profile?.isOnboardingComplete
         ? "/users/me"
@@ -51,7 +60,7 @@ export default function CustomProfileForm() {
       const body = {
         branch,
         year: parseInt(year),
-        collegeEmail,
+        collegeEmail: sanitizedCollegeEmail,
         chessAccounts: { chessCom: { username: chessComUsername } },
       };
 

@@ -59,8 +59,13 @@ export default function Navbar() {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
 
+  // Close mobile menu on any route change (e.g. Clerk's UserButton.Link to /profile)
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   const recruitmentPath =
-    myApplication &&
+    myApplication?.status &&
     !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
       myApplication.status,
     )
@@ -254,26 +259,50 @@ export default function Navbar() {
                 }}
               >
                 {userId ? (
-                  <div className="flex flex-col items-center gap-3">
+                  <div className="flex flex-col items-center gap-3 w-full">
                     <span className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-inter">
                       Account
                     </span>
-                    <UserButton
-                      afterSignOutUrl="/"
-                      appearance={userButtonAppearance}
-                    >
-                      <UserButton.MenuItems>
-                        <UserButton.Link
-                          label="Profile"
-                          labelIcon={
-                            <User size={15} color="#ffffff" strokeWidth={2} />
-                          }
-                          href="/profile"
-                        />
-                        <UserButton.Action label="manageAccount" />
-                        <UserButton.Action label="signOut" />
-                      </UserButton.MenuItems>
-                    </UserButton>
+                    <div className="flex justify-center items-center w-full" style={{ isolation: "isolate" }}>
+                      <UserButton
+                        afterSignOutUrl="/"
+                        appearance={{
+                          ...userButtonAppearance,
+                          elements: {
+                            ...userButtonAppearance.elements,
+                            rootBox: {
+                              display: "flex",
+                              justifyContent: "center",
+                            },
+                            userButtonBox: {
+                              display: "flex",
+                              justifyContent: "center",
+                            },
+                            userButtonPopoverCard: {
+                              ...userButtonAppearance.elements.userButtonPopoverCard,
+                              position: "fixed !important",
+                              top: "50% !important",
+                              left: "50% !important",
+                              transform: "translate(-50%, -50%) !important",
+                              zIndex: "9999 !important",
+                              width: "min(340px, 90vw) !important",
+                            },
+                          },
+                        }}
+                      >
+                        <UserButton.MenuItems>
+                          <UserButton.Link
+                            label="Profile"
+                            labelIcon={
+                              <User size={15} color="#ffffff" strokeWidth={2} />
+                            }
+                            href="/profile"
+                          />
+                          <UserButton.Action label="manageAccount" />
+                          <UserButton.Action label="signOut" />
+                        </UserButton.MenuItems>
+                      </UserButton>
+                    </div>
                   </div>
                 ) : (
                   <button

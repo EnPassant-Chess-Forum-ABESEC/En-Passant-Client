@@ -227,25 +227,25 @@ export default function AboutClub() {
           >
             <SpotlightCard
               spotlightColor="rgba(155, 26, 26, 0.35)"
-              className="relative w-full h-full p-[6vw] md:p-[3.5vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300 shadow-2xl overflow-hidden group"
+              className="relative w-full h-full p-[4vw] md:p-[3.5vw] flex flex-col justify-between bg-[#050505] border border-white/10 pointer-events-auto transition-all duration-300 shadow-2xl overflow-hidden group"
             >
               <div className="absolute right-[5%] bottom-[0%] text-[30vw] md:text-[18vw] font-cinzel font-black text-white/[0.02] group-hover:text-white/[0.04] transition-colors duration-500 select-none pointer-events-none leading-none z-0">
                 {card.notation}
               </div>
 
               <div className="flex justify-between items-start relative z-10">
-                <h3 className="text-white font-cinzel font-bold text-[22px] md:text-[28px] tracking-[0.15em] uppercase pt-1 bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent drop-shadow-md">
+                <h3 className="text-white font-cinzel font-bold text-[16px] md:text-[28px] tracking-[0.15em] uppercase pt-1 bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent drop-shadow-md">
                   {card.title}
                 </h3>
               </div>
 
-              <ul className="flex flex-col gap-[3vw] md:gap-[1.2vw] mt-auto relative z-10 pb-[2vw] md:pb-[1vw]">
+              <ul className="flex flex-col gap-[1.5vw] md:gap-[1.2vw] mt-auto relative z-10 pb-[2vw] md:pb-[1vw]">
                 {card.items.map((item) => (
                   <li
                     key={item}
-                    className="text-white/70 group-hover:text-white font-inter font-light text-[15px] md:text-[18px] tracking-[0.05em] flex items-center gap-[4vw] md:gap-[1.5vw] transition-colors duration-300"
+                    className="text-white/70 group-hover:text-white font-inter font-light text-[12px] md:text-[18px] tracking-[0.05em] flex items-center gap-[2vw] md:gap-[1.5vw] transition-colors duration-300"
                   >
-                    <span className="text-white/50 font-inter text-[14px] md:text-[16px]">
+                    <span className="text-white/50 font-inter text-[12px] md:text-[16px]">
                       —
                     </span>
                     {item}

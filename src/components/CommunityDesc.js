@@ -35,9 +35,7 @@ export default function CommunityDesc() {
 
   return (
     <section className="relative w-full bg-[#050505] overflow-hidden font-sans">
-      <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-[#050505] to-transparent z-20 pointer-events-none"></div>
-
-      <div className="relative w-full h-[180vw] md:h-auto overflow-hidden">
+      <div className="relative w-full h-[220vw] md:h-auto overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -108,7 +106,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textLeftVariants}
-            className="absolute top-[45%] md:top-[55%] lg:top-[40%] left-6 md:left-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[18px] leading-[1.75] text-white/90 text-left pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
+            className="relative md:absolute mt-[80vw] md:mt-0 md:top-[55%] lg:top-[40%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               For those searching for their own circle, among those who speak
@@ -121,7 +119,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textRightVariants}
-            className="absolute top-[45%] md:top-[55%] lg:top-[60%] right-6 md:right-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[18px] leading-[1.75] text-white/90 text-right pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
+            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[55%] lg:top-[60%] md:right-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-right pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               We wear this badge of honour where every member with their
@@ -134,7 +132,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textLeftVariants}
-            className="absolute top-[65%] md:top-[75%] lg:top-[80%] left-6 md:left-12 max-w-[65vw] md:max-w-[400px] font-inter font-normal text-[18 px] leading-[1.7] text-white/75 text-left pointer-events-auto bg-black/40 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-sm md:backdrop-blur-none"
+            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[75%] lg:top-[80%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.7] text-white/75 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               What began as a shared passion became a bond written into our

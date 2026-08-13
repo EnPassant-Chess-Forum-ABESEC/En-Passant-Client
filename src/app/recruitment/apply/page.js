@@ -164,6 +164,29 @@ export default function RecruitmentApplyPage() {
     if (!isStepValid(currentStep) || currentStep >= 3) return;
 
     if (currentStep === 0) {
+      const sanitizedName = formData.name.trim();
+      const sanitizedEmail = formData.email.trim();
+      const sanitizedCollegeEmail = formData.collegeEmail.trim().toLowerCase();
+      const sanitizedPhone = formData.phone.replace(/\D/g, "");
+
+      if (!sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
+        toast.error("College email must end with @abes.ac.in");
+        return;
+      }
+
+      if (sanitizedPhone.length !== 10) {
+        toast.error("Phone number must be exactly 10 digits");
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        name: sanitizedName,
+        email: sanitizedEmail,
+        collegeEmail: sanitizedCollegeEmail,
+        phone: sanitizedPhone,
+      }));
+
       if (!isSignedIn) {
         if (!clerk?.client) {
           alert(
@@ -177,9 +200,9 @@ export default function RecruitmentApplyPage() {
           try {
             const rawSignUp = clerk.client.signUp;
             await rawSignUp.create({
-              emailAddress: formData.email,
-              firstName: formData.name.split(" ")[0] || formData.name,
-              lastName: formData.name.split(" ").slice(1).join(" ") || "",
+              emailAddress: sanitizedEmail,
+              firstName: sanitizedName.split(" ")[0] || sanitizedName,
+              lastName: sanitizedName.split(" ").slice(1).join(" ") || "",
             });
 
             await rawSignUp.prepareEmailAddressVerification({
@@ -192,12 +215,12 @@ export default function RecruitmentApplyPage() {
             if (signUpErr.errors?.[0]?.code === "form_identifier_exists") {
               const rawSignIn = clerk.client.signIn;
               await rawSignIn.create({
-                identifier: formData.email,
+                identifier: sanitizedEmail,
               });
               const emailFactor = rawSignIn.supportedFirstFactors?.find(
                 (f) =>
                   f.strategy === "email_code" &&
-                  f.safeIdentifier === formData.email,
+                  f.safeIdentifier === sanitizedEmail,
               );
               if (emailFactor) {
                 await rawSignIn.prepareFirstFactor({
@@ -245,12 +268,15 @@ export default function RecruitmentApplyPage() {
       try {
         setIsSubmitting(true);
 
-        if (formData.collegeEmail) {
+        if (formData.collegeEmail || formData.phone) {
           await fetchApi("/users/me", {
             method: "PUT",
-            body: { collegeEmail: formData.collegeEmail },
+            body: { 
+              collegeEmail: formData.collegeEmail || undefined,
+              phoneNumber: formData.phone || undefined
+            },
           }).catch((err) =>
-            console.error("Failed to update college email", err),
+            console.error("Failed to update user profile", err),
           );
         }
 
@@ -646,7 +672,7 @@ export default function RecruitmentApplyPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        placeholder="+91 00000 00000"
+                        placeholder="00000 00000"
                       />
                     </div>
                   </div>

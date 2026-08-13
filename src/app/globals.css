@@ -124,8 +124,9 @@ body {
 .hero-image {
   opacity: 0;
   transform: translateY(16px) translateZ(0);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 .hero-image--visible {
@@ -137,8 +138,9 @@ body {
 .hero-bottom-text {
   opacity: 0;
   transform: translateX(var(--hero-slide-from, 0)) translateZ(0);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
-              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
   will-change: opacity, transform;
 }
 .hero-bottom-text--visible {
@@ -317,8 +319,6 @@ body {
   font-style: normal;
   font-display: swap;
 }
-
-
 
 @font-face {
   font-family: "prfaExtrabold";
@@ -520,4 +520,35 @@ body {
   display: none !important;
 }
 
+/* Center the UserButton popover on mobile (when opened from mobile nav) */
+@media (max-width: 768px) {
+  .cl-userButtonPopoverCard,
+  [class*="cl-userButtonPopoverCard"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(340px, 90vw) !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+  }
 
+  /* Root box should not clip or offset the popover */
+  .cl-userButtonPopoverRootBox,
+  [class*="cl-userButtonPopoverRootBox"] {
+    position: static !important;
+  }
+
+  /* Center the avatar button itself inside its flex wrapper */
+  .cl-rootBox,
+  [class*="cl-rootBox"] {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .cl-userButtonBox,
+  [class*="cl-userButtonBox"] {
+    display: flex !important;
+    justify-content: center !important;
+  }
+}
