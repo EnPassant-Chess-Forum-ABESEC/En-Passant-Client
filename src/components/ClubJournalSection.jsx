@@ -54,13 +54,13 @@ function JournalText({ date, title, text, align }) {
       <div
         className={`flex flex-col ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
       >
-        <span className="text-[#9b1a1a] font-inter font-medium text-[2.5vw] sm:text-[11px] tracking-[0.15em] uppercase mb-1 sm:mb-2 md:mb-4">
+        <span className="text-[#9b1a1a] font-sans font-medium text-[2.5vw] sm:text-[11px] tracking-[0.15em] uppercase mb-1 sm:mb-2 md:mb-4">
           {date}
         </span>
-        <h3 className="text-[#0a0a0a] font-cinzel font-bold group-hover:font-black text-[4vw] sm:text-[18px] tracking-[0.05em] uppercase mb-1 sm:mb-2 md:mb-4 leading-tight transition-all duration-200 ease-in-out">
+        <h3 className="text-[#0a0a0a] font-pezula font-bold group-hover:font-black text-[4vw] sm:text-[18px] tracking-[0.05em] uppercase mb-1 sm:mb-2 md:mb-4 leading-tight transition-all duration-200 ease-in-out">
           {title}
         </h3>
-        <p className="text-[#0a0a0a]/80 font-inter font-normal text-[3vw] sm:text-[13px] leading-[1.5] sm:leading-[1.7] line-clamp-4 sm:line-clamp-none">
+        <p className="text-[#0a0a0a]/80 font-sans font-normal text-[3vw] sm:text-[13px] leading-[1.5] sm:leading-[1.7] line-clamp-4 sm:line-clamp-none">
           {text}
         </p>
       </div>
@@ -70,7 +70,7 @@ function JournalText({ date, title, text, align }) {
 
 const journalEntries = [
   {
-    date: "FEBRUARY, 2026",
+    date: "FEBRUARY 15, 2026",
     title: "RANN — SPORTS FEST",
     text: "En Passant team showcased their brilliance at Inter College Sports Fest — RANN 26 hosted by KIET, secruing 1st runner up in the event.",
     image: "/journal/rann2026.png",
@@ -113,7 +113,7 @@ const journalEntries = [
     date: "August 17, 2026",
     title: "CLUB RECRUITMENT",
     text: "Ready to make your move? Join the En Passant community! Tryouts, orientations, and casual game nights begin soon.",
-    image: "/journal/recruitment.png",
+    image: "/journal/image.png",
     fit: "cover-top",
     desktopLayout: ["T-right", "I", "W", "D"],
   },
@@ -128,7 +128,7 @@ export default function ClubJournalSection() {
       <div className="relative w-full h-[30vw] md:h-[14vw]">
         <div className="absolute top-0 right-0 flex flex-col items-end justify-start pt-[6vw] md:pt-[1.5vw] pr-[6vw] md:pr-[2vw] z-30">
           <h2
-            className="text-white font-cinzel font-bold uppercase text-right leading-[0.88] tracking-[0.04em] md:tracking-[0.08em] text-[14vw] sm:text-[10vw] md:text-[5.5vw]"
+            className="text-white font-pezula font-bold uppercase text-right leading-[0.88] tracking-[0.04em] md:tracking-[0.08em] text-[14vw] sm:text-[10vw] md:text-[5.5vw]"
             style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)" }}
           >
             <motion.div
@@ -136,6 +136,7 @@ export default function ClubJournalSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 1.2, ease: premiumEase }}
+              className="drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
             >
               CLUB
             </motion.div>
@@ -144,8 +145,9 @@ export default function ClubJournalSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 1.2, ease: premiumEase, delay: 0.15 }}
+              className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)]"
             >
-              <span style={{ color: "var(--brand-crimson)" }}>JOURNAL</span>
+              JOURNAL
             </motion.div>
           </h2>
         </div>

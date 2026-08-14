@@ -110,7 +110,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.path}
                   className={`
-                    group relative font-inter font-semibold text-[13px] tracking-[0.14em] uppercase
+                    group relative font-sans font-semibold text-[13px] tracking-[0.14em] uppercase
                     transition-colors duration-200 py-1
                     ${
                       isActive(link.path)
@@ -149,12 +149,13 @@ export default function Navbar() {
                 <button
                   onClick={() => router.push("/auth/sign-in")}
                   className="
-                    relative font-inter font-semibold text-[12px] tracking-[0.12em] uppercase
+                    relative font-sans font-semibold text-[12px] tracking-[0.12em] uppercase
                     text-white/80 hover:text-white px-4 py-2 rounded-md
                     bg-white/5 hover:bg-[#c41e3a]/10
                     border border-white/10 hover:border-[#c41e3a]/50
                     transition-all duration-300
                     active:scale-[0.97]
+                    cursor-good
                   "
                 >
                   GET STARTED
@@ -222,7 +223,7 @@ export default function Navbar() {
                     href={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`
-                      group relative font-inter font-semibold text-[15px] tracking-[0.12em] uppercase
+                      group relative font-sans font-semibold text-[15px] tracking-[0.12em] uppercase
                       transition-colors duration-200 py-1
                       ${
                         isActive(link.path)
@@ -260,7 +261,7 @@ export default function Navbar() {
               >
                 {userId ? (
                   <div className="flex flex-col items-center gap-3 w-full">
-                    <span className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-inter">
+                    <span className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-sans">
                       Account
                     </span>
                     <div className="flex justify-center items-center w-full" style={{ isolation: "isolate" }}>
@@ -311,12 +312,13 @@ export default function Navbar() {
                       router.push("/auth/sign-in");
                     }}
                     className="
-                      font-inter font-semibold text-[12px] tracking-[0.12em] uppercase
+                      font-sans font-semibold text-[12px] tracking-[0.12em] uppercase
                       text-white/80 hover:text-white px-5 py-2.5 rounded-md
                       bg-white/5 hover:bg-[#c41e3a]/10
                       border border-white/10 hover:border-[#c41e3a]/50
                       transition-all duration-300
                       active:scale-[0.97]
+                      cursor-good
                     "
                   >
                     GET STARTED

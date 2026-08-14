@@ -104,7 +104,7 @@ export default function RecruitmentCTASection() {
           </p>
           <Link
             href="/recruitment/apply"
-            className="btn-bracket group"
+            className="btn-bracket group cursor-good"
             style={{ display: "inline-flex" }}
           >
             <div

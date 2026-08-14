@@ -412,7 +412,7 @@ const DepthCarousel = ({
             />
             {item.label && (
               <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none text-center flex flex-col items-center justify-end h-1/2 gap-2">
-                <h3 className="text-white font-cinzel font-bold tracking-widest text-lg md:text-xl uppercase [text-shadow:0_2px_14px_rgba(0,0,0,0.8)]">
+                <h3 className="text-white font-pezula font-bold tracking-widest text-lg md:text-xl uppercase [text-shadow:0_2px_14px_rgba(0,0,0,0.8)]">
                   {item.label}
                 </h3>
               </div>

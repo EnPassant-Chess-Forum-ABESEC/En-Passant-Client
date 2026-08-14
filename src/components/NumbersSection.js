@@ -179,11 +179,11 @@ export default function NumbersSection() {
             className="absolute top-[8vw] md:top-[6vw] w-full md:w-auto text-center md:text-right right-0 md:right-[5vw] z-30 leading-[0.85]"
           >
             <div className="relative inline-block">
-              <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
-                <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] text-[10vw] md:text-[100px]">
+              <h2 className="flex flex-col uppercase font-pezula font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
+                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[10vw] md:text-[100px]">
                   Jewels of
                 </span>
-                <span className="text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] text-[10vw] md:text-[100px]">
+                <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[10vw] md:text-[100px]">
                   Crown
                 </span>
               </h2>
@@ -220,10 +220,10 @@ export default function NumbersSection() {
           className="absolute top-[40vw] md:top-[36vw] left-0 md:left-auto md:right-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-pezula font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               15+
             </span>
-            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
+            <span className="text-white/70 font-sans font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Podium Finishes
             </span>
           </SpotlightCard>
@@ -238,10 +238,10 @@ export default function NumbersSection() {
           className="absolute top-[90vw] md:top-[12vw] left-[50vw] md:left-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-pezula font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               350+
             </span>
-            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
+            <span className="text-white/70 font-sans font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Community Members
             </span>
           </SpotlightCard>
@@ -256,10 +256,10 @@ export default function NumbersSection() {
           className="absolute top-[140vw] md:top-[60vw] left-0 md:left-[14vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-pezula font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               6
             </span>
-            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
+            <span className="text-white/70 font-sans font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Successful Events Hosted
             </span>
           </SpotlightCard>
@@ -274,10 +274,10 @@ export default function NumbersSection() {
           className="absolute top-[190vw] md:top-[72vw] left-[50vw] md:left-auto md:right-[2vw] w-[50vw] md:w-[24vw] h-[50vw] md:h-[24vw] z-20"
         >
           <SpotlightCard className="bg-[#050505] border border-white/10 w-full h-full flex flex-col items-center justify-center p-4 text-center transition-all duration-300">
-            <span className="text-white font-cinzel font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
+            <span className="text-white font-pezula font-bold tabular-nums text-[12vw] md:text-[6vw] uppercase leading-none mb-2 md:mb-1">
               3+
             </span>
-            <span className="text-white/70 font-inter font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
+            <span className="text-white/70 font-sans font-medium text-[12px] tracking-[0.1em] uppercase leading-[1.5] max-w-[80%]">
               Years Across 64 Squares
             </span>
           </SpotlightCard>

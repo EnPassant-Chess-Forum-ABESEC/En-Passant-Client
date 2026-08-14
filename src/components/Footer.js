@@ -85,7 +85,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-start md:justify-between w-full mb-6 md:mb-8 gap-6 md:gap-0">
             <div>
               <span
-                className="font-cinzel font-black text-white uppercase"
+                className="font-pezula font-black text-white uppercase"
                 style={{
                   fontSize: "clamp(28px, 4vw, 52px)",
                   letterSpacing: "0.06em",
@@ -94,7 +94,7 @@ export default function Footer() {
               >
                 Vive L' EN<span style={{ color: "#c41e3a" }}>PASSANT</span>
               </span>
-              <p className="text-white/30 text-sm mt-3 font-inter tracking-widest uppercase">
+              <p className="text-white/30 text-sm mt-3 font-sans tracking-widest uppercase">
                 For the game must always go on
               </p>
             </div>
@@ -124,14 +124,14 @@ export default function Footer() {
             />
             <blockquote>
               <p
-                className="font-eb-garamond italic leading-relaxed text-white/70"
+                className="font-sans italic leading-relaxed text-white/70"
                 style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
               >
                 "The beauty of a move lies not in its appearance but in the
                 thought behind it."
               </p>
               <footer
-                className="font-cinzel text-[11px] uppercase tracking-[0.22em] mt-6"
+                className="font-sans text-[11px] uppercase tracking-[0.22em] mt-6"
                 style={{ color: "rgba(196,30,58,0.7)" }}
               >
                 — Savielly Tartakower
@@ -144,7 +144,7 @@ export default function Footer() {
               {columns.map((col) => (
                 <div key={col.heading} className="flex flex-col">
                   <h3
-                    className="font-cinzel font-bold text-[13px] uppercase select-none"
+                    className="font-sans font-bold text-[13px] uppercase select-none"
                     style={{
                       letterSpacing: "0.15em",
                       color: "rgba(255,255,255,0.45)",
@@ -162,7 +162,7 @@ export default function Footer() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center font-eb-garamond font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#c41e3a]"
+                        className="group flex items-center font-sans font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#c41e3a]"
                         style={{
                           lineHeight: "2.4",
                           letterSpacing: "0.015em",
@@ -182,7 +182,7 @@ export default function Footer() {
             className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 mt-6"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <span className="font-cinzel text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left">
+            <span className="font-sans text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left">
               © {new Date().getFullYear()} En Passant · ABESEC
             </span>
             
@@ -191,7 +191,7 @@ export default function Footer() {
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-inter text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+                className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
               >
                 Privacy
               </Link>
@@ -200,7 +200,7 @@ export default function Footer() {
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-inter text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+                className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
               >
                 Terms
               </Link>

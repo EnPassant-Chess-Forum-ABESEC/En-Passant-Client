@@ -152,7 +152,7 @@ export default function ApplicationForm() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-4 w-full bg-[#9b1a1a] hover:bg-[#cc0000] text-white font-inter font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(155,26,26,0.2)] hover:shadow-[0_0_30px_rgba(155,26,26,0.4)] disabled:opacity-50"
+              className="mt-4 w-full bg-[#9b1a1a] hover:bg-[#cc0000] text-white font-pezula font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(155,26,26,0.2)] hover:shadow-[0_0_30px_rgba(155,26,26,0.4)] disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <>Continue <ArrowRight className="w-4 h-4" /></>
@@ -210,13 +210,13 @@ export default function ApplicationForm() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="flex-1 bg-transparent border border-white/10 hover:border-white/20 text-white font-inter font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg transition-all"
+                className="flex-1 bg-transparent border border-white/10 hover:border-white/20 text-white font-pezula font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg transition-all"
               >
                 Back
               </button>
               <button
                 type="submit"
-                className="flex-[2] bg-[#9b1a1a] hover:bg-[#cc0000] text-white font-inter font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(155,26,26,0.2)]"
+                className="flex-[2] bg-[#9b1a1a] hover:bg-[#cc0000] text-white font-pezula font-semibold text-[14px] tracking-[0.12em] uppercase py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(155,26,26,0.2)]"
               >
                 Review & Pay <ArrowRight className="w-4 h-4" />
               </button>

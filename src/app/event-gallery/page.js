@@ -135,10 +135,10 @@ export default function EventGalleryPage() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-2 md:mb-16"
         >
-          <h1 className="font-cinzel text-4xl md:text-6xl font-bold tracking-widest uppercase mb-4 text-white drop-shadow-2xl">
+          <h1 className="font-pezula text-4xl md:text-6xl font-bold tracking-widest uppercase mb-4 text-white drop-shadow-2xl">
             Events <span className="text-[#9b1a1a]">Gallery</span>
           </h1>
-          <p className="text-white/60 font-inter max-w-2xl mx-auto tracking-wide text-sm md:text-base">
+          <p className="text-white/60 font-pezula max-w-2xl mx-auto tracking-wide text-sm md:text-base">
             Explore our past events, tournaments, and community gatherings. Click on an event to view its full gallery, or use the external link icon to access original drive files.
           </p>
         </motion.div>
@@ -188,7 +188,7 @@ export default function EventGalleryPage() {
                 className="w-full"
               >
                 <div className="flex items-center justify-between mb-10 border-b border-white/10 pb-6">
-                  <h2 className="font-cinzel text-3xl font-bold tracking-wider uppercase text-white">
+                  <h2 className="font-pezula text-3xl font-bold tracking-wider uppercase text-white">
                     {selectedEvent.label} <span className="text-white/40 text-xl font-normal">Photos</span>
                   </h2>
                 </div>
@@ -208,7 +208,7 @@ export default function EventGalleryPage() {
                 animate={{ opacity: 1 }}
                 className="flex items-center justify-center h-64 border border-dashed border-white/10 rounded-2xl bg-white/[0.02] mx-4 md:mx-0"
               >
-                <p className="text-white/40 font-inter tracking-widest uppercase text-sm px-6 text-center">
+                <p className="text-white/40 font-pezula tracking-widest uppercase text-sm px-6 text-center">
                   Click on an event above to view its gallery
                 </p>
               </motion.div>

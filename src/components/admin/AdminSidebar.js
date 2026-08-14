@@ -228,7 +228,7 @@ export default function AdminSidebar() {
         
         <button
           onClick={() => signOut({ redirectUrl: "/" })}
-          className="flex items-center gap-4 px-4 py-3 mt-4 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
+          className="flex items-center gap-4 px-4 py-3 mt-4 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 cursor-bad"
         >
           <LogOut className="w-5 h-5" />
           <span className="text-sm font-semibold">Sign Out</span>

@@ -150,7 +150,7 @@ export default function DepartmentTasksPage() {
             <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
             {application?.status === "PAYMENT_PENDING" ? (
               <>
-                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
                   Payment Under Review
                 </h3>
                 <p className="text-white/60 max-w-md mx-auto leading-relaxed">
@@ -161,7 +161,7 @@ export default function DepartmentTasksPage() {
               </>
             ) : (
               <>
-                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
                   Access Restricted
                 </h3>
                 <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
@@ -194,7 +194,7 @@ export default function DepartmentTasksPage() {
           </div>
         ) : !isRevealed && revealDate ? (
           <div className="flex flex-col items-center justify-center p-12 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-[2rem] shadow-2xl max-w-4xl mx-auto w-full mt-12">
-            <h2 className="text-white/60 font-cinzel text-xl md:text-2xl uppercase tracking-widest mb-10 text-center">
+            <h2 className="text-white/60 font-pezula text-xl md:text-2xl uppercase tracking-widest mb-10 text-center">
               Tasks Revealing In
             </h2>
             <TaskCountdown targetDate={revealDate} />

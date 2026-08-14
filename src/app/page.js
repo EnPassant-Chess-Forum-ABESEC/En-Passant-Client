@@ -81,28 +81,30 @@ export default function Home() {
 
         <motion.div
           style={{ y: yText, opacity }}
-          className="absolute top-[25%] md:top-[22%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center"
+          className="absolute top-[20%] md:top-[18%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center"
         >
           <div className="relative w-full max-w-7xl flex justify-center">
-            <div className="relative flex items-baseline justify-center uppercase leading-[0.85] text-[13vw] md:text-[10vw] whitespace-nowrap w-max mx-auto">
-              {["E", "N"].map((letter, index) => (
-                <span
-                  key={`en-${index}`}
-                  className="inline-block text-[#c41e3a] font-cinzel font-bold tracking-[0.12em] hero-letter"
-                  style={{
-                    animationDelay: `${imageReady ? 0.05 * index : 99}s`,
-                    animationPlayState: imageReady ? "running" : "paused",
-                  }}
-                >
-                  {letter}
-                </span>
-              ))}
+            <div className="relative flex items-baseline justify-between uppercase leading-[0.85] text-[15vw] md:text-[11vw] whitespace-nowrap w-full transform scale-y-[1.1] origin-bottom">
+              <span className="inline-flex">
+                {["E", "N"].map((letter, index) => (
+                  <span
+                    key={`en-${index}`}
+                    className="inline-block text-[#9b1a1a] drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] font-prfaExtrabold font-black tracking-[0.12em] hero-letter"
+                    style={{
+                      animationDelay: `${imageReady ? 0.05 * index : 99}s`,
+                      animationPlayState: imageReady ? "running" : "paused",
+                    }}
+                  >
+                    {letter}
+                  </span>
+                ))}
+              </span>
 
-              <span className="inline-flex ml-[0.15em]">
+              <span className="inline-flex">
                 {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
                   <span
                     key={`p-${index}`}
-                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent font-cinzel font-black tracking-[0.08em] hero-letter"
+                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] font-prfaExtrabold font-black tracking-[0.08em] hero-letter"
                     style={{
                       animationDelay: `${imageReady ? 0.1 + 0.05 * index : 99}s`,
                       animationPlayState: imageReady ? "running" : "paused",
@@ -149,7 +151,7 @@ export default function Home() {
               className={`max-w-[340px] hidden md:block pointer-events-auto hero-bottom-text ${imageReady ? "hero-bottom-text--visible" : ""}`}
               style={{ "--hero-slide-from": "-20px" }}
             >
-              <p className="text-[#cccccc] font-inter font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
+              <p className="text-[#cccccc] font-sans font-normal text-[14px] leading-[1.8] tracking-[0.08em] uppercase opacity-80">
                 Whether you're making
                 <br />
                 your first move or your thousandth,
@@ -163,7 +165,7 @@ export default function Home() {
               style={{ "--hero-slide-from": "20px" }}
             >
               <div className="text-[#888888] text-xs md:text-sm tracking-wide hidden md:block">
-                <span className="text-[#cccccc] font-inter font-medium text-[13px] tracking-[0.1em] opacity-80">
+                <span className="text-[#cccccc] font-sans font-medium text-[13px] tracking-[0.1em] opacity-80">
                   Chess forum
                 </span>
                 <br />
@@ -172,9 +174,9 @@ export default function Home() {
               <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
                 <Link
                   href={userId ? "/recruitment" : "/sign-up"}
-                  className="btn-bracket group"
+                  className="btn-bracket group cursor-good"
                 >
-                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-inter font-semibold text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
+                  <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-pezula font-normal text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
                     {userId ? "Go to Recruitment" : "Sign Up Here"}
                   </div>
                 </Link>

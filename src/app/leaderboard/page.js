@@ -114,7 +114,7 @@ export default function LeaderboardPage() {
               className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
             />
           ) : (
-            <span className="text-white/20 font-cinzel font-bold text-sm">
+            <span className="text-white/20 font-pezula font-bold text-sm">
               {player.username?.[0] || player.userName?.[0] || "?"}
             </span>
           )}
@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
 
       {/* Name — flex-1 */}
       <div className="py-3 px-2 md:py-6 md:px-4 flex-1 min-w-0">
-        <div className="font-cinzel font-bold text-xs md:text-lg text-white/70 group-hover:text-white transition-colors truncate">
+        <div className="font-pezula font-bold text-xs md:text-lg text-white/70 group-hover:text-white transition-colors truncate">
           {player.username || player.userName}
         </div>
         <div className="text-[9px] md:text-xs text-white/20 font-mono mt-0.5 truncate hidden md:block">
@@ -139,7 +139,7 @@ export default function LeaderboardPage() {
 
       {/* Rating */}
       <div className="py-3 px-3 md:py-6 md:px-8 text-right shrink-0 w-16 md:w-32">
-        <span className="font-cinzel font-bold text-sm md:text-xl text-white/60 group-hover:text-white transition-colors tabular-nums">
+        <span className="font-pezula font-bold text-sm md:text-xl text-white/60 group-hover:text-white transition-colors tabular-nums">
           {player.rating}
         </span>
       </div>
@@ -220,7 +220,7 @@ export default function LeaderboardPage() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="relative md:absolute md:right-[2vw] md:top-[2vw] z-30 w-full px-6 md:px-0 text-right md:flex md:items-center"
           >
-            <h1 className="uppercase font-cinzel font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.06em] w-full">
+            <h1 className="uppercase font-pezula font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.06em] w-full">
               <span className="inline-block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] text-[12vw] md:text-[6vw]">
                 LEADER
               </span>
@@ -241,7 +241,7 @@ export default function LeaderboardPage() {
               <button
                 key={`${type}-mobile`}
                 onClick={() => setTimeControl(type)}
-                className={`flex-1 py-3 border transition-all duration-300 font-cinzel text-xs tracking-wider uppercase ${timeControl === type ? "border-[#9b1a1a] bg-[#9b1a1a]/10 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" : "border-white/10 text-white/40 hover:text-white/80"}`}
+                className={`flex-1 py-3 border transition-all duration-300 font-pezula text-xs tracking-wider uppercase ${timeControl === type ? "border-[#9b1a1a] bg-[#9b1a1a]/10 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" : "border-white/10 text-white/40 hover:text-white/80"}`}
               >
                 {type}
               </button>
@@ -265,7 +265,7 @@ export default function LeaderboardPage() {
                   className={`absolute inset-0 transition-opacity duration-500 ${timeControl === type ? "bg-gradient-to-b from-[#9b1a1a]/20 to-transparent opacity-100" : "bg-white/[0.03] opacity-0 group-hover:opacity-100"}`}
                 />
                 <span
-                  className={`font-cinzel font-bold text-[1.4vw] uppercase tracking-[0.1em] relative z-10 transition-all duration-500 ${timeControl === type ? "drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]" : ""}`}
+                  className={`font-pezula font-bold text-[1.4vw] uppercase tracking-[0.1em] relative z-10 transition-all duration-500 ${timeControl === type ? "drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]" : ""}`}
                 >
                   {type}
                 </span>
@@ -286,7 +286,7 @@ export default function LeaderboardPage() {
               className="w-full h-full flex flex-col justify-center px-4 md:px-6 py-[4vw] md:p-[3vw] border border-white/[0.06] bg-[#050505]"
             >
               <div className="relative z-10">
-                <p className="font-cinzel font-bold uppercase text-[5vw] md:text-[2.2vw] tracking-[0.05em] text-white leading-[1.1] mb-4 md:mb-6 break-words w-full">
+                <p className="font-pezula font-bold uppercase text-[5vw] md:text-[2.2vw] tracking-[0.05em] text-white leading-[1.1] mb-4 md:mb-6 break-words w-full">
                   TOP
                   <br />
                   PLAYERS
@@ -344,7 +344,7 @@ export default function LeaderboardPage() {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span
-                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none`}
+                      className={`font-pezula font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none`}
                     >
                       #1
                     </span>
@@ -368,7 +368,7 @@ export default function LeaderboardPage() {
                   top3[0].imageUrl ||
                   top3[0].profilePictureUrl) && (
                   <div
-                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none z-10`}
+                    className={`absolute top-4 left-4 font-pezula font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[0].color} ${MEDAL_COLORS[0].glow} leading-none z-10`}
                   >
                     #1
                   </div>
@@ -385,7 +385,7 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[0].username || top3[0].userName || "").split(" ")[0]}
                   </h3>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
@@ -423,7 +423,7 @@ export default function LeaderboardPage() {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span
-                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none`}
+                      className={`font-pezula font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none`}
                     >
                       #2
                     </span>
@@ -447,7 +447,7 @@ export default function LeaderboardPage() {
                   top3[1].imageUrl ||
                   top3[1].profilePictureUrl) && (
                   <div
-                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none z-10`}
+                    className={`absolute top-4 left-4 font-pezula font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[1].color} ${MEDAL_COLORS[1].glow} leading-none z-10`}
                   >
                     #2
                   </div>
@@ -464,7 +464,7 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[1].username || top3[1].userName || "").split(" ")[0]}
                   </h3>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
@@ -502,7 +502,7 @@ export default function LeaderboardPage() {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#111] to-black">
                     <span
-                      className={`font-cinzel font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none`}
+                      className={`font-pezula font-bold text-[15vw] md:text-[6vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none`}
                     >
                       #3
                     </span>
@@ -526,7 +526,7 @@ export default function LeaderboardPage() {
                   top3[2].imageUrl ||
                   top3[2].profilePictureUrl) && (
                   <div
-                    className={`absolute top-4 left-4 font-cinzel font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none z-10`}
+                    className={`absolute top-4 left-4 font-pezula font-bold text-[6vw] md:text-[2.5vw] ${MEDAL_COLORS[2].color} ${MEDAL_COLORS[2].glow} leading-none z-10`}
                   >
                     #3
                   </div>
@@ -543,7 +543,7 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-cinzel font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
+                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
                     {(top3[2].username || top3[2].userName || "").split(" ")[0]}
                   </h3>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
@@ -558,7 +558,7 @@ export default function LeaderboardPage() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="hidden md:flex absolute top-[84vw] left-[2vw] w-[24vw] h-[12vw] z-20 flex-col items-start justify-center px-[2vw] text-white/20 font-cinzel font-bold text-[1.2vw] uppercase tracking-[0.2em]"
+            className="hidden md:flex absolute top-[84vw] left-[2vw] w-[24vw] h-[12vw] z-20 flex-col items-start justify-center px-[2vw] text-white/20 font-pezula font-bold text-[1.2vw] uppercase tracking-[0.2em]"
           >
             <span>Ranks</span>
             <span className="text-[1.5vw] text-white/40">

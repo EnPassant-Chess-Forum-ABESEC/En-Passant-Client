@@ -49,14 +49,14 @@ export default function DriftWallSection() {
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 mb-16 text-center md:text-left">
-        <h2 className="flex flex-col uppercase font-cinzel font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
+        <h2 className="flex flex-col uppercase font-pezula font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
           <motion.span
             custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={headerVariants}
-            className="text-white text-[10vw] md:text-[6vw] bg-gradient-to-b from-white via-white/70 to-white/30 bg-clip-text text-transparent"
+            className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[10vw] md:text-[6vw]"
           >
             OUR
           </motion.span>
@@ -67,7 +67,7 @@ export default function DriftWallSection() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={headerVariants}
-              className="text-[#9b1a1a] inline-block"
+              className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] inline-block"
             >
               LEGACY
             </motion.span>
@@ -79,7 +79,7 @@ export default function DriftWallSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={headerVariants}
-          className="mt-6 text-[#888888] font-inter max-w-lg text-sm md:text-base leading-relaxed"
+          className="mt-6 text-[#888888] font-sans max-w-lg text-sm md:text-base leading-relaxed"
         >
           Explore moments captured across our history. From intense tournament
           battles to late-night strategy sessions, these are the memories that

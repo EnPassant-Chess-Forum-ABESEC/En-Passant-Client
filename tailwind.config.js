@@ -10,11 +10,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-
+        sans: ['var(--font-inter)', 'sans-serif'],
+        pezula: ['pezula', 'sans-serif'],
         prfaExtrabold: ['prfaExtrabold', 'sans-serif'],
-        cinzel: ['var(--font-cinzel)', 'serif'],
-        inter: ['var(--font-inter)', 'sans-serif'],
-        'eb-garamond': ['var(--font-eb-garamond)', 'serif'],
       },
       colors: {
         background: "var(--background)",

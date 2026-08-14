@@ -59,14 +59,14 @@ export default function CommunityDesc() {
 
       <div className="absolute inset-0 z-30 flex justify-center w-full pt-[6vw] md:pt-[2vw] px-6 md:px-12 pointer-events-none">
         <div className="relative w-full max-w-7xl flex flex-col h-full">
-          <div className="flex flex-col uppercase font-cinzel font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.08em] z-20 w-max pointer-events-auto">
+          <div className="flex flex-col uppercase font-pezula font-bold leading-[0.85] tracking-[0.04em] md:tracking-[0.08em] z-20 w-max pointer-events-auto">
             <motion.span
               custom={0}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={headerVariants}
-              className="text-white text-[12vw] md:text-[8vw] xl:text-[110px]"
+              className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[12vw] md:text-[8vw] xl:text-[110px]"
             >
               Forging
             </motion.span>
@@ -77,7 +77,7 @@ export default function CommunityDesc() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={headerVariants}
-                className="text-white text-[12vw] md:text-[8vw] xl:text-[110px]"
+                className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[12vw] md:text-[8vw] xl:text-[110px]"
               >
                 the
               </motion.span>
@@ -96,7 +96,7 @@ export default function CommunityDesc() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={headerVariants}
-              className="text-[#9b1a1a] text-[12vw] md:text-[8vw] xl:text-[110px]"
+              className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[12vw] md:text-[8vw] xl:text-[110px]"
             >
               crown
             </motion.span>
@@ -106,7 +106,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textLeftVariants}
-            className="relative md:absolute mt-[80vw] md:mt-0 md:top-[55%] lg:top-[40%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
+            className="relative md:absolute mt-[80vw] md:mt-0 md:top-[55%] lg:top-[40%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-sans font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               For those searching for their own circle, among those who speak
@@ -119,7 +119,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textRightVariants}
-            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[55%] lg:top-[60%] md:right-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-right pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
+            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[55%] lg:top-[60%] md:right-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-sans font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.75] text-white/90 text-center md:text-right pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               We wear this badge of honour where every member with their
@@ -132,7 +132,7 @@ export default function CommunityDesc() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textLeftVariants}
-            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[75%] lg:top-[80%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-inter font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.7] text-white/75 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
+            className="relative md:absolute mt-[6vw] md:mt-0 md:top-[75%] lg:top-[80%] md:left-12 self-center md:self-auto w-[85vw] md:max-w-[400px] font-sans font-normal text-[14px] md:text-[18px] leading-[1.6] md:leading-[1.7] text-white/75 text-center md:text-left pointer-events-auto bg-black/60 md:bg-transparent p-4 md:p-0 rounded-xl backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none"
           >
             <p>
               What began as a shared passion became a bond written into our

@@ -178,8 +178,7 @@ export const userButtonAppearance = {
     },
     // Footer
     userButtonPopoverFooter: {
-      borderTop: "1px solid rgba(255, 255, 255, 0.06) !important",
-      background: "transparent !important",
+      display: "none !important",
     },
   },
 };

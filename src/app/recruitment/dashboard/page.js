@@ -194,10 +194,10 @@ export default function RecruitmentDashboard() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="relative z-10 text-center px-4 mt-16"
         >
-          <h1 className="font-cinzel text-4xl md:text-6xl font-bold text-white tracking-widest uppercase mb-4 drop-shadow-2xl">
+          <h1 className="font-pezula text-4xl md:text-6xl font-bold text-white tracking-widest uppercase mb-4 drop-shadow-2xl">
             Recruitment <span className="text-[#ff3333]">Dashboard</span>
           </h1>
-          <p className="font-inter text-white/70 max-w-2xl mx-auto text-sm md:text-base tracking-wide">
+          <p className="font-pezula text-white/70 max-w-2xl mx-auto text-sm md:text-base tracking-wide">
             Your application is currently{" "}
             <span className="font-bold text-[#ff3333] uppercase">
               {application.status?.replace(/_/g, " ")}
@@ -219,7 +219,7 @@ export default function RecruitmentDashboard() {
                 transition={{ duration: 0.6, delay: 0.15 }}
                 className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl"
               >
-                <h2 className="text-white/60 font-cinzel text-lg md:text-xl uppercase tracking-widest mb-8">
+                <h2 className="text-white/60 font-pezula text-lg md:text-xl uppercase tracking-widest mb-8">
                   Tasks Revealing In
                 </h2>
                 <TaskCountdown targetDate={revealDate} />
@@ -234,7 +234,7 @@ export default function RecruitmentDashboard() {
                 className="space-y-6"
               >
                 <div className="flex items-center gap-4">
-                  <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
+                  <h2 className="font-pezula text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
                     {primaryDept.name}
                   </h2>
                   <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
@@ -269,7 +269,7 @@ export default function RecruitmentDashboard() {
                   className="space-y-6"
                 >
                   <div className="flex items-center gap-4">
-                    <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
+                    <h2 className="font-pezula text-2xl md:text-3xl font-bold text-white uppercase tracking-widest">
                       {dept.name}
                     </h2>
                     <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/10 shrink-0">
@@ -299,7 +299,7 @@ export default function RecruitmentDashboard() {
             <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
             {application.status === "PAYMENT_PENDING" ? (
               <>
-                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
                   Payment Under Review
                 </h3>
                 <p className="text-white/60 max-w-md mx-auto leading-relaxed">
@@ -310,7 +310,7 @@ export default function RecruitmentDashboard() {
               </>
             ) : (
               <>
-                <h3 className="text-xl md:text-2xl font-cinzel font-bold text-white uppercase tracking-widest mb-4">
+                <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
                   Access Restricted
                 </h3>
                 <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">

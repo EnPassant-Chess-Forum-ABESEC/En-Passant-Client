@@ -1,31 +1,4 @@
-import {
-  Geist,
-  Geist_Mono,
-  Cinzel,
-  Inter,
-  EB_Garamond,
-} from "next/font/google";
-import Navbar from "@/components/Navbar";
-import NavbarWrapper from "@/components/NavbarWrapper";
-import Footer from "@/components/Footer";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "900"],
-});
+import { Inter } from "next/font/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,10 +6,13 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
-const ebGaramond = EB_Garamond({
-  variable: "--font-eb-garamond",
-  subsets: ["latin"],
-});
+import Navbar from "@/components/Navbar";
+import NavbarWrapper from "@/components/NavbarWrapper";
+import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import "./globals.css";
+
+
 
 export const metadata = {
   title: "En Passant",
@@ -52,10 +28,10 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html
         lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${inter.variable} ${ebGaramond.variable}`}
+        className={`${inter.variable}`}
         suppressHydrationWarning
       >
-        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white antialiased overflow-x-hidden transition-colors duration-500">
+        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-hidden transition-colors duration-500">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
