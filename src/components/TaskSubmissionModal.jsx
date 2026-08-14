@@ -149,8 +149,8 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
       {/* Modal Container */}
       <div className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 my-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 md:p-8 border-b border-white/5 bg-white/[0.02] shrink-0">
-          <div>
+        <div className="p-6 md:p-8 border-b border-white/5 bg-white/[0.02] shrink-0 relative">
+          <div className="pr-10">
             <h2 className="text-2xl md:text-3xl font-pezula font-normal text-white tracking-[0.1em] uppercase">
               Submit Task
             </h2>
@@ -160,7 +160,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
           </div>
           <button
             onClick={onClose}
-            className="p-3 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
+            className="absolute top-5 right-5 md:top-7 md:right-7 p-2.5 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

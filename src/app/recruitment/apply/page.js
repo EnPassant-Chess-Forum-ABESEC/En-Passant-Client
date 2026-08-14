@@ -550,7 +550,17 @@ export default function RecruitmentApplyPage() {
             )}
           </div>
 
-          <div className="pt-6 pb-10 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar">
+          <div 
+            className="pt-6 pb-10 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
+            onWheel={(e) => {
+              const el = e.currentTarget;
+              const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+              const atTop = el.scrollTop <= 0;
+              const scrollingDown = e.deltaY > 0;
+              if ((scrollingDown && atBottom) || (!scrollingDown && atTop)) return;
+              e.stopPropagation();
+            }}
+          >
             <AnimatePresence mode="wait">
               {currentStep === 0 && (
                 <motion.div

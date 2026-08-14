@@ -84,36 +84,36 @@ export default function Home() {
           className="absolute top-[20%] md:top-[18%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center"
         >
           <div className="relative w-full max-w-7xl flex justify-center">
-            <div className="relative flex items-baseline justify-between uppercase leading-[0.85] text-[15vw] md:text-[11vw] whitespace-nowrap w-full transform scale-y-[1.1] origin-bottom">
-              <span className="inline-flex">
-                {["E", "N"].map((letter, index) => (
-                  <span
-                    key={`en-${index}`}
-                    className="inline-block text-[#9b1a1a] drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] font-prfaExtrabold font-black tracking-[0.12em] hero-letter"
-                    style={{
-                      animationDelay: `${imageReady ? 0.05 * index : 99}s`,
-                      animationPlayState: imageReady ? "running" : "paused",
-                    }}
-                  >
-                    {letter}
-                  </span>
-                ))}
-              </span>
-
-              <span className="inline-flex">
-                {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => (
-                  <span
-                    key={`p-${index}`}
-                    className="inline-block bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] font-prfaExtrabold font-black tracking-[0.08em] hero-letter"
-                    style={{
-                      animationDelay: `${imageReady ? 0.1 + 0.05 * index : 99}s`,
-                      animationPlayState: imageReady ? "running" : "paused",
-                    }}
-                  >
-                    {letter}
-                  </span>
-                ))}
-              </span>
+            <div className="relative flex items-baseline justify-between uppercase leading-[0.85] text-[15.5vw] md:text-[11vw] lg:text-[10.5vw] whitespace-nowrap w-full transform scale-y-[1.1] origin-bottom">
+              {["E", "N", " ", "P", "A", "S", "S", "A", "N", "T"].map(
+                (letter, index) => {
+                  if (letter === " ") {
+                    return (
+                      <span
+                        key={`space-${index}`}
+                        className="w-[3vw] md:w-[2vw]"
+                      />
+                    );
+                  }
+                  const isRed = index < 2;
+                  return (
+                    <span
+                      key={`letter-${index}`}
+                      className={`inline-block font-prfaExtrabold font-black hero-letter ${
+                        isRed
+                          ? "text-[#9b1a1a] drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
+                          : "bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                      }`}
+                      style={{
+                        animationDelay: `${imageReady ? 0.05 * index : 99}s`,
+                        animationPlayState: imageReady ? "running" : "paused",
+                      }}
+                    >
+                      {letter}
+                    </span>
+                  );
+                },
+              )}
             </div>
           </div>
         </motion.div>
