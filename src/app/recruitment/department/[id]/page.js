@@ -95,7 +95,7 @@ export default function DepartmentTasksPage() {
           src="/lonely_pawn.png"
           alt="Lonely Pawn Background"
           fill
-          className="object-cover object-[80%_center] opacity-100"
+          className="object-cover object-[80%_center] opacity-40"
           priority
         />
         <div className="absolute inset-x-0 top-0 h-[35vh] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent" />

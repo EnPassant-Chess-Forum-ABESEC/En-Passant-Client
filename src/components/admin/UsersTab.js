@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -43,7 +44,8 @@ export default function UsersTab() {
   if (loading) return <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">Loading Data...</div>;
 
   return (
-    <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left whitespace-nowrap">
           <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
@@ -85,6 +87,7 @@ export default function UsersTab() {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 }

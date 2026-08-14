@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, Fragment } from "react";
-import { Edit2, Trash2, GripVertical, User } from "lucide-react";
+import { Edit2, Trash2, GripVertical, User, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -39,6 +39,10 @@ export default function TasksTab() {
   const [acceptsText, setAcceptsText] = useState(false);
   const [acceptsLinks, setAcceptsLinks] = useState(false);
   const [acceptsFiles, setAcceptsFiles] = useState(false);
+  const [maxLinks, setMaxLinks] = useState(1);
+  const [maxFiles, setMaxFiles] = useState(1);
+  const [fileCategory, setFileCategory] = useState("image");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -66,6 +70,7 @@ export default function TasksTab() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       const payload = {
         departmentId,
@@ -79,7 +84,8 @@ export default function TasksTab() {
           acceptsText,
           acceptsLinks,
           acceptsFiles,
-          ...(acceptsFiles ? { fileCategory: "image", maxFiles: 5, maxFileSize: 5242880 } : {})
+          ...(acceptsLinks ? { maxLinks: parseInt(maxLinks) } : {}),
+          ...(acceptsFiles ? { fileCategory, maxFiles: parseInt(maxFiles), maxFileSize: 5242880 } : {})
         }
       };
 
@@ -94,6 +100,8 @@ export default function TasksTab() {
       loadData();
     } catch (err) {
       toast.error("Error saving: " + err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -109,6 +117,9 @@ export default function TasksTab() {
     setAcceptsText(task.submission?.acceptsText || false);
     setAcceptsLinks(task.submission?.acceptsLinks || false);
     setAcceptsFiles(task.submission?.acceptsFiles || false);
+    setMaxLinks(task.submission?.maxLinks || 1);
+    setMaxFiles(task.submission?.maxFiles || 1);
+    setFileCategory(task.submission?.fileCategory || "image");
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -142,6 +153,9 @@ export default function TasksTab() {
     setAcceptsText(false);
     setAcceptsLinks(false);
     setAcceptsFiles(false);
+    setMaxLinks(1);
+    setMaxFiles(1);
+    setFileCategory("image");
   };
 
   const activeTasks = useMemo(() => {
@@ -257,6 +271,13 @@ export default function TasksTab() {
                 <input type="checkbox" checked={acceptsLinks} onChange={e=>setAcceptsLinks(e.target.checked)} className="hidden" />
                 <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">Links</span>
               </label>
+              
+              {acceptsLinks && (
+                <div className="flex items-center gap-2 mr-4">
+                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Max Links:</span>
+                  <input type="number" min="1" max="10" value={maxLinks} onChange={e=>setMaxLinks(e.target.value)} className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none" />
+                </div>
+              )}
 
               <label className="group flex items-center gap-2 cursor-pointer">
                 <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsFiles ? 'bg-blue-600 border-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-700'}`}>
@@ -265,14 +286,33 @@ export default function TasksTab() {
                 <input type="checkbox" checked={acceptsFiles} onChange={e=>setAcceptsFiles(e.target.checked)} className="hidden" />
                 <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">Files</span>
               </label>
+
+              {acceptsFiles && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Max Files:</span>
+                  <input type="number" min="1" max="10" value={maxFiles} onChange={e=>setMaxFiles(e.target.value)} className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none" />
+                  <Select value={fileCategory} onValueChange={setFileCategory}>
+                    <SelectTrigger className="w-24 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 h-7">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 min-w-[6rem]">
+                      <SelectItem value="image" className="text-[10px] font-semibold">IMAGES</SelectItem>
+                      <SelectItem value="video" className="text-[10px] font-semibold">VIDEOS</SelectItem>
+                      <SelectItem value="raw" className="text-[10px] font-semibold">ANY FILE</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </div>
 
           <button 
             type="submit" 
-            className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md"
+            disabled={isSaving}
+            className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {editId ? 'Update Task' : 'Create Task'}
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {editId ? (isSaving ? 'Updating...' : 'Update Task') : (isSaving ? 'Creating...' : 'Create Task')}
           </button>
         </div>
       </form>
