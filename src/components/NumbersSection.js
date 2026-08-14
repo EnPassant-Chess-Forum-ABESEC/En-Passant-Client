@@ -1,36 +1,28 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useScroll, motion } from "framer-motion";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Environment, Center } from "@react-three/drei";
-import { Suspense } from "react";
 import SpotlightCard from "./SpotlightCard";
+import dynamic from "next/dynamic";
 
-function ChessPieceModel({ scrollYProgress }) {
-  const { scene } = useGLTF("/king.glb");
-  const modelRef = useRef();
-
-  useFrame(() => {
-    if (modelRef.current) {
-      // Map scroll progress (0 to 1) to rotation.
-      modelRef.current.rotation.y = scrollYProgress.get() * Math.PI * 4;
-    }
-  });
-
-  return (
-    <Center position={[0, 0, 0]}>
-      <primitive ref={modelRef} object={scene} scale={5.5} />
-    </Center>
-  );
-}
+const ChessCanvas = dynamic(() => import("./ChessCanvas"), {
+  ssr: false,
+});
 
 export default function NumbersSection() {
   const containerRef = useRef(null);
   const gridRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [mouseInGrid, setMouseInGrid] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleMouseMove = useCallback((e) => {
     if (!containerRef.current) return;
@@ -195,19 +187,19 @@ export default function NumbersSection() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1.5 }}
-            className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg]"
+            className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg] flex items-center justify-center"
           >
-            <Canvas
-              camera={{ position: [0, 0, 12], fov: 45 }}
-              gl={{ alpha: true, antialias: true }}
-            >
-              <ambientLight intensity={0.2} />
-              <directionalLight position={[10, 10, 5]} intensity={0.5} />
-              <Suspense fallback={null}>
-                <Environment preset="night" />
-                <ChessPieceModel scrollYProgress={scrollYProgress} />
-              </Suspense>
-            </Canvas>
+            {isMobile ? (
+              <Image 
+                src="/3d_model_snapshot.png" 
+                alt="Chess King" 
+                width={800} 
+                height={800} 
+                className="w-[80vw] h-auto object-contain opacity-80"
+              />
+            ) : (
+              <ChessCanvas scrollYProgress={scrollYProgress} />
+            )}
           </motion.div>
         </div>
 
@@ -289,4 +281,4 @@ export default function NumbersSection() {
   );
 }
 
-useGLTF.preload("/king.glb");
+

@@ -23,6 +23,16 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: [
+      'react-icons',
+      'lucide-react',
+      'framer-motion',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei'
+    ],
+  },
 };
 
 export default nextConfig;
