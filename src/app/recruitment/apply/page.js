@@ -825,7 +825,9 @@ export default function RecruitmentApplyPage() {
                       alt="Payment QR Code"
                       width={112}
                       height={112}
+                      priority
                       className="object-contain rounded-md shrink-0"
+                      style={{ width: '112px', height: 'auto' }}
                     />
                   </div>
 
