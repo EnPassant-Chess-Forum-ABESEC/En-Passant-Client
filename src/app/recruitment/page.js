@@ -68,6 +68,7 @@ export default function RecruitmentPage() {
               alt="Background"
               fill
               priority
+              unoptimized
               className="object-cover object-[70%_center] md:object-center"
             />
 
@@ -79,7 +80,7 @@ export default function RecruitmentPage() {
           style={{ y: yText, opacity }}
           className="absolute inset-0 w-full h-full select-none pointer-events-none z-20"
         >
-          <div className="absolute top-[35%] md:top-[30%] right-[2%] md:right-[8%]">
+          <div className="absolute top-[42%] md:top-[30%] right-[5%] md:right-[8%]">
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.14 }}
@@ -95,8 +96,7 @@ export default function RecruitmentPage() {
           </div>
 
           <div
-            className="absolute top-[46%] md:top-[49%] left-[25%] md:left-[41%]"
-            style={{ width: "80vw" }}
+            className="absolute top-[48%] md:top-[49%] w-full flex justify-center md:justify-start md:w-auto md:left-[41%]"
           >
             <motion.h1
               initial={{ y: 50, opacity: 0, z: 0 }}
@@ -114,7 +114,7 @@ export default function RecruitmentPage() {
               className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555]
               bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] font-pezula font-bold uppercase
               tracking-wider leading-[0.85]
-              text-[14vw] sm:text-[11vw] md:text-[8.5vw] lg:text-[7.8vw] whitespace-nowrap"
+              text-[12.5vw] sm:text-[11vw] md:text-[8.5vw] lg:text-[7.8vw] whitespace-nowrap"
             >
               RECRUITMENT
             </motion.h1>
@@ -140,6 +140,7 @@ export default function RecruitmentPage() {
               alt="Recruitment Hero"
               fill
               priority
+              unoptimized
               className="object-cover object-[70%_center] md:object-center"
             />
           </motion.div>

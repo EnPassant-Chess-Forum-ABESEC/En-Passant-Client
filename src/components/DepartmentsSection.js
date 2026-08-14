@@ -104,12 +104,12 @@ export default function DepartmentsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 1.2, ease: premiumEase }}
-            className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter"
+            className="flex flex-col uppercase font-black leading-[0.95] tracking-tighter"
           >
-            <span className="text-white text-[11vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
+            <span className="text-white text-[9vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
               FEATURED
             </span>
-            <span className="text-[#9b1a1a] text-[15vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
+            <span className="text-[#9b1a1a] text-[12vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
               DEPARTMENTS
             </span>
           </motion.h2>
@@ -171,7 +171,7 @@ export default function DepartmentsSection() {
         </div>
       </div>
 
-      <div 
+      <div
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setMouseInSection(true)}
@@ -249,7 +249,7 @@ export default function DepartmentsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 1.2, ease: premiumEase }}
-              className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter"
+              className="flex flex-col uppercase font-black leading-[0.95] tracking-tighter"
             >
               <span className="text-white text-[5vw] md:text-[64px] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
                 FEATURED
