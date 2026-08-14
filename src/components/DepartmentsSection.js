@@ -6,7 +6,20 @@ import { useApi } from "@/lib/api";
 import { motion } from "framer-motion";
 
 const premiumEase = [0.16, 1, 0.3, 1];
-const CHESS_SQUARES = ["E4", "D4", "C5", "F6", "G7", "A8", "H1", "B3", "E5", "C4", "F3", "G6"];
+const CHESS_SQUARES = [
+  "E5",
+  "D4",
+  "C5",
+  "F4",
+  "G7",
+  "A8",
+  "H1",
+  "B3",
+  "E5",
+  "C4",
+  "F3",
+  "G5",
+];
 
 const getGridSlot = (deptName, fallbackIndex) => {
   const name = deptName.toLowerCase();
@@ -20,7 +33,11 @@ const getGridSlot = (deptName, fallbackIndex) => {
   if (name.includes("graphic") || name.includes("design"))
     return { top: "36vw", left: "14vw", size: "24vw" };
 
-  if (name.includes("web") || name.includes("site") || name.includes("technical"))
+  if (
+    name.includes("web") ||
+    name.includes("site") ||
+    name.includes("technical")
+  )
     return { top: "48vw", right: "2vw", size: "24vw" };
 
   if (name.includes("event")) return { top: "72vw", left: "2vw", size: "24vw" };
@@ -39,6 +56,18 @@ const getGridSlot = (deptName, fallbackIndex) => {
 export default function DepartmentsSection() {
   const fetchApi = useApi();
   const [departments, setDepartments] = useState([]);
+  const containerRef = React.useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mouseInSection, setMouseInSection] = useState(false);
+
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   useEffect(() => {
     async function loadDepts() {
@@ -77,8 +106,12 @@ export default function DepartmentsSection() {
             transition={{ duration: 1.2, ease: premiumEase }}
             className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter"
           >
-            <span className="text-white text-[11vw]">FEATURED</span>
-            <span className="text-[#9b1a1a] text-[15vw]">DEPARTMENTS</span>
+            <span className="text-white text-[11vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
+              FEATURED
+            </span>
+            <span className="text-[#9b1a1a] text-[15vw] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
+              DEPARTMENTS
+            </span>
           </motion.h2>
         </div>
 
@@ -109,7 +142,7 @@ export default function DepartmentsSection() {
                     <div className="relative w-full h-full">
                       <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out group-hover:opacity-0 group-hover:-translate-y-4">
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <span className="text-[#9b1a1a] opacity-40 text-[20vw] font-serif leading-none tracking-tighter -mt-[6vw]">
+                          <span className="text-[#9b1a1a] opacity-40 text-[20vw] font-pezula leading-none tracking-tighter -mt-[6vw]">
                             {CHESS_SQUARES[i % CHESS_SQUARES.length]}
                           </span>
                         </div>
@@ -122,7 +155,7 @@ export default function DepartmentsSection() {
                         <span className="text-[#9b1a1a] font-black text-[3.5vw] tracking-tight uppercase mb-2 leading-none break-words">
                           {dept.name}
                         </span>
-                        <p className="text-white/80 text-[2.5vw] leading-snug lowercase font-light break-words">
+                        <p className="text-white/80 text-[2.5vw] leading-snug first-letter:uppercase font-light break-words">
                           {dept.description ||
                             "view recruitment tasks for this department"}
                         </p>
@@ -138,7 +171,13 @@ export default function DepartmentsSection() {
         </div>
       </div>
 
-      <div className="hidden md:block relative w-full h-[96vw]">
+      <div 
+        ref={containerRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setMouseInSection(true)}
+        onMouseLeave={() => setMouseInSection(false)}
+        className="hidden md:block relative w-full h-[96vw]"
+      >
         <div
           className="absolute inset-0 z-0 opacity-10 pointer-events-none"
           style={{
@@ -154,6 +193,24 @@ export default function DepartmentsSection() {
               "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
           }}
         />
+
+        {mouseInSection && (
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-200 z-0"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(155, 26, 26, 0.5) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(155, 26, 26, 0.5) 1px, transparent 1px)
+              `,
+              backgroundSize: "12vw 12vw",
+              backgroundPosition: "2vw 0",
+              WebkitMaskImage: `radial-gradient(circle 250px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+              maskImage: `radial-gradient(circle 250px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%), linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)`,
+              WebkitMaskComposite: "source-in",
+              maskComposite: "intersect",
+            }}
+          />
+        )}
 
         <div className="absolute top-0 w-full px-[2vw] flex text-white/30 text-[10px] font-mono pt-2 z-0">
           {["A", "B", "C", "D", "E", "F", "G", "H"].map((col) => (
@@ -194,10 +251,10 @@ export default function DepartmentsSection() {
               transition={{ duration: 1.2, ease: premiumEase }}
               className="flex flex-col uppercase font-black leading-[0.8] tracking-tighter"
             >
-              <span className="text-white text-[5vw] md:text-[64px]">
+              <span className="text-white text-[5vw] md:text-[64px] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
                 FEATURED
               </span>
-              <span className="text-[#9b1a1a] text-[7vw] md:text-[100px]">
+              <span className="text-[#9b1a1a] text-[7vw] md:text-[100px] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]">
                 DEPARTMENTS
               </span>
             </motion.h2>
@@ -235,7 +292,7 @@ export default function DepartmentsSection() {
                   <div className="relative w-full h-full">
                     <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out group-hover:opacity-0 group-hover:-translate-y-4">
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span className="text-[#9b1a1a] opacity-40 text-[12vw] font-serif leading-none tracking-tighter -mt-[4vw]">
+                        <span className="text-[#9b1a1a] opacity-40 text-[12vw] font-pezula leading-none tracking-tighter -mt-[4vw]">
                           {CHESS_SQUARES[i % CHESS_SQUARES.length]}
                         </span>
                       </div>
@@ -248,7 +305,7 @@ export default function DepartmentsSection() {
                       <span className="text-[#9b1a1a] font-black text-[1.8vw] tracking-tight uppercase mb-4 leading-none break-words">
                         {dept.name}
                       </span>
-                      <p className="text-white/80 text-[1.2vw] leading-snug lowercase font-light break-words">
+                      <p className="text-white/80 text-[1.2vw] leading-snug first-letter:uppercase font-light break-words">
                         {dept.description ||
                           "view recruitment tasks for this department"}
                       </p>

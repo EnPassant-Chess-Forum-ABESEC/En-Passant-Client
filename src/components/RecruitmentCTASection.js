@@ -9,15 +9,13 @@ const premiumEase = [0.16, 1, 0.3, 1];
 export default function RecruitmentCTASection() {
   return (
     <section
+      id="recruitment-cta"
       className="relative w-full bg-[#050505] overflow-hidden"
       style={{ minHeight: "100vh" }}
     >
-      {/* Top fade — blends from DepartmentsSection */}
       <div className="absolute top-0 left-0 w-full h-[15vw] bg-gradient-to-b from-[#050505] to-transparent z-20 pointer-events-none" />
 
-      {/* Full-bleed centered image container */}
       <div className="relative w-full" style={{ minHeight: "100vh" }}>
-        {/* Center Image */}
         <div className="absolute inset-0 flex items-center justify-center z-0 mt-[10vh] md:mt-0">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -33,7 +31,7 @@ export default function RecruitmentCTASection() {
               className="object-contain object-center"
               priority
             />
-            {/* Radial fade around image edges */}
+
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -44,7 +42,6 @@ export default function RecruitmentCTASection() {
           </motion.div>
         </div>
 
-        {/* Dark vignette overlay */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
@@ -53,24 +50,20 @@ export default function RecruitmentCTASection() {
           }}
         />
 
-        {/* ── Top-left headline ── */}
         <div className="absolute top-[8%] md:top-[12%] left-[6%] z-30 select-none">
           <motion.h2
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1.2, ease: premiumEase }}
-            className="font-black uppercase tracking-tighter leading-[0.82]"
+            className="font-bold uppercase tracking-wide leading-[0.82] font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
             style={{ fontSize: "clamp(46px, 6.5vw, 90px)" }}
           >
             <span className="text-white block">MAKE YOUR</span>
-            <span className="text-[#9b1a1a] block drop-shadow-[0_0_30px_rgba(155,26,26,0.5)]">
-              NEXT MOVE
-            </span>
+            <span className="text-[#9b1a1a] block mt-[0.4rem]">NEXT MOVE</span>
           </motion.h2>
         </div>
 
-        {/* ── Descriptor (Under headline on mobile, Top-right on desktop) ── */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +73,7 @@ export default function RecruitmentCTASection() {
         >
           <p className="text-[#888] text-md md:text-lg leading-relaxed font-light">
             <strong className="text-white font-bold">
-              Applications are now open.
+              Applications are now open !!
               <br />
             </strong>{" "}
             Prove your worth and earn your seat.
@@ -116,7 +109,6 @@ export default function RecruitmentCTASection() {
           </Link>
         </motion.div>
 
-        {/* Bottom page fade */}
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] to-transparent z-20 pointer-events-none" />
       </div>
     </section>

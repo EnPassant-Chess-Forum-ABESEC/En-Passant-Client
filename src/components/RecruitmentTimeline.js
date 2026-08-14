@@ -7,13 +7,13 @@ const steps = [
     number: "01",
     title: "Fill the Form",
     description:
-      "Begin by submitting your application through our portal. Tell us who you are and which department you're targeting.",
+      "Begin by submitting your recruitment application. Tell us who you are and which department you're applying for.",
   },
   {
     number: "02",
     title: "Task Given",
     description:
-      "Shortlisted candidates receive a custom task tailored to their chosen department. This is your first real test.",
+      "Applicants will then receive a custom task tailored to their chosen department. Departments have a mandatory task for all applicants.",
   },
   {
     number: "03",
@@ -31,7 +31,7 @@ const steps = [
     number: "05",
     title: "Selection",
     description:
-      "Final results are announced. Those selected are onboarded into the elite En Passant community.",
+      "Final results are announced. Those selected are onboarded into the En Passant family.",
 
     isAccent: true,
   },
@@ -56,14 +56,15 @@ export default function RecruitmentTimeline() {
       <div className="relative max-w-[1400px] mx-auto px-6 z-20">
         <div className="text-center mb-48">
           <h2
-            className="font-black uppercase tracking-tighter leading-[0.85] text-white"
+            className="font-black uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
             style={{ fontSize: "clamp(60px, 12vw, 150px)" }}
           >
             THE <span className="text-[#9b1a1a]">PROCEDURE</span>
           </h2>
           <p className="text-[#666] text-base md:text-xl mt-10 leading-relaxed max-w-[700px] mx-auto font-light">
-            A merit-based process designed to identify the most driven and
-            talented individuals.
+            The <span className="text-[#9b1a1a]">recruitment process </span>
+            follows this simple procedure to ensure the best candidates are
+            selected.
           </p>
         </div>
 
@@ -102,7 +103,7 @@ export default function RecruitmentTimeline() {
                           {step.number}
                         </span>
                       </div>
-                      <h3 className="text-xl md:text-2xl font-black tracking-[0.2em] text-white uppercase mb-4 md:mb-6">
+                      <h3 className="text-xl md:text-2xl font-pezula font-medium tracking-[0.1em] text-white uppercase mb-4 md:mb-6">
                         {step.title}
                       </h3>
                       <p className="text-sm md:text-lg text-[#999] leading-relaxed max-w-[450px] font-light">

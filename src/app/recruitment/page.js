@@ -79,6 +79,21 @@ export default function RecruitmentPage() {
           style={{ y: yText, opacity }}
           className="absolute inset-0 w-full h-full select-none pointer-events-none z-20"
         >
+          <div className="absolute top-[35%] md:top-[30%] right-[2%] md:right-[8%]">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.14 }}
+              transition={{ duration: 1.5, delay: 0.6 }}
+              style={{
+                WebkitTransform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+              }}
+              className="inline-block text-[#9b1a1a] font-black tracking-tighter leading-[0.85] text-[35vw] md:text-[30vw] lg:text-[25vw] transform scale-y-[1.8] origin-bottom"
+            >
+              26
+            </motion.span>
+          </div>
+
           <div
             className="absolute top-[46%] md:top-[49%] left-[25%] md:left-[41%]"
             style={{ width: "80vw" }}
@@ -97,32 +112,12 @@ export default function RecruitmentPage() {
                 backfaceVisibility: "hidden",
               }}
               className="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555]
-              bg-clip-text text-transparent font-pezula uppercase
+              bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] font-pezula font-bold uppercase
               tracking-wider leading-[0.85]
-              text-[15vw] md:text-[10vw] whitespace-nowrap"
+              text-[14vw] sm:text-[11vw] md:text-[8.5vw] lg:text-[7.8vw] whitespace-nowrap"
             >
               RECRUITMENT
             </motion.h1>
-          </div>
-
-          <div className="absolute top-[56%] md:top-[58%] right-[10%] md:right-[20%]">
-            <motion.span
-              initial={{ y: 50, opacity: 0, z: 0 }}
-              animate={{ y: 0, opacity: 1, z: 0 }}
-              transition={{
-                type: "spring",
-                stiffness: 60,
-                damping: 20,
-                delay: 0.6,
-              }}
-              style={{
-                WebkitTransform: "translateZ(0)",
-                backfaceVisibility: "hidden",
-              }}
-              className="inline-block text-[#9b1a1a] drop-shadow-[0_0_40px_rgba(155,26,26,0.6)] font-black tracking-tighter leading-[0.85] text-[15vw] md:text-[10vw]"
-            >
-              2026
-            </motion.span>
           </div>
         </motion.div>
 
@@ -160,12 +155,20 @@ export default function RecruitmentPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.5, duration: 1 }}
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2 cursor-pointer pointer-events-auto group"
+            onClick={() => {
+              document
+                .getElementById("recruitment-cta")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
-            <span className="text-[12px] uppercase tracking-[0.2em] text-white/40 font-bold">
+            <span className="text-[12px] uppercase tracking-[0.2em] text-white/40 font-bold ml-[0.2em] group-hover:text-white transition-colors duration-300">
               Scroll
             </span>
-            <ChevronDown className="w-4 h-4 text-white/40 animate-bounce" />
+            <ChevronDown
+              className="w-4 h-4 text-white/40 animate-bounce group-hover:text-white transition-colors duration-300"
+              style={{ animationDuration: "1.5s" }}
+            />
           </motion.div>
         </motion.div>
       </section>
