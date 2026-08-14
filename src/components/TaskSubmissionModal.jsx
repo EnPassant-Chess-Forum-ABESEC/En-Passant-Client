@@ -151,10 +151,10 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 md:p-8 border-b border-white/5 bg-white/[0.02] shrink-0">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase">
+            <h2 className="text-2xl md:text-3xl font-pezula font-normal text-white tracking-[0.1em] uppercase">
               Submit Task
             </h2>
-            <p className="text-xs text-white/40 mt-1 uppercase tracking-[0.2em] font-bold">
+            <p className="text-xs font-sans text-white/50 mt-1.5 uppercase tracking-[0.15em] font-medium leading-relaxed">
               {task.title}
             </p>
           </div>
@@ -226,7 +226,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
           )}
 
           {requiresLink && (
-            <div className="space-y-4 pt-4 border-t border-white/5">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 border-l-2 border-white/30 pl-3">
                   <LinkIcon className="w-3 h-3 text-white/40" /> Link Submission
@@ -260,7 +260,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
           )}
 
           {requiresFiles && (
-            <div className="space-y-4 pt-4 border-t border-white/5">
+            <div className="space-y-4">
               <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 border-l-2 border-white/30 pl-3">
                 <Upload className="w-3 h-3 text-white/40" /> File Submission
               </label>

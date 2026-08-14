@@ -271,9 +271,9 @@ export default function RecruitmentApplyPage() {
         if (formData.collegeEmail || formData.phone) {
           await fetchApi("/users/me", {
             method: "PUT",
-            body: { 
+            body: {
               collegeEmail: formData.collegeEmail || undefined,
-              phoneNumber: formData.phone || undefined
+              phoneNumber: formData.phone || undefined,
             },
           }).catch((err) =>
             console.error("Failed to update user profile", err),
@@ -805,7 +805,7 @@ export default function RecruitmentApplyPage() {
                       <div className="text-[11px] font-bold tracking-wide text-white/70 uppercase break-all">
                         UPI ID:{" "}
                         <span className="text-[#ff3333] select-all font-medium normal-case">
-                          kaustubhsharma434@okaxis
+                          8933905351@ybl
                         </span>
                       </div>
                     </div>

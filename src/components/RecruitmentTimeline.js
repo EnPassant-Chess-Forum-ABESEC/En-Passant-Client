@@ -56,7 +56,7 @@ export default function RecruitmentTimeline() {
       <div className="relative max-w-[1400px] mx-auto px-6 z-20">
         <div className="text-center mb-48">
           <h2
-            className="font-black uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
+            className="uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
             style={{ fontSize: "clamp(60px, 12vw, 150px)" }}
           >
             THE <span className="text-[#9b1a1a]">PROCEDURE</span>
