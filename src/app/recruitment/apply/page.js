@@ -454,7 +454,7 @@ export default function RecruitmentApplyPage() {
       <div
         className="relative z-10 flex w-full max-w-5xl overflow-hidden rounded-[2rem]"
         style={{
-          height: "740px",
+          height: "min(680px, 85vh)",
           boxShadow:
             "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
@@ -531,10 +531,10 @@ export default function RecruitmentApplyPage() {
 
           <div className="pb-2 relative z-10 flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-[2rem] font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-1 leading-none">
+              <h2 className="text-[2rem] font-pezula uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-1 leading-none">
                 {getStepTitle()}
               </h2>
-              <p className="text-white/50 text-[14px] font-medium tracking-wide">
+              <p className="text-white/50 text-[14px] font-inter font-medium tracking-wide">
                 {getStepDesc()}
               </p>
             </div>
@@ -550,7 +550,7 @@ export default function RecruitmentApplyPage() {
             )}
           </div>
 
-          <div className="py-6 flex-1 min-h-0 flex flex-col relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10">
+          <div className="pt-6 pb-10 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar">
             <AnimatePresence mode="wait">
               {currentStep === 0 && (
                 <motion.div
@@ -560,12 +560,12 @@ export default function RecruitmentApplyPage() {
                   animate="animate"
                   exit="exit"
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="space-y-5 w-full"
+                  className="space-y-3 w-full"
                 >
                   <div className="space-y-1.5 group">
                     <label
                       htmlFor="name"
-                      className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
                     >
                       Full Name
                     </label>
@@ -576,7 +576,7 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="name"
                         type="text"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
                           isSignedIn ? "opacity-60 cursor-not-allowed" : ""
                         }`}
                         value={formData.name}
@@ -596,7 +596,7 @@ export default function RecruitmentApplyPage() {
                   <div className="space-y-1.5 group">
                     <label
                       htmlFor="email"
-                      className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
                     >
                       Email Address
                     </label>
@@ -607,7 +607,7 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="email"
                         type="email"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
                           isSignedIn ? "opacity-60 cursor-not-allowed" : ""
                         }`}
                         value={formData.email}
@@ -627,7 +627,7 @@ export default function RecruitmentApplyPage() {
                   <div className="space-y-1.5 group">
                     <label
                       htmlFor="collegeEmail"
-                      className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
                     >
                       College Email
                     </label>
@@ -638,7 +638,7 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="collegeEmail"
                         type="email"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
                         value={formData.collegeEmail}
                         onChange={(e) =>
                           setFormData({
@@ -653,7 +653,7 @@ export default function RecruitmentApplyPage() {
                   <div className="space-y-1.5 group">
                     <label
                       htmlFor="phone"
-                      className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
                     >
                       Phone Number
                     </label>
@@ -667,7 +667,7 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="phone"
                         type="tel"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
                         value={formData.phone}
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
@@ -795,14 +795,14 @@ export default function RecruitmentApplyPage() {
                 >
                   <div className="flex items-center justify-between gap-6 bg-white/5 border border-white/10 p-5 rounded-2xl my-2">
                     <div className="flex-1 text-left">
-                      <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-1.5">
+                      <h4 className="text-s font-pezula normalcase tracking-wider text-white mb-1.5">
                         Registration Fee
                       </h4>
                       <p className="text-white/50 text-[12px] font-medium leading-relaxed mb-2">
                         Please pay to the UPI ID mentioned below and upload the
                         screenshot of the payment.
                       </p>
-                      <div className="text-[11px] font-bold tracking-wide text-white/70 uppercase break-all">
+                      <div className="text-[11px] font-bold tracking-wide text-white/70 normalcase break-all">
                         UPI ID:{" "}
                         <span className="text-[#ff3333] select-all font-medium normal-case">
                           8933905351@ybl
@@ -815,13 +815,13 @@ export default function RecruitmentApplyPage() {
                       alt="Payment QR Code"
                       width={112}
                       height={112}
-                      className="object-contain rounded-[1.2rem] shrink-0"
+                      className="object-contain rounded-md shrink-0"
                     />
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5 group">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                      <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
                         Transaction ID (UTR)
                       </label>
                       <input
@@ -834,7 +834,7 @@ export default function RecruitmentApplyPage() {
                     </div>
 
                     <div className="space-y-1.5 group">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                      <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
                         Payment Screenshot
                       </label>
                       <input
@@ -850,7 +850,7 @@ export default function RecruitmentApplyPage() {
                     </div>
                   </div>
 
-                  <div className="w-full mt-2">
+                  <div className="w-full mt-6">
                     <SpecularButton
                       onClick={handlePayment}
                       disabled={
