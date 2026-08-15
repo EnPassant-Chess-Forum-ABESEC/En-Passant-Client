@@ -326,13 +326,13 @@ export default function ProfilePage() {
 
       {profile && isEditing && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto"
+          className="fixed inset-0 z-40 flex items-start justify-center bg-black/65 backdrop-blur-sm p-4 pt-24 sm:p-6 sm:pt-28 overflow-y-auto"
           data-lenis-prevent="true"
         >
-          <div className="relative my-auto w-fit flex justify-center">
+          <div className="relative my-auto w-full max-w-[850px] h-[min(620px,85vh)] flex justify-center">
             <button
               onClick={() => setIsEditing(false)}
-              className="absolute top-2 right-3 md:top-4 md:right-5 z-[60] text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="absolute top-3 right-3 md:top-4 md:right-4 z-[60] text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
               title="Close"
             >
               <X size={20} />
@@ -341,7 +341,7 @@ export default function ProfilePage() {
               <UserProfile.Page label="account" />
               <UserProfile.Page
                 label="En Passant"
-                labelIcon={<ChessPawn size={16} />}
+                labelIcon={<SiChessdotcom size={14} />}
                 url="en-passant"
               >
                 <CustomProfileForm />

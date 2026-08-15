@@ -196,12 +196,18 @@ export const userProfileAppearance = {
   elements: {
     rootBox: {
       background: "transparent",
+      width: "100% !important",
+      maxWidth: "100% !important",
+      height: "100% !important",
     },
     cardBox: {
       background: "#111111",
       border: "1px solid rgba(255, 255, 255, 0.08)",
       boxShadow: "0 24px 60px rgba(0, 0, 0, 0.6)",
       borderRadius: "16px",
+      width: "100% !important",
+      maxWidth: "100% !important",
+      height: "100% !important",
     },
     navbar: {
       background: "#0d0d0d",
@@ -221,9 +227,12 @@ export const userProfileAppearance = {
     },
     pageScrollBox: {
       background: "#111111",
+      height: "100% !important",
     },
     page: {
       background: "#111111",
+      height: "100% !important",
+      minHeight: "100% !important",
     },
     profileSectionTitle: {
       color: "#ffffff !important",

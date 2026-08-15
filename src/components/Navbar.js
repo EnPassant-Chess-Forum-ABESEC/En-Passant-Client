@@ -266,7 +266,10 @@ export default function Navbar() {
                     <span className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-sans">
                       Account
                     </span>
-                    <div className="flex justify-center items-center w-full" style={{ isolation: "isolate" }}>
+                    <div
+                      className="flex justify-center items-center w-full"
+                      style={{ isolation: "isolate" }}
+                    >
                       <UserButton
                         afterSignOutUrl="/"
                         appearance={{
@@ -282,7 +285,8 @@ export default function Navbar() {
                               justifyContent: "center",
                             },
                             userButtonPopoverCard: {
-                              ...userButtonAppearance.elements.userButtonPopoverCard,
+                              ...userButtonAppearance.elements
+                                .userButtonPopoverCard,
                               position: "fixed !important",
                               top: "50% !important",
                               left: "50% !important",

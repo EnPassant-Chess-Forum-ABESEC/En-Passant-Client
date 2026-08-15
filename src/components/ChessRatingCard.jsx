@@ -72,18 +72,26 @@ export default function ChessRatingCard({
           return;
         }
 
-        const recentArchives = archivesData.archives.slice(-3);
         let timeClassGames = [];
+        const maxMonthsToCheck = 12;
+        let monthsChecked = 0;
 
-        for (const url of recentArchives) {
+        for (let i = archivesData.archives.length - 1; i >= 0; i--) {
+          if (monthsChecked >= maxMonthsToCheck) break;
+          const url = archivesData.archives[i];
           try {
             const monthRes = await fetch(url);
             if (monthRes.ok) {
               const monthData = await monthRes.json();
               const games = monthData.games || [];
-              timeClassGames.push(...games.filter((g) => g.time_class === key));
+              const relevantGames = games.filter((g) => g.time_class === key);
+
+              timeClassGames = [...relevantGames, ...timeClassGames];
+
+              if (timeClassGames.length >= 12) break;
             }
           } catch (e) {}
+          monthsChecked++;
         }
 
         const ratings = timeClassGames.map((g) => {
