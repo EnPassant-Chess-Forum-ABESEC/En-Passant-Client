@@ -97,6 +97,11 @@ export default function DriftWallSection() {
           overlayColor="#050505"
           dim={0.6}
           fade={0.5}
+          tilt={0}
+          turn={0}
+          roll={0}
+          depth={0}
+          parallax={0}
         />
       </div>
 
