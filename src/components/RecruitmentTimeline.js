@@ -54,18 +54,14 @@ export default function RecruitmentTimeline() {
       <div className="absolute bottom-0 left-0 w-full h-[20vw] bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 z-20">
-        <div className="text-center mb-48">
+        <div className="text-left mb-32 md:mb-48 pl-2 md:pl-16">
           <h2
-            className="uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
+            className="uppercase flex flex-col tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
             style={{ fontSize: "clamp(60px, 12vw, 150px)" }}
           >
-            THE <span className="text-[#9b1a1a]">PROCEDURE</span>
+            <span>THE</span>
+            <span className="text-[#9b1a1a]">PROCEDURE</span>
           </h2>
-          <p className="text-[#666] text-base md:text-xl mt-10 leading-relaxed max-w-[700px] mx-auto font-light">
-            The <span className="text-[#9b1a1a]">recruitment process </span>
-            follows this simple procedure to ensure the best candidates are
-            selected.
-          </p>
         </div>
 
         <div className="relative mt-12 md:mt-20">

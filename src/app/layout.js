@@ -22,6 +22,7 @@ export const metadata = {
 import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import SmoothScroll from "@/components/SmoothScroll";
+import PreloaderWrapper from "@/components/PreloaderWrapper";
 
 export default function RootLayout({ children }) {
   return (
@@ -37,15 +38,17 @@ export default function RootLayout({ children }) {
             defaultTheme="system"
             enableSystem
           >
-            <SmoothScroll>
-              <NavbarWrapper>
-                <Navbar />
-              </NavbarWrapper>
-              <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
-                {children}
-              </main>
-              <Footer />
-            </SmoothScroll>
+            <PreloaderWrapper>
+              <SmoothScroll>
+                <NavbarWrapper>
+                  <Navbar />
+                </NavbarWrapper>
+                <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
+                  {children}
+                </main>
+                <Footer />
+              </SmoothScroll>
+            </PreloaderWrapper>
             <Toaster />
           </ThemeProvider>
         </body>
