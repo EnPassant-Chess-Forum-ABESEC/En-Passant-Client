@@ -52,6 +52,8 @@ export default function Navbar() {
       fetchApi("/recruitment/my-application")
         .then((res) => setMyApplication(res.myApplication))
         .catch(() => {});
+    } else {
+      setMyApplication(null);
     }
   }, [userId, fetchApi]);
 

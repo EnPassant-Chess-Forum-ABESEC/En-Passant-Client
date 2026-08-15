@@ -222,22 +222,29 @@ export default function RecruitmentApplyPage() {
 
         try {
           setIsSubmitting(true);
-          try {
-            const rawSignUp = clerk.client.signUp;
-            await rawSignUp.create({
-              emailAddress: sanitizedEmail,
-              firstName: sanitizedName.split(" ")[0] || sanitizedName,
-              lastName: sanitizedName.split(" ").slice(1).join(" ") || "",
+            const res = await fetch("/api/auth/fast-signup", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: sanitizedEmail,
+                firstName: sanitizedName.split(" ")[0] || sanitizedName,
+                lastName: sanitizedName.split(" ").slice(1).join(" ") || "",
+              }),
             });
+            const data = await res.json();
 
-            await rawSignUp.prepareEmailAddressVerification({
-              strategy: "email_code",
-            });
-
-            setAuthMode("signUp");
-            setShowOtpModal(true);
-          } catch (signUpErr) {
-            if (signUpErr.errors?.[0]?.code === "form_identifier_exists") {
+            if (data.success && data.ticket) {
+              const signInAttempt = await clerk.client.signIn.create({
+                strategy: "ticket",
+                ticket: data.ticket,
+              });
+              if (signInAttempt.status === "complete") {
+                await clerk.setActive({ session: signInAttempt.createdSessionId });
+                setCurrentStep(1);
+              } else {
+                throw new Error("Sign in not complete. Status: " + signInAttempt.status);
+              }
+            } else if (data.error === "EXISTS") {
               const rawSignIn = clerk.client.signIn;
               await rawSignIn.create({
                 identifier: sanitizedEmail,
@@ -260,9 +267,8 @@ export default function RecruitmentApplyPage() {
                 );
               }
             } else {
-              throw signUpErr;
+              throw new Error(data.error || "Failed to create account");
             }
-          }
         } catch (err) {
           console.error("Auth init failed", err);
           let msg = "An unknown error occurred.";
