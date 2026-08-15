@@ -48,7 +48,7 @@ export default function DriftWallSection() {
       {/* Top Fade */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
-      <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 mb-16 text-center md:text-left">
+      <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 mb-16 text-left">
         <h2 className="flex flex-col uppercase font-pezula font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
           <motion.span
             custom={0}
@@ -56,11 +56,11 @@ export default function DriftWallSection() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={headerVariants}
-            className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[10vw] md:text-[6vw]"
+            className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[15vw] md:text-[100px]"
           >
             OUR
           </motion.span>
-          <span className="text-[10vw] md:text-[6vw]">
+          <span className="text-[15vw] md:text-[100px]">
             <motion.span
               custom={1}
               initial="hidden"
@@ -73,18 +73,6 @@ export default function DriftWallSection() {
             </motion.span>
           </span>
         </h2>
-        <motion.p
-          custom={2}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={headerVariants}
-          className="mt-6 text-[#888888] font-sans max-w-lg text-sm md:text-base leading-relaxed"
-        >
-          Explore moments captured across our history. From intense tournament
-          battles to late-night strategy sessions, these are the memories that
-          define us.
-        </motion.p>
       </div>
 
       {/* DriftWall Container */}

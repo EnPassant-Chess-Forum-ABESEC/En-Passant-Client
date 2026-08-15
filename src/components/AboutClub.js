@@ -186,11 +186,11 @@ export default function AboutClub() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={headerVariants}
-              className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[12vw] md:text-[7vw]"
+              className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[15vw] md:text-[100px]"
             >
               THE CLUB
             </motion.span>
-            <span className="text-[12vw] md:text-[7vw]">
+            <span className="text-[15vw] md:text-[100px]">
               <motion.span
                 custom={1}
                 initial="hidden"
