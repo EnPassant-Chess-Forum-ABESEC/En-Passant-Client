@@ -15,6 +15,7 @@ import {
   GraduationCap,
   Trophy,
   MailCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
@@ -31,6 +32,7 @@ export default function ProfilePage() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [chessError, setChessError] = useState(false);
 
   useEffect(() => {
     if (isLoaded && clerkUser) loadProfile();
@@ -100,7 +102,7 @@ export default function ProfilePage() {
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md overflow-hidden p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
             >
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-6 min-w-0 flex-1 w-full">
                 <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-white/20 shrink-0 shadow-lg shadow-black/50">
                   <Image
                     src={clerkUser?.imageUrl || "/profile_placeholder.jpg"}
@@ -109,42 +111,42 @@ export default function ProfilePage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl md:text-4xl font-semibold font-pezula tracking-wide text-white">
+                <div className="flex flex-col gap-2 min-w-0 flex-1 w-full">
+                  <div className="flex items-center gap-3 w-full min-w-0">
+                    <h1 className="text-3xl md:text-4xl font-semibold font-pezula tracking-wide text-white truncate w-full">
                       {profile.userName || clerkUser?.fullName || "Player"}
                     </h1>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-white/50 text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-white/50 text-sm w-full min-w-0">
                     {profile.email && (
-                      <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full">
-                        <Mail size={14} className="opacity-70" />
-                        <span>{profile.email}</span>
+                      <div className="flex items-center gap-1.5 bg-white/5 px-3 py-1.5 rounded-full min-w-0">
+                        <Mail size={14} className="opacity-70 shrink-0" />
+                        <span className="truncate">{profile.email}</span>
                       </div>
                     )}
                     {profile.collegeEmail && (
-                      <div className="flex items-center gap-1.5 text-[#ff3333]/90 bg-[#ff3333]/10 px-3 py-1.5 rounded-full">
-                        <MailCheck size={14} className="opacity-70" />
-                        <span>{profile.collegeEmail}</span>
+                      <div className="flex items-center gap-1.5 text-[#ff3333]/90 bg-[#ff3333]/10 px-3 py-1.5 rounded-full min-w-0 max-w-full">
+                        <MailCheck size={14} className="opacity-70 shrink-0" />
+                        <span className="truncate">{profile.collegeEmail}</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 shrink-0 md:self-end">
-                <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-col gap-3 shrink-0 w-full md:w-auto md:self-end mt-4 md:mt-0">
+                <div className="flex flex-wrap items-center gap-3 w-full">
                   {profile.isOnboardingComplete && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider border border-white/10 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all shadow-sm"
+                      className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider border border-white/10 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all shadow-sm"
                     >
                       <Edit2 size={14} /> Edit Profile
                     </button>
                   )}
                   <Link
                     href="/leaderboard"
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider uppercase border border-white/10 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all shadow-sm"
+                    className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider uppercase border border-white/10 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all shadow-sm"
                   >
                     <Trophy size={14} /> Leaderboard
                   </Link>
@@ -176,7 +178,7 @@ export default function ProfilePage() {
                 </div>
                 <button
                   onClick={() => setShowOnboardingModal(true)}
-                  className="shrink-0 px-5 py-2 text-xs font-bold uppercase tracking-widest bg-[#c21818] text-white hover:bg-[#a11414] rounded-lg transition-colors shadow-lg"
+                  className="shrink-0 px-5 py-2 text-xs font-bold uppercase tracking-widest bg-[#c21818] text-white hover:bg-[#a11414] rounded-lg transition-colors shadow-lg w-full sm:w-auto"
                 >
                   Complete Profile
                 </button>
@@ -273,7 +275,7 @@ export default function ProfilePage() {
                             Year
                           </p>
                           <p className="text-sm font-semibold text-white/90">
-                            {profile.year ? `Year ${profile.year}` : "—"}
+                            {profile.year ? (profile.year === 5 ? "Passed" : `Year ${profile.year}`) : "—"}
                           </p>
                         </div>
                       </div>
@@ -293,20 +295,30 @@ export default function ProfilePage() {
                 className="lg:col-span-2 flex flex-col gap-6"
               >
                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-6 h-full">
-                  <h2 className="text-s font-normal font-pezula tracking-[0.1em] uppercase text-white/70 mb-6 flex items-center gap-4">
-                    <SiChessdotcom size={14} /> Chess.com Ratings
-                  </h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-s font-normal font-pezula tracking-[0.1em] uppercase text-white/70 flex items-center gap-4">
+                      <SiChessdotcom size={14} /> Chess.com Ratings
+                    </h2>
+                    {chessError && (
+                      <div className="flex items-center gap-1.5 text-[#ff3333]">
+                        <AlertTriangle size={14} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest">Invalid Username</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-auto md:h-[calc(100%-2.5rem)]">
                     <div className="flex flex-col gap-3">
                       <ChessRatingCard
                         username={chess?.username}
                         timeClass="Blitz"
                         currentRating={chess?.ratings?.blitz}
+                        onError={() => setChessError(true)}
                       />
                       <ChessRatingCard
                         username={chess?.username}
                         timeClass="Bullet"
                         currentRating={chess?.ratings?.bullet}
+                        onError={() => setChessError(true)}
                       />
                     </div>
 
@@ -315,6 +327,7 @@ export default function ProfilePage() {
                       timeClass="Rapid"
                       currentRating={chess?.ratings?.rapid}
                       variant="hero"
+                      onError={() => setChessError(true)}
                     />
                   </div>
                 </div>

@@ -68,9 +68,7 @@ export default function Navbar() {
 
   const recruitmentPath =
     myApplication?.status &&
-    !["DRAFT", "PAYMENT_PENDING", "PAYMENT_FAILED"].includes(
-      myApplication.status,
-    )
+    !["DRAFT", "PAYMENT_FAILED"].includes(myApplication.status)
       ? "/recruitment/dashboard"
       : "/recruitment";
 

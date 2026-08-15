@@ -134,7 +134,7 @@ export default function LeaderboardPage() {
       {/* Branch / Year — desktop only */}
       <div className="py-6 px-8 text-xs md:text-sm text-white/25 font-mono hidden md:block shrink-0 md:w-48 lg:w-64">
         {player.branch}
-        {player.year ? ` · Y${player.year}` : ""}
+        {player.year ? (player.year === 5 ? ` · Passed` : ` · Y${player.year}`) : ""}
       </div>
 
       {/* Rating */}

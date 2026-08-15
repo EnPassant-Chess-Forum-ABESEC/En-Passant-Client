@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 const MONO = { stroke: "#c8c8c8", gradientFrom: "#c8c8c8" };
 
@@ -46,9 +47,11 @@ export default function ChessRatingCard({
   timeClass,
   currentRating,
   variant = "default",
+  onError,
 }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const key = timeClass.toLowerCase();
   const config = TIME_CLASS_CONFIG[key] || TIME_CLASS_CONFIG.rapid;
@@ -102,12 +105,18 @@ export default function ChessRatingCard({
         setHistory(ratings.slice(-12));
       } catch (err) {
         console.error("Error fetching chess.com history:", err);
+        setError(true);
+        if (onError) onError();
       } finally {
         setLoading(false);
       }
     };
 
-    fetchHistory().catch(() => setLoading(false));
+    fetchHistory().catch(() => {
+      setError(true);
+      if (onError) onError();
+      setLoading(false);
+    });
   }, [username, timeClass]);
 
   let delta = 0;
@@ -168,9 +177,17 @@ export default function ChessRatingCard({
               {config.label}
             </p>
           </div>
-          <p className="text-[40px] font-black leading-none text-white">
-            {loading ? "···" : displayRating || "—"}
-          </p>
+          <div className="text-[40px] font-black leading-none text-white flex items-center h-[40px]">
+            {loading ? (
+              <Loader2 className="w-8 h-8 text-white/20 animate-spin" strokeWidth={2.5} />
+            ) : displayRating ? (
+              displayRating
+            ) : (
+              <span className="text-white/10 text-xl font-bold tracking-widest uppercase mt-2">
+                N/A
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="absolute inset-0 w-full h-full">
@@ -233,9 +250,17 @@ export default function ChessRatingCard({
             {config.label}
           </p>
         </div>
-        <p className="text-[26px] font-black leading-none text-white">
-          {loading ? "···" : displayRating || "—"}
-        </p>
+        <div className="text-[26px] font-black leading-none text-white flex items-center h-[26px]">
+          {loading ? (
+            <Loader2 className="w-6 h-6 text-white/20 animate-spin" strokeWidth={2.5} />
+          ) : displayRating ? (
+            displayRating
+          ) : (
+            <span className="text-white/10 text-[15px] font-bold tracking-widest uppercase mt-1">
+              N/A
+            </span>
+          )}
+        </div>
       </div>
 
       {/* SVG area chart pinned to bottom */}

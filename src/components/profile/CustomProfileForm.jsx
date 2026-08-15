@@ -2,6 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const BRANCH_OPTIONS = [
+  "BCA",
+  "MCA",
+  "CSE",
+  "CS",
+  "CE",
+  "CSE-AIML",
+  "CSE-DS",
+  "ELCE",
+  "EN",
+  "ME",
+  "ECE",
+  "IT",
+  "MBA",
+];
 
 export default function CustomProfileForm() {
   const fetchApi = useApi();
@@ -48,7 +71,10 @@ export default function CustomProfileForm() {
 
     const sanitizedCollegeEmail = collegeEmail.trim().toLowerCase();
 
-    if (sanitizedCollegeEmail && !sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
+    if (
+      sanitizedCollegeEmail &&
+      !sanitizedCollegeEmail.endsWith("@abes.ac.in")
+    ) {
       setError("College email must end with @abes.ac.in");
       setSaving(false);
       return;
@@ -116,29 +142,69 @@ export default function CustomProfileForm() {
             <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
               Branch
             </label>
-            <input
-              type="text"
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              placeholder="e.g. CSE"
-              required
-              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
-            />
+            <Select value={branch} onValueChange={setBranch} required={!profile?.isOnboardingComplete}>
+              <SelectTrigger className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30">
+                <SelectValue placeholder="Select Branch" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#111] border-white/10 text-white max-h-40 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                {BRANCH_OPTIONS.map((opt) => (
+                  <SelectItem
+                    key={opt}
+                    value={opt}
+                    className="focus:bg-[#c21818]/20 focus:text-white"
+                  >
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
               Year
             </label>
-            <input
-              type="number"
-              min="1"
-              max="4"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              required
-              className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
-            />
+            <Select
+              value={String(year)}
+              onValueChange={(val) => setYear(Number(val))}
+              required={!profile?.isOnboardingComplete}
+            >
+              <SelectTrigger className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30">
+                <SelectValue placeholder="Select Year" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#111] border-white/10 text-white">
+                <SelectItem
+                  value="1"
+                  className="focus:bg-[#c21818]/20 focus:text-white"
+                >
+                  1st Year
+                </SelectItem>
+                <SelectItem
+                  value="2"
+                  className="focus:bg-[#c21818]/20 focus:text-white"
+                >
+                  2nd Year
+                </SelectItem>
+                <SelectItem
+                  value="3"
+                  className="focus:bg-[#c21818]/20 focus:text-white"
+                >
+                  3rd Year
+                </SelectItem>
+                <SelectItem
+                  value="4"
+                  className="focus:bg-[#c21818]/20 focus:text-white"
+                >
+                  4th Year
+                </SelectItem>
+                <SelectItem
+                  value="5"
+                  className="focus:bg-[#c21818]/20 focus:text-white"
+                >
+                  Passed
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -151,7 +217,7 @@ export default function CustomProfileForm() {
             value={collegeEmail}
             onChange={(e) => setCollegeEmail(e.target.value)}
             placeholder="name.admNo@abes.ac.in"
-            required
+            required={!profile?.isOnboardingComplete}
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
         </div>
@@ -165,7 +231,7 @@ export default function CustomProfileForm() {
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             placeholder="+91..."
-            required
+            required={!profile?.isOnboardingComplete}
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
         </div>

@@ -2,6 +2,20 @@
 
 import { useState } from "react";
 import { CheckCircle2, ChevronRight, Loader2, ArrowRight } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const BRANCH_OPTIONS = [
+  "CSE",
+  "ECE",
+  "IT",
+  // Add more branch values here
+];
 
 const DEPARTMENTS = [
   { id: "dept_content", name: "Content Creation" },
@@ -101,28 +115,33 @@ export default function ApplicationForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-2">
                 <label className="text-xs uppercase font-bold text-[#555] tracking-widest">Branch</label>
-                <input
-                  required
-                  type="text"
-                  className="bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#9b1a1a] transition-colors"
-                  placeholder="e.g. CSE"
-                  value={formData.branch}
-                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                />
+                <Select value={formData.branch} onValueChange={(val) => setFormData({ ...formData, branch: val })} required>
+                  <SelectTrigger className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 h-[50px] text-white focus:outline-none focus:border-[#9b1a1a] transition-colors">
+                    <SelectValue placeholder="Select Branch" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#111] border-white/10 text-white max-h-40 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    {BRANCH_OPTIONS.map((opt) => (
+                      <SelectItem key={opt} value={opt} className="focus:bg-[#c21818]/20 focus:text-white">
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-xs uppercase font-bold text-[#555] tracking-widest">Year</label>
-                <select
-                  required
-                  className="bg-[#111] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#9b1a1a] transition-colors appearance-none"
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                >
-                  <option value="1">1st Year</option>
-                  <option value="2">2nd Year</option>
-                  <option value="3">3rd Year</option>
-                  <option value="4">4th Year</option>
-                </select>
+                <Select value={String(formData.year)} onValueChange={(val) => setFormData({ ...formData, year: val })} required>
+                  <SelectTrigger className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-3 h-[50px] text-white focus:outline-none focus:border-[#9b1a1a] transition-colors">
+                    <SelectValue placeholder="Select Year" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#111] border-white/10 text-white">
+                    <SelectItem value="1" className="focus:bg-[#c21818]/20 focus:text-white">1st Year</SelectItem>
+                    <SelectItem value="2" className="focus:bg-[#c21818]/20 focus:text-white">2nd Year</SelectItem>
+                    <SelectItem value="3" className="focus:bg-[#c21818]/20 focus:text-white">3rd Year</SelectItem>
+                    <SelectItem value="4" className="focus:bg-[#c21818]/20 focus:text-white">4th Year</SelectItem>
+                    <SelectItem value="5" className="focus:bg-[#c21818]/20 focus:text-white">Passed</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
