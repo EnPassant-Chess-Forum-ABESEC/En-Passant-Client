@@ -12,7 +12,9 @@ export async function POST(req) {
       );
     }
 
-    const user = await clerkClient.users.createUser({
+    const client = await clerkClient();
+
+    const user = await client.users.createUser({
       emailAddress: [email],
       firstName: firstName || "",
       lastName: lastName || "",
@@ -20,7 +22,7 @@ export async function POST(req) {
       skipPasswordChecks: true,
     });
 
-    const tokenResponse = await clerkClient.signInTokens.createSignInToken({
+    const tokenResponse = await client.signInTokens.createSignInToken({
       userId: user.id,
       expiresInSeconds: 60 * 5,
     });
