@@ -33,49 +33,52 @@ export default function HeroSection({ children }) {
 
       <motion.div
         style={{ y: yText, opacity }}
-        className="absolute top-[20%] md:top-[18%] w-full px-4 md:px-12 select-none pointer-events-none z-10 flex justify-center"
+        className="absolute top-[15%] md:top-[18%] w-full px-6 md:px-12 select-none pointer-events-none z-10 flex justify-start md:justify-center"
       >
-        <div className="relative w-full max-w-7xl flex justify-center">
-          <div className="relative flex items-baseline justify-between uppercase leading-[0.85] text-[15.5vw] md:text-[11vw] lg:text-[10.5vw] whitespace-nowrap w-full transform scale-y-[1.1] origin-bottom">
-            {["E", "N", " ", "P", "A", "S", "S", "A", "N", "T"].map(
-              (letter, index) => {
-                if (letter === " ") {
-                  return (
-                    <span
-                      key={`space-${index}`}
-                      className="w-[3vw] md:w-[2vw]"
-                    />
-                  );
-                }
-                const isRed = index < 2;
+        <div className="relative w-full max-w-7xl flex justify-start md:justify-center">
+          <div className="relative flex flex-col md:flex-row items-start md:items-baseline justify-start md:justify-between uppercase leading-[0.85] text-[19vw] md:text-[11vw] lg:text-[10.5vw] w-full transform scale-y-[1.1] origin-bottom">
+            {/* EN on Mobile, inline on Desktop */}
+            <div className="flex justify-start md:contents gap-[2vw] md:gap-0 w-full md:w-auto">
+              {["E", "N"].map((letter, index) => (
+                <span
+                  key={`letter-${index}`}
+                  className="inline-block font-prfaExtrabold font-black hero-letter text-[#9b1a1a] drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
+                  style={{ animationDelay: `${0.1 + 0.05 * index}s` }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
+            
+            {/* Space on desktop */}
+            <span className="hidden md:inline-block w-[2vw]" />
+            
+            {/* PASSANT on Mobile, inline on Desktop */}
+            <div className="flex justify-start md:contents gap-[1vw] md:gap-0 w-full md:w-auto mt-[2vw] md:mt-0">
+              {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => {
+                const actualIndex = index + 2;
                 return (
                   <span
-                    key={`letter-${index}`}
-                    className={`inline-block font-prfaExtrabold font-black hero-letter ${
-                      isRed
-                        ? "text-[#9b1a1a] drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
-                        : "bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"
-                    }`}
-                    style={{
-                      animationDelay: `${0.1 + 0.05 * index}s`,
-                    }}
+                    key={`letter-${actualIndex}`}
+                    className="inline-block font-prfaExtrabold font-black hero-letter bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                    style={{ animationDelay: `${0.1 + 0.05 * actualIndex}s` }}
                   >
                     {letter}
                   </span>
                 );
-              }
-            )}
+              })}
+            </div>
           </div>
         </div>
       </motion.div>
 
       <div
-        className="absolute left-1/2 z-20 -translate-x-1/2 w-[200vw] sm:w-[150vw] md:w-[120vw] max-w-[1600px] h-[85vh] md:h-[110vh] bottom-0"
+        className="absolute left-1/2 z-20 -translate-x-1/2 w-[250vw] sm:w-[150vw] md:w-[120vw] max-w-[1600px] h-[80vh] md:h-[110vh] bottom-[-5vh] md:bottom-0"
         style={{ contain: "layout style paint" }}
       >
         <motion.div style={{ y: yImage }} className="w-full h-full relative">
           <div
-            className="w-full h-full relative hero-image"
+            className="w-full h-full relative hero-image scale-[3] md:scale-100"
             style={{
               transformOrigin: "bottom center",
               backfaceVisibility: "hidden",
@@ -96,7 +99,7 @@ export default function HeroSection({ children }) {
 
       <motion.div
         style={{ opacity }}
-        className="absolute bottom-10 md:bottom-14 left-0 w-full px-6 md:px-12 z-40 flex justify-center pointer-events-none"
+        className="absolute bottom-12 md:bottom-14 left-0 w-full px-6 md:px-12 z-40 flex justify-center pointer-events-none"
       >
         {children}
       </motion.div>

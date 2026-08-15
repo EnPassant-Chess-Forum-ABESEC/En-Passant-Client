@@ -15,7 +15,7 @@ export default async function Home() {
   const { userId } = await auth();
 
   return (
-    <>
+    <main className="w-full bg-[#050505] font-sans">
       <HeroSection>
         <div className="w-full max-w-7xl flex justify-center md:justify-between items-end">
           <div
@@ -75,6 +75,6 @@ export default async function Home() {
       <LazyLoad minHeight="100vh">
         <ClubJournalSection />
       </LazyLoad>
-    </>
+    </main>
   );
 }

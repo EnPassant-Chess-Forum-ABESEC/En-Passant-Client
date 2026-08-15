@@ -168,14 +168,14 @@ export default function NumbersSection() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={textVariants}
-            className="absolute top-[8vw] md:top-[6vw] w-full md:w-auto text-center md:text-right right-0 md:right-[5vw] z-30 leading-[0.85]"
+            className="absolute top-[8vw] md:top-[6vw] right-[5vw] text-right z-30 leading-[0.85]"
           >
             <div className="relative inline-block">
               <h2 className="flex flex-col uppercase font-pezula font-bold tracking-[0.04em] md:tracking-[0.08em] leading-[0.8]">
-                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[10vw] md:text-[100px]">
+                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[15vw] md:text-[100px]">
                   Jewels of
                 </span>
-                <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[10vw] md:text-[100px]">
+                <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[15vw] md:text-[100px]">
                   Crown
                 </span>
               </h2>
@@ -195,7 +195,7 @@ export default function NumbersSection() {
                 alt="Chess King" 
                 width={800} 
                 height={800} 
-                className="w-[80vw] h-auto object-contain opacity-80"
+                className="h-[260vw] w-auto object-contain opacity-80 max-w-none"
               />
             ) : (
               <ChessCanvas scrollYProgress={scrollYProgress} />
@@ -280,5 +280,3 @@ export default function NumbersSection() {
     </section>
   );
 }
-
-

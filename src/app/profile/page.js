@@ -178,7 +178,7 @@ export default function ProfilePage() {
                   onClick={() => setShowOnboardingModal(true)}
                   className="shrink-0 px-5 py-2 text-xs font-bold uppercase tracking-widest bg-[#c21818] text-white hover:bg-[#a11414] rounded-lg transition-colors shadow-lg"
                 >
-                  Complete Setup
+                  Complete Profile
                 </button>
               </motion.div>
             )}
