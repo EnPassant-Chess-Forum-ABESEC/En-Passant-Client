@@ -11,7 +11,7 @@ export function useApi() {
   const fetchApi = useCallback(
     async (endpoint, options = {}) => {
       const token = await getToken();
-      
+
       const headers = {
         ...options.headers,
       };
@@ -20,8 +20,6 @@ export function useApi() {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      // If body is a plain object, stringify it and set Content-Type
-      // (Unless it's FormData for file uploads, where the browser sets Content-Type)
       if (
         options.body &&
         typeof options.body === "object" &&
@@ -39,13 +37,31 @@ export function useApi() {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        const errDetails = data?.errors ? JSON.stringify(data.errors) : (data?.error || "");
-        throw new Error(data?.message ? `${data.message} ${errDetails}` : `API Error: ${response.status}`);
+        let errStr = data?.message || `API Error: ${response.status}`;
+
+        if (data?.errors && Array.isArray(data.errors)) {
+          const detailMsgs = data.errors
+            .map((e) => e.message || JSON.stringify(e))
+            .join(", ");
+          if (data?.message === "Validation failed") {
+            errStr = detailMsgs;
+          } else {
+            errStr = `${errStr}: ${detailMsgs}`;
+          }
+        } else if (data?.error) {
+          errStr =
+            typeof data.error === "string"
+              ? data.error
+              : JSON.stringify(data.error);
+          if (data?.message) errStr = `${data.message}: ${errStr}`;
+        }
+
+        throw new Error(errStr);
       }
 
       return data;
     },
-    [getToken]
+    [getToken],
   );
   return fetchApi;
 }

@@ -211,7 +211,20 @@ export default function ProfilePage() {
                             Club Rank
                           </p>
                           <p className="text-sm font-semibold text-white/90">
-                            {profile.rank || "Unranked"}
+                            {(() => {
+                              if (!profile.ranks) return "Unranked";
+                              let bestRank = Infinity;
+                              let bestMode = "";
+                              ["rapid", "blitz", "bullet"].forEach(mode => {
+                                if (profile.ranks[mode]?.rank && profile.ranks[mode].rank < bestRank) {
+                                  bestRank = profile.ranks[mode].rank;
+                                  bestMode = mode;
+                                }
+                              });
+                              if (bestRank === Infinity) return "Unranked";
+                              const modeStr = bestMode.charAt(0).toUpperCase() + bestMode.slice(1);
+                              return `#${bestRank} in ${modeStr}`;
+                            })()}
                           </p>
                         </div>
                       </div>
