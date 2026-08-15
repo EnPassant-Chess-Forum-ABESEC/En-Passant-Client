@@ -32,6 +32,10 @@ export default function RecruitmentApplyPage() {
     primaryDept: null,
     secondaryDept: null,
   });
+  const [prefilledFields, setPrefilledFields] = useState({
+    collegeEmail: false,
+    phone: false,
+  });
 
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { user: clerkUser } = useUser();
@@ -80,6 +84,27 @@ export default function RecruitmentApplyPage() {
       }));
     }
   }, [clerkUser]);
+
+  useEffect(() => {
+    async function loadProfile() {
+      if (!isSignedIn || !authLoaded) return;
+      try {
+        const res = await fetchApi("/users/me");
+        if (res?.success && res?.user) {
+          setFormData((prev) => ({
+            ...prev,
+            collegeEmail: res.user.collegeEmail || prev.collegeEmail,
+            phone: res.user.phoneNumber || prev.phone,
+          }));
+          setPrefilledFields({
+            collegeEmail: !!res.user.collegeEmail,
+            phone: !!res.user.phoneNumber,
+          });
+        }
+      } catch (err) {}
+    }
+    loadProfile();
+  }, [isSignedIn, authLoaded, fetchApi]);
 
   useEffect(() => {
     async function syncApplication() {
@@ -281,6 +306,10 @@ export default function RecruitmentApplyPage() {
         }
 
         const body = {
+          name: formData.name,
+          email: formData.email,
+          collegeEmail: formData.collegeEmail,
+          phone: formData.phone,
           preferredDepartmentId: formData.primaryDept,
           secondaryDepartmentId: formData.secondaryDept
             ? [formData.secondaryDept]
@@ -290,14 +319,19 @@ export default function RecruitmentApplyPage() {
             : [],
         };
 
-        await fetchApi("/recruitment/apply", {
+        const res = await fetchApi("/recruitment/apply", {
           method: "POST",
           body: body,
         });
-        setCurrentStep(3);
+        
+        if (res.success) {
+          setCurrentStep(3);
+        } else {
+          toast.error(res.message || "Failed to submit application");
+        }
       } catch (err) {
         console.error("Failed to create application", err);
-        setCurrentStep(3);
+        toast.error(err.message || "Failed to submit application");
       } finally {
         setIsSubmitting(false);
       }
@@ -648,7 +682,9 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="collegeEmail"
                         type="email"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                          prefilledFields.collegeEmail ? "opacity-60 cursor-not-allowed" : ""
+                        }`}
                         value={formData.collegeEmail}
                         onChange={(e) =>
                           setFormData({
@@ -657,8 +693,14 @@ export default function RecruitmentApplyPage() {
                           })
                         }
                         placeholder="name.admNo@abes.ac.in"
+                        disabled={prefilledFields.collegeEmail}
                       />
                     </div>
+                    {prefilledFields.collegeEmail && (
+                      <p className="text-[10px] text-white/40 mt-1 pl-1">
+                        * Fetched from your profile. Update it there if needed.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
@@ -677,14 +719,22 @@ export default function RecruitmentApplyPage() {
                       <input
                         id="phone"
                         type="tel"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                          prefilledFields.phone ? "opacity-60 cursor-not-allowed" : ""
+                        }`}
                         value={formData.phone}
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        placeholder="00000 00000"
+                        placeholder="e.g. 9876543210"
+                        disabled={prefilledFields.phone}
                       />
                     </div>
+                    {prefilledFields.phone && (
+                      <p className="text-[10px] text-white/40 mt-1 pl-1">
+                        * Fetched from your profile. Update it there if needed.
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               )}

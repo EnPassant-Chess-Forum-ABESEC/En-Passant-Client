@@ -14,6 +14,7 @@ export default function CustomProfileForm() {
   const [branch, setBranch] = useState("");
   const [year, setYear] = useState(1);
   const [collegeEmail, setCollegeEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [chessComUsername, setChessComUsername] = useState("");
 
   const loadProfile = async () => {
@@ -25,6 +26,7 @@ export default function CustomProfileForm() {
         setBranch(data.user.branch || "CSE");
         setYear(data.user.year || 1);
         setCollegeEmail(data.user.collegeEmail || "");
+        setPhoneNumber(data.user.phoneNumber || "");
         setChessComUsername(data.user.chessAccounts?.chessCom?.username || "");
       }
     } catch (err) {
@@ -61,6 +63,7 @@ export default function CustomProfileForm() {
         branch,
         year: parseInt(year),
         collegeEmail: sanitizedCollegeEmail,
+        phoneNumber: phoneNumber.trim(),
         chessAccounts: { chessCom: { username: chessComUsername } },
       };
 
@@ -148,6 +151,20 @@ export default function CustomProfileForm() {
             value={collegeEmail}
             onChange={(e) => setCollegeEmail(e.target.value)}
             placeholder="name.admNo@abes.ac.in"
+            required
+            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+            Phone Number
+          </label>
+          <input
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="+91..."
             required
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
