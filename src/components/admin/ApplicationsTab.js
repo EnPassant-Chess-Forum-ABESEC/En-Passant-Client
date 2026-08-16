@@ -1,18 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
+import { toast } from "sonner";
 import AdminSearchBar from "./AdminSearchBar";
-import {
-  User,
-  Calendar,
-  Briefcase,
-  CreditCard,
-  Eye,
-  Phone,
-  Mail,
-  MapPin,
-  ChevronLeft,
-} from "lucide-react";
-import SpecularButton from "../SpecularButton";
+import { User, Eye, Mail, ChevronLeft, Trash2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -20,6 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 function timeAgo(dateString) {
   if (!dateString) return "";
@@ -42,12 +42,8 @@ export default function ApplicationsTab() {
   const fetchApi = useApi();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Search and Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-
-  // Detail View State
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [appDetails, setAppDetails] = useState(null);
   const [appSubmissions, setAppSubmissions] = useState([]);
@@ -56,7 +52,7 @@ export default function ApplicationsTab() {
   const groupedSubmissions = useMemo(() => {
     if (!appSubmissions || appSubmissions.length === 0) return {};
     const groups = {};
-    appSubmissions.forEach(sub => {
+    appSubmissions.forEach((sub) => {
       const deptName = sub.taskId?.departmentId?.name || "Unknown Department";
       if (!groups[deptName]) {
         groups[deptName] = [];
@@ -88,7 +84,7 @@ export default function ApplicationsTab() {
       const res = await fetchApi("/admin/applications");
       setApplications(res.applications || []);
     } catch (err) {
-      alert("Error loading applications: " + err.message);
+      toast.error("Error loading applications: " + err.message);
     }
     setLoading(false);
   };
@@ -99,15 +95,41 @@ export default function ApplicationsTab() {
         method: "PATCH",
         body: { status: newStatus },
       });
-      // Update local state for fast UI
       setApplications((prev) =>
         prev.map((a) => (a._id === id ? { ...a, status: newStatus } : a)),
       );
       if (selectedAppId === id && appDetails) {
         setAppDetails({ ...appDetails, status: newStatus });
       }
+      toast.success("Application status updated");
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error("Error: " + err.message);
+    }
+  };
+
+  const [confirmDeleteAction, setConfirmDeleteAction] = useState(null);
+
+  const deleteApplication = (id) => {
+    setConfirmDeleteAction(id);
+  };
+
+  const executeDeleteApplication = async () => {
+    if (!confirmDeleteAction) return;
+    const id = confirmDeleteAction;
+    setConfirmDeleteAction(null);
+
+    try {
+      await fetchApi(`/admin/applications/${id}`, {
+        method: "DELETE",
+      });
+      setApplications((prev) => prev.filter((app) => app._id !== id));
+      if (selectedAppId === id) {
+        setSelectedAppId(null);
+        setAppDetails(null);
+      }
+      toast.success("Application deleted successfully");
+    } catch (err) {
+      toast.error("Error deleting application: " + err.message);
     }
   };
 
@@ -121,16 +143,14 @@ export default function ApplicationsTab() {
         setAppSubmissions(res.submission || []);
       }
     } catch (err) {
-      alert("Error loading details: " + err.message);
+      toast.error("Error loading details: " + err.message);
     }
     setLoadingDetails(false);
   };
 
-  // Filter Logic
   const filteredAndSortedApps = useMemo(() => {
     let result = [...applications];
 
-    // Filter by search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -141,12 +161,10 @@ export default function ApplicationsTab() {
       );
     }
 
-    // Filter by status
     if (statusFilter !== "ALL") {
       result = result.filter((app) => app.status === statusFilter);
     }
 
-    // Always sort by newest first natively
     result.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -155,6 +173,39 @@ export default function ApplicationsTab() {
 
     return result;
   }, [applications, searchQuery, statusFilter]);
+
+  const deleteDialog = (
+    <AlertDialog
+      open={!!confirmDeleteAction}
+      onOpenChange={(open) => {
+        if (!open) setConfirmDeleteAction(null);
+      }}
+    >
+      <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+            Confirm Deletion
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+            Are you sure you want to delete this application? This will also
+            delete any attached payments and submissions. This action cannot be
+            undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={executeDeleteApplication}
+            className="text-white bg-red-600 hover:bg-red-700"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 
   if (loading)
     return (
@@ -167,7 +218,7 @@ export default function ApplicationsTab() {
     return (
       <div className="space-y-6">
         <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg p-8 transition-colors">
-          <div className="mb-6">
+          <div className="mb-6 flex justify-between items-center">
             <button
               onClick={() => setSelectedAppId(null)}
               className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#020617] hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-full text-xs font-bold transition-colors shadow-sm"
@@ -175,68 +226,102 @@ export default function ApplicationsTab() {
               <ChevronLeft className="w-4 h-4" />
               Back to List
             </button>
+            {appDetails && (
+              <button
+                onClick={() => deleteApplication(appDetails._id)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            )}
           </div>
 
-        {loadingDetails ? (
-          <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase">
-            Loading Application...
-          </div>
-        ) : appDetails ? (
-          <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 dark:border-slate-800 pb-6 mb-6 gap-6">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-black  text-slate-800 dark:text-slate-50 tracking-tight mb-2">{appDetails._id}</h2>
-                <div className="text-slate-500 dark:text-slate-400 font-mono text-[10px] md:text-xs mb-4">
-                  {appDetails.userId?.userName || "Unknown User"} &bull; {appDetails.userId?.email || "No Email"}
-                </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
-                  <span className="text-slate-500 dark:text-slate-400">Applied For:</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
-                      Primary: <span className="text-slate-600 dark:text-slate-400">{appDetails.preferredDepartmentId?.name || "N/A"}</span>
+          {loadingDetails ? (
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase">
+              Loading Application...
+            </div>
+          ) : appDetails ? (
+            <div>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 dark:border-slate-800 pb-6 mb-6 gap-6">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-black  text-slate-800 dark:text-slate-50 tracking-tight mb-2">
+                    {appDetails._id}
+                  </h2>
+                  <div className="text-slate-500 dark:text-slate-400 font-mono text-[10px] md:text-xs mb-4">
+                    {appDetails.userId?.userName || "Unknown User"} &bull;{" "}
+                    {appDetails.userId?.email || "No Email"}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
+                    <span className="text-slate-500 dark:text-slate-400">
+                      Applied For:
                     </span>
-                    {appDetails.secondaryDepartmentId && appDetails.secondaryDepartmentId.length > 0 && (
+                    <div className="flex items-center gap-2">
                       <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
-                        Secondary: <span className="text-slate-600 dark:text-slate-400">{appDetails.secondaryDepartmentId.map(d => d.name).join(", ")}</span>
+                        Primary:{" "}
+                        <span className="text-slate-600 dark:text-slate-400">
+                          {appDetails.preferredDepartmentId?.name || "N/A"}
+                        </span>
                       </span>
-                    )}
+                      {appDetails.secondaryDepartmentId &&
+                        appDetails.secondaryDepartmentId.length > 0 && (
+                          <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
+                            Secondary:{" "}
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {appDetails.secondaryDepartmentId
+                                .map((d) => d.name)
+                                .join(", ")}
+                            </span>
+                          </span>
+                        )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4 text-right min-w-[200px]">
+                  <div className="flex items-center justify-end gap-3">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
+                      Status:
+                    </span>
+                    <Select
+                      value={appDetails.status}
+                      onValueChange={(value) =>
+                        updateApplicationStatus(appDetails._id, value)
+                      }
+                    >
+                      <SelectTrigger className="w-[190px] bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase shadow-lg focus:ring-blue-500 dark:focus:ring-blue-500/50">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+                        {statusOptions.map((s) => (
+                          <SelectItem
+                            key={s.value}
+                            value={s.value}
+                            className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 dark:focus:bg-slate-800/50 focus:text-blue-600 dark:focus:text-blue-400"
+                          >
+                            {s.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-end gap-3 pr-2">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
+                      Payment:
+                    </span>
+                    <span
+                      className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === "SUCCESS" ? "text-green-500 dark:text-green-400" : "text-yellow-500 dark:text-yellow-400"}`}
+                    >
+                      {appDetails.paymentStatus}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 text-right min-w-[200px]">
-                <div className="flex items-center justify-end gap-3">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Status:</span>
-                  <Select 
-                    value={appDetails.status} 
-                    onValueChange={(value) => updateApplicationStatus(appDetails._id, value)}
-                  >
-                    <SelectTrigger className="w-[190px] bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase shadow-lg focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                      {statusOptions.map(s => (
-                        <SelectItem key={s.value} value={s.value} className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 dark:focus:bg-slate-800/50 focus:text-blue-600 dark:focus:text-blue-400">
-                          {s.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center justify-end gap-3 pr-2">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Payment:</span>
-                  <span className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === 'SUCCESS' ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
-                    {appDetails.paymentStatus}
-                  </span>
-                </div>
-              </div>
             </div>
-
-          </div>
-        ) : (
-          <div className="p-8 text-center text-red-500 uppercase">
-            Failed to load application details.
-          </div>
-        )}
+          ) : (
+            <div className="p-8 text-center text-red-500 uppercase">
+              Failed to load application details.
+            </div>
+          )}
         </div>
 
         {appDetails && (
@@ -250,13 +335,21 @@ export default function ApplicationsTab() {
               </p>
             ) : (
               Object.entries(groupedSubmissions).map(([deptName, subs]) => (
-                <div key={deptName} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
+                <div
+                  key={deptName}
+                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden"
+                >
                   <div className="bg-slate-50 dark:bg-[#020617] border-b border-slate-200 dark:border-slate-800 px-6 py-4">
-                    <h4 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">{deptName}</h4>
+                    <h4 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">
+                      {deptName}
+                    </h4>
                   </div>
                   <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {subs.map((sub, index) => (
-                      <div key={sub._id} className="p-6 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                      <div
+                        key={sub._id}
+                        className="p-6 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                      >
                         <h5 className="text-blue-600 dark:text-blue-400 text-sm font-bold tracking-tight mb-4">
                           {sub.taskId?.title || `Task ${index + 1}`}
                         </h5>
@@ -340,6 +433,7 @@ export default function ApplicationsTab() {
             )}
           </div>
         )}
+        {deleteDialog}
       </div>
     );
   }
@@ -378,7 +472,6 @@ export default function ApplicationsTab() {
                 onClick={() => viewDetails(app._id)}
               >
                 <div className="flex flex-col xl:flex-row gap-6 xl:items-center justify-between">
-                  {/* Left: User Info */}
                   <div className="flex items-center gap-4 xl:w-[30%]">
                     <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0">
                       <User className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors" />
@@ -395,23 +488,29 @@ export default function ApplicationsTab() {
                     </div>
                   </div>
 
-                  {/* Middle: Stats Row */}
                   <div className="flex flex-wrap items-center gap-x-8 gap-y-4 flex-1 md:pl-8 md:border-l border-slate-100 dark:border-slate-800">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                       <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">Applied</span>
-                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{appDate}</span>
+                      <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">
+                        Applied
+                      </span>
+                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        {appDate}
+                      </span>
                     </div>
-                    
+
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                       <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">Status</span>
-                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === 'ACTIVE' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : 'bg-slate-100 text-slate-700 dark:bg-[#020617] dark:text-slate-300 dark:border dark:border-slate-700'}`}>
-                         {app.status.replace(/_/g, " ")}
-                       </span>
+                      <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">
+                        Status
+                      </span>
+                      <span
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === "ACTIVE" ? "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-slate-100 text-slate-700 dark:bg-[#020617] dark:text-slate-300 dark:border dark:border-slate-700"}`}
+                      >
+                        {app.status.replace(/_/g, " ")}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Right: Actions */}
-                  <div className="flex items-center gap-3 xl:w-[15%] justify-end mt-4 xl:mt-0">
+                  <div className="flex items-center gap-2 xl:w-[20%] justify-end mt-4 xl:mt-0">
                     <button
                       className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
                       onClick={(e) => {
@@ -422,10 +521,19 @@ export default function ApplicationsTab() {
                       <Eye className="w-4 h-4" />
                       View
                     </button>
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteApplication(app._id);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
                   </div>
                 </div>
 
-                {/* Bottom Contact Footer */}
                 <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-6 text-[10px] md:text-xs text-slate-500 dark:text-slate-400 tracking-widest">
                   <div className="flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-slate-800/30 dark:text-slate-400/50" />
@@ -439,6 +547,7 @@ export default function ApplicationsTab() {
           })
         )}
       </div>
+      {deleteDialog}
     </div>
   );
 }

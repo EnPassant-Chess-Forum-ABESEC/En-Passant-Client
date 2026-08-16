@@ -133,6 +133,7 @@ export default function RecruitmentApplyPage() {
             setCurrentStep(4);
           } else if (
             app.status === "DRAFT" ||
+            app.status === "PAYMENT_FAILED" ||
             app.paymentStatus === "PENDING"
           ) {
             setFormData((prev) => ({
@@ -141,6 +142,12 @@ export default function RecruitmentApplyPage() {
               email: clerkUser?.primaryEmailAddress?.emailAddress || prev.email,
             }));
             setCurrentStep(3);
+            if (app.status === "PAYMENT_FAILED") {
+              toast.error(
+                "Your previous payment failed or was rejected. Please try again.",
+                { id: "payment-failed-toast" },
+              );
+            }
           }
         }
       } catch (err) {}
@@ -222,53 +229,57 @@ export default function RecruitmentApplyPage() {
 
         try {
           setIsSubmitting(true);
-            const res = await fetch("/api/auth/fast-signup", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: sanitizedEmail,
-                firstName: sanitizedName.split(" ")[0] || sanitizedName,
-                lastName: sanitizedName.split(" ").slice(1).join(" ") || "",
-              }),
-            });
-            const data = await res.json();
+          const res = await fetch("/api/auth/fast-signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: sanitizedEmail,
+              firstName: sanitizedName.split(" ")[0] || sanitizedName,
+              lastName: sanitizedName.split(" ").slice(1).join(" ") || "",
+            }),
+          });
+          const data = await res.json();
 
-            if (data.success && data.ticket) {
-              const signInAttempt = await clerk.client.signIn.create({
-                strategy: "ticket",
-                ticket: data.ticket,
+          if (data.success && data.ticket) {
+            const signInAttempt = await clerk.client.signIn.create({
+              strategy: "ticket",
+              ticket: data.ticket,
+            });
+            if (signInAttempt.status === "complete") {
+              await clerk.setActive({
+                session: signInAttempt.createdSessionId,
               });
-              if (signInAttempt.status === "complete") {
-                await clerk.setActive({ session: signInAttempt.createdSessionId });
-                setCurrentStep(1);
-              } else {
-                throw new Error("Sign in not complete. Status: " + signInAttempt.status);
-              }
-            } else if (data.error === "EXISTS") {
-              const rawSignIn = clerk.client.signIn;
-              await rawSignIn.create({
-                identifier: sanitizedEmail,
-              });
-              const emailFactor = rawSignIn.supportedFirstFactors?.find(
-                (f) =>
-                  f.strategy === "email_code" &&
-                  f.safeIdentifier === sanitizedEmail,
-              );
-              if (emailFactor) {
-                await rawSignIn.prepareFirstFactor({
-                  strategy: "email_code",
-                  emailAddressId: emailFactor.emailAddressId,
-                });
-                setAuthMode("signIn");
-                setShowOtpModal(true);
-              } else {
-                throw new Error(
-                  "Passwordless email sign-in is not supported for this account.",
-                );
-              }
+              setCurrentStep(1);
             } else {
-              throw new Error(data.error || "Failed to create account");
+              throw new Error(
+                "Sign in not complete. Status: " + signInAttempt.status,
+              );
             }
+          } else if (data.error === "EXISTS") {
+            const rawSignIn = clerk.client.signIn;
+            await rawSignIn.create({
+              identifier: sanitizedEmail,
+            });
+            const emailFactor = rawSignIn.supportedFirstFactors?.find(
+              (f) =>
+                f.strategy === "email_code" &&
+                f.safeIdentifier === sanitizedEmail,
+            );
+            if (emailFactor) {
+              await rawSignIn.prepareFirstFactor({
+                strategy: "email_code",
+                emailAddressId: emailFactor.emailAddressId,
+              });
+              setAuthMode("signIn");
+              setShowOtpModal(true);
+            } else {
+              throw new Error(
+                "Passwordless email sign-in is not supported for this account.",
+              );
+            }
+          } else {
+            throw new Error(data.error || "Failed to create account");
+          }
         } catch (err) {
           console.error("Auth init failed", err);
           let msg = "An unknown error occurred.";
@@ -320,16 +331,13 @@ export default function RecruitmentApplyPage() {
           secondaryDepartmentId: formData.secondaryDept
             ? [formData.secondaryDept]
             : [],
-          secondaryDepartmentIds: formData.secondaryDept
-            ? [formData.secondaryDept]
-            : [],
         };
 
         const res = await fetchApi("/recruitment/apply", {
           method: "POST",
           body: body,
         });
-        
+
         if (res.success) {
           setCurrentStep(3);
         } else {
@@ -424,7 +432,7 @@ export default function RecruitmentApplyPage() {
           id: "payment-toast",
         });
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/recruitment/dashboard";
         }, 2500);
       } else {
         toast.error(res.message || "Failed to submit payment", {
@@ -494,7 +502,7 @@ export default function RecruitmentApplyPage() {
       <div
         className="relative z-10 flex w-full max-w-5xl overflow-hidden rounded-[2rem]"
         style={{
-          height: "min(680px, 85vh)",
+          height: "min(720px, 85vh)",
           boxShadow:
             "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
@@ -590,14 +598,16 @@ export default function RecruitmentApplyPage() {
             )}
           </div>
 
-          <div 
+          <div
             className="pt-6 pb-10 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
             onWheel={(e) => {
               const el = e.currentTarget;
-              const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+              const atBottom =
+                el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
               const atTop = el.scrollTop <= 0;
               const scrollingDown = e.deltaY > 0;
-              if ((scrollingDown && atBottom) || (!scrollingDown && atTop)) return;
+              if ((scrollingDown && atBottom) || (!scrollingDown && atTop))
+                return;
               e.stopPropagation();
             }}
           >
@@ -612,6 +622,14 @@ export default function RecruitmentApplyPage() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="space-y-3 w-full"
                 >
+                  {(isSignedIn ||
+                    prefilledFields.collegeEmail ||
+                    prefilledFields.phone) && (
+                    <p className="text-[10.5px] text-white/80 bg-white/5 border border-white/10 px-3 py-2 rounded-lg font-medium tracking-wide">
+                      * Some fields have been fetched from your profile. Update
+                      them there if needed.
+                    </p>
+                  )}
                   <div className="space-y-1.5 group">
                     <label
                       htmlFor="name"
@@ -637,11 +655,6 @@ export default function RecruitmentApplyPage() {
                         disabled={isSignedIn}
                       />
                     </div>
-                    {isSignedIn && (
-                      <p className="text-[10px] text-white/40 mt-1 pl-1">
-                        * You are logged in. Update this from your profile.
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
@@ -668,11 +681,6 @@ export default function RecruitmentApplyPage() {
                         disabled={isSignedIn}
                       />
                     </div>
-                    {isSignedIn && (
-                      <p className="text-[10px] text-white/40 mt-1 pl-1">
-                        * You are logged in. Update this from your profile.
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
@@ -689,7 +697,9 @@ export default function RecruitmentApplyPage() {
                         id="collegeEmail"
                         type="email"
                         className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          prefilledFields.collegeEmail ? "opacity-60 cursor-not-allowed" : ""
+                          prefilledFields.collegeEmail
+                            ? "opacity-60 cursor-not-allowed"
+                            : ""
                         }`}
                         value={formData.collegeEmail}
                         onChange={(e) =>
@@ -702,11 +712,6 @@ export default function RecruitmentApplyPage() {
                         disabled={prefilledFields.collegeEmail}
                       />
                     </div>
-                    {prefilledFields.collegeEmail && (
-                      <p className="text-[10px] text-white/40 mt-1 pl-1">
-                        * Fetched from your profile. Update it there if needed.
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-1.5 group">
                     <label
@@ -726,7 +731,9 @@ export default function RecruitmentApplyPage() {
                         id="phone"
                         type="tel"
                         className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          prefilledFields.phone ? "opacity-60 cursor-not-allowed" : ""
+                          prefilledFields.phone
+                            ? "opacity-60 cursor-not-allowed"
+                            : ""
                         }`}
                         value={formData.phone}
                         onChange={(e) =>
@@ -736,11 +743,6 @@ export default function RecruitmentApplyPage() {
                         disabled={prefilledFields.phone}
                       />
                     </div>
-                    {prefilledFields.phone && (
-                      <p className="text-[10px] text-white/40 mt-1 pl-1">
-                        * Fetched from your profile. Update it there if needed.
-                      </p>
-                    )}
                   </div>
                 </motion.div>
               )}
@@ -883,7 +885,7 @@ export default function RecruitmentApplyPage() {
                       height={112}
                       priority
                       className="object-contain rounded-md shrink-0"
-                      style={{ width: '112px', height: 'auto' }}
+                      style={{ width: "112px", height: "auto" }}
                     />
                   </div>
 

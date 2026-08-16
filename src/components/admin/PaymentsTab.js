@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
 import { ExternalLink, Check, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import AdminSearchBar from "./AdminSearchBar";
 
 export default function PaymentsTab() {
   const fetchApi = useApi();
@@ -19,6 +20,25 @@ export default function PaymentsTab() {
   const [loading, setLoading] = useState(true);
   const [verifyingId, setVerifyingId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  const filteredPayments = useMemo(() => {
+    let result = [...payments];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(p => 
+        p.applicationId?.toLowerCase().includes(q) ||
+        (p.userId?.userName || "").toLowerCase().includes(q) ||
+        (p.userId?.email || "").toLowerCase().includes(q)
+      );
+    }
+    if (statusFilter !== "ALL") {
+      result = result.filter(p => p.status === statusFilter);
+    }
+    return result;
+  }, [payments, searchQuery, statusFilter]);
 
   useEffect(() => {
     loadData();
@@ -36,6 +56,7 @@ export default function PaymentsTab() {
   };
 
   const [confirmAction, setConfirmAction] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   const handleVerify = (paymentId, status) => {
     setConfirmAction({ id: paymentId, status });
@@ -43,15 +64,20 @@ export default function PaymentsTab() {
 
   const executeVerify = async () => {
     if (!confirmAction) return;
-    
+
+    if (confirmAction.status === "FAILED" && !rejectionReason.trim()) {
+      toast.error("Please provide a rejection reason.");
+      return;
+    }
+
     const { id: paymentId, status } = confirmAction;
     setVerifyingId(paymentId);
     setConfirmAction(null);
-    
+
     try {
       await fetchApi(`/admin/payments/${paymentId}/verify`, {
         method: "PATCH",
-        body: { status },
+        body: { status, reason: rejectionReason.trim() },
       });
       toast.success(`Payment marked as ${status}`);
       loadData();
@@ -59,6 +85,7 @@ export default function PaymentsTab() {
       toast.error("Error: " + err.message);
     }
     setVerifyingId(null);
+    setRejectionReason("");
   };
 
   const handleCopy = (text) => {
@@ -75,8 +102,20 @@ export default function PaymentsTab() {
     );
 
   return (
-    <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
-      <div className="overflow-x-auto">
+    <div className="space-y-6">
+      <AdminSearchBar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        statusOptions={[
+          { label: "Pending", value: "PENDING" },
+          { label: "Success", value: "SUCCESS" },
+          { label: "Failed", value: "FAILED" },
+        ]}
+      />
+      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
+        <div className="overflow-x-auto">
         <table className="w-full text-left whitespace-nowrap">
           <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
             <tr>
@@ -90,7 +129,7 @@ export default function PaymentsTab() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
-            {payments.length === 0 ? (
+            {filteredPayments.length === 0 ? (
               <tr>
                 <td
                   colSpan="7"
@@ -100,7 +139,7 @@ export default function PaymentsTab() {
                 </td>
               </tr>
             ) : (
-              payments.map((payment) => (
+              filteredPayments.map((payment) => (
                 <tr
                   key={payment._id}
                   className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
@@ -134,7 +173,7 @@ export default function PaymentsTab() {
                     )}
                   </td>
                   <td className="px-6 py-5 font-mono font-bold tracking-wide text-slate-800 dark:text-slate-50">
-                    ₹{payment.amount / 100}
+                    {payment.amount / 100}
                   </td>
                   <td className="px-6 py-5">
                     {payment.paymentScreenshotUrl ? (
@@ -185,7 +224,9 @@ export default function PaymentsTab() {
                         ) : (
                           <>
                             <button
-                              onClick={() => handleVerify(payment._id, "SUCCESS")}
+                              onClick={() =>
+                                handleVerify(payment._id, "SUCCESS")
+                              }
                               disabled={verifyingId === payment._id}
                               className="p-2 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-50"
                               title="Approve Payment"
@@ -193,7 +234,9 @@ export default function PaymentsTab() {
                               <Check className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleVerify(payment._id, "FAILED")}
+                              onClick={() =>
+                                handleVerify(payment._id, "FAILED")
+                              }
                               disabled={verifyingId === payment._id}
                               className="p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
                               title="Reject Payment"
@@ -211,23 +254,54 @@ export default function PaymentsTab() {
           </tbody>
         </table>
       </div>
+      </div>
 
-      <AlertDialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
+      <AlertDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmAction(null);
+            setRejectionReason("");
+          }
+        }}
+      >
         <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">Confirm Action</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-              Are you sure you want to mark this payment as <span className="font-bold text-slate-800 dark:text-slate-200">{confirmAction?.status}</span>?
-              This action cannot be easily undone.
+            <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+              Confirm Action
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 dark:text-slate-400 space-y-4">
+              <p>
+                Are you sure you want to mark this payment as{" "}
+                <span className="font-bold text-slate-800 dark:text-slate-200">
+                  {confirmAction?.status}
+                </span>
+                ? This action cannot be easily undone.
+              </p>
+              {confirmAction?.status === "FAILED" && (
+                <div className="space-y-2 mt-4 text-left">
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Rejection Reason <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="E.g., Screenshot is blurry, UTR does not match..."
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none h-24 text-slate-900 dark:text-white"
+                  />
+                </div>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
               onClick={executeVerify}
               className={`text-white ${
-                confirmAction?.status === "SUCCESS" 
-                  ? "bg-green-600 hover:bg-green-700" 
+                confirmAction?.status === "SUCCESS"
+                  ? "bg-green-600 hover:bg-green-700"
                   : "bg-red-600 hover:bg-red-700"
               }`}
             >

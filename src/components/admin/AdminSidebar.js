@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   Briefcase,
   Settings,
+  Mail,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import ThemeToggle from "./ThemeToggle";
@@ -24,7 +25,6 @@ export default function AdminSidebar() {
   const { signOut } = useClerk();
   const { user } = useUser();
 
-  // Keep Recruitment dropdown open if we are currently inside it
   const isRecruitmentActive = pathname.startsWith("/admin/recruitment");
   const [isRecruitmentOpen, setIsRecruitmentOpen] =
     useState(isRecruitmentActive);
@@ -50,7 +50,6 @@ export default function AdminSidebar() {
       </div>
 
       <nav className="flex-1 flex flex-col gap-2 overflow-y-auto">
-        {/* Dashboard Home */}
         <Link
           href="/admin"
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
@@ -69,7 +68,6 @@ export default function AdminSidebar() {
           )}
         </Link>
 
-        {/* Recruitment Dropdown */}
         <div className="mt-2">
           <button
             onClick={() => setIsRecruitmentOpen(!isRecruitmentOpen)}
@@ -145,7 +143,6 @@ export default function AdminSidebar() {
           </div>
         </div>
 
-        {/* Users */}
         <Link
           href="/admin/users"
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
@@ -164,7 +161,24 @@ export default function AdminSidebar() {
           )}
         </Link>
 
-        {/* Payments Dropdown */}
+        <Link
+          href="/admin/queries"
+          className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            ${
+              pathname === "/admin/queries"
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+            }`}
+        >
+          <Mail
+            className={`w-5 h-5 transition-transform duration-300 ${pathname === "/admin/queries" ? "scale-110" : "group-hover:scale-110"}`}
+          />
+          <span className="text-sm font-semibold">User Queries</span>
+          {pathname === "/admin/queries" && (
+            <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
+          )}
+        </Link>
+
         <div className="mt-2">
           <button
             onClick={() => setIsPaymentsOpen(!isPaymentsOpen)}
@@ -201,7 +215,6 @@ export default function AdminSidebar() {
             </div>
           </div>
         </div>
-
       </nav>
 
       <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
@@ -225,7 +238,7 @@ export default function AdminSidebar() {
           </div>
         )}
         <ThemeToggle />
-        
+
         <button
           onClick={() => signOut({ redirectUrl: "/" })}
           className="flex items-center gap-4 px-4 py-3 mt-4 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 cursor-bad"

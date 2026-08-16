@@ -10,6 +10,7 @@ import { Menu, X, User } from "lucide-react";
 import { userButtonAppearance } from "@/lib/clerkAppearance";
 import { useApi } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import SpecularButton from "@/components/SpecularButton";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -19,7 +20,6 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [myApplication, setMyApplication] = useState(null);
 
-  // Scroll direction detection
   const [navVisible, setNavVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const lastScrollY = useRef(0);
@@ -29,7 +29,6 @@ export default function Navbar() {
       const currentY = window.scrollY;
       setScrolled(currentY > 20);
 
-      // Only hide/show after we've scrolled a bit to avoid flicker
       if (currentY > 100) {
         setNavVisible(currentY < lastScrollY.current);
       } else {
@@ -56,7 +55,6 @@ export default function Navbar() {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
 
-  // Close mobile menu on any route change (e.g. Clerk's UserButton.Link to /profile)
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
@@ -78,7 +76,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Desktop & Mobile Header ── */}
       <header
         className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
         style={{
@@ -89,7 +86,6 @@ export default function Navbar() {
       >
         <div className="w-full transition-all duration-500 ease-out bg-transparent">
           <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 h-16 md:h-20">
-            {/* Logo */}
             <Link
               href="/"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -98,7 +94,6 @@ export default function Navbar() {
               <Image src="/logo.png" alt="EnPassant" width={26} height={26} />
             </Link>
 
-            {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
@@ -120,10 +115,8 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* Divider */}
               <div className="w-px h-4 bg-white/15" />
 
-              {/* Auth */}
               {userId ? (
                 <UserButton
                   afterSignOutUrl="/"
@@ -141,24 +134,17 @@ export default function Navbar() {
                   </UserButton.MenuItems>
                 </UserButton>
               ) : (
-                <button
+                <SpecularButton
+                  size="sm"
                   onClick={() => router.push("/auth/sign-in")}
-                  className="
-                    relative font-sans font-semibold text-[12px] tracking-[0.12em] uppercase
-                    text-white/80 hover:text-white px-4 py-2 rounded-md
-                    bg-white/5 hover:bg-[#c41e3a]/10
-                    border border-white/10 hover:border-[#c41e3a]/50
-                    transition-all duration-300
-                    active:scale-[0.97]
-                    cursor-good
-                  "
+                  className="font-sans font-semibold tracking-[0.12em] uppercase"
+                  autoAnimate={true}
                 >
                   GET STARTED
-                </button>
+                </SpecularButton>
               )}
             </nav>
 
-            {/* Mobile Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden relative z-50 text-white/80 hover:text-white transition-colors p-1"
@@ -192,7 +178,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ── Mobile Overlay ── */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -305,23 +290,17 @@ export default function Navbar() {
                     </div>
                   </div>
                 ) : (
-                  <button
+                  <SpecularButton
+                    size="md"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       router.push("/auth/sign-in");
                     }}
-                    className="
-                      font-sans font-semibold text-[12px] tracking-[0.12em] uppercase
-                      text-white/80 hover:text-white px-5 py-2.5 rounded-md
-                      bg-white/5 hover:bg-[#c41e3a]/10
-                      border border-white/10 hover:border-[#c41e3a]/50
-                      transition-all duration-300
-                      active:scale-[0.97]
-                      cursor-good
-                    "
+                    className="font-sans font-semibold tracking-[0.12em] uppercase"
+                    autoAnimate={true}
                   >
                     GET STARTED
-                  </button>
+                  </SpecularButton>
                 )}
               </motion.div>
             </nav>

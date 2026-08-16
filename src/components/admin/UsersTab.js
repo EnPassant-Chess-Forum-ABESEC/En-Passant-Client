@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -8,11 +8,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import AdminSearchBar from "./AdminSearchBar";
 
 export default function UsersTab() {
   const fetchApi = useApi();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("ALL");
+
+  const filteredUsers = useMemo(() => {
+    let result = [...users];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(u => 
+        u._id.toLowerCase().includes(q) ||
+        (u.userName || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q)
+      );
+    }
+    if (roleFilter !== "ALL") {
+      result = result.filter(u => u.role === roleFilter);
+    }
+    return result;
+  }, [users, searchQuery, roleFilter]);
 
   useEffect(() => {
     loadData();
@@ -45,6 +65,16 @@ export default function UsersTab() {
 
   return (
     <div className="space-y-6">
+      <AdminSearchBar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={roleFilter}
+        setStatusFilter={setRoleFilter}
+        statusOptions={[
+          { label: "User", value: "user" },
+          { label: "Admin", value: "admin" },
+        ]}
+      />
       <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left whitespace-nowrap">
@@ -58,10 +88,10 @@ export default function UsersTab() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
-            {users.length === 0 ? (
+            {filteredUsers.length === 0 ? (
               <tr><td colSpan="5" className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">No users found</td></tr>
             ) : (
-              users.map((user) => (
+              filteredUsers.map((user) => (
                 <tr key={user._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                   <td className="px-6 py-5 font-mono text-sm text-slate-500 dark:text-slate-400">{user._id}</td>
                   <td className="px-6 py-5 font-bold tracking-wide text-slate-900 dark:text-slate-50">{user.userName}</td>
