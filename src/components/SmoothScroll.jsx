@@ -2,14 +2,21 @@
 
 import { useEffect, useRef } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
+import { usePathname } from "next/navigation";
 
 function LenisController() {
   const lenis = useLenis();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!lenis) return;
+    window.scrollTo(0, 0);
+    lenis.scrollTo(0, { immediate: true });
+  }, [pathname, lenis]);
 
   useEffect(() => {
     if (!lenis) return;
 
-    // MutationObserver to watch body style changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === "style") {
@@ -25,7 +32,6 @@ function LenisController() {
 
     observer.observe(document.body, { attributes: true });
 
-    // Initial check
     if (document.body.style.overflow === "hidden") {
       lenis.stop();
     }
