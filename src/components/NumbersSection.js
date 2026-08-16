@@ -171,7 +171,10 @@ export default function NumbersSection() {
                 <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[15vw] md:text-[100px]">
                   Jewels of
                 </span>
-                <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[15vw] md:text-[100px]">
+                <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] text-[15vw] md:text-[100px] mt-3">
+                  The
+                </span>
+                <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] text-[15vw] md:text-[100px] mt-3">
                   Crown
                 </span>
               </h2>
