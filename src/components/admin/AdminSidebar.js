@@ -49,7 +49,7 @@ export default function AdminSidebar() {
         </Link>
       </div>
 
-      <nav className="flex-1 flex flex-col gap-2 overflow-y-auto">
+      <nav className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-4 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
         <Link
           href="/admin"
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
