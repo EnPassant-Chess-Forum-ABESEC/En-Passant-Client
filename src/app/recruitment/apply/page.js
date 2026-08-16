@@ -63,7 +63,7 @@ export default function RecruitmentApplyPage() {
     if (settings?.applicationStartDate) {
       const start = new Date(settings.applicationStartDate);
       setIsBeforeStart(new Date() < start);
-      
+
       const interval = setInterval(() => {
         setIsBeforeStart(new Date() < start);
       }, 1000);
@@ -222,20 +222,31 @@ export default function RecruitmentApplyPage() {
       const sanitizedPhone = formData.phone.replace(/\D/g, "");
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-      
+
       if (!emailRegex.test(sanitizedEmail)) {
         toast.error("Please enter a valid personal email address");
         return;
       }
 
-      const commonTypos = ["g2ail.com", "gamil.com", "gmaill.com", "gnail.com", "gmail.con", "gmail.co", "gmai.com"];
+      const commonTypos = [
+        "g2ail.com",
+        "gamil.com",
+        "gmaill.com",
+        "gnail.com",
+        "gmail.con",
+        "gmail.co",
+        "gmai.com",
+      ];
       const emailDomain = sanitizedEmail.split("@")[1];
       if (commonTypos.includes(emailDomain)) {
         toast.error(`Did you mean @gmail.com? Please check your email.`);
         return;
       }
 
-      if (!emailRegex.test(sanitizedCollegeEmail) || !sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
+      if (
+        !emailRegex.test(sanitizedCollegeEmail) ||
+        !sanitizedCollegeEmail.endsWith("@abes.ac.in")
+      ) {
         toast.error("College email must be a valid @abes.ac.in address");
         return;
       }
@@ -530,7 +541,8 @@ export default function RecruitmentApplyPage() {
       <div
         className="hidden md:block absolute inset-0 z-0 opacity-40"
         style={{
-          backgroundImage: "url('/recruitment/recruitment_apply_background.png')",
+          backgroundImage:
+            "url('/recruitment/recruitment_apply_background.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -620,7 +632,9 @@ export default function RecruitmentApplyPage() {
               <h2 className="text-[1.8rem] md:text-[2.2rem] font-pezula uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-8 leading-tight">
                 Applications Opening Soon
               </h2>
-              <TaskCountdown targetDate={new Date(settings.applicationStartDate)} />
+              <TaskCountdown
+                targetDate={new Date(settings.applicationStartDate)}
+              />
               <p className="text-white/40 text-[12px] uppercase tracking-widest mt-8">
                 Stay tuned
               </p>
@@ -648,351 +662,462 @@ export default function RecruitmentApplyPage() {
                 )}
               </div>
 
-          <div
-            className="pt-6 pb-8 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
-            onWheel={(e) => {
-              const el = e.currentTarget;
-              const atBottom =
-                el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-              const atTop = el.scrollTop <= 0;
-              const scrollingDown = e.deltaY > 0;
-              if ((scrollingDown && atBottom) || (!scrollingDown && atTop))
-                return;
-              e.stopPropagation();
-            }}
-          >
-            <AnimatePresence mode="wait">
-              {currentStep === 0 && (
-                <motion.div
-                  key="step0"
-                  variants={slideVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="space-y-3 w-full"
-                >
-                  {(isSignedIn ||
-                    prefilledFields.collegeEmail ||
-                    prefilledFields.phone) && (
-                    <p className="text-[10.5px] text-white/80 bg-white/5 border border-white/10 px-3 py-2 rounded-lg font-medium tracking-wide">
-                      * Some fields have been fetched from your profile. Update
-                      them there if needed.
-                    </p>
+              <div
+                className="pt-6 pb-8 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
+                onWheel={(e) => {
+                  const el = e.currentTarget;
+                  const atBottom =
+                    el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+                  const atTop = el.scrollTop <= 0;
+                  const scrollingDown = e.deltaY > 0;
+                  if ((scrollingDown && atBottom) || (!scrollingDown && atTop))
+                    return;
+                  e.stopPropagation();
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  {currentStep === 0 && (
+                    <motion.div
+                      key="step0"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="space-y-3 w-full"
+                    >
+                      {(isSignedIn ||
+                        prefilledFields.collegeEmail ||
+                        prefilledFields.phone) && (
+                        <p className="text-[10.5px] text-white/80 bg-white/5 border border-white/10 px-3 py-2 rounded-lg font-medium tracking-wide">
+                          * Some fields have been fetched from your profile.
+                          Update them there if needed.
+                        </p>
+                      )}
+                      <div className="space-y-1.5 group">
+                        <label
+                          htmlFor="name"
+                          className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                        >
+                          Full Name
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
+                            <User
+                              className="w-[18px] h-[18px]"
+                              strokeWidth={2.5}
+                            />
+                          </div>
+                          <input
+                            id="name"
+                            type="text"
+                            className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                              isSignedIn ? "opacity-60 cursor-not-allowed" : ""
+                            }`}
+                            value={formData.name}
+                            onChange={(e) =>
+                              setFormData({ ...formData, name: e.target.value })
+                            }
+                            placeholder="Your Name"
+                            disabled={isSignedIn}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 group">
+                        <label
+                          htmlFor="email"
+                          className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                        >
+                          Email Address
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
+                            <Mail
+                              className="w-[18px] h-[18px]"
+                              strokeWidth={2.5}
+                            />
+                          </div>
+                          <input
+                            id="email"
+                            type="email"
+                            className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                              isSignedIn ? "opacity-60 cursor-not-allowed" : ""
+                            }`}
+                            value={formData.email}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                email: e.target.value,
+                              })
+                            }
+                            placeholder="youremail@gmail.com"
+                            disabled={isSignedIn}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 group">
+                        <label
+                          htmlFor="collegeEmail"
+                          className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                        >
+                          College Email
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
+                            <Mail
+                              className="w-[18px] h-[18px]"
+                              strokeWidth={2.5}
+                            />
+                          </div>
+                          <input
+                            id="collegeEmail"
+                            type="email"
+                            className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                              prefilledFields.collegeEmail
+                                ? "opacity-60 cursor-not-allowed"
+                                : ""
+                            }`}
+                            value={formData.collegeEmail}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                collegeEmail: e.target.value,
+                              })
+                            }
+                            placeholder="name.admNo@abes.ac.in"
+                            disabled={prefilledFields.collegeEmail}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 group">
+                        <label
+                          htmlFor="phone"
+                          className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                        >
+                          Phone Number
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
+                            <Phone
+                              className="w-[18px] h-[18px]"
+                              strokeWidth={2.5}
+                            />
+                          </div>
+                          <input
+                            id="phone"
+                            type="tel"
+                            className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
+                              prefilledFields.phone
+                                ? "opacity-60 cursor-not-allowed"
+                                : ""
+                            }`}
+                            value={formData.phone}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                phone: e.target.value,
+                              })
+                            }
+                            placeholder="e.g. 9876543210"
+                            disabled={prefilledFields.phone}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
                   )}
-                  <div className="space-y-1.5 group">
-                    <label
-                      htmlFor="name"
-                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+
+                  {currentStep === 1 && (
+                    <motion.div
+                      key="step1"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="w-full flex flex-col"
                     >
-                      Full Name
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
-                        <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                      </div>
-                      <input
-                        id="name"
-                        type="text"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          isSignedIn ? "opacity-60 cursor-not-allowed" : ""
-                        }`}
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
-                        placeholder="Your Name"
-                        disabled={isSignedIn}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label
-                      htmlFor="email"
-                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      {loadingDepts ? (
+                        <div className="text-white/50 text-[14px] text-center py-4 uppercase tracking-widest font-bold animate-pulse">
+                          Scanning Data...
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5">
+                          {departments.map((dept) => {
+                            const isSelected =
+                              formData.primaryDept === dept._id;
+                            return (
+                              <button
+                                key={dept._id}
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    primaryDept: dept._id,
+                                  })
+                                }
+                                className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
+                                  isSelected
+                                    ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_25px_rgba(155,26,26,0.2)] text-white"
+                                    : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
+                                }`}
+                              >
+                                <span className="text-[15px] font-bold">
+                                  {dept.name}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {currentStep === 2 && (
+                    <motion.div
+                      key="step2"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="w-full flex flex-col"
                     >
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
-                        <Mail className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                      </div>
-                      <input
-                        id="email"
-                        type="email"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          isSignedIn ? "opacity-60 cursor-not-allowed" : ""
-                        }`}
-                        value={formData.email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, email: e.target.value })
-                        }
-                        placeholder="youremail@gmail.com"
-                        disabled={isSignedIn}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label
-                      htmlFor="collegeEmail"
-                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
+                      {loadingDepts ? (
+                        <div className="text-white/50 text-[14px] text-center py-4 uppercase tracking-widest font-bold animate-pulse">
+                          Scanning Data...
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5">
+                          <button
+                            onClick={() =>
+                              setFormData({ ...formData, secondaryDept: null })
+                            }
+                            className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
+                              formData.secondaryDept === null
+                                ? "bg-white/15 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-white"
+                                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/50 hover:text-white/70"
+                            }`}
+                          >
+                            <span className="text-[15px] font-bold italic">
+                              None (Skip)
+                            </span>
+                          </button>
+
+                          {departments.map((dept) => {
+                            if (dept._id === formData.primaryDept) return null;
+                            const isSelected =
+                              formData.secondaryDept === dept._id;
+                            return (
+                              <button
+                                key={dept._id}
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    secondaryDept: dept._id,
+                                  })
+                                }
+                                className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
+                                  isSelected
+                                    ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_25px_rgba(155,26,26,0.2)] text-white"
+                                    : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
+                                }`}
+                              >
+                                <span className="text-[15px] font-bold">
+                                  {dept.name}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {currentStep === 3 && (
+                    <motion.div
+                      key="step3"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="w-full flex flex-col space-y-4"
                     >
-                      College Email
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
-                        <Mail className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                      </div>
-                      <input
-                        id="collegeEmail"
-                        type="email"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          prefilledFields.collegeEmail
-                            ? "opacity-60 cursor-not-allowed"
-                            : ""
-                        }`}
-                        value={formData.collegeEmail}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            collegeEmail: e.target.value,
-                          })
-                        }
-                        placeholder="name.admNo@abes.ac.in"
-                        disabled={prefilledFields.collegeEmail}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label
-                      htmlFor="phone"
-                      className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
-                    >
-                      Phone Number
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
-                        <Phone
-                          className="w-[18px] h-[18px]"
-                          strokeWidth={2.5}
+                      <div className="flex items-center justify-between gap-6 bg-white/5 border border-white/10 p-5 rounded-2xl my-2">
+                        <div className="flex-1 text-left">
+                          <h4 className="text-s font-pezula normalcase tracking-wider text-white mb-1.5">
+                            Registration Fee
+                          </h4>
+                          <p className="text-white/50 text-[12px] font-medium leading-relaxed mb-2">
+                            Please pay to the UPI ID mentioned below and upload
+                            the screenshot of the payment.
+                          </p>
+                          <div className="text-[11px] font-bold tracking-wide text-white/70 normalcase break-all">
+                            UPI ID:{" "}
+                            <span className="text-[#ff3333] select-all font-medium normal-case">
+                              8933905351@ybl
+                            </span>
+                          </div>
+                        </div>
+
+                        <Image
+                          src="/recruitment/recruitment_payment_qr.jpeg"
+                          alt="Payment QR Code"
+                          width={112}
+                          height={112}
+                          priority
+                          className="object-contain rounded-md shrink-0"
+                          style={{ width: "112px", height: "auto" }}
                         />
                       </div>
-                      <input
-                        id="phone"
-                        type="tel"
-                        className={`w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 pl-12 pr-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium ${
-                          prefilledFields.phone
-                            ? "opacity-60 cursor-not-allowed"
-                            : ""
-                        }`}
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
-                        }
-                        placeholder="e.g. 9876543210"
-                        disabled={prefilledFields.phone}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
 
-              {currentStep === 1 && (
-                <motion.div
-                  key="step1"
-                  variants={slideVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full flex flex-col"
-                >
-                  {loadingDepts ? (
-                    <div className="text-white/50 text-[14px] text-center py-4 uppercase tracking-widest font-bold animate-pulse">
-                      Scanning Data...
-                    </div>
-                  ) : (
-                    <div className="space-y-2.5">
-                      {departments.map((dept) => {
-                        const isSelected = formData.primaryDept === dept._id;
-                        return (
-                          <button
-                            key={dept._id}
-                            onClick={() =>
-                              setFormData({
-                                ...formData,
-                                primaryDept: dept._id,
-                              })
-                            }
-                            className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
-                              isSelected
-                                ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_25px_rgba(155,26,26,0.2)] text-white"
-                                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
-                            }`}
-                          >
-                            <span className="text-[15px] font-bold">
-                              {dept.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </motion.div>
-              )}
+                      <div className="space-y-4">
+                        <div className="space-y-1.5 group">
+                          <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                            Transaction ID (UTR)
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 px-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
+                            value={paymentUtr}
+                            onChange={(e) => setPaymentUtr(e.target.value)}
+                            placeholder="e.g. 123456789012"
+                          />
+                        </div>
 
-              {currentStep === 2 && (
-                <motion.div
-                  key="step2"
-                  variants={slideVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full flex flex-col"
-                >
-                  {loadingDepts ? (
-                    <div className="text-white/50 text-[14px] text-center py-4 uppercase tracking-widest font-bold animate-pulse">
-                      Scanning Data...
-                    </div>
-                  ) : (
-                    <div className="space-y-2.5">
-                      <button
-                        onClick={() =>
-                          setFormData({ ...formData, secondaryDept: null })
-                        }
-                        className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
-                          formData.secondaryDept === null
-                            ? "bg-white/15 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] text-white"
-                            : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/50 hover:text-white/70"
-                        }`}
-                      >
-                        <span className="text-[15px] font-bold italic">
-                          None (Skip)
-                        </span>
-                      </button>
-
-                      {departments.map((dept) => {
-                        if (dept._id === formData.primaryDept) return null;
-                        const isSelected = formData.secondaryDept === dept._id;
-                        return (
-                          <button
-                            key={dept._id}
-                            onClick={() =>
-                              setFormData({
-                                ...formData,
-                                secondaryDept: dept._id,
-                              })
-                            }
-                            className={`w-full flex items-center justify-center px-5 py-4 rounded-xl border transition-all duration-300 text-center group ${
-                              isSelected
-                                ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_25px_rgba(155,26,26,0.2)] text-white"
-                                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
-                            }`}
-                          >
-                            <span className="text-[15px] font-bold">
-                              {dept.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {currentStep === 3 && (
-                <motion.div
-                  key="step3"
-                  variants={slideVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full flex flex-col space-y-4"
-                >
-                  <div className="flex items-center justify-between gap-6 bg-white/5 border border-white/10 p-5 rounded-2xl my-2">
-                    <div className="flex-1 text-left">
-                      <h4 className="text-s font-pezula normalcase tracking-wider text-white mb-1.5">
-                        Registration Fee
-                      </h4>
-                      <p className="text-white/50 text-[12px] font-medium leading-relaxed mb-2">
-                        Please pay to the UPI ID mentioned below and upload the
-                        screenshot of the payment.
-                      </p>
-                      <div className="text-[11px] font-bold tracking-wide text-white/70 normalcase break-all">
-                        UPI ID:{" "}
-                        <span className="text-[#ff3333] select-all font-medium normal-case">
-                          8933905351@ybl
-                        </span>
+                        <div className="space-y-1.5 group">
+                          <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
+                            Payment Screenshot
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                setPaymentScreenshot(e.target.files[0]);
+                              }
+                            }}
+                            className="w-full bg-white/5 border border-white/10 text-white/70 rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-widest file:bg-[#9b1a1a]/20 file:text-[#ff4444] hover:file:bg-[#9b1a1a]/40 file:transition-colors"
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <Image
-                      src="/recruitment/payment_qr.jpeg"
-                      alt="Payment QR Code"
-                      width={112}
-                      height={112}
-                      priority
-                      className="object-contain rounded-md shrink-0"
-                      style={{ width: "112px", height: "auto" }}
-                    />
-                  </div>
+                      <div className="w-full mt-12 pt-3">
+                        <SpecularButton
+                          onClick={handlePayment}
+                          disabled={isSubmitting}
+                          className={`w-full h-14 group ${!isStepValid(3) && !isSubmitting ? "opacity-55" : ""}`}
+                          radius={12}
+                          lineColor="#ff4444"
+                          baseColor="#550000"
+                          textColor="#ffffff"
+                          tint="#9b1a1a"
+                          tintOpacity={0.15}
+                          autoAnimate={true}
+                        >
+                          <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px]">
+                            {isSubmitting ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Submitting...</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Submit Payment</span>
+                                <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                                  <ChevronRight className="w-5 h-5" />
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </SpecularButton>
+                      </div>
+                    </motion.div>
+                  )}
 
-                  <div className="space-y-4">
-                    <div className="space-y-1.5 group">
-                      <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
-                        Transaction ID (UTR)
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-14 px-4 text-[15px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 focus:bg-white/10 placeholder:text-white/20 font-medium"
-                        value={paymentUtr}
-                        onChange={(e) => setPaymentUtr(e.target.value)}
-                        placeholder="e.g. 123456789012"
-                      />
-                    </div>
+                  {currentStep === 4 && (
+                    <motion.div
+                      key="step4"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="w-full flex flex-col items-center justify-center space-y-6 text-center py-8"
+                    >
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-2">
+                          Payment Submitted
+                        </h3>
+                        <p className="text-white/50 text-[14px] leading-relaxed max-w-sm mx-auto">
+                          Your payment details have been received and are
+                          currently being verified by our administrators. Please
+                          check back later.
+                        </p>
+                      </div>
+                      <div className="w-full pt-4 max-w-[280px]">
+                        <SpecularButton
+                          onClick={() => {
+                            window.location.href = "/recruitment/dashboard";
+                          }}
+                          className="w-full h-14 group"
+                          radius={12}
+                          lineColor="#ff4444"
+                          baseColor="#550000"
+                          textColor="#ffffff"
+                          tint="#9b1a1a"
+                          tintOpacity={0.15}
+                          autoAnimate={true}
+                        >
+                          <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
+                            <span>Go to Dashboard</span>
+                            <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                              <ChevronRight className="w-5 h-5" />
+                            </span>
+                          </div>
+                        </SpecularButton>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                    <div className="space-y-1.5 group">
-                      <label className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]">
-                        Payment Screenshot
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            setPaymentScreenshot(e.target.files[0]);
-                          }
-                        }}
-                        className="w-full bg-white/5 border border-white/10 text-white/70 rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-[#9b1a1a]/50 focus:ring-1 focus:ring-[#9b1a1a]/50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-widest file:bg-[#9b1a1a]/20 file:text-[#ff4444] hover:file:bg-[#9b1a1a]/40 file:transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="w-full mt-12 pt-3">
+              <div className="pt-2 flex flex-col justify-end z-10 relative">
+                {currentStep === 0 && (
+                  <p className="text-white/40 text-[11px] text-center mb-2 tracking-widest font-normal">
+                    We will create your account upon submission if account does
+                    not exist
+                  </p>
+                )}
+                {currentStep < 3 && (
+                  <div className="w-full">
                     <SpecularButton
-                      onClick={handlePayment}
+                      onClick={handleNext}
                       disabled={isSubmitting}
-                      className={`w-full h-14 group ${!isStepValid(3) && !isSubmitting ? "opacity-55" : ""}`}
+                      className={`w-full h-14 group ${!isStepValid(currentStep) && !isSubmitting ? "opacity-55" : ""}`}
                       radius={12}
-                      lineColor="#ff4444"
-                      baseColor="#550000"
+                      lineColor="#ffffff"
+                      baseColor="#555555"
                       textColor="#ffffff"
-                      tint="#9b1a1a"
-                      tintOpacity={0.15}
+                      tint="#ffffff"
+                      tintOpacity={0.1}
                       autoAnimate={true}
                     >
-                      <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px]">
+                      <div className="flex items-center justify-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px]">
                         {isSubmitting ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Submitting...</span>
+                            <span>
+                              {currentStep === 0
+                                ? "Creating Account..."
+                                : "Processing..."}
+                            </span>
                           </>
                         ) : (
                           <>
-                            <span>Submit Payment</span>
-                            <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                            <span>
+                              {currentStep === 2 ? "Review & Pay" : "Continue"}
+                            </span>
+                            <span className="group-hover:translate-x-1 transition-transform">
                               <ChevronRight className="w-5 h-5" />
                             </span>
                           </>
@@ -1000,102 +1125,8 @@ export default function RecruitmentApplyPage() {
                       </div>
                     </SpecularButton>
                   </div>
-                </motion.div>
-              )}
-
-              {currentStep === 4 && (
-                <motion.div
-                  key="step4"
-                  variants={slideVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full flex flex-col items-center justify-center space-y-6 text-center py-8"
-                >
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-2">
-                      Payment Submitted
-                    </h3>
-                    <p className="text-white/50 text-[14px] leading-relaxed max-w-sm mx-auto">
-                      Your payment details have been received and are currently
-                      being verified by our administrators. Please check back
-                      later.
-                    </p>
-                  </div>
-                  <div className="w-full pt-4 max-w-[280px]">
-                    <SpecularButton
-                      onClick={() => {
-                        window.location.href = "/recruitment/dashboard";
-                      }}
-                      className="w-full h-14 group"
-                      radius={12}
-                      lineColor="#ff4444"
-                      baseColor="#550000"
-                      textColor="#ffffff"
-                      tint="#9b1a1a"
-                      tintOpacity={0.15}
-                      autoAnimate={true}
-                    >
-                      <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
-                        <span>Go to Dashboard</span>
-                        <span className="text-[11px] group-hover:translate-x-1 transition-transform">
-                          <ChevronRight className="w-5 h-5" />
-                        </span>
-                      </div>
-                    </SpecularButton>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="pt-2 flex flex-col justify-end z-10 relative">
-            {currentStep === 0 && (
-              <p className="text-white/40 text-[11px] text-center mb-2 tracking-widest font-normal">
-                We will create your account upon submission if account does not
-                exist
-              </p>
-            )}
-            {currentStep < 3 && (
-              <div className="w-full">
-                <SpecularButton
-                  onClick={handleNext}
-                  disabled={isSubmitting}
-                  className={`w-full h-14 group ${!isStepValid(currentStep) && !isSubmitting ? "opacity-55" : ""}`}
-                  radius={12}
-                  lineColor="#ffffff"
-                  baseColor="#555555"
-                  textColor="#ffffff"
-                  tint="#ffffff"
-                  tintOpacity={0.1}
-                  autoAnimate={true}
-                >
-                  <div className="flex items-center justify-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px]">
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>
-                          {currentStep === 0
-                            ? "Creating Account..."
-                            : "Processing..."}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span>
-                          {currentStep === 2 ? "Review & Pay" : "Continue"}
-                        </span>
-                        <span className="group-hover:translate-x-1 transition-transform">
-                          <ChevronRight className="w-5 h-5" />
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </SpecularButton>
+                )}
               </div>
-            )}
-          </div>
             </>
           )}
         </div>
