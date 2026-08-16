@@ -6,7 +6,7 @@ export default function AuthLayout({ children }) {
       <div
         className="hidden md:block absolute inset-0 z-0 opacity-50"
         style={{
-          backgroundImage: "url('/auth/signup_login_background.jpeg')",
+          backgroundImage: "url('/auth/auth_page_background.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
