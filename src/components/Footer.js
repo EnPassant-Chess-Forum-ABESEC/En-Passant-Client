@@ -8,21 +8,17 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 const columns = [
   {
-    heading: "PLATFORM",
+    heading: "THE CLUB",
     links: [
-      { label: "About", href: "#" },
-      { label: "Services", href: "#" },
-      { label: "Recruitment", href: "/recruitment" },
-      { label: "Tournaments", href: "#" },
+      { label: "Home", href: "/" },
+      { label: "Leaderboard", href: "/leaderboard" },
     ],
   },
   {
-    heading: "RESOURCES",
+    heading: "ENGAGE",
     links: [
-      { label: "Club Journal", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Openings", href: "#" },
-      { label: "Endgames", href: "#" },
+      { label: "Recruitment", href: "/recruitment" },
+      { label: "Profile", href: "/profile" },
     ],
   },
 ];
@@ -160,8 +156,6 @@ export default function Footer() {
                       <Link
                         key={link.label}
                         href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="group flex items-center font-sans font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#c41e3a]"
                         style={{
                           lineHeight: "2.4",
@@ -188,18 +182,14 @@ export default function Footer() {
             
             <div className="flex items-center justify-center gap-4">
               <Link
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/privacy"
                 className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
               >
                 Privacy
               </Link>
               <span className="text-white/20 pointer-events-none">·</span>
               <Link
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/terms"
                 className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
               >
                 Terms

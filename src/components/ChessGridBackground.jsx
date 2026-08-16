@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function ChessGridBackground() {
+export default function ChessGridBackground({ showPieces = true }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -50,39 +50,41 @@ export default function ChessGridBackground() {
           backgroundSize: "var(--cell-size) var(--cell-size)",
           backgroundPosition: "center center",
           WebkitMaskImage:
-            "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+            "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
           maskImage:
-            "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+            "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
         }}
       />
 
-      <div
-        className="hidden md:block absolute bottom-0 left-0 z-[1] pointer-events-none"
-        style={{
-          width: "clamp(250px, 35vw, 420px)",
-          height: "clamp(450px, 80vh, 1050px)",
-        }}
-      >
-        <div className="relative w-full h-full">
-          <Image
-            src="/profile_page_asset.png"
-            alt=""
-            fill
-            className="object-contain object-bottom"
-            unoptimized
-            priority
-            style={{ opacity: 0.18 }}
-          />
+      {showPieces && (
+        <div
+          className="hidden md:block absolute bottom-0 left-0 z-[1] pointer-events-none"
+          style={{
+            width: "clamp(250px, 35vw, 420px)",
+            height: "clamp(450px, 80vh, 1050px)",
+          }}
+        >
+          <div className="relative w-full h-full">
+            <Image
+              src="/profile_page_asset.png"
+              alt=""
+              fill
+              className="object-contain object-bottom"
+              unoptimized
+              priority
+              style={{ opacity: 0.18 }}
+            />
 
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to right, #050505 0%, transparent 55%), linear-gradient(to top, #050505 0%, transparent 30%)",
-            }}
-          />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, #050505 0%, transparent 55%), linear-gradient(to top, #050505 0%, transparent 30%)",
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <div
         className="absolute inset-0 z-[5] pointer-events-none"
@@ -96,9 +98,9 @@ export default function ChessGridBackground() {
         className="absolute inset-0 z-10"
         style={{
           WebkitMaskImage:
-            "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+            "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
           maskImage:
-            "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
+            "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,1) 20%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)",
         }}
       >
         {filledSquares.map((sq, i) => (
