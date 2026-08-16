@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import EnPassantPreloader from "./Preloader";
 
-const FORCE_PRELOADER_ON_EVERY_LOAD = false;
+const FORCE_PRELOADER_ON_EVERY_LOAD = true;
 
 export default function PreloaderWrapper({ children }) {
   const [showPreloader, setShowPreloader] = useState(true);
