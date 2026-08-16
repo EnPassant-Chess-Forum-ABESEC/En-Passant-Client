@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
-import { CheckCircle2, Loader2, MailOpen, Clock } from "lucide-react";
+import { CheckCircle2, Loader2, MailOpen, Clock, Search } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -11,6 +11,7 @@ export default function QueriesTab() {
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadQueries();
@@ -53,28 +54,46 @@ export default function QueriesTab() {
     );
   }
 
+  const filteredQueries = queries.filter((q) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      (q.email || "").toLowerCase().includes(term) ||
+      (q.name || "").toLowerCase().includes(term) ||
+      (q.subject || "").toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             User Queries
           </h1>
         </div>
+        <div className="relative max-w-md w-full md:w-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search by name, email, or subject..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          />
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-        <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
-          {queries.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">
-              No queries found.
-            </div>
-          ) : (
-            queries.map((query) => (
-              <div
-                key={query._id}
-                className="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors flex flex-col md:flex-row gap-6"
-              >
+      <div className="flex flex-col gap-4">
+        {filteredQueries.length === 0 ? (
+          <div className="p-8 text-center text-slate-500 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl">
+            No queries found.
+          </div>
+        ) : (
+          filteredQueries.map((query) => (
+            <div
+              key={query._id}
+              className="p-6 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6"
+            >
                 <div className="flex-1 space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
@@ -141,9 +160,8 @@ export default function QueriesTab() {
                   )}
                 </div>
               </div>
-            ))
-          )}
-        </div>
+          ))
+        )}
       </div>
     </div>
   );
