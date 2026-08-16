@@ -98,7 +98,10 @@ export default function CustomProfileForm() {
       const data = await fetchApi(endpoint, { method, body });
       if (data.success) {
         setSuccess(true);
-        setTimeout(() => window.location.reload(), 1000);
+        setTimeout(() => {
+          // Setting href to pathname strips query params like ?onboarding=true
+          window.location.href = window.location.pathname;
+        }, 1000);
       }
     } catch (err) {
       setError(err.message);
