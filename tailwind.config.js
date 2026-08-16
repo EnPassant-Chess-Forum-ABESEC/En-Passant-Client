@@ -13,6 +13,9 @@ module.exports = {
         sans: ['var(--font-inter)', 'sans-serif'],
         pezula: ['pezula', 'sans-serif'],
         prfaExtrabold: ['prfaExtrabold', 'sans-serif'],
+        adminSans: ['var(--font-admin-sans)', 'sans-serif'],
+        adminMono: ['var(--font-admin-mono)', 'monospace'],
+        mono: ['var(--font-admin-mono)', 'monospace'],
       },
       colors: {
         background: "var(--background)",

@@ -1,6 +1,19 @@
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { Inter, Roboto_Mono } from "next/font/google";
+
+const adminSans = Inter({
+  subsets: ["latin"],
+  variable: "--font-admin-sans",
+  display: "swap",
+});
+
+const adminMono = Roboto_Mono({
+  subsets: ["latin"],
+  variable: "--font-admin-mono",
+  display: "swap",
+});
 
 export const dynamic = 'force-dynamic';
 
@@ -37,7 +50,7 @@ export default async function AdminLayout({ children }) {
     }
 
     return (
-      <div className="flex min-h-screen bg-slate-50 dark:bg-[#020617] font-pezula text-slate-800 dark:text-slate-200 transition-colors duration-500">
+      <div className={`flex min-h-screen bg-slate-50 dark:bg-[#020617] font-adminSans ${adminSans.variable} ${adminMono.variable} text-slate-800 dark:text-slate-200 transition-colors duration-500`}>
         <AdminSidebar />
         <main className="flex-1 relative bg-slate-50 dark:bg-[#020617] min-h-screen ml-[280px] transition-colors duration-500">
           <div className="relative z-10 px-10 py-16 md:px-16 md:py-20 lg:px-24 max-w-[1800px] mx-auto w-full min-h-full">
