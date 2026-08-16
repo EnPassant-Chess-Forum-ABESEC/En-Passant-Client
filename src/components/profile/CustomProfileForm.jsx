@@ -72,12 +72,22 @@ export default function CustomProfileForm() {
     setError(null);
 
     const sanitizedCollegeEmail = collegeEmail.trim().toLowerCase();
+    const sanitizedPhone = phoneNumber.replace(/\D/g, "");
 
-    if (
-      sanitizedCollegeEmail &&
-      !sanitizedCollegeEmail.endsWith("@abes.ac.in")
-    ) {
-      setError("College email must end with @abes.ac.in");
+    if (sanitizedCollegeEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+      if (
+        !emailRegex.test(sanitizedCollegeEmail) ||
+        !sanitizedCollegeEmail.endsWith("@abes.ac.in")
+      ) {
+        setError("Invalid college email. Must be a valid @abes.ac.in address.");
+        setSaving(false);
+        return;
+      }
+    }
+
+    if (sanitizedPhone && sanitizedPhone.length !== 10) {
+      setError("Phone number must be exactly 10 digits.");
       setSaving(false);
       return;
     }
@@ -91,7 +101,7 @@ export default function CustomProfileForm() {
         branch,
         year: parseInt(year),
         collegeEmail: sanitizedCollegeEmail,
-        phoneNumber: phoneNumber.trim(),
+        phoneNumber: sanitizedPhone,
         chessAccounts: { chessCom: { username: chessComUsername } },
       };
 
@@ -99,7 +109,6 @@ export default function CustomProfileForm() {
       if (data.success) {
         setSuccess(true);
         setTimeout(() => {
-          // Setting href to pathname strips query params like ?onboarding=true
           window.location.href = window.location.pathname;
         }, 1000);
       }
@@ -147,7 +156,11 @@ export default function CustomProfileForm() {
             <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
               Branch
             </label>
-            <Select value={branch} onValueChange={setBranch} required={!profile?.isOnboardingComplete}>
+            <Select
+              value={branch}
+              onValueChange={setBranch}
+              required={!profile?.isOnboardingComplete}
+            >
               <SelectTrigger className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30">
                 <SelectValue placeholder="Select Branch" />
               </SelectTrigger>
