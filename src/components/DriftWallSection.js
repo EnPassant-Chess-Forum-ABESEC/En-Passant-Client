@@ -3,20 +3,26 @@
 import { motion } from "framer-motion";
 import DriftWall from "./DriftWall";
 
-// Some placeholder chess/club images for the wall
 const clubImages = [
-  "https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1560174038-da43ac74f01b?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1588412079929-790d9f59729a?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1610631070868-b80c35f29f04?auto=format&fit=crop&q=80&w=600&h=400",
-  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=600&h=400",
+  "/our_legacy/1.jpg",
+  "/our_legacy/2.jpg",
+  "/our_legacy/3.jpg",
+  "/our_legacy/4.jpg",
+  "/our_legacy/5.jpg",
+  "/our_legacy/6.jpg",
+  "/our_legacy/7.jpg",
+  "/our_legacy/8.jpg",
+  "/our_legacy/9.png",
+  "/our_legacy/10.jpg",
 ];
 
-const items = Array.from({ length: 15 }, (_, i) => ({
-  image: clubImages[i % clubImages.length],
+// Pre-calculated scrambled indices to ensure all 10 images are used,
+// no two identical images appear in the same column (which has 3 items),
+// and no two identical images are adjacent horizontally.
+const randomizedIndices = [2, 9, 5, 6, 1, 7, 1, 0, 4, 8, 4, 8, 3, 2, 9];
+
+const items = randomizedIndices.map((imgIndex, i) => ({
+  image: clubImages[imgIndex],
   title: `Memory ${i + 1}`,
 }));
 

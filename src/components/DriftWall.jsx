@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Image from "next/image";
 
 const DEFAULT_ITEMS = Array.from({ length: 15 }, (_, i) => {
   const ids = [
@@ -293,25 +294,24 @@ const DriftWall = ({
   );
   const imgClass = cx(
     "block h-full w-full select-none object-cover",
-    "[filter:grayscale(var(--dw-gray))_saturate(0.92)]",
-    "transition-[filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-    "group-[.is-active]/tile:[filter:grayscale(0)_saturate(1.05)] group-focus-visible/tile:[filter:grayscale(0)_saturate(1.05)]",
+    "[filter:grayscale(0.65)_saturate(0.6)_brightness(0.75)] scale-100",
+    "transition-[filter,transform] duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+    "group-[.is-active]/tile:[filter:grayscale(0)_saturate(1.05)_brightness(1.1)] group-[.is-active]/tile:scale-105 group-focus-visible/tile:[filter:grayscale(0)_saturate(1.05)_brightness(1.1)] group-focus-visible/tile:scale-105",
   );
   const overlayClass = cx(
-    "pointer-events-none absolute inset-0 bg-[var(--dw-overlay)] opacity-[0.42]",
-    "transition-opacity duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+    "pointer-events-none absolute inset-0 bg-[var(--dw-overlay)] opacity-[0.4]",
+    "transition-[opacity,background-color] duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
     "group-[.is-active]/tile:opacity-0 group-focus-visible/tile:opacity-0",
   );
 
   const renderTile = (item, id, colIndex) => {
     const inner = (
       <span className={innerClass}>
-        <img
+        <Image
           src={item.image}
           alt={item.title ?? ""}
-          loading="lazy"
-          decoding="async"
-          draggable={false}
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
           className={imgClass}
         />
         <span className={overlayClass} aria-hidden="true" />
