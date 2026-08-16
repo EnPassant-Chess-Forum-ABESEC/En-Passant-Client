@@ -19,6 +19,24 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useApi } from "@/lib/api";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export default function TasksTab() {
   const fetchApi = useApi();
@@ -26,8 +44,6 @@ export default function TasksTab() {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(null);
-
-  // Form states
   const [editId, setEditId] = useState(null);
   const [departmentId, setDepartmentId] = useState("");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -48,12 +64,12 @@ export default function TasksTab() {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  async function loadData() {
     setLoading(true);
     try {
       const [tasksRes, deptsRes] = await Promise.all([
-        fetchApi("/tasks?year=2026"), // Admin should fetch for specific year or all
-        fetchApi("/admin/departments")
+        fetchApi("/tasks?year=2026"),
+        fetchApi("/admin/departments"),
       ]);
       setTasks(tasksRes.tasks || []);
       const loadedDepts = deptsRes.departments || [];
@@ -66,7 +82,7 @@ export default function TasksTab() {
       alert("Error loading data: " + err.message);
     }
     setLoading(false);
-  };
+  }
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -77,7 +93,7 @@ export default function TasksTab() {
         year: parseInt(year),
         title,
         summary,
-        instructions: instructions.split('\n').filter(i => i.trim() !== ""),
+        instructions: instructions.split("\n").filter((i) => i.trim() !== ""),
         order: parseInt(order),
         isRequired,
         submission: {
@@ -85,12 +101,21 @@ export default function TasksTab() {
           acceptsLinks,
           acceptsFiles,
           ...(acceptsLinks ? { maxLinks: parseInt(maxLinks) } : {}),
-          ...(acceptsFiles ? { fileCategory, maxFiles: parseInt(maxFiles), maxFileSize: 5242880 } : {})
-        }
+          ...(acceptsFiles
+            ? {
+                fileCategory,
+                maxFiles: parseInt(maxFiles),
+                maxFileSize: 5242880,
+              }
+            : {}),
+        },
       };
 
       if (editId) {
-        await fetchApi(`/admin/tasks/${editId}`, { method: "PATCH", body: payload });
+        await fetchApi(`/admin/tasks/${editId}`, {
+          method: "PATCH",
+          body: payload,
+        });
         toast.success("Task updated successfully!");
       } else {
         await fetchApi("/admin/tasks", { method: "POST", body: payload });
@@ -111,7 +136,11 @@ export default function TasksTab() {
     setYear(task.year);
     setTitle(task.title);
     setSummary(task.summary);
-    setInstructions(Array.isArray(task.instructions) ? task.instructions.join('\n') : task.instructions);
+    setInstructions(
+      Array.isArray(task.instructions)
+        ? task.instructions.join("\n")
+        : task.instructions,
+    );
     setOrder(task.order);
     setIsRequired(task.isRequired);
     setAcceptsText(task.submission?.acceptsText || false);
@@ -121,7 +150,7 @@ export default function TasksTab() {
     setMaxFiles(task.submission?.maxFiles || 1);
     setFileCategory(task.submission?.fileCategory || "image");
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const [deletingId, setDeletingId] = useState(null);
@@ -161,25 +190,41 @@ export default function TasksTab() {
   const activeTasks = useMemo(() => {
     if (!activeTab) return [];
     return tasks
-      .filter(t => (t.departmentId?._id || t.departmentId) === activeTab)
+      .filter((t) => (t.departmentId?._id || t.departmentId) === activeTab)
       .sort((a, b) => a.order - b.order);
   }, [tasks, activeTab]);
 
-  if (loading) return <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">Loading Data...</div>;
+  if (loading)
+    return (
+      <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">
+        Loading Data...
+      </div>
+    );
 
   return (
-    <div className="space-y-12">
-      {/* ─── Task Form ─── */}
-      <form onSubmit={handleSave} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden transition-colors">
-        {/* Subtle top glow */}
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-12"
+    >
+      <motion.form
+        variants={itemVariants}
+        onSubmit={handleSave}
+        className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden transition-colors"
+      >
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-600/50 to-transparent" />
-        
+
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold  tracking-tight text-slate-800 dark:text-slate-50">
-            {editId ? 'Edit Task' : 'Create New Task'}
+            {editId ? "Edit Task" : "Create New Task"}
           </h2>
           {editId && (
-            <button type="button" onClick={resetForm} className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+            >
               Cancel Edit
             </button>
           )}
@@ -187,118 +232,211 @@ export default function TasksTab() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">Department</label>
-            <Select value={departmentId || undefined} onValueChange={setDepartmentId}>
+            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+              Department
+            </label>
+            <Select
+              value={departmentId || undefined}
+              onValueChange={setDepartmentId}
+            >
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
                 <SelectValue placeholder="Select Department">
-                  {departments.find(d => d._id.toString() === (departmentId || "").toString())?.name || "Select Department"}
+                  {departments.find(
+                    (d) => d._id.toString() === (departmentId || "").toString(),
+                  )?.name || "Select Department"}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                {departments.map(d => (
-                  <SelectItem key={d._id} value={d._id.toString()} className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50">
+                {departments.map((d) => (
+                  <SelectItem
+                    key={d._id}
+                    value={d._id.toString()}
+                    className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
+                  >
                     {d.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">Title</label>
-            <input 
-              required 
-              value={title} 
-              onChange={e=>setTitle(e.target.value)} 
+            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+              Title
+            </label>
+            <input
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Write an Instagram Caption"
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20" 
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20"
             />
           </div>
 
           <div className="md:col-span-2 space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">Summary</label>
-            <textarea 
-              required 
-              value={summary} 
-              onChange={e=>setSummary(e.target.value)} 
+            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+              Summary
+            </label>
+            <textarea
+              required
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
               placeholder="Brief description of what needs to be done..."
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none" 
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none"
               rows="2"
             />
           </div>
 
           <div className="md:col-span-2 space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">Instructions (One per line)</label>
-            <textarea 
-              required 
-              value={instructions} 
-              onChange={e=>setInstructions(e.target.value)} 
+            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+              Instructions (One per line)
+            </label>
+            <textarea
+              required
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
               placeholder="1. Read the guidelines\n2. Draft the caption\n3. Submit for review"
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none font-mono" 
+              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none font-mono"
               rows="4"
             />
           </div>
         </div>
 
-        {/* Configuration Bar */}
         <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row gap-6 items-center justify-between">
           <div className="flex flex-wrap items-center gap-6">
             <label className="group flex items-center gap-3 cursor-pointer">
-              <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isRequired ? 'bg-blue-600 border-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-600'}`}>
+              <div
+                className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isRequired ? "bg-blue-600 border-transparent" : "bg-transparent border border-slate-300 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-600"}`}
+              >
                 {isRequired && <span className="text-white text-xs">✓</span>}
               </div>
-              <input type="checkbox" checked={isRequired} onChange={e=>setIsRequired(e.target.checked)} className="hidden" />
-              <span className="text-xs tracking-tight text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">Required Task</span>
+              <input
+                type="checkbox"
+                checked={isRequired}
+                onChange={(e) => setIsRequired(e.target.checked)}
+                className="hidden"
+              />
+              <span className="text-xs tracking-tight text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">
+                Required Task
+              </span>
             </label>
-            
+
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden md:block" />
-            
+
             <div className="flex items-center gap-4">
-              <span className="text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">Accepts:</span>
-              
+              <span className="text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+                Accepts:
+              </span>
+
               <label className="group flex items-center gap-2 cursor-pointer">
-                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsText ? 'bg-blue-600 border-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-700'}`}>
-                  {acceptsText && <span className="text-white text-[10px]">✓</span>}
+                <div
+                  className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsText ? "bg-blue-600 border-transparent" : "bg-transparent border border-slate-300 dark:border-slate-700"}`}
+                >
+                  {acceptsText && (
+                    <span className="text-white text-[10px]">✓</span>
+                  )}
                 </div>
-                <input type="checkbox" checked={acceptsText} onChange={e=>setAcceptsText(e.target.checked)} className="hidden" />
-                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">Text</span>
+                <input
+                  type="checkbox"
+                  checked={acceptsText}
+                  onChange={(e) => setAcceptsText(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">
+                  Text
+                </span>
               </label>
 
               <label className="group flex items-center gap-2 cursor-pointer">
-                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsLinks ? 'bg-blue-600 border-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-700'}`}>
-                  {acceptsLinks && <span className="text-white text-[10px]">✓</span>}
+                <div
+                  className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsLinks ? "bg-blue-600 border-transparent" : "bg-transparent border border-slate-300 dark:border-slate-700"}`}
+                >
+                  {acceptsLinks && (
+                    <span className="text-white text-[10px]">✓</span>
+                  )}
                 </div>
-                <input type="checkbox" checked={acceptsLinks} onChange={e=>setAcceptsLinks(e.target.checked)} className="hidden" />
-                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">Links</span>
+                <input
+                  type="checkbox"
+                  checked={acceptsLinks}
+                  onChange={(e) => setAcceptsLinks(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">
+                  Links
+                </span>
               </label>
-              
+
               {acceptsLinks && (
                 <div className="flex items-center gap-2 mr-4">
-                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Max Links:</span>
-                  <input type="number" min="1" max="10" value={maxLinks} onChange={e=>setMaxLinks(e.target.value)} className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none" />
+                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
+                    Max Links:
+                  </span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={maxLinks}
+                    onChange={(e) => setMaxLinks(e.target.value)}
+                    className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none"
+                  />
                 </div>
               )}
 
               <label className="group flex items-center gap-2 cursor-pointer">
-                <div className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsFiles ? 'bg-blue-600 border-transparent' : 'bg-transparent border border-slate-300 dark:border-slate-700'}`}>
-                  {acceptsFiles && <span className="text-white text-[10px]">✓</span>}
+                <div
+                  className={`w-4 h-4 rounded-sm flex items-center justify-center transition-colors ${acceptsFiles ? "bg-blue-600 border-transparent" : "bg-transparent border border-slate-300 dark:border-slate-700"}`}
+                >
+                  {acceptsFiles && (
+                    <span className="text-white text-[10px]">✓</span>
+                  )}
                 </div>
-                <input type="checkbox" checked={acceptsFiles} onChange={e=>setAcceptsFiles(e.target.checked)} className="hidden" />
-                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">Files</span>
+                <input
+                  type="checkbox"
+                  checked={acceptsFiles}
+                  onChange={(e) => setAcceptsFiles(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-xs tracking-tight text-slate-500 dark:text-slate-400">
+                  Files
+                </span>
               </label>
 
               {acceptsFiles && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Max Files:</span>
-                  <input type="number" min="1" max="10" value={maxFiles} onChange={e=>setMaxFiles(e.target.value)} className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none" />
+                  <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
+                    Max Files:
+                  </span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={maxFiles}
+                    onChange={(e) => setMaxFiles(e.target.value)}
+                    className="w-12 h-7 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 outline-none"
+                  />
                   <Select value={fileCategory} onValueChange={setFileCategory}>
                     <SelectTrigger className="w-24 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-[10px] font-semibold text-slate-700 dark:text-slate-300 h-7">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 min-w-[6rem]">
-                      <SelectItem value="image" className="text-[10px] font-semibold">IMAGES</SelectItem>
-                      <SelectItem value="video" className="text-[10px] font-semibold">VIDEOS</SelectItem>
-                      <SelectItem value="raw" className="text-[10px] font-semibold">ANY FILE</SelectItem>
+                      <SelectItem
+                        value="image"
+                        className="text-[10px] font-semibold"
+                      >
+                        IMAGES
+                      </SelectItem>
+                      <SelectItem
+                        value="video"
+                        className="text-[10px] font-semibold"
+                      >
+                        VIDEOS
+                      </SelectItem>
+                      <SelectItem
+                        value="raw"
+                        className="text-[10px] font-semibold"
+                      >
+                        ANY FILE
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -306,20 +444,24 @@ export default function TasksTab() {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSaving}
             className="w-full lg:w-auto bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 rounded-full text-xs font-bold tracking-tight transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {editId ? (isSaving ? 'Updating...' : 'Update Task') : (isSaving ? 'Creating...' : 'Create Task')}
+            {editId
+              ? isSaving
+                ? "Updating..."
+                : "Update Task"
+              : isSaving
+                ? "Creating..."
+                : "Create Task"}
           </button>
         </div>
-      </form>
+      </motion.form>
 
-      {/* ─── Department Tabs & Task List Table ─── */}
-      <div className="space-y-6">
-        {/* Horizontal Department Tabs */}
+      <motion.div variants={itemVariants} className="space-y-6">
         <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
           {departments.map((dept) => (
             <button
@@ -341,38 +483,70 @@ export default function TasksTab() {
             <table className="w-full text-left whitespace-nowrap">
               <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4 font-normal w-16 text-center">Ord</th>
+                  <th className="px-6 py-4 font-normal w-16 text-center">
+                    Ord
+                  </th>
                   <th className="px-6 py-4 font-normal">Title</th>
                   <th className="px-6 py-4 font-normal">Accepts</th>
                   <th className="px-6 py-4 font-normal text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
+              <motion.tbody
+                variants={containerVariants}
+                className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
+              >
                 {activeTasks.length === 0 ? (
-                  <tr><td colSpan="4" className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">No tasks found for this department</td></tr>
+                  <motion.tr variants={itemVariants}>
+                    <td
+                      colSpan="4"
+                      className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
+                    >
+                      No tasks found for this department
+                    </td>
+                  </motion.tr>
                 ) : (
                   activeTasks.map((task) => (
-                    <tr key={task._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                      <td className="px-6 py-5 text-center text-slate-500 dark:text-slate-400 font-mono text-sm">{task.order}</td>
-                      <td className="px-6 py-5 font-bold text-slate-800 dark:text-slate-200 tracking-wide">{task.title}</td>
+                    <motion.tr
+                      variants={itemVariants}
+                      key={task._id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                    >
+                      <td className="px-6 py-5 text-center text-slate-500 dark:text-slate-400 font-mono text-sm">
+                        {task.order}
+                      </td>
+                      <td className="px-6 py-5 font-bold text-slate-800 dark:text-slate-200 tracking-wide">
+                        {task.title}
+                      </td>
                       <td className="px-6 py-5">
                         <div className="flex gap-2">
-                          {task.submission?.acceptsText && <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">TXT</span>}
-                          {task.submission?.acceptsLinks && <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">LNK</span>}
-                          {task.submission?.acceptsFiles && <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">FILE</span>}
+                          {task.submission?.acceptsText && (
+                            <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">
+                              TXT
+                            </span>
+                          )}
+                          {task.submission?.acceptsLinks && (
+                            <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">
+                              LNK
+                            </span>
+                          )}
+                          {task.submission?.acceptsFiles && (
+                            <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-1 text-[10px]  tracking-widest">
+                              FILE
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="flex items-center justify-end gap-3">
-                          <button 
-                            onClick={() => handleEdit(task)} 
+                          <button
+                            onClick={() => handleEdit(task)}
                             title="Edit Task"
                             className="text-slate-400 hover:text-blue-600 transition-colors p-1"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <button 
-                            onClick={() => confirmDelete(task._id)} 
+                          <button
+                            onClick={() => confirmDelete(task._id)}
                             title="Delete Task"
                             className="text-slate-400 hover:text-red-500 transition-colors p-1"
                           >
@@ -380,31 +554,38 @@ export default function TasksTab() {
                           </button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))
                 )}
-              </tbody>
+              </motion.tbody>
             </table>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <AlertDialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
+      <AlertDialog
+        open={!!deletingId}
+        onOpenChange={(open) => !open && setDeletingId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this task.
+              This action cannot be undone. This will permanently delete this
+              task.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={executeDelete} className="bg-red-600 hover:bg-red-700 text-white">
+            <AlertDialogAction
+              onClick={executeDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
               Delete Task
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }

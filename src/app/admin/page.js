@@ -13,6 +13,24 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export default function AdminDashboard() {
   const fetchApi = useApi();
@@ -41,18 +59,17 @@ export default function AdminDashboard() {
       a.click();
       a.remove();
 
-      // Keep spinner until the browser save dialog is dismissed (window regains focus)
       const reset = () => {
         window.URL.revokeObjectURL(url);
         setExportingId(null);
       };
       window.addEventListener("focus", reset, { once: true });
-      // Safety fallback: reset after 60s if focus never fires
+
       const fallback = setTimeout(() => {
         window.removeEventListener("focus", reset);
         reset();
       }, 60000);
-      // Clean up fallback if focus fires first
+
       window.addEventListener("focus", () => clearTimeout(fallback), {
         once: true,
       });
@@ -91,7 +108,6 @@ export default function AdminDashboard() {
         }
 
         if (appsRes?.applications) {
-          // Slice the first 5 just in case the backend didn't respect the limit query
           setRecentApps(appsRes.applications.slice(0, 5));
         }
       } catch (err) {
@@ -104,9 +120,11 @@ export default function AdminDashboard() {
   }, [fetchApi]);
 
   return (
-    <>
-      {/* Header */}
-      <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.header
+        variants={itemVariants}
+        className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
+      >
         <div>
           <h1 className="text-3xl md:text-5xl font-black  tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             Admin Dashboard
@@ -115,10 +133,12 @@ export default function AdminDashboard() {
             Manage operations, members, and content seamlessly.
           </p>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Stats Cards Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+      >
         {[
           {
             label: "Total Applications",
@@ -159,10 +179,9 @@ export default function AdminDashboard() {
             </div>
           );
         })}
-      </div>
+      </motion.div>
 
-      {/* Export Sheets Section */}
-      <section className="mb-16">
+      <motion.section variants={itemVariants} className="mb-16">
         <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
           <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
             Export Sheets
@@ -230,10 +249,9 @@ export default function AdminDashboard() {
             );
           })}
         </div>
-      </section>
+      </motion.section>
 
-      {/* Recent Applications Table */}
-      <section>
+      <motion.section variants={itemVariants}>
         <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
           <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
             Latest Applications
@@ -311,7 +329,7 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
-      </section>
-    </>
+      </motion.section>
+    </motion.div>
   );
 }

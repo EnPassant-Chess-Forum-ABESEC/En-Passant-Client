@@ -13,6 +13,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import AdminSearchBar from "./AdminSearchBar";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+};
 
 export default function PaymentsTab() {
   const fetchApi = useApi();
@@ -44,7 +58,7 @@ export default function PaymentsTab() {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  async function loadData() {
     setLoading(true);
     try {
       const res = await fetchApi("/admin/payments");
@@ -102,8 +116,14 @@ export default function PaymentsTab() {
     );
 
   return (
-    <div className="space-y-6">
-      <AdminSearchBar
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants}>
+        <AdminSearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         statusFilter={statusFilter}
@@ -114,7 +134,8 @@ export default function PaymentsTab() {
           { label: "Failed", value: "FAILED" },
         ]}
       />
-      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
+      </motion.div>
+      <motion.div variants={itemVariants} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
         <div className="overflow-x-auto">
         <table className="w-full text-left whitespace-nowrap">
           <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
@@ -128,19 +149,20 @@ export default function PaymentsTab() {
               <th className="px-6 py-4 font-normal text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
+          <motion.tbody variants={containerVariants} className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
             {filteredPayments.length === 0 ? (
-              <tr>
+              <motion.tr variants={itemVariants}>
                 <td
                   colSpan="7"
                   className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
                 >
                   No payments found
                 </td>
-              </tr>
+              </motion.tr>
             ) : (
               filteredPayments.map((payment) => (
-                <tr
+                <motion.tr
+                  variants={itemVariants}
                   key={payment._id}
                   className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                 >
@@ -248,13 +270,13 @@ export default function PaymentsTab() {
                       </div>
                     )}
                   </td>
-                </tr>
+                </motion.tr>
               ))
             )}
-          </tbody>
+          </motion.tbody>
         </table>
       </div>
-      </div>
+      </motion.div>
 
       <AlertDialog
         open={!!confirmAction}
@@ -310,6 +332,6 @@ export default function PaymentsTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }

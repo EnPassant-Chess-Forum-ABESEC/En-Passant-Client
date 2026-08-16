@@ -5,6 +5,24 @@ import { useApi } from "@/lib/api";
 import { Save, Calendar as CalendarIcon, Clock, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export default function AdminSettingsPage() {
   const fetchApi = useApi();
@@ -25,11 +43,10 @@ export default function AdminSettingsPage() {
     try {
       const res = await fetchApi("/settings/recruitment-phases");
       if (res.data) {
-        // Convert to local datetime-local string format (YYYY-MM-DDThh:mm)
         const formatForInput = (isoString) => {
           if (!isoString) return "";
           const d = new Date(isoString);
-          // Need to handle timezone offset so the input shows the correct local time
+
           const tzOffset = d.getTimezoneOffset() * 60000;
           return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
         };
@@ -79,17 +96,25 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl">
-      <div className="mb-8">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="max-w-4xl"
+    >
+      <motion.div variants={itemVariants} className="mb-8">
         <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-2">
           Recruitment Settings
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
           Configure global settings and recruitment phases.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8 transition-colors">
+      <motion.div
+        variants={itemVariants}
+        className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8 transition-colors"
+      >
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
             <CalendarIcon className="w-5 h-5" />
@@ -180,7 +205,7 @@ export default function AdminSettingsPage() {
             {saving ? "Saving..." : "Save Settings"}
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

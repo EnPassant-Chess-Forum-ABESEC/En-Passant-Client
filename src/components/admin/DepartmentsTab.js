@@ -12,6 +12,24 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export default function DepartmentsTab() {
   const fetchApi = useApi();
@@ -28,7 +46,7 @@ export default function DepartmentsTab() {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  async function loadData() {
     setLoading(true);
     try {
       const res = await fetchApi("/admin/departments");
@@ -37,7 +55,7 @@ export default function DepartmentsTab() {
       alert("Error: " + err.message);
     }
     setLoading(false);
-  };
+  }
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -100,8 +118,14 @@ export default function DepartmentsTab() {
     );
 
   return (
-    <div className="space-y-12">
-      <form
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-12"
+    >
+      <motion.form
+        variants={itemVariants}
         onSubmit={handleSave}
         className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden transition-colors"
       >
@@ -173,10 +197,12 @@ export default function DepartmentsTab() {
             {editId ? "Update Department" : "Create Department"}
           </button>
         </div>
-      </form>
+      </motion.form>
 
-      {/* ─── Department List Table ─── */}
-      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
+      <motion.div
+        variants={itemVariants}
+        className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
@@ -188,19 +214,23 @@ export default function DepartmentsTab() {
                 <th className="px-6 py-4 font-normal text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200">
+            <motion.tbody
+              variants={containerVariants}
+              className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
+            >
               {departments.length === 0 && (
-                <tr>
+                <motion.tr variants={itemVariants}>
                   <td
                     colSpan="5"
                     className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
                   >
                     No departments found
                   </td>
-                </tr>
+                </motion.tr>
               )}
               {departments.map((dept) => (
-                <tr
+                <motion.tr
+                  variants={itemVariants}
                   key={dept._id}
                   className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                 >
@@ -234,12 +264,12 @@ export default function DepartmentsTab() {
                       </button>
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
 
       <AlertDialog
         open={!!deletingId}
@@ -264,6 +294,6 @@ export default function DepartmentsTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }

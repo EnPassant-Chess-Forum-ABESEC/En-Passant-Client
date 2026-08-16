@@ -5,6 +5,20 @@ import { useApi } from "@/lib/api";
 import { CheckCircle2, Loader2, MailOpen, Clock, Search } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+};
 
 export default function QueriesTab() {
   const fetchApi = useApi();
@@ -13,11 +27,7 @@ export default function QueriesTab() {
   const [updatingId, setUpdatingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    loadQueries();
-  }, []);
-
-  const loadQueries = async () => {
+  async function loadQueries() {
     setLoading(true);
     try {
       const res = await fetchApi("/contact");
@@ -28,6 +38,10 @@ export default function QueriesTab() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadQueries();
+  }, []);
 
   const handleUpdateStatus = async (id, status) => {
     setUpdatingId(id);
@@ -64,8 +78,13 @@ export default function QueriesTab() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             User Queries
@@ -81,16 +100,17 @@ export default function QueriesTab() {
             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
           />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex flex-col gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col gap-4">
         {filteredQueries.length === 0 ? (
-          <div className="p-8 text-center text-slate-500 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl">
+          <motion.div variants={itemVariants} className="p-8 text-center text-slate-500 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl">
             No queries found.
-          </div>
+          </motion.div>
         ) : (
           filteredQueries.map((query) => (
-            <div
+            <motion.div
+              variants={itemVariants}
               key={query._id}
               className="p-6 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6"
             >
@@ -159,10 +179,10 @@ export default function QueriesTab() {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
           ))
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

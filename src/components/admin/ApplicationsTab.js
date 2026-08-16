@@ -3,6 +3,21 @@ import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import AdminSearchBar from "./AdminSearchBar";
 import { User, Eye, Mail, ChevronLeft, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+};
+
 import {
   Select,
   SelectContent,
@@ -74,11 +89,7 @@ export default function ApplicationsTab() {
     { label: "Rejected", value: "REJECTED" },
   ];
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  async function loadData() {
     setLoading(true);
     try {
       const res = await fetchApi("/admin/applications");
@@ -88,6 +99,10 @@ export default function ApplicationsTab() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const updateApplicationStatus = async (id, newStatus) => {
     try {
@@ -216,8 +231,13 @@ export default function ApplicationsTab() {
 
   if (selectedAppId) {
     return (
-      <div className="space-y-6">
-        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg p-8 transition-colors">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="space-y-6"
+      >
+        <motion.div variants={itemVariants} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg p-8 transition-colors">
           <div className="mb-6 flex justify-between items-center">
             <button
               onClick={() => setSelectedAppId(null)}
@@ -322,10 +342,10 @@ export default function ApplicationsTab() {
               Failed to load application details.
             </div>
           )}
-        </div>
+        </motion.div>
 
         {appDetails && (
-          <div className="space-y-6">
+          <motion.div variants={itemVariants} className="space-y-6">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-50 tracking-tight px-2">
               Task Submissions
             </h3>
@@ -431,28 +451,34 @@ export default function ApplicationsTab() {
                 </div>
               ))
             )}
-          </div>
+          </motion.div>
         )}
         {deleteDialog}
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div>
-      <AdminSearchBar
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={itemVariants}>
+        <AdminSearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         statusOptions={statusOptions}
       />
+      </motion.div>
 
-      <div className="space-y-4">
+      <motion.div variants={itemVariants} className="space-y-4 mt-6">
         {filteredAndSortedApps.length === 0 ? (
-          <div className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+          <motion.div variants={itemVariants} className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
             No applications match your criteria
-          </div>
+          </motion.div>
         ) : (
           filteredAndSortedApps.map((app) => {
             const relativeTime = timeAgo(app.createdAt);
@@ -466,7 +492,8 @@ export default function ApplicationsTab() {
             const shortId = app._id ? `${app._id.substring(0, 8)}` : "";
 
             return (
-              <div
+              <motion.div
+                variants={itemVariants}
                 key={app._id}
                 className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 group cursor-pointer"
                 onClick={() => viewDetails(app._id)}
@@ -542,12 +569,12 @@ export default function ApplicationsTab() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })
         )}
-      </div>
+      </motion.div>
       {deleteDialog}
-    </div>
+    </motion.div>
   );
 }
