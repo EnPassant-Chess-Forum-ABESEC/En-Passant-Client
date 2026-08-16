@@ -40,6 +40,15 @@ export default function ProfilePage() {
   }, [isLoaded]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("onboarding") === "true") {
+        setShowOnboardingModal(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const locked = isEditing || showOnboardingModal;
     document.documentElement.style.overflow = locked ? "hidden" : "unset";
     document.body.style.overflow = locked ? "hidden" : "unset";
