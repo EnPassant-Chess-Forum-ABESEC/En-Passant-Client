@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
+import { toast } from "sonner";
 import {
   FileText,
   CheckSquare,
@@ -10,7 +11,19 @@ import {
   Download,
   ChevronRight,
   Loader2,
+  Database,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
@@ -36,6 +49,27 @@ export default function AdminDashboard() {
   const fetchApi = useApi();
   const { getToken } = useAuth();
   const [exportingId, setExportingId] = useState(null);
+  const [isCleaningRedis, setIsCleaningRedis] = useState(false);
+  const [isRedisModalOpen, setIsRedisModalOpen] = useState(false);
+
+  const handleCleanRedis = async () => {
+    setIsCleaningRedis(true);
+    try {
+      const res = await fetchApi("/admin/redis/clean", { method: "POST" });
+
+      if (res?.success) {
+        toast.success("Redis sets cleaned successfully.");
+      } else {
+        toast.error("Failed to clean Redis sets: " + (res?.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error cleaning Redis: " + error.message);
+    } finally {
+      setIsCleaningRedis(false);
+      setIsRedisModalOpen(false);
+    }
+  };
 
   const createExportHandler = (id, endpoint, filename) => async () => {
     setExportingId(id);
@@ -75,7 +109,7 @@ export default function AdminDashboard() {
       });
     } catch (error) {
       console.error(error);
-      alert("Error exporting: " + error.message);
+      toast.error("Error exporting: " + error.message);
       setExportingId(null);
     }
   };
@@ -248,6 +282,67 @@ export default function AdminDashboard() {
               </div>
             );
           })}
+        </div>
+      </motion.section>
+
+      <motion.section variants={itemVariants} className="mb-16">
+        <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            System Actions
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+              <Database className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+              Clean Redis Sets
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+              Clear cached data and active sets from Redis. Use this if the system state is stale or out of sync.
+            </p>
+            <AlertDialog open={isRedisModalOpen} onOpenChange={setIsRedisModalOpen}>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={isCleaningRedis}
+                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isCleaningRedis ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Cleaning...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="w-3.5 h-3.5" /> Clean Redis
+                    </>
+                  )}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                    Clean Redis Leaderboard Sets?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                    This action cannot be undone. This will permanently remove all cached leaderboard data and sorted sets from Redis.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleCleanRedis}
+                    className="bg-red-500 hover:bg-red-600 text-white border-0"
+                  >
+                    Yes, Clean Sets
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </motion.section>
 

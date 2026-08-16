@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function AuthLayout({ children }) {
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden flex items-center justify-center">
@@ -30,15 +32,13 @@ export default function AuthLayout({ children }) {
             backgroundRepeat: "no-repeat",
           }}
         >
-          <img
+          <Image
             src="/auth/login_signup_figure.png"
             alt=""
             aria-hidden="true"
+            fill
+            priority
             style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
               objectFit: "cover",
               objectPosition: "center 15%",
               transform: "scaleX(-1)",
