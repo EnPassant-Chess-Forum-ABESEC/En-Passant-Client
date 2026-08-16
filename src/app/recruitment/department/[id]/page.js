@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useApi } from "@/lib/api";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import TaskAccordion from "@/components/TaskAccordion";
 import Image from "next/image";
 import TaskCountdown from "@/components/TaskCountdown";
@@ -88,6 +89,23 @@ export default function DepartmentTasksPage() {
       "REJECTED",
     ].includes(application.status);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   return (
     <div className="h-screen bg-[#050505] relative overflow-hidden text-white font-sans selection:bg-[#9b1a1a]/40 flex flex-col">
       <div className="absolute top-0 left-0 w-full md:w-[60%] h-full z-0 pointer-events-none">
@@ -103,13 +121,18 @@ export default function DepartmentTasksPage() {
         <div className="absolute inset-x-0 bottom-0 h-[20vh] bg-gradient-to-t from-[#050505] to-transparent" />
       </div>
 
-      <div className="relative z-10 flex flex-col flex-1 min-h-0 pt-20 lg:pt-24 pb-6 px-6 md:px-10 lg:px-16 gap-4">
-        <div className="shrink-0 px-2">
+      <motion.div 
+        className="relative z-10 flex flex-col flex-1 min-h-0 pt-20 lg:pt-24 pb-6 px-6 md:px-10 lg:px-16 gap-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants} className="shrink-0 px-2">
           <h1 className="text-[10vw] md:text-[5vw] lg:text-[60px] font-pezula uppercase tracking-wide leading-none text-white drop-shadow-lg break-words">
             {loading ? "..." : departmentName || "DEPARTMENT"}
           </h1>
-        </div>
-        <div ref={tasksSectionRef} className="flex-1 min-h-0 w-full">
+        </motion.div>
+        <motion.div variants={itemVariants} ref={tasksSectionRef} className="flex-1 min-h-0 w-full">
           {loading ? (
             <div className="text-center text-white/40 uppercase tracking-widest text-sm py-12">
               Fetching classified tasks...
@@ -176,8 +199,8 @@ export default function DepartmentTasksPage() {
               departmentId={id}
             />
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
