@@ -13,6 +13,7 @@ import {
 import { useApi } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import SpecularButton from "@/components/SpecularButton";
+import TaskCountdown from "@/components/TaskCountdown";
 import {
   useSignUp,
   useSignIn,
@@ -56,6 +57,19 @@ export default function RecruitmentApplyPage() {
 
   const [settings, setSettings] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
+  const [isBeforeStart, setIsBeforeStart] = useState(false);
+
+  useEffect(() => {
+    if (settings?.applicationStartDate) {
+      const start = new Date(settings.applicationStartDate);
+      setIsBeforeStart(new Date() < start);
+      
+      const interval = setInterval(() => {
+        setIsBeforeStart(new Date() < start);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [settings]);
 
   useEffect(() => {
     async function loadSettings() {
@@ -587,26 +601,38 @@ export default function RecruitmentApplyPage() {
         >
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
-          <div className="pb-2 relative z-10 flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-[2rem] font-pezula uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-1 leading-none">
-                {getStepTitle()}
+          {isBeforeStart ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10 px-4">
+              <h2 className="text-[1.8rem] md:text-[2.2rem] font-pezula uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-8 leading-tight">
+                Applications Opening Soon
               </h2>
-              <p className="text-white/50 text-[14px] font-inter font-medium tracking-wide">
-                {getStepDesc()}
+              <TaskCountdown targetDate={new Date(settings.applicationStartDate)} />
+              <p className="text-white/40 text-[12px] uppercase tracking-widest mt-8">
+                Stay tuned
               </p>
             </div>
+          ) : (
+            <>
+              <div className="pb-2 relative z-10 flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-[2rem] font-pezula uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-1 leading-none">
+                    {getStepTitle()}
+                  </h2>
+                  <p className="text-white/50 text-[14px] font-inter font-medium tracking-wide">
+                    {getStepDesc()}
+                  </p>
+                </div>
 
-            {currentStep > 0 && currentStep < 4 && (
-              <button
-                onClick={handleBack}
-                className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest self-start mt-2 shrink-0"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
-            )}
-          </div>
+                {currentStep > 0 && currentStep < 4 && (
+                  <button
+                    onClick={handleBack}
+                    className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest self-start mt-2 shrink-0"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>Back</span>
+                  </button>
+                )}
+              </div>
 
           <div
             className="pt-6 pb-8 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
@@ -1056,6 +1082,8 @@ export default function RecruitmentApplyPage() {
               </div>
             )}
           </div>
+            </>
+          )}
         </div>
       </div>
 

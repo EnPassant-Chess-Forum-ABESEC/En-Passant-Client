@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Loader2,
   Database,
+  CloudLightning,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -51,6 +52,8 @@ export default function AdminDashboard() {
   const [exportingId, setExportingId] = useState(null);
   const [isCleaningRedis, setIsCleaningRedis] = useState(false);
   const [isRedisModalOpen, setIsRedisModalOpen] = useState(false);
+  const [isCleaningCloud, setIsCleaningCloud] = useState(false);
+  const [isCloudModalOpen, setIsCloudModalOpen] = useState(false);
 
   const handleCleanRedis = async () => {
     setIsCleaningRedis(true);
@@ -68,6 +71,25 @@ export default function AdminDashboard() {
     } finally {
       setIsCleaningRedis(false);
       setIsRedisModalOpen(false);
+    }
+  };
+
+  const handleCleanCloud = async () => {
+    setIsCleaningCloud(true);
+    try {
+      const res = await fetchApi("/admin/cloud/clean", { method: "POST" });
+
+      if (res?.success) {
+        toast.success("Cloud files cleaned successfully.");
+      } else {
+        toast.error("Failed to clean cloud files: " + (res?.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error cleaning cloud files: " + error.message);
+    } finally {
+      setIsCleaningCloud(false);
+      setIsCloudModalOpen(false);
     }
   };
 
@@ -338,6 +360,58 @@ export default function AdminDashboard() {
                     className="bg-red-500 hover:bg-red-600 text-white border-0"
                   >
                     Yes, Clean Sets
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+
+          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+              <CloudLightning className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+              Clean Cloud Files
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+              Delete all files stored in Cloudinary. Use this to clear uploaded receipts, submissions, and test files.
+            </p>
+            <AlertDialog open={isCloudModalOpen} onOpenChange={setIsCloudModalOpen}>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={isCleaningCloud}
+                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isCleaningCloud ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Cleaning...
+                    </>
+                  ) : (
+                    <>
+                      <CloudLightning className="w-3.5 h-3.5" /> Clean Cloud
+                    </>
+                  )}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                    Clean Cloudinary Files?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                    This action cannot be undone. This will permanently delete all files uploaded to Cloudinary, including receipts and user submissions.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleCleanCloud}
+                    className="bg-red-500 hover:bg-red-600 text-white border-0"
+                  >
+                    Yes, Clean Files
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
