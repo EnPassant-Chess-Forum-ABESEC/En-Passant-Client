@@ -37,7 +37,11 @@ export default function TermsPage() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] },
+    },
   };
 
   return (
@@ -45,8 +49,7 @@ export default function TermsPage() {
       <ChessGridBackground showPieces={false} />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto flex flex-col gap-12 lg:gap-20">
-        {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
@@ -69,15 +72,18 @@ export default function TermsPage() {
           </div>
         </motion.div>
 
-        {/* Editorial Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 lg:gap-y-16"
         >
           {terms.map((term, index) => (
-            <motion.div key={index} variants={itemVariants} className="flex flex-col">
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="flex flex-col"
+            >
               <h3 className="text-white font-pezula font-bold text-[18px] lg:text-[22px] tracking-[0.15em] uppercase mb-4 pb-3 border-b border-[#9b1a1a]/30 flex items-center gap-3">
                 <span className="text-[#9b1a1a] font-sans text-[14px]">›</span>
                 {term.title}

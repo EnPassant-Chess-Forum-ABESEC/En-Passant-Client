@@ -16,9 +16,6 @@ const clubImages = [
   "/our_legacy/10.jpg",
 ];
 
-// Pre-calculated scrambled indices to ensure all 10 images are used,
-// no two identical images appear in the same column (which has 3 items),
-// and no two identical images are adjacent horizontally.
 const randomizedIndices = [2, 9, 5, 6, 1, 7, 1, 0, 4, 8, 4, 8, 3, 2, 9];
 
 const items = randomizedIndices.map((imgIndex, i) => ({
@@ -40,18 +37,16 @@ export default function DriftWallSection() {
 
   return (
     <section className="relative w-full bg-[#050505] overflow-hidden font-sans py-24">
-      {/* Dark Marble Texture Background */}
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
-          backgroundImage: 'url("/dark_marble_bg.png")',
+          backgroundImage: 'url("/common/dark_marble_bg.png")',
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       ></div>
       <div className="absolute inset-0 z-0 bg-black/40 pointer-events-none"></div>
 
-      {/* Top Fade */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 mb-16 text-left">
@@ -81,7 +76,6 @@ export default function DriftWallSection() {
         </h2>
       </div>
 
-      {/* DriftWall Container */}
       <div className="relative w-full h-[600px] md:h-[800px] z-20">
         <DriftWall
           items={items}
@@ -99,7 +93,6 @@ export default function DriftWallSection() {
         />
       </div>
 
-      {/* Bottom Fade - transitions into ClubJournalSection's #0a0a0a */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-30 pointer-events-none" />
     </section>
   );

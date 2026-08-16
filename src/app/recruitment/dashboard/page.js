@@ -197,7 +197,7 @@ export default function RecruitmentDashboard() {
           className="absolute inset-x-0 -top-[5%] -bottom-[10%] z-0 bg-[#050505]"
         >
           <Image
-            src="/recruitment_dashboard_hero.png"
+            src="/recruitment/recruitment_dashboard_hero.png"
             alt="Dashboard Hero"
             fill
             style={{

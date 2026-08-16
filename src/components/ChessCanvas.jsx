@@ -5,12 +5,11 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Center } from "@react-three/drei";
 
 function ChessPieceModel({ scrollYProgress }) {
-  const { scene } = useGLTF("/king.glb");
+  const { scene } = useGLTF("/models/king.glb");
   const modelRef = useRef();
 
   useFrame(() => {
     if (modelRef.current) {
-      // Map scroll progress (0 to 1) to rotation.
       modelRef.current.rotation.y = scrollYProgress.get() * Math.PI * 4;
     }
   });
@@ -38,4 +37,4 @@ export default function ChessCanvas({ scrollYProgress }) {
   );
 }
 
-useGLTF.preload("/king.glb");
+useGLTF.preload("/models/king.glb");

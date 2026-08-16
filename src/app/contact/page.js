@@ -77,7 +77,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-[#050505] relative overflow-hidden flex flex-col font-sans selection:bg-[#9b1a1a]/40">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
-          src="/contact_page_grid.png"
+          src="/contact/contact_page_grid.png"
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         />

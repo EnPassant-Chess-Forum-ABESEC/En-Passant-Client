@@ -37,7 +37,6 @@ export default function HeroSection({ children }) {
       >
         <div className="relative w-full max-w-7xl flex justify-start md:justify-center">
           <div className="relative flex flex-col md:flex-row items-start md:items-baseline justify-start md:justify-between uppercase leading-[0.85] text-[19vw] md:text-[11vw] lg:text-[10.5vw] w-full transform scale-y-[1.1] origin-bottom">
-            {/* EN on Mobile, inline on Desktop */}
             <div className="flex justify-start md:contents gap-[2vw] md:gap-0 w-full md:w-auto">
               {["E", "N"].map((letter, index) => (
                 <span
@@ -49,11 +48,9 @@ export default function HeroSection({ children }) {
                 </span>
               ))}
             </div>
-            
-            {/* Space on desktop */}
+
             <span className="hidden md:inline-block w-[2vw]" />
-            
-            {/* PASSANT on Mobile, inline on Desktop */}
+
             <div className="flex justify-start md:contents gap-[1vw] md:gap-0 w-full md:w-auto mt-[2vw] md:mt-0">
               {["P", "A", "S", "S", "A", "N", "T"].map((letter, index) => {
                 const actualIndex = index + 2;
@@ -86,7 +83,7 @@ export default function HeroSection({ children }) {
             }}
           >
             <Image
-              src="/hero.png"
+              src="/home/hero.png"
               alt="King"
               fill
               priority

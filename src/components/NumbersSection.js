@@ -38,7 +38,6 @@ export default function NumbersSection() {
     offset: ["start end", "end start"],
   });
 
-  // Stagger configurations
   const textVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -69,7 +68,7 @@ export default function NumbersSection() {
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
-          backgroundImage: 'url("/dark_marble_bg.png")',
+          backgroundImage: 'url("/common/dark_marble_bg.png")',
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -79,12 +78,10 @@ export default function NumbersSection() {
       <div className="absolute top-0 left-0 w-full h-[30vw] bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none"></div>
 
       <div className="relative w-full h-[240vw] md:h-[96vw]">
-        {/* Grid lines + mouse glow (pointer-events-none so clicks pass through) */}
         <div
           ref={gridRef}
           className="absolute inset-0 z-[1] pointer-events-none"
         >
-          {/* Base grid lines (desktop) — soft and diffused to match card borders */}
           <div
             className="absolute inset-0 opacity-[0.06] pointer-events-none hidden md:block"
             style={{
@@ -102,7 +99,6 @@ export default function NumbersSection() {
             }}
           />
 
-          {/* Mouse-following glow grid (desktop) */}
           {mouseInGrid && (
             <div
               className="absolute inset-0 pointer-events-none hidden md:block transition-opacity duration-200"
@@ -190,11 +186,11 @@ export default function NumbersSection() {
             className="absolute left-1/2 top-[40vw] md:top-[-5vw] -translate-x-1/2 w-[100vw] md:w-[60vw] h-[200vw] md:h-[100vw] z-10 pointer-events-none rotate-[6deg] flex items-center justify-center"
           >
             {isMobile ? (
-              <Image 
-                src="/3d_model_snapshot.png" 
-                alt="Chess King" 
-                width={800} 
-                height={800} 
+              <Image
+                src="/home/3d_model_snapshot.png"
+                alt="Chess King"
+                width={800}
+                height={800}
                 className="h-[260vw] w-auto object-contain opacity-80 max-w-none"
               />
             ) : (

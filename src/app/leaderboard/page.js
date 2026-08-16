@@ -97,12 +97,10 @@ export default function LeaderboardPage() {
       className="flex w-full items-center text-left group border-b border-white/[0.03] last:border-0"
       key={player.userId}
     >
-      {/* Rank */}
       <div className="py-3 px-2 md:py-6 md:px-8 font-mono text-white/20 font-bold text-xs md:text-lg group-hover:text-[#9b1a1a] transition-colors w-8 md:w-32 shrink-0 text-center md:text-left">
         #{i + 4 + (currentPage - 1) * itemsPerPage}
       </div>
 
-      {/* Avatar — desktop only */}
       <div className="hidden md:flex py-6 px-8 items-center gap-4">
         <div className="w-12 h-12 bg-[#111] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center rounded-full">
           {player.profilePictureUrl || player.profilePic || player.imageUrl ? (
@@ -121,7 +119,6 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Name — flex-1 */}
       <div className="py-3 px-2 md:py-6 md:px-4 flex-1 min-w-0">
         <div className="font-pezula font-bold text-xs md:text-lg text-white/70 group-hover:text-white transition-colors truncate">
           {player.username || player.userName}
@@ -131,13 +128,15 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Branch / Year — desktop only */}
       <div className="py-6 px-8 text-xs md:text-sm text-white/25 font-mono hidden md:block shrink-0 md:w-48 lg:w-64">
         {player.branch}
-        {player.year ? (player.year === 5 ? ` · Passed` : ` · Y${player.year}`) : ""}
+        {player.year
+          ? player.year === 5
+            ? ` · Passed`
+            : ` · Y${player.year}`
+          : ""}
       </div>
 
-      {/* Rating */}
       <div className="py-3 px-3 md:py-6 md:px-8 text-right shrink-0 w-16 md:w-32">
         <span className="font-pezula font-bold text-sm md:text-xl text-white/60 group-hover:text-white transition-colors tabular-nums">
           {player.rating}
@@ -149,18 +148,16 @@ export default function LeaderboardPage() {
   return (
     <div className="relative w-full bg-[#050505] font-sans overflow-hidden">
       <div className="relative w-full h-[255vw] md:h-[96vw] mt-24 md:mt-32">
-        {/* Dark Marble Texture */}
         <div
           className="absolute inset-0 z-0 opacity-30 pointer-events-none"
           style={{
-            backgroundImage: 'url("/dark_marble_bg.png")',
+            backgroundImage: 'url("/common/dark_marble_bg.png")',
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
         <div className="absolute inset-0 z-0 bg-black/60 pointer-events-none" />
 
-        {/* Desktop Chess Board Grid lines */}
         <div
           className="absolute inset-0 z-0 opacity-10 pointer-events-none hidden md:block"
           style={{
@@ -177,7 +174,6 @@ export default function LeaderboardPage() {
           }}
         />
 
-        {/* Mobile 2×6 grid borders */}
         <div className="absolute top-0 left-0 w-full h-full z-0 md:hidden flex flex-wrap pointer-events-none">
           {[...Array(12)].map((_, i) => (
             <div
@@ -187,7 +183,6 @@ export default function LeaderboardPage() {
           ))}
         </div>
 
-        {/* Row Labels Left (Desktop) */}
         <div className="absolute top-0 left-0 h-full hidden md:flex flex-col text-[#444] text-[9px] font-mono pr-2 z-10">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -199,7 +194,6 @@ export default function LeaderboardPage() {
           ))}
         </div>
 
-        {/* Row Labels Right (Desktop) */}
         <div className="absolute top-0 right-0 h-full hidden md:flex flex-col text-[#444] text-[9px] font-mono pl-2 z-10">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((row) => (
             <div
@@ -211,9 +205,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
 
-        {/* Inner grid content */}
         <div className="relative w-full h-full pt-20 md:pt-0">
-          {/* Title on the 1st row right side */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -230,7 +222,6 @@ export default function LeaderboardPage() {
             </h1>
           </motion.div>
 
-          {/* Time Control Filters (Mobile) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -248,7 +239,6 @@ export default function LeaderboardPage() {
             ))}
           </motion.div>
 
-          {/* ── TIME CONTROL FILTERS — Cols F–H, Row 2 (w=36vw h=12vw from left=62vw top=12vw) ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -273,7 +263,6 @@ export default function LeaderboardPage() {
             ))}
           </motion.div>
 
-          {/* ── LEFT TEXT BLOCK — Cols A–B, Rows 1-2 (w=24vw h=24vw from left=2vw top=0vw) ── */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -317,7 +306,6 @@ export default function LeaderboardPage() {
             </SpotlightCard>
           </motion.div>
 
-          {/* ── PLAYER #1 — Cols C–D (left-[26vw]), Rows 3–4 (top-[24vw]) ── */}
           {top3[0] && (
             <motion.div
               custom={0}
@@ -327,7 +315,6 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[127.5vw] md:top-[24vw] left-[50vw] md:left-[26vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              {/* Profile Image Area (2x2) */}
               <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
                 {top3[0].profilePic ||
                 top3[0].imageUrl ||
@@ -351,7 +338,6 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Progressive Blur Overlay (Fixed Masking) */}
                 <div
                   className="absolute inset-0 pointer-events-none z-0"
                   style={{
@@ -374,12 +360,13 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Details Overlay */}
-                <div 
+                <div
                   className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none z-0"
                   style={{
-                    WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
-                    maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
                   }}
                 >
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
@@ -396,7 +383,6 @@ export default function LeaderboardPage() {
             </motion.div>
           )}
 
-          {/* ── PLAYER #2 — Cols E–F (left-[50vw]), Rows 5–6 (top-[48vw]) ── */}
           {top3[1] && (
             <motion.div
               custom={1}
@@ -406,7 +392,6 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[170vw] md:top-[48vw] left-0 md:left-[50vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              {/* Profile Image Area (2x2) */}
               <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
                 {top3[1].profilePic ||
                 top3[1].imageUrl ||
@@ -430,7 +415,6 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Progressive Blur Overlay (Fixed Masking) */}
                 <div
                   className="absolute inset-0 pointer-events-none z-0"
                   style={{
@@ -453,12 +437,13 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Details Overlay */}
-                <div 
+                <div
                   className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none z-0"
                   style={{
-                    WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
-                    maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
                   }}
                 >
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
@@ -475,7 +460,6 @@ export default function LeaderboardPage() {
             </motion.div>
           )}
 
-          {/* ── PLAYER #3 — Cols G–H (left-[74vw]), Rows 7–8 (top-[72vw]) ── */}
           {top3[2] && (
             <motion.div
               custom={2}
@@ -485,7 +469,6 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[212.5vw] md:top-[72vw] left-[50vw] md:left-[74vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              {/* Profile Image Area (2x2) */}
               <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
                 {top3[2].profilePic ||
                 top3[2].imageUrl ||
@@ -509,7 +492,6 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Progressive Blur Overlay (Fixed Masking) */}
                 <div
                   className="absolute inset-0 pointer-events-none z-0"
                   style={{
@@ -532,12 +514,13 @@ export default function LeaderboardPage() {
                   </div>
                 )}
 
-                {/* Details Overlay */}
-                <div 
+                <div
                   className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none z-0"
                   style={{
-                    WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
-                    maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
+                    maskImage:
+                      "linear-gradient(to top, black 0%, transparent 100%)",
                   }}
                 >
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
@@ -553,7 +536,7 @@ export default function LeaderboardPage() {
               </div>
             </motion.div>
           )}
-          {/* ── RANKS INFO — Col A (left-[2vw]), Row 8 (top-[84vw]) ── */}
+
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -567,13 +550,9 @@ export default function LeaderboardPage() {
           </motion.div>
         </div>
 
-        {/* Bottom Fade */}
         <div className="absolute bottom-0 left-0 w-full h-[20vw] bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent z-10 pointer-events-none" />
       </div>
 
-      {/* ──────────────────────────────────────────
-          RANK 4+ TABLE
-         ────────────────────────────────────────── */}
       {rest.length > 0 && (
         <div className="relative w-full z-20 px-4 md:px-[4vw] mt-12 md:mt-16 pb-32">
           <div className="relative z-10 w-full mx-auto">
@@ -581,7 +560,7 @@ export default function LeaderboardPage() {
               <div
                 className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-screen"
                 style={{
-                  backgroundImage: 'url("/white_marble_texture.png")',
+                  backgroundImage: 'url("/common/white_marble_texture.png")',
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}

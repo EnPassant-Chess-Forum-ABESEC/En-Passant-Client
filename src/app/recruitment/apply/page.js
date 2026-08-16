@@ -502,7 +502,7 @@ export default function RecruitmentApplyPage() {
       <div
         className="hidden md:block absolute inset-0 z-0 opacity-40"
         style={{
-          backgroundImage: "url('/recruitment_apply_background.png')",
+          backgroundImage: "url('/recruitment/recruitment_apply_background.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -521,14 +521,14 @@ export default function RecruitmentApplyPage() {
           className="hidden lg:block relative flex-1"
           style={{
             backgroundColor: "#050505",
-            backgroundImage: "url('/dark_marble_bg.png')",
+            backgroundImage: "url('/common/dark_marble_bg.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         >
           <Image
-            src="/apply_page.png"
+            src="/recruitment/apply_page.png"
             alt="Club Recruitment"
             aria-hidden="true"
             fill
@@ -889,7 +889,7 @@ export default function RecruitmentApplyPage() {
                     </div>
 
                     <Image
-                      src="/payment_qr.jpeg"
+                      src="/recruitment/payment_qr.jpeg"
                       alt="Payment QR Code"
                       width={112}
                       height={112}

@@ -98,7 +98,21 @@ const SpecularButton = ({
   const fxRef = useRef(null);
   const propsRef = useRef({});
 
-  propsRef.current = {
+  useEffect(() => {
+    propsRef.current = {
+      radius,
+      lineColor,
+      baseColor,
+      intensity,
+      shineSize,
+      shineFade,
+      thickness,
+      speed,
+      followMouse,
+      proximity,
+      autoAnimate,
+    };
+  }, [
     radius,
     lineColor,
     baseColor,
@@ -110,7 +124,7 @@ const SpecularButton = ({
     followMouse,
     proximity,
     autoAnimate,
-  };
+  ]);
 
   useEffect(() => {
     const btn = btnRef.current;

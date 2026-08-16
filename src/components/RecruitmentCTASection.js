@@ -25,7 +25,7 @@ export default function RecruitmentCTASection() {
             className="relative w-[90vw] md:w-[55vw] h-[50vh] md:h-[80vh]"
           >
             <Image
-              src="/cta_image.png"
+              src="/home/cta_image.png"
               alt="En Passant – Apply Now"
               fill
               className="object-contain object-center"

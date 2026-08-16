@@ -66,7 +66,7 @@ export default function ChessGridBackground({ showPieces = true }) {
         >
           <div className="relative w-full h-full">
             <Image
-              src="/profile_page_asset.png"
+              src="/profile/profile_page_asset.png"
               alt=""
               fill
               className="object-contain object-bottom"

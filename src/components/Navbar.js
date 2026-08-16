@@ -91,7 +91,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="relative z-50 flex items-center hover:opacity-70 transition-opacity"
             >
-              <Image src="/logo.png" alt="EnPassant" width={26} height={26} />
+              <Image src="/common/logo.png" alt="EnPassant" width={26} height={26} />
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -104,7 +104,7 @@ export default function Navbar() {
                     transition-colors duration-200 py-1
                     ${
                       isActive(link.path)
-                        ? "text-[#c41e3a]"
+                        ? "text-[#9b1a1a]"
                         : "text-[#a0a0a0] hover:text-white"
                     }
                   `}
@@ -207,7 +207,7 @@ export default function Navbar() {
                       transition-colors duration-200 py-1
                       ${
                         isActive(link.path)
-                          ? "text-[#c41e3a]"
+                          ? "text-[#9b1a1a]"
                           : "text-white/60 hover:text-white/90"
                       }
                     `}

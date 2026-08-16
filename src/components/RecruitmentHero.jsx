@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 export default function RecruitmentHero() {
   const premiumEase = [0.16, 1, 0.3, 1];
   const containerRef = useRef(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -45,9 +45,8 @@ export default function RecruitmentHero() {
           }}
           className="w-full h-full relative"
         >
-          {/* REMOVED unoptimized FLAG TO ENABLE COMPRESSION */}
           <Image
-            src="/recruitment_hero_front_background.png"
+            src="/recruitment/recruitment_hero_front_background.png"
             alt="Background"
             fill
             priority
@@ -115,9 +114,8 @@ export default function RecruitmentHero() {
           }}
           className="w-full h-full relative"
         >
-          {/* REMOVED unoptimized FLAG TO ENABLE COMPRESSION */}
           <Image
-            src="/recruitment_hero_front.png"
+            src="/recruitment/recruitment_hero_front.png"
             alt="Recruitment Hero"
             fill
             priority

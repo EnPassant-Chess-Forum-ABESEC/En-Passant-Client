@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
 import { SiChessdotcom } from "react-icons/si";
+import { Copyright } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const columns = [
@@ -89,7 +90,7 @@ export default function Footer() {
                   lineHeight: 1,
                 }}
               >
-                Vive L' EN<span style={{ color: "#c41e3a" }}>PASSANT</span>
+                Vive L' EN<span style={{ color: "#9b1a1a" }}>PASSANT</span>
               </span>
               <p className="text-white/30 text-sm mt-3 font-sans tracking-widest uppercase">
                 For the game must always go on
@@ -104,7 +105,7 @@ export default function Footer() {
                   aria-label={s.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/25 hover:text-[#c41e3a] transition-all duration-300 hover:scale-110 cursor-pointer"
+                  className="text-white/25 hover:text-[#9b1a1a] transition-all duration-300 hover:scale-110 cursor-pointer"
                 >
                   {s.icon}
                 </a>
@@ -116,7 +117,7 @@ export default function Footer() {
             <div
               className="w-10 h-[2px] mb-8"
               style={{
-                background: "linear-gradient(to right, #c41e3a, transparent)",
+                background: "linear-gradient(to right, #9b1a1a, transparent)",
               }}
             />
             <blockquote>
@@ -129,7 +130,7 @@ export default function Footer() {
               </p>
               <footer
                 className="font-sans text-[11px] uppercase tracking-[0.22em] mt-6"
-                style={{ color: "rgba(196,30,58,0.7)" }}
+                style={{ color: "rgba(155,26,26,0.7)" }}
               >
                 — Savielly Tartakower
               </footer>
@@ -145,7 +146,7 @@ export default function Footer() {
                     style={{
                       letterSpacing: "0.15em",
                       color: "rgba(255,255,255,0.45)",
-                      borderBottom: "1px solid rgba(196,30,58,0.3)",
+                      borderBottom: "1px solid rgba(155,26,26,0.3)",
                       paddingBottom: "14px",
                       marginBottom: "24px",
                     }}
@@ -157,13 +158,13 @@ export default function Footer() {
                       <Link
                         key={link.label}
                         href={link.href}
-                        className="group flex items-center font-sans font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#c41e3a]"
+                        className="group flex items-center font-sans font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#9b1a1a]"
                         style={{
                           lineHeight: "2.4",
                           letterSpacing: "0.015em",
                         }}
                       >
-                        <span className="h-[1px] bg-[#c41e3a] transition-all duration-300 ease-out w-0 group-hover:w-6 group-hover:mr-3" />
+                        <span className="h-[1px] bg-[#9b1a1a] transition-all duration-300 ease-out w-0 group-hover:w-6 group-hover:mr-3" />
                         {link.label}
                       </Link>
                     ))}
@@ -177,10 +178,10 @@ export default function Footer() {
             className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 mt-6"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <span className="font-sans text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left">
-              © {new Date().getFullYear()} En Passant · ABESEC
+            <span className="font-sans text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5">
+              <Copyright strokeWidth={2.5} className="w-[11px] h-[11px] mt-px" /> {new Date().getFullYear()} En Passant · ABESEC
             </span>
-            
+
             <div className="flex items-center justify-center gap-4">
               <Link
                 href="/privacy"

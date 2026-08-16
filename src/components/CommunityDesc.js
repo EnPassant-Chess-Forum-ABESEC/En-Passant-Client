@@ -44,7 +44,7 @@ export default function CommunityDesc() {
           className="w-full h-full md:h-auto"
         >
           <Image
-            src="/comm_desc.png"
+            src="/home/comm_desc.png"
             alt="Think Before You Move"
             width={1920}
             height={1080}

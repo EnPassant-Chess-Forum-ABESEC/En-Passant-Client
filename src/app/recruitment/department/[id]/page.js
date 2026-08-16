@@ -110,7 +110,7 @@ export default function DepartmentTasksPage() {
     <div className="h-screen bg-[#050505] relative overflow-hidden text-white font-sans selection:bg-[#9b1a1a]/40 flex flex-col">
       <div className="absolute top-0 left-0 w-full md:w-[60%] h-full z-0 pointer-events-none">
         <Image
-          src="/lonely_pawn.png"
+          src="/recruitment/lonely_pawn.png"
           alt="Lonely Pawn Background"
           fill
           className="object-cover object-[80%_center] opacity-40"

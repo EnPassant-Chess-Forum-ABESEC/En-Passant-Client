@@ -8,10 +8,10 @@ async function fetchWithAuth(endpoint, token) {
   try {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      // Avoid aggressive caching for user-specific data
-      cache: 'no-store'
+
+      cache: "no-store",
     });
     return await res.json();
   } catch (error) {
@@ -22,17 +22,16 @@ async function fetchWithAuth(endpoint, token) {
 
 export default async function ApplyPage() {
   const { getToken, userId } = auth();
-  
+
   if (!userId) {
     redirect("/auth/sign-in");
   }
 
   const token = await getToken();
 
-  // Fetch application and tasks data concurrently
   const [appData, tasksData] = await Promise.all([
     fetchWithAuth("/recruitment/my-application", token),
-    fetchWithAuth("/tasks?year=2026", token)
+    fetchWithAuth("/tasks?year=2026", token),
   ]);
 
   let application = null;
@@ -44,13 +43,18 @@ export default async function ApplyPage() {
 
   if (tasksData?.tasks) {
     const uniqueDepts = [];
-    tasksData.tasks.forEach(t => {
-      if (!uniqueDepts.find(d => d._id === t.departmentId._id)) {
+    tasksData.tasks.forEach((t) => {
+      if (!uniqueDepts.find((d) => d._id === t.departmentId._id)) {
         uniqueDepts.push(t.departmentId);
       }
     });
     departments = uniqueDepts;
   }
 
-  return <ApplyForm initialApplication={application} initialDepartments={departments} />;
+  return (
+    <ApplyForm
+      initialApplication={application}
+      initialDepartments={departments}
+    />
+  );
 }

@@ -8,7 +8,6 @@ export const glassAppearance = {
       maxWidth: "450px",
     },
 
-    // cardBox and card are transparent — the glass shell is owned by auth/layout.js
     cardBox: {
       width: "100%",
       background: "transparent",
@@ -97,7 +96,6 @@ export const glassAppearance = {
       color: "#ffffff",
     },
 
-    // Footer — fully transparent so it blends into the cardBox glass
     cardFooter: {
       background: "transparent",
       borderTop: "1px solid rgba(255, 255, 255, 0.1)",
@@ -132,7 +130,6 @@ export const userButtonAppearance = {
     colorTextSecondary: "rgba(255, 255, 255, 0.5)",
   },
   elements: {
-    // Glass card — increased transparency so glassmorphism is more visible
     userButtonPopoverCard: {
       background: "rgba(20, 20, 20, 0.5) !important",
       backdropFilter: "blur(20px) !important",
@@ -144,7 +141,7 @@ export const userButtonAppearance = {
     userButtonPopoverMain: {
       background: "transparent !important",
     },
-    // User name at top
+
     userPreviewMainIdentifier: {
       color: "#ffffff !important",
       fontWeight: "600 !important",
@@ -152,11 +149,11 @@ export const userButtonAppearance = {
     userPreviewSecondaryIdentifier: {
       color: "rgba(255, 255, 255, 0.5) !important",
     },
-    // Thin divider line
+
     userButtonPopoverActionButtonsSeparator: {
       background: "rgba(255, 255, 255, 0.08) !important",
     },
-    // All action button rows (built-in + custom Profile link)
+
     userButtonPopoverActionButton: {
       color: "#ffffff !important",
       borderRadius: "8px !important",
@@ -165,18 +162,18 @@ export const userButtonAppearance = {
         background: "transparent !important",
       },
     },
-    // Text label on every row (including Profile custom link)
+
     userButtonPopoverActionButtonText: {
       color: "#ffffff !important",
     },
-    // Icon on every row
+
     userButtonPopoverActionButtonIconBox: {
       color: "#ffffff !important",
       "& > svg": {
         color: "#ffffff !important",
       },
     },
-    // Footer
+
     userButtonPopoverFooter: {
       display: "none !important",
     },

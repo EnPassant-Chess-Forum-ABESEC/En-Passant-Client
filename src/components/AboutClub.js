@@ -92,7 +92,7 @@ export default function AboutClub() {
       <div
         className="absolute inset-0 z-0 opacity-40 pointer-events-none"
         style={{
-          backgroundImage: 'url("/dark_marble_bg.png")',
+          backgroundImage: 'url("/common/dark_marble_bg.png")',
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

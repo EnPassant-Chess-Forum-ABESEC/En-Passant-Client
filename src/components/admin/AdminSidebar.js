@@ -37,7 +37,7 @@ export default function AdminSidebar() {
       <div className="mb-14 px-4">
         <Link href="/admin" className="flex items-center gap-3 group">
           <Image
-            src="/logo.png"
+            src="/common/logo.png"
             alt="logo"
             width={32}
             height={32}

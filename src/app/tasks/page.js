@@ -11,8 +11,6 @@ export default function TasksPage() {
   const [revealDate, setRevealDate] = useState(null);
   const [submissions, setSubmissions] = useState({});
   const [loading, setLoading] = useState(true);
-
-  // Form states per task
   const [textInputs, setTextInputs] = useState({});
   const [linkInputs, setLinkInputs] = useState({});
   const [fileInputs, setFileInputs] = useState({});
@@ -24,31 +22,40 @@ export default function TasksPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const appData = await fetchApi("/recruitment/my-application").catch(() => null);
-      
+      const appData = await fetchApi("/recruitment/my-application").catch(
+        () => null,
+      );
+
       if (appData?.success && appData.myApplication) {
         setApplication(appData.myApplication);
-        
-        // If they paid, they can see tasks
-        if (appData.myApplication.paymentStatus === 'SUCCESS') {
-          const deptId = appData.myApplication.preferredDepartmentId._id || appData.myApplication.preferredDepartmentId;
-          const tasksData = await fetchApi(`/tasks/department?departmentId=${deptId}&year=2026`);
+
+        if (appData.myApplication.paymentStatus === "SUCCESS") {
+          const deptId =
+            appData.myApplication.preferredDepartmentId._id ||
+            appData.myApplication.preferredDepartmentId;
+          const tasksData = await fetchApi(
+            `/tasks/department?departmentId=${deptId}&year=2026`,
+          );
           if (tasksData.tasks) {
             setTasks(tasksData.tasks);
-            
+
             if (tasksData.isRevealed !== undefined) {
               setIsRevealed(tasksData.isRevealed);
             }
             if (tasksData.revealDate) {
               setRevealDate(new Date(tasksData.revealDate));
             }
-            
+
             if (tasksData.isRevealed !== false) {
-              // Load submissions for each task
               for (const task of tasksData.tasks) {
-                const subData = await fetchApi(`/submissions/${appData.myApplication._id}/${task._id}`).catch(() => null);
+                const subData = await fetchApi(
+                  `/submissions/${appData.myApplication._id}/${task._id}`,
+                ).catch(() => null);
                 if (subData?.success && subData.submission) {
-                  setSubmissions(prev => ({ ...prev, [task._id]: subData.submission }));
+                  setSubmissions((prev) => ({
+                    ...prev,
+                    [task._id]: subData.submission,
+                  }));
                 }
               }
             }
@@ -63,7 +70,7 @@ export default function TasksPage() {
   };
 
   const handleFileChange = (taskId, e) => {
-    setFileInputs(prev => ({ ...prev, [taskId]: e.target.files }));
+    setFileInputs((prev) => ({ ...prev, [taskId]: e.target.files }));
   };
 
   const submitTask = async (taskId, e) => {
@@ -72,14 +79,14 @@ export default function TasksPage() {
 
     try {
       const formData = new FormData();
-      
+
       if (textInputs[taskId]) {
         formData.append("text", textInputs[taskId]);
       }
       if (linkInputs[taskId]) {
-        formData.append("links", linkInputs[taskId]); // Simplified: backend takes string[] but formData append strings it. Backend handles it or we send multiple
+        formData.append("links", linkInputs[taskId]);
       }
-      
+
       const files = fileInputs[taskId];
       if (files) {
         for (let i = 0; i < files.length; i++) {
@@ -89,13 +96,12 @@ export default function TasksPage() {
 
       const res = await fetchApi(`/submissions/${application._id}/${taskId}`, {
         method: "POST",
-        body: formData
-        // Don't set Content-Type header for FormData, browser does it automatically with boundary
+        body: formData,
       });
 
       if (res.success) {
         alert("Submitted successfully!");
-        setSubmissions(prev => ({ ...prev, [taskId]: res.submission }));
+        setSubmissions((prev) => ({ ...prev, [taskId]: res.submission }));
       }
     } catch (err) {
       alert("Error submitting: " + err.message);
@@ -107,15 +113,23 @@ export default function TasksPage() {
   }
 
   if (!application) {
-    return <div className="p-8 mt-24 text-white/50">You haven't applied yet. Go to /apply.</div>;
+    return (
+      <div className="p-8 mt-24 text-white/50">
+        You haven't applied yet. Go to /apply.
+      </div>
+    );
   }
 
-  if (application.paymentStatus !== 'SUCCESS') {
+  if (application.paymentStatus !== "SUCCESS") {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-white font-sans text-center">
         <div>
-          <h1 className="text-2xl font-bold uppercase tracking-widest text-[#ff4444] mb-4">Payment Required</h1>
-          <p className="text-white/50 text-sm">You must complete your application payment to view tasks.</p>
+          <h1 className="text-2xl font-bold uppercase tracking-widest text-[#ff4444] mb-4">
+            Payment Required
+          </h1>
+          <p className="text-white/50 text-sm">
+            You must complete your application payment to view tasks.
+          </p>
         </div>
       </div>
     );
@@ -125,11 +139,23 @@ export default function TasksPage() {
     return (
       <main className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-white text-center font-sans">
         <div className="w-20 h-20 bg-[#9b1a1a]/10 rounded-full flex items-center justify-center mb-6 border border-[#9b1a1a]/30">
-          <svg className="w-8 h-8 text-[#ff4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          <svg
+            className="w-8 h-8 text-[#ff4444]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
           </svg>
         </div>
-        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-4">Tasks Locked</h1>
+        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-4">
+          Tasks Locked
+        </h1>
         <p className="text-white/60 max-w-md mx-auto text-sm leading-relaxed mb-8">
           The tasks for this recruitment cycle will be revealed exactly at:
         </p>
@@ -143,42 +169,67 @@ export default function TasksPage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full p-8 mt-24 font-sans bg-[#111] min-h-screen">
-      <h1 className="text-3xl font-bold uppercase tracking-widest text-white mb-8 border-b border-white/10 pb-4">Department Tasks</h1>
+      <h1 className="text-3xl font-bold uppercase tracking-widest text-white mb-8 border-b border-white/10 pb-4">
+        Department Tasks
+      </h1>
 
       {tasks.length === 0 ? (
         <p className="text-white/40">No tasks found for your department.</p>
       ) : (
         <div className="space-y-12">
-          {tasks.map(task => {
+          {tasks.map((task) => {
             const sub = submissions[task._id];
-            
+
             return (
-              <div key={task._id} className="bg-[#1a1a1a] p-6 border border-white/10 rounded-sm">
+              <div
+                key={task._id}
+                className="bg-[#1a1a1a] p-6 border border-white/10 rounded-sm"
+              >
                 <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold uppercase text-white tracking-wider">{task.title}</h2>
-                  {sub && <span className="bg-green-900/30 text-green-400 px-3 py-1 text-xs font-mono uppercase tracking-widest">Submitted</span>}
+                  <h2 className="text-2xl font-bold uppercase text-white tracking-wider">
+                    {task.title}
+                  </h2>
+                  {sub && (
+                    <span className="bg-green-900/30 text-green-400 px-3 py-1 text-xs font-mono uppercase tracking-widest">
+                      Submitted
+                    </span>
+                  )}
                 </div>
-                
+
                 <p className="text-white/80 mb-4">{task.summary}</p>
-                
+
                 <div className="mb-6 p-4 bg-white/5 border border-white/10 text-sm text-white/70">
-                  <strong className="block text-white mb-2 uppercase tracking-widest">Instructions:</strong>
+                  <strong className="block text-white mb-2 uppercase tracking-widest">
+                    Instructions:
+                  </strong>
                   {Array.isArray(task.instructions) ? (
                     <ul className="list-disc pl-5 space-y-1">
-                      {task.instructions.map((inst, i) => <li key={i}>{inst}</li>)}
+                      {task.instructions.map((inst, i) => (
+                        <li key={i}>{inst}</li>
+                      ))}
                     </ul>
                   ) : (
                     <p>{task.instructions}</p>
                   )}
                 </div>
 
-                <form onSubmit={(e) => submitTask(task._id, e)} className="space-y-4">
+                <form
+                  onSubmit={(e) => submitTask(task._id, e)}
+                  className="space-y-4"
+                >
                   {task.submission.acceptsText && (
                     <div>
-                      <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">Text Answer</label>
+                      <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">
+                        Text Answer
+                      </label>
                       <textarea
-                        value={textInputs[task._id] || (sub?.text || "")}
-                        onChange={e => setTextInputs(prev => ({ ...prev, [task._id]: e.target.value }))}
+                        value={textInputs[task._id] || sub?.text || ""}
+                        onChange={(e) =>
+                          setTextInputs((prev) => ({
+                            ...prev,
+                            [task._id]: e.target.value,
+                          }))
+                        }
                         className="w-full bg-[#222] border border-white/20 p-3 text-white focus:outline-none focus:border-[#9b1a1a] min-h-[100px]"
                       ></textarea>
                     </div>
@@ -186,11 +237,18 @@ export default function TasksPage() {
 
                   {task.submission.acceptsLinks && (
                     <div>
-                      <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">Submission Link (e.g., GitHub, Figma)</label>
+                      <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">
+                        Submission Link (e.g., GitHub, Figma)
+                      </label>
                       <input
                         type="url"
-                        value={linkInputs[task._id] || (sub?.links?.[0] || "")}
-                        onChange={e => setLinkInputs(prev => ({ ...prev, [task._id]: e.target.value }))}
+                        value={linkInputs[task._id] || sub?.links?.[0] || ""}
+                        onChange={(e) =>
+                          setLinkInputs((prev) => ({
+                            ...prev,
+                            [task._id]: e.target.value,
+                          }))
+                        }
                         className="w-full bg-[#222] border border-white/20 p-3 text-white focus:outline-none focus:border-[#9b1a1a]"
                       />
                     </div>
@@ -199,7 +257,8 @@ export default function TasksPage() {
                   {task.submission.acceptsFiles && (
                     <div>
                       <label className="block text-sm text-white/60 uppercase mb-2 tracking-wider">
-                        Upload Files (Max: {task.submission.maxFiles}, {task.submission.fileCategory})
+                        Upload Files (Max: {task.submission.maxFiles},{" "}
+                        {task.submission.fileCategory})
                       </label>
                       <input
                         type="file"
@@ -210,19 +269,34 @@ export default function TasksPage() {
                     </div>
                   )}
 
-                  <button type="submit" className="bg-[#9b1a1a] text-white uppercase font-bold tracking-widest px-8 py-3 hover:bg-red-800 transition w-full mt-4">
+                  <button
+                    type="submit"
+                    className="bg-[#9b1a1a] text-white uppercase font-bold tracking-widest px-8 py-3 hover:bg-red-800 transition w-full mt-4"
+                  >
                     Submit Task
                   </button>
                 </form>
 
                 {sub?.files && sub.files.length > 0 && (
                   <div className="mt-8 pt-6 border-t border-white/10">
-                    <h3 className="text-sm font-bold uppercase text-white/50 mb-4 tracking-widest">Uploaded Files</h3>
+                    <h3 className="text-sm font-bold uppercase text-white/50 mb-4 tracking-widest">
+                      Uploaded Files
+                    </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {sub.files.map(f => (
-                        <a key={f.publicId} href={f.url} target="_blank" rel="noreferrer" className="block p-4 border border-white/10 hover:border-white/30 transition text-center">
-                          <span className="block text-xs font-mono truncate text-white/80">{f.originalName}</span>
-                          <span className="block text-[10px] text-white/40 mt-1 uppercase">{(f.size / 1024).toFixed(1)} KB</span>
+                      {sub.files.map((f) => (
+                        <a
+                          key={f.publicId}
+                          href={f.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block p-4 border border-white/10 hover:border-white/30 transition text-center"
+                        >
+                          <span className="block text-xs font-mono truncate text-white/80">
+                            {f.originalName}
+                          </span>
+                          <span className="block text-[10px] text-white/40 mt-1 uppercase">
+                            {(f.size / 1024).toFixed(1)} KB
+                          </span>
                         </a>
                       ))}
                     </div>
@@ -257,7 +331,7 @@ const CountdownTimer = ({ targetDate }) => {
       const seconds = Math.floor((difference / 1000) % 60);
 
       setTimeLeft(
-        `${days.toString().padStart(2, '0')} : ${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`
+        `${days.toString().padStart(2, "0")} : ${hours.toString().padStart(2, "0")} : ${minutes.toString().padStart(2, "0")} : ${seconds.toString().padStart(2, "0")}`,
       );
     }, 1000);
 

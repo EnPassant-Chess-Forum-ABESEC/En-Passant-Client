@@ -1,18 +1,16 @@
 export default function AuthLayout({ children }) {
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden flex items-center justify-center">
-      {/* ── Full-screen background (hidden on mobile) ── */}
       <div
         className="hidden md:block absolute inset-0 z-0 opacity-50"
         style={{
-          backgroundImage: "url('/signup_login_background.jpeg')",
+          backgroundImage: "url('/auth/signup_login_background.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       />
 
-      {/* ── Centered split card ── */}
       <div
         className="relative z-10 flex w-full max-w-5xl mx-4 sm:mx-6 overflow-hidden"
         style={{
@@ -22,20 +20,18 @@ export default function AuthLayout({ children }) {
             "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
-        {/* LEFT — figure image, flipped horizontally */}
         <div
           className="hidden lg:block relative flex-1"
           style={{
             backgroundColor: "#050505",
-            backgroundImage: "url('/dark_marble_bg.png')",
+            backgroundImage: "url('/common/dark_marble_bg.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* We use an <img> tag so transform applies cleanly */}
           <img
-            src="/login_signup_figure.png"
+            src="/auth/login_signup_figure.png"
             alt=""
             aria-hidden="true"
             style={{
@@ -51,7 +47,6 @@ export default function AuthLayout({ children }) {
             }}
           />
 
-          {/* Subtle right-edge fade into form panel */}
           <div
             style={{
               position: "absolute",
@@ -63,7 +58,6 @@ export default function AuthLayout({ children }) {
           />
         </div>
 
-        {/* RIGHT — form */}
         <div
           className="flex flex-col items-center justify-center w-full lg:w-[55%] flex-shrink-0 px-4 sm:px-8 py-10"
           style={{

@@ -7,7 +7,7 @@ const premiumEase = [0.16, 1, 0.3, 1];
 
 const dark = { backgroundColor: "#0a0a0a" };
 const light = {
-  backgroundImage: 'url("/white_marble_texture.png")',
+  backgroundImage: 'url("/common/white_marble_texture.png")',
   backgroundSize: "cover",
   backgroundPosition: "center",
 };
@@ -190,7 +190,6 @@ export default function ClubJournalSection() {
           );
         })}
 
-        {/* Removed overlapping top shadow */}
         <div
           className="absolute inset-x-0 bottom-0 pointer-events-none h-[30vw] z-10"
           style={{
@@ -199,7 +198,6 @@ export default function ClubJournalSection() {
         />
       </div>
 
-      {/* DESKTOP GRID */}
       <div className="relative hidden md:grid grid-cols-4 w-full overflow-hidden">
         {journalEntries.map((entry, idx) => (
           <React.Fragment key={`d-${idx}`}>

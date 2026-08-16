@@ -209,19 +209,19 @@ export default function EnPassantPreloader({ onFinish }) {
     >
       <link
         rel="preload"
-        href="/3d_model_snapshot.png"
+        href="/home/3d_model_snapshot.png"
         as="image"
         media="(max-width: 767px)"
       />
 
       <link
         rel="preload"
-        href="/king.glb"
+        href="/models/king.glb"
         as="fetch"
         crossOrigin="anonymous"
         media="(min-width: 768px)"
       />
-      <link rel="preload" href="/dark_marble_bg.png" as="image" />
+      <link rel="preload" href="/common/dark_marble_bg.png" as="image" />
 
       <div
         style={{

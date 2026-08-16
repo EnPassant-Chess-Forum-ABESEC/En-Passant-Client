@@ -31,7 +31,6 @@ export default function PaymentsPage() {
       a.click();
       a.remove();
 
-      // Keep spinner until the browser save dialog is dismissed (window regains focus)
       const reset = () => {
         window.URL.revokeObjectURL(url);
         setExporting(false);
@@ -41,8 +40,9 @@ export default function PaymentsPage() {
         window.removeEventListener("focus", reset);
         reset();
       }, 60000);
-      window.addEventListener("focus", () => clearTimeout(fallback), { once: true });
-
+      window.addEventListener("focus", () => clearTimeout(fallback), {
+        once: true,
+      });
     } catch (error) {
       console.error(error);
       alert("Error exporting payments: " + error.message);
