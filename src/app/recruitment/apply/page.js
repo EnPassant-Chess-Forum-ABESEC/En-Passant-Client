@@ -193,7 +193,13 @@ export default function RecruitmentApplyPage() {
   };
 
   const handleNext = async () => {
-    if (!isStepValid(currentStep) || currentStep >= 3) return;
+    if (!isStepValid(currentStep)) {
+      if (currentStep === 0)
+        toast.error("Please fill all required fields correctly.");
+      if (currentStep === 1) toast.error("Please select a primary department.");
+      return;
+    }
+    if (currentStep >= 3) return;
 
     if (currentStep === 0) {
       const sanitizedName = formData.name.trim();
@@ -415,6 +421,10 @@ export default function RecruitmentApplyPage() {
   };
 
   const handlePayment = async () => {
+    if (!isStepValid(3)) {
+      toast.error("Please provide UTR and payment screenshot to proceed.");
+      return;
+    }
     try {
       setIsSubmitting(true);
 
@@ -502,7 +512,7 @@ export default function RecruitmentApplyPage() {
       <div
         className="relative z-10 flex w-full max-w-5xl overflow-hidden rounded-[2rem]"
         style={{
-          height: "min(720px, 85vh)",
+          height: "min(670px, 85vh)",
           boxShadow:
             "0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
@@ -568,7 +578,7 @@ export default function RecruitmentApplyPage() {
         </div>
 
         <div
-          className="flex flex-col justify-between w-full lg:w-[55%] flex-shrink-0 px-6 sm:px-10 py-10 relative overflow-x-hidden"
+          className="flex flex-col justify-between w-full lg:w-[55%] flex-shrink-0 px-6 sm:px-10 py-8 relative overflow-x-hidden"
           style={{
             background: "rgba(10, 10, 10, 0.92)",
             backdropFilter: "blur(24px) saturate(150%)",
@@ -599,7 +609,7 @@ export default function RecruitmentApplyPage() {
           </div>
 
           <div
-            className="pt-6 pb-10 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
+            className="pt-6 pb-8 flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden -mx-6 px-6 sm:-mx-10 sm:px-10 z-10 custom-scrollbar"
             onWheel={(e) => {
               const el = e.currentTarget;
               const atBottom =
@@ -920,15 +930,11 @@ export default function RecruitmentApplyPage() {
                     </div>
                   </div>
 
-                  <div className="w-full mt-6">
+                  <div className="w-full mt-12 pt-3">
                     <SpecularButton
                       onClick={handlePayment}
-                      disabled={
-                        isSubmitting ||
-                        paymentUtr.trim() === "" ||
-                        paymentScreenshot === null
-                      }
-                      className="w-full h-14 group"
+                      disabled={isSubmitting}
+                      className={`w-full h-14 group ${!isStepValid(3) && !isSubmitting ? "opacity-55" : ""}`}
                       radius={12}
                       lineColor="#ff4444"
                       baseColor="#550000"
@@ -1004,9 +1010,9 @@ export default function RecruitmentApplyPage() {
             </AnimatePresence>
           </div>
 
-          <div className="pt-4 flex flex-col justify-end z-10 relative">
+          <div className="pt-2 flex flex-col justify-end z-10 relative">
             {currentStep === 0 && (
-              <p className="text-white/40 text-[11px] text-center mb-3 tracking-widest font-normal">
+              <p className="text-white/40 text-[11px] text-center mb-2 tracking-widest font-normal">
                 We will create your account upon submission if account does not
                 exist
               </p>
@@ -1015,8 +1021,8 @@ export default function RecruitmentApplyPage() {
               <div className="w-full">
                 <SpecularButton
                   onClick={handleNext}
-                  disabled={!isStepValid(currentStep) || isSubmitting}
-                  className="w-full h-14 group"
+                  disabled={isSubmitting}
+                  className={`w-full h-14 group ${!isStepValid(currentStep) && !isSubmitting ? "opacity-55" : ""}`}
                   radius={12}
                   lineColor="#ffffff"
                   baseColor="#555555"

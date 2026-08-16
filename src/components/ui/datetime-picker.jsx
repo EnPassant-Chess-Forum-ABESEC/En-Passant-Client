@@ -27,6 +27,7 @@ export function DateTimePicker({ date, setDate }) {
 
   React.useEffect(() => {
     if (date) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedDate(new Date(date));
       setTimeValue(format(new Date(date), "hh:mm a"));
     }
