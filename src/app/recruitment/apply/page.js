@@ -221,8 +221,22 @@ export default function RecruitmentApplyPage() {
       const sanitizedCollegeEmail = formData.collegeEmail.trim().toLowerCase();
       const sanitizedPhone = formData.phone.replace(/\D/g, "");
 
-      if (!sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
-        toast.error("College email must end with @abes.ac.in");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+      
+      if (!emailRegex.test(sanitizedEmail)) {
+        toast.error("Please enter a valid personal email address");
+        return;
+      }
+
+      const commonTypos = ["g2ail.com", "gamil.com", "gmaill.com", "gnail.com", "gmail.con", "gmail.co", "gmai.com"];
+      const emailDomain = sanitizedEmail.split("@")[1];
+      if (commonTypos.includes(emailDomain)) {
+        toast.error(`Did you mean @gmail.com? Please check your email.`);
+        return;
+      }
+
+      if (!emailRegex.test(sanitizedCollegeEmail) || !sanitizedCollegeEmail.endsWith("@abes.ac.in")) {
+        toast.error("College email must be a valid @abes.ac.in address");
         return;
       }
 

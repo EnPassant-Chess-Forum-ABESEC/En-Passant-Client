@@ -12,6 +12,23 @@ export async function POST(req) {
       );
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { success: false, error: "Valid email is required" },
+        { status: 400 },
+      );
+    }
+
+    const commonTypos = ["g2ail.com", "gamil.com", "gmaill.com", "gnail.com", "gmail.con", "gmail.co", "gmai.com"];
+    const emailDomain = email.split("@")[1];
+    if (commonTypos.includes(emailDomain)) {
+      return NextResponse.json(
+        { success: false, error: "Did you mean @gmail.com? Please check your email." },
+        { status: 400 },
+      );
+    }
+
     const client = await clerkClient();
 
     const user = await client.users.createUser({
