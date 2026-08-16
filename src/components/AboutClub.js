@@ -243,10 +243,10 @@ export default function AboutClub() {
                 {card.items.map((item) => (
                   <li
                     key={item}
-                    className="text-white/70 group-hover:text-white font-sans font-light text-[12px] md:text-[18px] tracking-[0.05em] flex items-center gap-[2vw] md:gap-[1.5vw] transition-colors duration-300"
+                    className="group/item text-white/70 hover:text-white font-sans font-light text-[12px] md:text-[18px] tracking-[0.05em] flex items-center gap-[2vw] md:gap-[1.5vw] transition-colors duration-300"
                   >
-                    <span className="text-white/50 font-sans text-[12px] md:text-[16px]">
-                      —
+                    <span className="text-[#9b1a1a] font-bold text-[16px] md:text-[20px] leading-none mt-[-2px] group-hover/item:translate-x-1 transition-transform duration-300">
+                      ›
                     </span>
                     {item}
                   </li>

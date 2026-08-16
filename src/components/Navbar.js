@@ -9,12 +9,7 @@ import { Menu, X, User } from "lucide-react";
 
 import { userButtonAppearance } from "@/lib/clerkAppearance";
 import { useApi } from "@/lib/api";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const { userId } = useAuth();
@@ -74,8 +69,8 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Leaderboard", path: "/leaderboard" },
-    { name: "Gallery", path: "/event-gallery" },
-    { name: "Team", path: "/team" },
+    // { name: "Gallery", path: "/event-gallery" },
+    // { name: "Team", path: "/team" },
     { name: "Recruitment", path: recruitmentPath },
   ];
 

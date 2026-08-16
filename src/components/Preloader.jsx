@@ -300,36 +300,37 @@ export default function EnPassantPreloader({ onFinish }) {
           }}
         >
           {welcomeShown && (
-            <>
-              <div style={{ marginBottom: "1rem" }}>
+            <div className="flex flex-col items-center justify-center w-full max-w-[100vw] px-4">
+              <div style={{ marginBottom: "clamp(0.5rem, 2vw, 1rem)" }}>
                 <FoldText
                   text="Welcome to"
-                  fontSize="4.5rem"
+                  fontSize="clamp(2rem, 6vw, 4.5rem)"
                   fontWeight={500}
                   color="#fff"
                   stagger={0.03}
+                  className="whitespace-nowrap"
                 />
               </div>
-              <div style={{ display: "flex", gap: "1.5rem" }}>
+              <div style={{ display: "flex", gap: "clamp(0.5rem, 3vw, 1.5rem)" }}>
                 <FoldText
                   text="EN"
-                  fontSize="8rem"
+                  fontSize="clamp(3.5rem, 14vw, 8rem)"
                   fontWeight={900}
                   color="#9b1a1a"
                   stagger={0.04}
-                  className="inline-block font-prfaExtrabold font-black hero-letter drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
+                  className="inline-block whitespace-nowrap font-prfaExtrabold font-black hero-letter drop-shadow-[0_0_15px_rgba(155,26,26,0.25)]"
                 />
                 <FoldText
                   text="PASSANT"
-                  fontSize="8rem"
+                  fontSize="clamp(3.5rem, 14vw, 8rem)"
                   fontWeight={900}
                   color="#fff"
                   stagger={0.04}
-                  className="font-prfaExtrabold font-black hero-letter drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] tracking-[0.2em]"
+                  className="whitespace-nowrap font-prfaExtrabold font-black hero-letter drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] tracking-[0.05em] md:tracking-[0.2em]"
                   innerClassName="bg-gradient-to-b from-[#ffffff] via-[#cccccc] to-[#555555] bg-clip-text text-transparent"
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
