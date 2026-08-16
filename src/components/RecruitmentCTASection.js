@@ -101,8 +101,7 @@ export default function RecruitmentCTASection() {
             style={{ display: "inline-flex" }}
           >
             <div
-              className="btn-inner bg-[#9b1a1a] hover:bg-[#c0392b] text-white px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs transition-colors shadow-[0_0_30px_rgba(155,26,26,0.3)] w-full md:w-auto text-center"
-              style={{ cursor: "pointer" }}
+              className="btn-inner bg-[#9b1a1a] hover:bg-[#c0392b] text-white px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs transition-colors shadow-[0_0_30px_rgba(155,26,26,0.3)] w-full md:w-auto text-center cursor-good"
             >
               Apply Now
             </div>

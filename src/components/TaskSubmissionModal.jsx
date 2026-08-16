@@ -102,16 +102,22 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
       return;
     }
 
+    const filteredTexts = texts.filter((t) => t.trim() !== "");
+    const filteredLinks = links.filter((l) => l.trim() !== "");
+
+    if (filteredTexts.length === 0 && filteredLinks.length === 0 && files.length === 0) {
+      toast.error("Please provide at least one text, link, or file before submitting.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const formData = new FormData();
 
-      const filteredTexts = texts.filter((t) => t.trim() !== "");
       if (filteredTexts.length > 0) {
         formData.append("text", filteredTexts.join("\n\n"));
       }
 
-      const filteredLinks = links.filter((l) => l.trim() !== "");
       filteredLinks.forEach((link) => {
         formData.append("links", link);
       });

@@ -283,7 +283,7 @@ export default function ApplicationsTab() {
                                   <a
                                     href={link}
                                     target="_blank"
-                                    rel="noreferrer"
+                                    rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors border border-blue-100 dark:border-blue-500/20"
                                   >
                                     {link}
@@ -305,7 +305,7 @@ export default function ApplicationsTab() {
                                   key={i}
                                   href={file.url}
                                   target="_blank"
-                                  rel="noreferrer"
+                                  rel="noopener noreferrer"
                                   className="flex items-center gap-3 p-3 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-lg hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-sm transition-all min-w-[200px]"
                                 >
                                   {file.resourceType === "image" ? (
