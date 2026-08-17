@@ -223,14 +223,14 @@ export default function RecruitmentDashboard() {
           >
             RECRUITMENT <span className="text-[#9b1a1a]">DASHBOARD</span>
           </h1>
-          <p className="font-sans font-light text-[#999] max-w-2xl mx-auto text-sm md:text-base tracking-wide mt-6">
+          <p className="font-sans font-light text-[#999] max-w-2xl mx-auto text-sm md:text-lg tracking-wide mt-6">
             Your Application is Successfully Submitted! <br />
-            Your application status is{" "}
+            {/* Your application status is{" "}
             <span className="font-bold text-[#9b1a1a] uppercase">
               {application.status?.replace(/_/g, " ")}
             </span>
             {statusDescriptions[application.status] ||
-              ". Complete your application process to unlock access to the designated tasks."}
+              ". Complete your application process to unlock access to the designated tasks."} */}
           </p>
         </motion.div>
       </section>

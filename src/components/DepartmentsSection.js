@@ -118,6 +118,7 @@ export default function DepartmentsSection() {
         <div className="w-full grid grid-cols-2 relative z-20">
           {departments.map((dept, i) => {
             const isRight = i % 2 !== 0;
+            const displayName = dept.name.toLowerCase() === "community" ? "Community & PR" : dept.name;
 
             return (
               <React.Fragment key={dept._id || i}>
@@ -147,13 +148,13 @@ export default function DepartmentsSection() {
                           </span>
                         </div>
                         <span className="text-white font-black text-[4.5vw] tracking-tight uppercase leading-[0.9] relative z-10 text-center mt-[6vw]">
-                          {dept.name}
+                          {displayName}
                         </span>
                       </div>
 
                       <div className="absolute inset-0 p-[5vw] flex flex-col justify-start opacity-0 translate-y-4 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0">
                         <span className="text-[#9b1a1a] font-black text-[3.5vw] tracking-tight uppercase mb-2 leading-none break-words">
-                          {dept.name}
+                          {displayName}
                         </span>
                         <p className="text-white/80 text-[2.5vw] leading-snug first-letter:uppercase font-light break-words">
                           {dept.description ||
@@ -263,6 +264,7 @@ export default function DepartmentsSection() {
           {departments.map((dept, i) => {
             const slot = getGridSlot(dept.name, i);
             if (!slot) return null;
+            const displayName = dept.name.toLowerCase() === "community" ? "Community & PR" : dept.name;
 
             return (
               <motion.div
@@ -297,13 +299,13 @@ export default function DepartmentsSection() {
                         </span>
                       </div>
                       <span className="text-white font-black text-[3.2vw] tracking-tight uppercase leading-[0.9] relative z-10 text-center mt-[4vw]">
-                        {dept.name}
+                        {displayName}
                       </span>
                     </div>
 
                     <div className="absolute inset-0 p-[2.5vw] flex flex-col justify-start opacity-0 translate-y-4 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0">
                       <span className="text-[#9b1a1a] font-black text-[1.8vw] tracking-tight uppercase mb-4 leading-none break-words">
-                        {dept.name}
+                        {displayName}
                       </span>
                       <p className="text-white/80 text-[1.2vw] leading-snug first-letter:uppercase font-light break-words">
                         {dept.description ||

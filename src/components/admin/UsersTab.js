@@ -42,7 +42,7 @@ export default function UsersTab() {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (u) =>
-          u._id.toLowerCase().includes(q) ||
+          (u._id || "").toLowerCase().includes(q) ||
           (u.userName || "").toLowerCase().includes(q) ||
           (u.email || "").toLowerCase().includes(q),
       );
@@ -60,7 +60,7 @@ export default function UsersTab() {
   async function loadData() {
     setLoading(true);
     try {
-      const res = await fetchApi("/admin/users");
+      const res = await fetchApi("/admin/users?pageSize=1000");
       setUsers(res.users || []);
       console.log(res.users);
     } catch (err) {

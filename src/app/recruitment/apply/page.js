@@ -861,7 +861,7 @@ export default function RecruitmentApplyPage() {
                                 }`}
                               >
                                 <span className="text-[15px] font-bold">
-                                  {dept.name}
+                                  {dept.name.toLowerCase() === "community" ? "Community & PR" : dept.name}
                                 </span>
                               </button>
                             );
@@ -922,7 +922,7 @@ export default function RecruitmentApplyPage() {
                                 }`}
                               >
                                 <span className="text-[15px] font-bold">
-                                  {dept.name}
+                                  {dept.name.toLowerCase() === "community" ? "Community & PR" : dept.name}
                                 </span>
                               </button>
                             );
@@ -961,15 +961,20 @@ export default function RecruitmentApplyPage() {
                           </div>
                         </div>
 
-                        <Image
-                          src="/recruitment/recruitment_payment_qr.jpeg"
-                          alt="Payment QR Code"
-                          width={112}
-                          height={112}
-                          priority
-                          className="object-contain rounded-md shrink-0"
-                          style={{ width: "112px", height: "auto" }}
-                        />
+                        <div className="flex flex-col items-center justify-center shrink-0">
+                          <Image
+                            src="/recruitment/recruitment_payment_qr.jpeg"
+                            alt="Payment QR Code"
+                            width={112}
+                            height={112}
+                            priority
+                            className="object-contain rounded-md mb-2"
+                            style={{ width: "112px", height: "auto" }}
+                          />
+                          <span className="text-white font-black text-[11px] bg-[#9b1a1a] px-3 py-1 rounded w-full text-center tracking-wider border border-[#9b1a1a]/50">
+                            Rs. 40
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-4">
