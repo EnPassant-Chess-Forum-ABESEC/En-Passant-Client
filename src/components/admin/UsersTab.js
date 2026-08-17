@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import AdminSearchBar from "./AdminSearchBar";
 import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,23 +36,43 @@ export default function UsersTab() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
+  const [sortFilter, setSortFilter] = useState("NEWEST");
 
   const filteredUsers = useMemo(() => {
-    let result = [...users];
-    if (searchQuery.trim()) {
+    let result = users.filter((user) => {
       const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (u) =>
-          (u._id || "").toLowerCase().includes(q) ||
-          (u.userName || "").toLowerCase().includes(q) ||
-          (u.email || "").toLowerCase().includes(q),
-      );
+      const matchesSearch =
+        (user._id || "").toLowerCase().includes(q) ||
+        (user.userName || "").toLowerCase().includes(q) ||
+        (user.email || "").toLowerCase().includes(q);
+
+      const matchesRole = roleFilter === "ALL" || user.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+
+    if (sortFilter === "NEWEST") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortFilter === "OLDEST") {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
-    if (roleFilter !== "ALL") {
-      result = result.filter((u) => u.role === roleFilter);
-    }
+
     return result;
-  }, [users, searchQuery, roleFilter]);
+  }, [users, searchQuery, roleFilter, sortFilter]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter, sortFilter]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredUsers, currentPage]);
+
+  // Total pages
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   useEffect(() => {
     loadData();
@@ -62,7 +83,6 @@ export default function UsersTab() {
     try {
       const res = await fetchApi("/admin/users?pageSize=1000");
       setUsers(res.users || []);
-      console.log(res.users);
     } catch (err) {
       alert("Error: " + err.message);
     }
@@ -75,10 +95,10 @@ export default function UsersTab() {
         method: "PATCH",
         body: { role: newRole },
       });
-      console.log(id);
+      toast.success("Role updated successfully");
       loadData();
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error(err.message || "Failed to update role");
     }
   };
 
@@ -106,6 +126,14 @@ export default function UsersTab() {
             { label: "User", value: "user" },
             { label: "Admin", value: "admin" },
           ]}
+          sortFilter={sortFilter}
+          setSortFilter={setSortFilter}
+          sortOptions={[
+            { label: "Newest First", value: "NEWEST" },
+            { label: "Oldest First", value: "OLDEST" },
+          ]}
+          totalCount={filteredUsers.length}
+          countLabel="Total Users"
         />
       </motion.div>
       <motion.div
@@ -127,7 +155,7 @@ export default function UsersTab() {
               variants={containerVariants}
               className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
             >
-              {filteredUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <motion.tr variants={itemVariants}>
                   <td
                     colSpan="5"
@@ -137,7 +165,7 @@ export default function UsersTab() {
                   </td>
                 </motion.tr>
               ) : (
-                filteredUsers.map((user) => (
+                paginatedUsers.map((user) => (
                   <motion.tr
                     variants={itemVariants}
                     key={user._id}
@@ -185,6 +213,29 @@ export default function UsersTab() {
             </motion.tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-[#020617]">
+            <span className="text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

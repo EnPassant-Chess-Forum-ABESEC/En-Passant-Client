@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
-import { ExternalLink, Check, X, Loader2 } from "lucide-react";
+import { ExternalLink, Check, X, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -35,29 +35,60 @@ const itemVariants = {
 export default function PaymentsTab() {
   const fetchApi = useApi();
   const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [verifyingId, setVerifyingId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [sortFilter, setSortFilter] = useState("NEWEST");
+  const [loading, setLoading] = useState(true);
 
   const filteredPayments = useMemo(() => {
-    let result = [...payments];
-    if (searchQuery.trim()) {
+    let result = payments.filter((payment) => {
       const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.applicationId?.toLowerCase().includes(q) ||
-          (p.userId?.userName || "").toLowerCase().includes(q) ||
-          (p.userId?.email || "").toLowerCase().includes(q),
-      );
+      const matchesSearch =
+        payment.applicationId?.toLowerCase().includes(q) ||
+        (payment.userId?.userName || "").toLowerCase().includes(q) ||
+        (payment.userId?.email || "").toLowerCase().includes(q);
+
+      const matchesStatus =
+        statusFilter === "ALL" || payment.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+
+    if (sortFilter === "NEWEST") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortFilter === "OLDEST") {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (sortFilter === "AMOUNT_HIGH") {
+      result.sort((a, b) => (b.amount || 0) - (a.amount || 0));
+    } else if (sortFilter === "AMOUNT_LOW") {
+      result.sort((a, b) => (a.amount || 0) - (b.amount || 0));
     }
-    if (statusFilter !== "ALL") {
-      result = result.filter((p) => p.status === statusFilter);
-    }
+
     return result;
-  }, [payments, searchQuery, statusFilter]);
+  }, [payments, searchQuery, statusFilter, sortFilter]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, sortFilter]);
+
+  const paginatedPayments = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredPayments.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredPayments, currentPage]);
+
+  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
 
   useEffect(() => {
     loadData();
@@ -69,7 +100,7 @@ export default function PaymentsTab() {
       const res = await fetchApi("/admin/payments?pageSize=1000");
       setPayments(res.payments || []);
     } catch (err) {
-      alert("Error: " + err.message);
+      toast.error("Error: " + err.message);
     }
     setLoading(false);
   }
@@ -138,6 +169,16 @@ export default function PaymentsTab() {
             { label: "Success", value: "SUCCESS" },
             { label: "Failed", value: "FAILED" },
           ]}
+          sortFilter={sortFilter}
+          setSortFilter={setSortFilter}
+          sortOptions={[
+            { label: "Newest First", value: "NEWEST" },
+            { label: "Oldest First", value: "OLDEST" },
+            { label: "Amount: High to Low", value: "AMOUNT_HIGH" },
+            { label: "Amount: Low to High", value: "AMOUNT_LOW" },
+          ]}
+          totalCount={filteredPayments.length}
+          countLabel="Total Payments"
         />
       </motion.div>
       <motion.div
@@ -161,7 +202,7 @@ export default function PaymentsTab() {
               variants={containerVariants}
               className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
             >
-              {filteredPayments.length === 0 ? (
+              {paginatedPayments.length === 0 ? (
                 <motion.tr variants={itemVariants}>
                   <td
                     colSpan="7"
@@ -171,7 +212,7 @@ export default function PaymentsTab() {
                   </td>
                 </motion.tr>
               ) : (
-                filteredPayments.map((payment) => (
+                paginatedPayments.map((payment) => (
                   <motion.tr
                     variants={itemVariants}
                     key={payment._id}
@@ -287,6 +328,29 @@ export default function PaymentsTab() {
             </motion.tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-[#020617]">
+            <span className="text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       <AlertDialog

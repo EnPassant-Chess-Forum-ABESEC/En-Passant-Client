@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import AdminSearchBar from "./AdminSearchBar";
-import { User, Eye, Mail, ChevronLeft, Trash2 } from "lucide-react";
+import { User, Eye, Mail, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -163,6 +163,8 @@ export default function ApplicationsTab() {
     setLoadingDetails(false);
   };
 
+  const [sortFilter, setSortFilter] = useState("NEWEST");
+
   const filteredAndSortedApps = useMemo(() => {
     let result = [...applications];
 
@@ -180,14 +182,27 @@ export default function ApplicationsTab() {
       result = result.filter((app) => app.status === statusFilter);
     }
 
-    result.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA;
-    });
+    if (sortFilter === "NEWEST") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortFilter === "OLDEST") {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
 
     return result;
-  }, [applications, searchQuery, statusFilter]);
+  }, [applications, searchQuery, statusFilter, sortFilter]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, sortFilter]);
+
+  const totalPages = Math.ceil(filteredAndSortedApps.length / itemsPerPage);
+  const paginatedApps = filteredAndSortedApps.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const deleteDialog = (
     <AlertDialog
@@ -464,23 +479,31 @@ export default function ApplicationsTab() {
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants} className="mt-6 mb-8">
         <AdminSearchBar
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        statusOptions={statusOptions}
-      />
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          statusOptions={statusOptions}
+          sortFilter={sortFilter}
+          setSortFilter={setSortFilter}
+          sortOptions={[
+            { label: "Newest First", value: "NEWEST" },
+            { label: "Oldest First", value: "OLDEST" },
+          ]}
+          totalCount={filteredAndSortedApps.length}
+          countLabel="Total Applications"
+        />
       </motion.div>
 
-      <motion.div variants={itemVariants} className="space-y-4 mt-6">
-        {filteredAndSortedApps.length === 0 ? (
+      <motion.div variants={itemVariants} className="space-y-4">
+        {paginatedApps.length === 0 ? (
           <motion.div variants={itemVariants} className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
             No applications match your criteria
           </motion.div>
         ) : (
-          filteredAndSortedApps.map((app) => {
+          paginatedApps.map((app) => {
             const relativeTime = timeAgo(app.createdAt);
             const appDate = app.createdAt
               ? new Date(app.createdAt).toLocaleDateString("en-GB", {
@@ -572,6 +595,30 @@ export default function ApplicationsTab() {
               </motion.div>
             );
           })
+        )}
+        
+        {totalPages > 1 && (
+          <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 mt-4 bg-white dark:bg-[#0F172A] rounded-2xl shadow-sm">
+            <span className="text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         )}
       </motion.div>
       {deleteDialog}
