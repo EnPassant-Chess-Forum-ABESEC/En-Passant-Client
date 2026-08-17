@@ -177,8 +177,6 @@ export default function PaymentsTab() {
           sortOptions={[
             { label: "Newest First", value: "NEWEST" },
             { label: "Oldest First", value: "OLDEST" },
-            { label: "Amount: High to Low", value: "AMOUNT_HIGH" },
-            { label: "Amount: Low to High", value: "AMOUNT_LOW" },
           ]}
           totalCount={filteredPayments.length}
           countLabel="Total Payments"
