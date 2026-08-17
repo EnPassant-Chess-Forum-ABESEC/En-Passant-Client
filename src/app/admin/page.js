@@ -13,6 +13,7 @@ import {
   Loader2,
   Database,
   CloudLightning,
+  Mail,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -93,6 +94,27 @@ export default function AdminDashboard() {
     }
   };
 
+  const [isSendingReminders, setIsSendingReminders] = useState(false);
+  const [isRemindersModalOpen, setIsRemindersModalOpen] = useState(false);
+
+  const handleSendReminders = async () => {
+    setIsSendingReminders(true);
+    try {
+      const res = await fetchApi("/admin/applications/remind-drafts", { method: "POST" });
+      if (res?.success) {
+        toast.success(res.message || "Draft reminders sent successfully.");
+      } else {
+        toast.error("Failed to send reminders: " + (res?.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error sending reminders: " + error.message);
+    } finally {
+      setIsSendingReminders(false);
+      setIsRemindersModalOpen(false);
+    }
+  };
+
   const createExportHandler = (id, endpoint, filename) => async () => {
     setExportingId(id);
     try {
@@ -151,7 +173,7 @@ export default function AdminDashboard() {
       try {
         const [statsRes, appsRes] = await Promise.all([
           fetchApi("/admin/stats"),
-          fetchApi("/admin/applications?limit=5"),
+          fetchApi("/admin/applications?pageSize=1000"),
         ]);
 
         if (statsRes?.stats) {
@@ -164,7 +186,10 @@ export default function AdminDashboard() {
         }
 
         if (appsRes?.applications) {
-          setRecentApps(appsRes.applications.slice(0, 5));
+          const sortedApps = [...appsRes.applications].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          setRecentApps(sortedApps.slice(0, 5));
         }
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
@@ -313,7 +338,7 @@ export default function AdminDashboard() {
             System Actions
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
             <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
               <Database className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
@@ -412,6 +437,58 @@ export default function AdminDashboard() {
                     className="bg-red-500 hover:bg-red-600 text-white border-0"
                   >
                     Yes, Clean Files
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+
+          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+              <Mail className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+              Draft Reminders
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+              Send reminder emails to users who have submitted an application but have not completed the payment.
+            </p>
+            <AlertDialog open={isRemindersModalOpen} onOpenChange={setIsRemindersModalOpen}>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={isSendingReminders}
+                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isSendingReminders ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-3.5 h-3.5" /> Send Emails
+                    </>
+                  )}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                    Send Draft Reminders?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                    This will queue reminder emails for all applicants with a DRAFT or PAYMENT_PENDING status. Are you sure?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleSendReminders}
+                    className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+                  >
+                    Yes, Send Emails
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
