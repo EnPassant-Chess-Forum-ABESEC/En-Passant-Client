@@ -251,8 +251,12 @@ export default function AdminDashboard() {
                   <Icon className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-50 mb-2 tracking-tight">
-                {stat.value}
+              <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-50 mb-2 tracking-tight flex items-center">
+                {stat.value === "..." ? (
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                ) : (
+                  stat.value
+                )}
               </h3>
               <p className="text-[10px] text-slate-400 tracking-wider">
                 {stat.label}
@@ -513,8 +517,9 @@ export default function AdminDashboard() {
 
         <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
           {loadingApps ? (
-            <div className="p-12 text-center text-slate-400  tracking-widest text-xs">
-              Loading Recent Applications...
+            <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+              <span>Loading Recent Applications...</span>
             </div>
           ) : recentApps.length === 0 ? (
             <div className="p-12 text-center text-slate-400  tracking-widest text-xs">

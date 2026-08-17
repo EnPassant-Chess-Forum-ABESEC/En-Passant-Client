@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import AdminSearchBar from "./AdminSearchBar";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -104,8 +104,9 @@ export default function UsersTab() {
 
   if (loading)
     return (
-      <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">
-        Loading Data...
+      <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+        <span>Loading Data...</span>
       </div>
     );
 
@@ -186,7 +187,9 @@ export default function UsersTab() {
                     <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                       <Select
                         value={user.role}
-                        onValueChange={(val) => updateUserRole(user.clerkId, val)}
+                        onValueChange={(val) =>
+                          updateUserRole(user.clerkId, val)
+                        }
                       >
                         <SelectTrigger className="w-28 text-[10px] font-bold uppercase tracking-wider h-8 bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 ml-auto">
                           <SelectValue placeholder="Role" />
@@ -227,7 +230,9 @@ export default function UsersTab() {
                 <ChevronLeft size={16} />
               </button>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >

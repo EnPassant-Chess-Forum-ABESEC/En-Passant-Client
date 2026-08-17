@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -112,8 +112,9 @@ export default function DepartmentsTab() {
 
   if (loading)
     return (
-      <div className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm">
-        Loading Data...
+      <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+        <span>Loading Data...</span>
       </div>
     );
 

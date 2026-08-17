@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import AdminSearchBar from "./AdminSearchBar";
-import { User, Eye, Mail, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { User, Eye, Mail, ChevronLeft, ChevronRight, Trash2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -239,8 +239,9 @@ export default function ApplicationsTab() {
 
   if (loading)
     return (
-      <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
-        Loading Applications...
+      <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+        <span>Loading Applications...</span>
       </div>
     );
 
@@ -273,8 +274,9 @@ export default function ApplicationsTab() {
           </div>
 
           {loadingDetails ? (
-            <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase">
-              Loading Application...
+            <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+              <span>Loading Application...</span>
             </div>
           ) : appDetails ? (
             <div>
