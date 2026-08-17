@@ -948,8 +948,10 @@ export default function RecruitmentApplyPage() {
                             Registration Fee
                           </h4>
                           <p className="text-white/50 text-[12px] font-medium leading-relaxed mb-2">
-                            Please pay to the UPI ID mentioned below and upload
-                            the screenshot of the payment.
+                            Please pay{" "}
+                            <span className="text-[#9b1a1a] ">Rs. 40</span> to
+                            the UPI ID mentioned below and upload the screenshot
+                            of the payment.
                           </p>
                           <div className="text-[11px] font-bold tracking-wide text-white/70 normalcase break-all">
                             UPI ID:{" "}
