@@ -794,7 +794,7 @@ export default function RecruitmentApplyPage() {
                           htmlFor="phone"
                           className="text-[11px] font-bold normalcase tracking-widest text-white/50 group-focus-within:text-[#9b1a1a]"
                         >
-                          Phone Number
+                          WhatsApp Number
                         </label>
                         <div className="relative">
                           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#9b1a1a]">
