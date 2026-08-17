@@ -18,6 +18,11 @@ import {
   Mail,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import ThemeToggle from "./ThemeToggle";
 
 export default function AdminSidebar() {
@@ -49,7 +54,7 @@ export default function AdminSidebar() {
         </Link>
       </div>
 
-      <nav className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-24 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+      <nav className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-8 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
         <Link
           href="/admin"
           className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
@@ -217,35 +222,66 @@ export default function AdminSidebar() {
         </div>
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
-        {user && (
-          <div className="flex items-center gap-3 px-4 mb-4">
-            <Image
-              src={user.imageUrl}
-              alt="Profile"
-              width={36}
-              height={36}
-              className="rounded-full border border-slate-200 dark:border-slate-700"
-            />
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
-                {user.fullName || "Admin"}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                {user.primaryEmailAddress?.emailAddress}
-              </span>
-            </div>
-          </div>
-        )}
-        <ThemeToggle />
+      <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+        {user ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-3 px-3 py-2 w-full hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors text-left outline-none">
+                <Image
+                  src={user.imageUrl}
+                  alt="Profile"
+                  width={36}
+                  height={36}
+                  className="rounded-full border border-slate-200 dark:border-slate-700 shrink-0"
+                />
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
+                    {user.fullName || "Admin"}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    {user.primaryEmailAddress?.emailAddress}
+                  </span>
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent 
+              side="top" 
+              align="start" 
+              className="w-60 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-3"
+            >
+              <div className="flex flex-col gap-2">
+                <div className="px-2 py-1 border-b border-slate-100 dark:border-slate-800 pb-3 mb-1">
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-50 block truncate">
+                    {user.fullName || "Admin"}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 block truncate">
+                    {user.primaryEmailAddress?.emailAddress}
+                  </span>
+                </div>
+                
+                <div className="-mt-1">
+                  <ThemeToggle />
+                </div>
 
-        <button
-          onClick={() => signOut({ redirectUrl: "/" })}
-          className="flex items-center gap-4 px-4 py-3 mt-4 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 cursor-bad"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-sm font-semibold">Sign Out</span>
-        </button>
+                <button
+                  onClick={() => signOut({ redirectUrl: "/" })}
+                  className="flex items-center gap-3 px-3 py-2.5 mt-1 w-full text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors rounded-lg group"
+                >
+                  <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-semibold">Sign Out</span>
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <button
+            onClick={() => signOut({ redirectUrl: "/" })}
+            className="flex items-center gap-4 px-4 py-3 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-sm font-semibold">Sign Out</span>
+          </button>
+        )}
       </div>
     </aside>
   );

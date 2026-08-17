@@ -1,6 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
-import { ExternalLink, Check, X, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ExternalLink,
+  Check,
+  X,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -60,10 +67,6 @@ export default function PaymentsTab() {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortFilter === "OLDEST") {
       result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    } else if (sortFilter === "AMOUNT_HIGH") {
-      result.sort((a, b) => (b.amount || 0) - (a.amount || 0));
-    } else if (sortFilter === "AMOUNT_LOW") {
-      result.sort((a, b) => (a.amount || 0) - (b.amount || 0));
     }
 
     return result;
@@ -342,7 +345,9 @@ export default function PaymentsTab() {
                 <ChevronLeft size={16} />
               </button>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
