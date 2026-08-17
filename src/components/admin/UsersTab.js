@@ -119,6 +119,7 @@ export default function UsersTab() {
     >
       <motion.div variants={itemVariants}>
         <AdminSearchBar
+          onRefresh={loadData}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           statusFilter={roleFilter}

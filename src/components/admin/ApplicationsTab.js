@@ -483,6 +483,7 @@ export default function ApplicationsTab() {
     >
       <motion.div variants={itemVariants} className="mt-6 mb-8">
         <AdminSearchBar
+          onRefresh={loadData}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}

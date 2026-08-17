@@ -164,6 +164,7 @@ export default function PaymentsTab() {
     >
       <motion.div variants={itemVariants}>
         <AdminSearchBar
+          onRefresh={loadData}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}
