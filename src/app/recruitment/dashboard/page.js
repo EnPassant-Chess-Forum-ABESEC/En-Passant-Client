@@ -224,12 +224,13 @@ export default function RecruitmentDashboard() {
             RECRUITMENT <span className="text-[#9b1a1a]">DASHBOARD</span>
           </h1>
           <p className="font-sans font-light text-[#999] max-w-2xl mx-auto text-sm md:text-lg tracking-wide mt-6">
-            Your Application is Successfully Submitted! <br />
-            {/* Your application status is{" "}
+            Your application status is{" "}
             <span className="font-bold text-[#9b1a1a] uppercase">
-              {application.status?.replace(/_/g, " ")}
+              {application.status === "PAYMENT_PENDING"
+                ? "PAYMENT RECEIVED"
+                : application.status?.replace(/_/g, " ")}
             </span>
-            {statusDescriptions[application.status] ||
+            {/* {statusDescriptions[application.status] ||
               ". Complete your application process to unlock access to the designated tasks."} */}
           </p>
         </motion.div>
@@ -339,16 +340,31 @@ export default function RecruitmentDashboard() {
           >
             <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
             {application.status === "PAYMENT_PENDING" ? (
-              <>
-                <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
-                  Payment Under Review
-                </h3>
-                <p className="text-white/60 max-w-md mx-auto leading-relaxed">
-                  Your payment details have been received and are currently
-                  being verified by our administrators. You will gain access to
-                  the dashboard once your payment is approved.
-                </p>
-              </>
+              <div className="text-left space-y-10">
+                <div>
+                  <h3 className="flex items-center gap-2 text-white font-pezula font-bold uppercase tracking-wide text-xl md:text-2xl mb-4">
+                    <span className="text-[#9b1a1a]">›</span>
+                    Thank You for Registering
+                  </h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    Your application has been successfully submitted. Thank you
+                    for showing your interest in being a part of our community.
+                    We&apos;re excited to have you with us.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="flex items-center gap-2 text-white font-pezula font-bold uppercase tracking-wide text-xl md:text-2xl mb-4">
+                    <span className="text-[#9b1a1a]">›</span>
+                    One Last Step
+                  </h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    We&apos;ve received your payment details, and our team will
+                    verify them shortly. There&apos;s nothing you need to do
+                    from your end — just sit back and relax. Once the
+                    verification is complete, your dashboard will be activated.
+                  </p>
+                </div>
+              </div>
             ) : (
               <>
                 <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
