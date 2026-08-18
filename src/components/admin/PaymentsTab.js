@@ -178,7 +178,7 @@ export default function PaymentsTab() {
       animate="show"
       className="space-y-6"
     >
-      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-4 items-start justify-between">
         <div className="flex-1 w-full">
           <AdminSearchBar
             onRefresh={loadData}
@@ -204,7 +204,7 @@ export default function PaymentsTab() {
         <button
           onClick={handleRetryReceipts}
           disabled={isRetrying}
-          className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
+          className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 h-[46px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
         >
           {isRetrying ? (
             <Loader2 className="w-4 h-4 animate-spin" />
