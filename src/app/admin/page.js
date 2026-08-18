@@ -275,21 +275,21 @@ export default function AdminDashboard() {
               id: "applications_export",
               title: "Recruitment Applications",
               description:
-                "Download a spreadsheet of all submitted applications.",
+                "Update a spreadsheet of all submitted applications.",
               icon: FileText,
               onClick: createExportHandler(
                 "applications_export",
-                "/admin/applications/export"
+                "/admin/applications/export",
               ),
             },
             {
               id: "payments_export",
               title: "Recruitment Payments",
-              description: "Export the full payment log with UTR and statuses.",
+              description: "Update a spreadsheet of all payment records.",
               icon: CreditCard,
               onClick: createExportHandler(
                 "payments_export",
-                "/admin/payments/export"
+                "/admin/payments/export",
               ),
             },
           ].map((doc) => {
@@ -317,11 +317,12 @@ export default function AdminDashboard() {
                   {isLoading ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Downloading...
+                      Updating...
                     </>
                   ) : (
                     <>
-                      <Download className="w-3.5 h-3.5" /> Generate Report
+                      <Download className="w-3.5 h-3.5" />
+                      Update Sheet
                     </>
                   )}
                 </button>
@@ -404,8 +405,8 @@ export default function AdminDashboard() {
                 Clean Cloud Files
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-                Delete all files stored in Cloudinary. Use this to clear uploaded
-                receipts, submissions, and test files.
+                Delete all files stored in Cloudinary. Use this to clear
+                uploaded receipts, submissions, and test files.
               </p>
               <AlertDialog
                 open={isCloudModalOpen}
