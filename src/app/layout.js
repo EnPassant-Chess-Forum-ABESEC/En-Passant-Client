@@ -12,11 +12,45 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
-
-
 export const metadata = {
-  title: "En Passant",
-  description: "Master every move. Join the club.",
+  metadataBase: new URL("https://enpassant.co.in"),
+  title: {
+    default: "En Passant | Official Chess Forum of ABESEC",
+    template: "%s | En Passant",
+  },
+  description:
+    "The official chess community at ABES Engineering College. Participate in tournaments, climb the leaderboards, and connect with other players.",
+  keywords: [
+    "chess club",
+    "ABESEC",
+    "En Passant",
+    "college chess",
+    "chess leaderboard",
+    "chess tournaments",
+    "ABES Engineering College",
+  ],
+  openGraph: {
+    title: "En Passant | ABESEC Chess Forum",
+    description: "The official chess community at ABES Engineering College.",
+    url: "https://enpassant.co.in",
+    siteName: "En Passant",
+    images: [
+      {
+        url: "/common/logo.png",
+        width: 800,
+        height: 800,
+        alt: "En Passant Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "En Passant | ABESEC Chess Forum",
+    description: "The official chess community at ABES Engineering College.",
+    images: ["/common/logo.png"],
+  },
 };
 
 import { Toaster } from "@/components/ui/sonner";
@@ -27,17 +61,9 @@ import PreloaderWrapper from "@/components/PreloaderWrapper";
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html
-        lang="en"
-        className={`${inter.variable}`}
-        suppressHydrationWarning
-      >
+      <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-hidden transition-colors duration-500">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-          >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <PreloaderWrapper>
               <SmoothScroll>
                 <NavbarWrapper>
