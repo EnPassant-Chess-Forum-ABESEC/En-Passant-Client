@@ -143,7 +143,7 @@ export default function UsersTab() {
         className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl"
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-left whitespace-nowrap">
+          <table className="hidden md:table w-full text-left whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-6 py-4 font-normal">User ID</th>
@@ -216,6 +216,58 @@ export default function UsersTab() {
               )}
             </motion.tbody>
           </table>
+          <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
+            {paginatedUsers.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+                No users found
+              </div>
+            ) : (
+              paginatedUsers.map((user) => (
+                <div key={user._id} className="p-4 flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col min-w-0 pr-4">
+                      <span className="font-bold tracking-wide text-slate-900 dark:text-slate-50 truncate">
+                        {user.userName}
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-1">
+                        {user.email}
+                      </span>
+                    </div>
+                    <span className="font-mono text-[10px] text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase px-2 py-1 rounded shrink-0">
+                      {user.role}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-2">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                      Change Role
+                    </span>
+                    <Select
+                      value={user.role}
+                      onValueChange={(val) => updateUserRole(user.clerkId, val)}
+                    >
+                      <SelectTrigger className="w-full text-xs font-bold uppercase tracking-wider h-10 bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800">
+                        <SelectValue placeholder="Role" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+                        <SelectItem
+                          value="user"
+                          className="text-xs font-bold uppercase tracking-wider cursor-pointer"
+                        >
+                          USER
+                        </SelectItem>
+                        <SelectItem
+                          value="admin"
+                          className="text-xs font-bold uppercase tracking-wider cursor-pointer"
+                        >
+                          ADMIN
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
         {totalPages > 1 && (
           <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-[#020617]">

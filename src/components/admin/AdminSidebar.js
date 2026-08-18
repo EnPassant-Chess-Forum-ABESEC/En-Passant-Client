@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -16,6 +16,8 @@ import {
   Briefcase,
   Settings,
   Mail,
+  Menu,
+  X,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
@@ -37,22 +39,71 @@ export default function AdminSidebar() {
   const isPaymentsActive = pathname.startsWith("/admin/payments");
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(isPaymentsActive);
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when pathname changes (user navigated)
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
-    <aside className="w-[280px] h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-6 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] z-20 transition-colors duration-500">
-      <div className="mb-14 px-4">
-        <Link href="/admin" className="flex items-center gap-3 group">
+    <>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-[#0F172A] border-b border-slate-200 dark:border-slate-800 z-40 flex items-center justify-between px-4">
+        <Link href="/admin" className="flex items-center gap-3">
           <Image
             src="/common/logo.png"
             alt="logo"
-            width={32}
-            height={32}
+            width={28}
+            height={28}
             className="object-contain"
           />
-          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+          <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-slate-50">
             EN PASSANT
           </h2>
         </Link>
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
       </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`w-full lg:w-[280px] h-screen fixed top-0 right-0 lg:left-0 lg:right-auto flex-shrink-0 flex flex-col py-10 px-6 border-l lg:border-l-0 lg:border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] z-50 transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
+        }`}
+      >
+        <div className="mb-14 px-4 flex items-center justify-between">
+          <Link href="/admin" className="flex items-center gap-3 group">
+            <Image
+              src="/common/logo.png"
+              alt="logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
+            <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+              EN PASSANT
+            </h2>
+          </Link>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="lg:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
       <nav className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-8 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
         <Link
@@ -280,6 +331,7 @@ export default function AdminSidebar() {
           </button>
         )}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

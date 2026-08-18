@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
-import { Save, Calendar as CalendarIcon, Clock, Lock } from "lucide-react";
+import { Save, Calendar as CalendarIcon, Clock, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { motion } from "framer-motion";
@@ -92,7 +92,11 @@ export default function AdminSettingsPage() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
   }
 
   return (
@@ -106,9 +110,6 @@ export default function AdminSettingsPage() {
         <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight mb-2">
           Recruitment Settings
         </h1>
-        <p className="text-slate-500 dark:text-slate-400">
-          Configure global settings and recruitment phases.
-        </p>
       </motion.div>
 
       <motion.div
@@ -123,9 +124,6 @@ export default function AdminSettingsPage() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
               Recruitment Phases
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Manage when application windows open and close.
-            </p>
           </div>
         </div>
 
@@ -201,7 +199,7 @@ export default function AdminSettingsPage() {
             disabled={saving}
             className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-colors shadow-sm disabled:opacity-50"
           >
-            <Save className="w-4 h-4" />
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? "Saving..." : "Save Settings"}
           </button>
         </div>

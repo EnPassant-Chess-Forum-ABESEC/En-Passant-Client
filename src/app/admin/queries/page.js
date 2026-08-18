@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function QueriesPage() {
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <QueriesTab />
     </div>
   );

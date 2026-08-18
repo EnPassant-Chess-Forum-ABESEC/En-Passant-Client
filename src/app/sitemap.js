@@ -1,9 +1,6 @@
 export default function sitemap() {
   const baseUrl = "https://enpassant.co.in";
-  
-  // You can fetch dynamic routes here (e.g., specific events or profiles if they are public)
-  // For now, we'll list the static public routes
-  
+
   const routes = [
     "",
     "/contact",
@@ -11,7 +8,7 @@ export default function sitemap() {
     "/recruitment",
     "/apply",
     "/privacy",
-    "/terms"
+    "/terms",
   ];
 
   return routes.map((route) => ({

@@ -463,7 +463,7 @@ export default function TasksTab() {
       </motion.form>
 
       <motion.div variants={itemVariants} className="space-y-6">
-        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex flex-wrap gap-2 pb-4">
           {departments.map((dept) => (
             <button
               key={dept._id}
@@ -481,7 +481,7 @@ export default function TasksTab() {
 
         <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
           <div className="overflow-x-auto">
-            <table className="w-full text-left whitespace-nowrap">
+            <table className="hidden md:table w-full text-left whitespace-nowrap">
               <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-4 font-normal w-16 text-center">
@@ -560,6 +560,68 @@ export default function TasksTab() {
                 )}
               </motion.tbody>
             </table>
+            <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
+              {activeTasks.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+                  No tasks found for this department
+                </div>
+              ) : (
+                activeTasks.map((task) => (
+                  <div key={task._id} className="p-4 flex flex-col gap-3">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex flex-col min-w-0 pr-2">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 tracking-wide text-sm">
+                          {task.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full">
+                        <span className="text-slate-500 dark:text-slate-400 font-mono text-xs font-normal">
+                          {task.order}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider mr-2 self-center">
+                        Accepts:
+                      </span>
+                      {task.submission?.acceptsText && (
+                        <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-0.5 text-[10px] tracking-widest">
+                          TXT
+                        </span>
+                      )}
+                      {task.submission?.acceptsLinks && (
+                        <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-0.5 text-[10px] tracking-widest">
+                          LNK
+                        </span>
+                      )}
+                      {task.submission?.acceptsFiles && (
+                        <span className="bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded px-2 py-0.5 text-[10px] tracking-widest">
+                          FILE
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-3 mt-2 pt-3 border-t border-slate-50 dark:border-slate-800/50">
+                      <button
+                        onClick={() => handleEdit(task)}
+                        title="Edit Task"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 transition-colors text-xs font-bold"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(task._id)}
+                        title="Delete Task"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 transition-colors text-xs font-bold"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </motion.div>

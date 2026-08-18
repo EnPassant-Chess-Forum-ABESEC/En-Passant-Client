@@ -189,7 +189,7 @@ export default function PaymentsTab() {
         className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors"
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-left whitespace-nowrap">
+          <table className="hidden md:table w-full text-left whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-4 py-4 font-normal">Applicant Name</th>
@@ -330,6 +330,130 @@ export default function PaymentsTab() {
               )}
             </motion.tbody>
           </table>
+
+          <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
+            {paginatedPayments.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+                No payments found
+              </div>
+            ) : (
+              paginatedPayments.map((payment) => (
+                <div key={payment._id} className="p-4 flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col min-w-0 pr-4">
+                      <span className="font-bold tracking-wide text-slate-800/90 dark:text-slate-200 truncate">
+                        {payment.userId?.userName || "Unknown User"}
+                      </span>
+                      {payment.userId?.email && (
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">
+                          {payment.userId.email}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="font-mono font-black tracking-wide text-lg text-slate-800 dark:text-slate-50">
+                        {payment.amount / 100}
+                      </span>
+                      <span
+                        className={`mt-1 text-[10px] font-bold uppercase tracking-wider ${
+                          payment.status === "SUCCESS"
+                            ? "text-green-500 dark:text-green-400"
+                            : payment.status === "FAILED"
+                              ? "text-red-500 dark:text-red-400"
+                              : "text-yellow-500 dark:text-yellow-400"
+                        }`}
+                      >
+                        {payment.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
+                        App ID
+                      </span>
+                      {payment.applicationId ? (
+                        <button
+                          onClick={() => handleCopy(payment.applicationId)}
+                          className="font-mono text-xs text-slate-600 dark:text-slate-400 text-left hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                        >
+                          {`${payment.applicationId.substring(0, 6)}...${payment.applicationId.substring(payment.applicationId.length - 4)}`}
+                          {copiedId === payment.applicationId && (
+                            <span className="ml-2 text-green-500 text-[10px]">
+                              Copied!
+                            </span>
+                          )}
+                        </button>
+                      ) : (
+                        <span className="font-mono text-slate-400">N/A</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
+                        Date
+                      </span>
+                      <span className="text-slate-600 dark:text-slate-300">
+                        {new Date(payment.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                    <div className="flex items-center gap-2">
+                      {payment.paymentScreenshotUrl ? (
+                        <a
+                          href={payment.paymentScreenshotUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 transition-colors text-xs font-bold uppercase tracking-widest"
+                        >
+                          Receipt <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
+                          No Receipt
+                        </span>
+                      )}
+                    </div>
+
+                    {payment.status === "PENDING" && (
+                      <div className="flex items-center gap-2">
+                        {verifyingId === payment._id ? (
+                          <div className="p-2 text-slate-400">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() =>
+                                handleVerify(payment._id, "FAILED")
+                              }
+                              disabled={verifyingId === payment._id}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors"
+                              title="Reject Payment"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleVerify(payment._id, "SUCCESS")
+                              }
+                              disabled={verifyingId === payment._id}
+                              className="p-2 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20 transition-colors"
+                              title="Approve Payment"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
         {totalPages > 1 && (
           <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-[#020617]">

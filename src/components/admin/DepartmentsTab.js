@@ -205,7 +205,7 @@ export default function DepartmentsTab() {
         className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors"
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-left whitespace-nowrap">
+          <table className="hidden md:table w-full text-left whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-6 py-4 font-normal">Dept ID</th>
@@ -269,6 +269,44 @@ export default function DepartmentsTab() {
               ))}
             </motion.tbody>
           </table>
+          <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
+            {departments.length === 0 && (
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+                No departments found
+              </div>
+            )}
+            {departments.map((dept) => (
+              <div key={dept._id} className="p-4 flex flex-col gap-3">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex flex-col min-w-0 pr-2">
+                    <span className="font-bold text-slate-900 dark:text-slate-50 tracking-wide text-sm">
+                      {dept.name}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                      {dept.description}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 mt-2 pt-3 border-t border-slate-50 dark:border-slate-800/50">
+                  <button
+                    onClick={() => handleEdit(dept)}
+                    title="Edit Department"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 transition-colors text-xs font-bold"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => confirmDelete(dept._id)}
+                    title="Delete Department"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 transition-colors text-xs font-bold"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
 

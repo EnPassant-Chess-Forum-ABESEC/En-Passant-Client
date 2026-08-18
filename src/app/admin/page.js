@@ -64,7 +64,9 @@ export default function AdminDashboard() {
       if (res?.success) {
         toast.success("Redis sets cleaned successfully.");
       } else {
-        toast.error("Failed to clean Redis sets: " + (res?.message || "Unknown error"));
+        toast.error(
+          "Failed to clean Redis sets: " + (res?.message || "Unknown error"),
+        );
       }
     } catch (error) {
       console.error(error);
@@ -83,7 +85,9 @@ export default function AdminDashboard() {
       if (res?.success) {
         toast.success("Cloud files cleaned successfully.");
       } else {
-        toast.error("Failed to clean cloud files: " + (res?.message || "Unknown error"));
+        toast.error(
+          "Failed to clean cloud files: " + (res?.message || "Unknown error"),
+        );
       }
     } catch (error) {
       console.error(error);
@@ -100,11 +104,15 @@ export default function AdminDashboard() {
   const handleSendReminders = async () => {
     setIsSendingReminders(true);
     try {
-      const res = await fetchApi("/admin/applications/remind-drafts", { method: "POST" });
+      const res = await fetchApi("/admin/applications/remind-drafts", {
+        method: "POST",
+      });
       if (res?.success) {
         toast.success(res.message || "Draft reminders sent successfully.");
       } else {
-        toast.error("Failed to send reminders: " + (res?.message || "Unknown error"));
+        toast.error(
+          "Failed to send reminders: " + (res?.message || "Unknown error"),
+        );
       }
     } catch (error) {
       console.error(error);
@@ -187,7 +195,7 @@ export default function AdminDashboard() {
 
         if (appsRes?.applications) {
           const sortedApps = [...appsRes.applications].sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
           );
           setRecentApps(sortedApps.slice(0, 5));
         }
@@ -210,15 +218,12 @@ export default function AdminDashboard() {
           <h1 className="text-3xl md:text-5xl font-black  tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-slate-400 text-xs md:text-sm  tracking-widest">
-            Manage operations, members, and content seamlessly.
-          </p>
         </div>
       </motion.header>
 
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16"
       >
         {[
           {
@@ -242,23 +247,23 @@ export default function AdminDashboard() {
           return (
             <div
               key={i}
-              className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-8 rounded-3xl relative overflow-hidden group shadow-xl transition-all duration-500 hover:shadow-blue-500/10 hover:-translate-y-1"
+              className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-4 md:p-8 rounded-2xl md:rounded-3xl relative overflow-hidden group shadow-xl transition-all duration-500 hover:shadow-blue-500/10 hover:-translate-y-1"
             >
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-slate-800/50 transition-colors">
-                  <Icon className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              <div className="flex justify-between items-start mb-4 md:mb-6">
+                <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center group-hover:bg-slate-100 dark:group-hover:bg-slate-800/50 transition-colors">
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-50 mb-2 tracking-tight flex items-center">
+              <h3 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-slate-50 mb-1 md:mb-2 tracking-tight flex items-center">
                 {stat.value === "..." ? (
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                  <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-blue-500" />
                 ) : (
                   stat.value
                 )}
               </h3>
-              <p className="text-[10px] text-slate-400 tracking-wider">
+              <p className="text-[9px] md:text-[10px] text-slate-400 tracking-wider">
                 {stat.label}
               </p>
             </div>
@@ -351,9 +356,13 @@ export default function AdminDashboard() {
               Clean Redis Sets
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Clear cached data and active sets from Redis. Use this if the system state is stale or out of sync.
+              Clear cached data and active sets from Redis. Use this if the
+              system state is stale or out of sync.
             </p>
-            <AlertDialog open={isRedisModalOpen} onOpenChange={setIsRedisModalOpen}>
+            <AlertDialog
+              open={isRedisModalOpen}
+              onOpenChange={setIsRedisModalOpen}
+            >
               <AlertDialogTrigger asChild>
                 <button
                   disabled={isCleaningRedis}
@@ -377,7 +386,8 @@ export default function AdminDashboard() {
                     Clean Redis Leaderboard Sets?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This action cannot be undone. This will permanently remove all cached leaderboard data and sorted sets from Redis.
+                    This action cannot be undone. This will permanently remove
+                    all cached leaderboard data and sorted sets from Redis.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -403,9 +413,13 @@ export default function AdminDashboard() {
               Clean Cloud Files
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Delete all files stored in Cloudinary. Use this to clear uploaded receipts, submissions, and test files.
+              Delete all files stored in Cloudinary. Use this to clear uploaded
+              receipts, submissions, and test files.
             </p>
-            <AlertDialog open={isCloudModalOpen} onOpenChange={setIsCloudModalOpen}>
+            <AlertDialog
+              open={isCloudModalOpen}
+              onOpenChange={setIsCloudModalOpen}
+            >
               <AlertDialogTrigger asChild>
                 <button
                   disabled={isCleaningCloud}
@@ -429,7 +443,9 @@ export default function AdminDashboard() {
                     Clean Cloudinary Files?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This action cannot be undone. This will permanently delete all files uploaded to Cloudinary, including receipts and user submissions.
+                    This action cannot be undone. This will permanently delete
+                    all files uploaded to Cloudinary, including receipts and
+                    user submissions.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -455,9 +471,13 @@ export default function AdminDashboard() {
               Draft Reminders
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Send reminder emails to users who have submitted an application but have not completed the payment.
+              Send reminder emails to users who have submitted an application
+              but have not completed the payment.
             </p>
-            <AlertDialog open={isRemindersModalOpen} onOpenChange={setIsRemindersModalOpen}>
+            <AlertDialog
+              open={isRemindersModalOpen}
+              onOpenChange={setIsRemindersModalOpen}
+            >
               <AlertDialogTrigger asChild>
                 <button
                   disabled={isSendingReminders}
@@ -481,7 +501,8 @@ export default function AdminDashboard() {
                     Send Draft Reminders?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This will queue reminder emails for all applicants with a DRAFT or PAYMENT_PENDING status. Are you sure?
+                    This will queue reminder emails for all applicants with a
+                    DRAFT or PAYMENT_PENDING status. Are you sure?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -527,7 +548,7 @@ export default function AdminDashboard() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left whitespace-nowrap">
+              <table className="hidden md:table w-full text-left whitespace-nowrap">
                 <thead className="bg-slate-50 dark:bg-[#020617] text-slate-400 dark:text-slate-500 text-[10px] font-bold  tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="px-6 py-4 font-normal">Applicant Name</th>
@@ -577,6 +598,57 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+              <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
+                {recentApps.map((app) => (
+                  <div key={app._id} className="p-4 flex flex-col gap-3">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex flex-col min-w-0 pr-2">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 tracking-wide text-sm truncate">
+                          {app.userId?.userName || "Unknown"}
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">
+                          {app.userId?.email || "N/A"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0 mt-0.5">
+                        {new Date(app.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
+                        Dept:
+                      </span>
+                      <span className="font-mono text-xs text-slate-900/70 dark:text-slate-300 truncate">
+                        {app.preferredDepartmentId?.name || "N/A"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-50 dark:border-slate-800/50">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
+                          Status:
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-widest ${app.status === "ACTIVE" ? "bg-green-500/10 text-green-500 dark:text-green-400" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"}`}
+                        >
+                          {app.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
+                          Payment:
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold tracking-widest uppercase ${app.paymentStatus === "SUCCESS" ? "text-green-500 dark:text-green-400" : "text-yellow-500 dark:text-yellow-400"}`}
+                        >
+                          {app.paymentStatus}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

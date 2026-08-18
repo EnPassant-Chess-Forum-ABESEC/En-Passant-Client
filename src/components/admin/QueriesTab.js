@@ -117,20 +117,20 @@ export default function QueriesTab() {
               className="p-6 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6"
             >
                 <div className="flex-1 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white text-lg">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1 pr-2">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-lg truncate">
                         {query.name}
                       </h3>
                       <a
                         href={`mailto:${query.email}`}
-                        className="text-blue-600 dark:text-blue-400 text-sm hover:underline"
+                        className="text-blue-600 dark:text-blue-400 text-sm hover:underline block truncate"
                       >
                         {query.email}
                       </a>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full border bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                      <Clock className="w-3 h-3" />
+                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2.5 py-1 md:px-3 rounded-full border bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shrink-0 whitespace-nowrap">
+                      <Clock className="w-3 h-3 shrink-0" />
                       {format(new Date(query.createdAt), "MMM d, yyyy h:mm a")}
                     </div>
                   </div>
