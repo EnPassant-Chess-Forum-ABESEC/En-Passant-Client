@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useApi } from "@/lib/api";
 import SpotlightCard from "@/components/SpotlightCard";
 import { motion } from "framer-motion";
@@ -93,8 +94,9 @@ export default function LeaderboardPage() {
   };
 
   const tableItems = paginatedRest.map((player, i) => (
-    <div
-      className="flex w-full items-center text-left group border-b border-white/[0.03] last:border-0"
+    <Link
+      href={`/u/${encodeURIComponent(player.userName || player.username || "")}`}
+      className="flex w-full items-center text-left group border-b border-white/[0.03] last:border-0 hover:bg-white/[0.02] transition-colors cursor-pointer"
       key={player.userId}
     >
       <div className="py-3 px-2 md:py-6 md:px-8 font-mono text-white/20 font-bold text-xs md:text-lg group-hover:text-[#9b1a1a] transition-colors w-8 md:w-32 shrink-0 text-center md:text-left">
@@ -142,7 +144,7 @@ export default function LeaderboardPage() {
           {player.rating}
         </span>
       </div>
-    </div>
+    </Link>
   ));
 
   return (
@@ -315,7 +317,7 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[127.5vw] md:top-[24vw] left-[50vw] md:left-[26vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+              <Link href={`/u/${encodeURIComponent(top3[0].userName || top3[0].username || "")}`} className="w-full h-full bg-[#050505] relative overflow-hidden group cursor-pointer block">
                 {top3[0].profilePic ||
                 top3[0].imageUrl ||
                 top3[0].profilePictureUrl ? (
@@ -386,7 +388,7 @@ export default function LeaderboardPage() {
                     {top3[0].rating}
                   </p>
                 </div>
-              </div>
+              </Link>
             </motion.div>
           )}
 
@@ -399,7 +401,7 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[170vw] md:top-[48vw] left-0 md:left-[50vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+              <Link href={`/u/${encodeURIComponent(top3[1].userName || top3[1].username || "")}`} className="w-full h-full bg-[#050505] relative overflow-hidden group cursor-pointer block">
                 {top3[1].profilePic ||
                 top3[1].imageUrl ||
                 top3[1].profilePictureUrl ? (
@@ -470,7 +472,7 @@ export default function LeaderboardPage() {
                     {top3[1].rating}
                   </p>
                 </div>
-              </div>
+              </Link>
             </motion.div>
           )}
 
@@ -483,7 +485,7 @@ export default function LeaderboardPage() {
               variants={cardVariants}
               className="absolute top-[212.5vw] md:top-[72vw] left-[50vw] md:left-[74vw] w-[50vw] md:w-[24vw] h-[42.5vw] md:h-[24vw] z-20 flex flex-col"
             >
-              <div className="w-full h-full bg-[#050505] relative overflow-hidden group">
+              <Link href={`/u/${encodeURIComponent(top3[2].userName || top3[2].username || "")}`} className="w-full h-full bg-[#050505] relative overflow-hidden group cursor-pointer block">
                 {top3[2].profilePic ||
                 top3[2].imageUrl ||
                 top3[2].profilePictureUrl ? (
@@ -554,7 +556,7 @@ export default function LeaderboardPage() {
                     {top3[2].rating}
                   </p>
                 </div>
-              </div>
+              </Link>
             </motion.div>
           )}
 

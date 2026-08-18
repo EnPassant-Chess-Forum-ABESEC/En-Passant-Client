@@ -29,7 +29,8 @@ export default function PublicProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const safeUserName = encodeURIComponent(userName);
+      const decodedUserName = decodeURIComponent(userName);
+      const safeUserName = encodeURIComponent(decodedUserName);
       const data = await fetchApi(`/users/${safeUserName}`);
       if (data.success && data.user) {
         setProfile(data.user);
