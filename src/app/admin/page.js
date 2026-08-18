@@ -180,7 +180,7 @@ export default function AdminDashboard() {
             totalApplications: statsRes.stats.totalApplications || 0,
             activeTasks: statsRes.stats.activeTasks || 0,
             totalMembers: statsRes.stats.totalMembers || 0,
-            totalRevenue: `₹${((statsRes.stats.totalRevenue || 0) / 100).toLocaleString("en-IN")}`,
+            totalRevenue: `Rs. ${((statsRes.stats.totalRevenue || 0) / 100).toLocaleString("en-IN")}`,
           });
         }
 
