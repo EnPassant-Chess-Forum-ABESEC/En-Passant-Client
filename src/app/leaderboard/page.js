@@ -372,9 +372,16 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
-                    {(top3[0].username || top3[0].userName || "").split(" ")[0]}
-                  </h3>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md">
+                      {(top3[0].username || top3[0].userName || "").split(" ")[0]}
+                    </h3>
+                    {top3[0].chessComUsername && (
+                      <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.8vw] mt-0.5 truncate drop-shadow-sm font-light">
+                        {top3[0].chessComUsername}
+                      </p>
+                    )}
+                  </div>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
                     {top3[0].rating}
                   </p>
@@ -449,9 +456,16 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
-                    {(top3[1].username || top3[1].userName || "").split(" ")[0]}
-                  </h3>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md">
+                      {(top3[1].username || top3[1].userName || "").split(" ")[0]}
+                    </h3>
+                    {top3[1].chessComUsername && (
+                      <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.8vw] mt-0.5 truncate drop-shadow-sm font-light">
+                        {top3[1].chessComUsername}
+                      </p>
+                    )}
+                  </div>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
                     {top3[1].rating}
                   </p>
@@ -526,9 +540,16 @@ export default function LeaderboardPage() {
                   <div className="absolute inset-0 backdrop-blur-md bg-black/50" />
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex flex-row items-end justify-between px-[4vw] md:px-[1.5vw] pb-[4vw] md:pb-[1.5vw] z-10 gap-1">
-                  <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md min-w-0 flex-1">
-                    {(top3[2].username || top3[2].userName || "").split(" ")[0]}
-                  </h3>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <h3 className="text-white font-pezula font-bold text-[4vw] md:text-[1.8vw] leading-tight break-words drop-shadow-md">
+                      {(top3[2].username || top3[2].userName || "").split(" ")[0]}
+                    </h3>
+                    {top3[2].chessComUsername && (
+                      <p className="text-white/60 font-mono text-[2.5vw] md:text-[0.8vw] mt-0.5 truncate drop-shadow-sm font-light">
+                        {top3[2].chessComUsername}
+                      </p>
+                    )}
+                  </div>
                   <p className="text-white font-mono font-bold text-[3.5vw] md:text-[0.9vw] uppercase tracking-widest tabular-nums drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] shrink-0">
                     {top3[2].rating}
                   </p>
