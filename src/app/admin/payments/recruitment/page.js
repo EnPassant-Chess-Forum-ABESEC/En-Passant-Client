@@ -22,27 +22,13 @@ export default function PaymentsPage() {
 
       if (!response.ok) throw new Error("Failed to export payments");
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `payments_recruitment_${new Date().toISOString().split("T")[0]}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      const reset = () => {
-        window.URL.revokeObjectURL(url);
-        setExporting(false);
-      };
-      window.addEventListener("focus", reset, { once: true });
-      const fallback = setTimeout(() => {
-        window.removeEventListener("focus", reset);
-        reset();
-      }, 60000);
-      window.addEventListener("focus", () => clearTimeout(fallback), {
-        once: true,
-      });
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message || "Export successful");
+      } else {
+        alert(data.message || "Export failed");
+      }
+      setExporting(false);
     } catch (error) {
       console.error(error);
       alert("Error exporting payments: " + error.message);

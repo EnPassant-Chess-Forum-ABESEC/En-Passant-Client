@@ -123,7 +123,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const createExportHandler = (id, endpoint, filename) => async () => {
+  const createExportHandler = (id, endpoint) => async () => {
     setExportingId(id);
     try {
       const token = await getToken();
@@ -136,29 +136,13 @@ export default function AdminDashboard() {
 
       if (!response.ok) throw new Error("Export failed");
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${filename}_${new Date().toISOString().split("T")[0]}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      const reset = () => {
-        window.URL.revokeObjectURL(url);
-        setExportingId(null);
-      };
-      window.addEventListener("focus", reset, { once: true });
-
-      const fallback = setTimeout(() => {
-        window.removeEventListener("focus", reset);
-        reset();
-      }, 60000);
-
-      window.addEventListener("focus", () => clearTimeout(fallback), {
-        once: true,
-      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success(data.message || "Export successful");
+      } else {
+        toast.error(data.message || "Export failed");
+      }
+      setExportingId(null);
     } catch (error) {
       console.error(error);
       toast.error("Error exporting: " + error.message);
@@ -176,13 +160,20 @@ export default function AdminDashboard() {
   const [recentApps, setRecentApps] = useState([]);
   const [loadingApps, setLoadingApps] = useState(true);
 
+  const [userRole, setUserRole] = useState(null);
+
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [statsRes, appsRes] = await Promise.all([
+        const [statsRes, appsRes, userRes] = await Promise.all([
           fetchApi("/admin/stats"),
           fetchApi("/admin/applications?pageSize=1000"),
+          fetchApi("/users/me"),
         ]);
+
+        if (userRes?.user?.role) {
+          setUserRole(userRes.user.role);
+        }
 
         if (statsRes?.stats) {
           setStats({
@@ -281,25 +272,24 @@ export default function AdminDashboard() {
           {[
             {
               id: "applications",
+              id: "applications_export",
               title: "Recruitment Applications",
               description:
                 "Download a spreadsheet of all submitted applications.",
               icon: FileText,
               onClick: createExportHandler(
-                "applications",
-                "/admin/applications/export",
                 "applications_export",
+                "/admin/applications/export"
               ),
             },
             {
-              id: "payments",
+              id: "payments_export",
               title: "Recruitment Payments",
               description: "Export the full payment log with UTR and statuses.",
               icon: CreditCard,
               onClick: createExportHandler(
-                "payments",
-                "/admin/payments/export",
                 "payments_export",
+                "/admin/payments/export"
               ),
             },
           ].map((doc) => {
@@ -341,186 +331,188 @@ export default function AdminDashboard() {
         </div>
       </motion.section>
 
-      <motion.section variants={itemVariants} className="mb-16">
-        <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
-          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            System Actions
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
-            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
-              <Database className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-            </div>
-            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
-              Clean Redis Sets
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Clear cached data and active sets from Redis. Use this if the
-              system state is stale or out of sync.
-            </p>
-            <AlertDialog
-              open={isRedisModalOpen}
-              onOpenChange={setIsRedisModalOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <button
-                  disabled={isCleaningRedis}
-                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isCleaningRedis ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Cleaning...
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-3.5 h-3.5" /> Clean Redis
-                    </>
-                  )}
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
-                    Clean Redis Leaderboard Sets?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This action cannot be undone. This will permanently remove
-                    all cached leaderboard data and sorted sets from Redis.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCleanRedis}
-                    className="bg-red-500 hover:bg-red-600 text-white border-0"
-                  >
-                    Yes, Clean Sets
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+      {userRole === "admin" && (
+        <motion.section variants={itemVariants} className="mb-16">
+          <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
+            <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
+              System Actions
+            </h2>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+              <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+                <Database className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </div>
+              <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+                Clean Redis Sets
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+                Clear cached data and active sets from Redis. Use this if the
+                system state is stale or out of sync.
+              </p>
+              <AlertDialog
+                open={isRedisModalOpen}
+                onOpenChange={setIsRedisModalOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <button
+                    disabled={isCleaningRedis}
+                    className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isCleaningRedis ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Cleaning...
+                      </>
+                    ) : (
+                      <>
+                        <Database className="w-3.5 h-3.5" /> Clean Redis
+                      </>
+                    )}
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                      Clean Redis Leaderboard Sets?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                      This action cannot be undone. This will permanently remove
+                      all cached leaderboard data and sorted sets from Redis.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCleanRedis}
+                      className="bg-red-500 hover:bg-red-600 text-white border-0"
+                    >
+                      Yes, Clean Sets
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
 
-          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
-            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
-              <CloudLightning className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-            </div>
-            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
-              Clean Cloud Files
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Delete all files stored in Cloudinary. Use this to clear uploaded
-              receipts, submissions, and test files.
-            </p>
-            <AlertDialog
-              open={isCloudModalOpen}
-              onOpenChange={setIsCloudModalOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <button
-                  disabled={isCleaningCloud}
-                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isCleaningCloud ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Cleaning...
-                    </>
-                  ) : (
-                    <>
-                      <CloudLightning className="w-3.5 h-3.5" /> Clean Cloud
-                    </>
-                  )}
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
-                    Clean Cloudinary Files?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This action cannot be undone. This will permanently delete
-                    all files uploaded to Cloudinary, including receipts and
-                    user submissions.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCleanCloud}
-                    className="bg-red-500 hover:bg-red-600 text-white border-0"
+            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+              <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+                <CloudLightning className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </div>
+              <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+                Clean Cloud Files
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+                Delete all files stored in Cloudinary. Use this to clear uploaded
+                receipts, submissions, and test files.
+              </p>
+              <AlertDialog
+                open={isCloudModalOpen}
+                onOpenChange={setIsCloudModalOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <button
+                    disabled={isCleaningCloud}
+                    className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Yes, Clean Files
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+                    {isCleaningCloud ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Cleaning...
+                      </>
+                    ) : (
+                      <>
+                        <CloudLightning className="w-3.5 h-3.5" /> Clean Cloud
+                      </>
+                    )}
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                      Clean Cloudinary Files?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                      This action cannot be undone. This will permanently delete
+                      all files uploaded to Cloudinary, including receipts and
+                      user submissions.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCleanCloud}
+                      className="bg-red-500 hover:bg-red-600 text-white border-0"
+                    >
+                      Yes, Clean Files
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
 
-          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
-            <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
-              <Mail className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-            </div>
-            <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
-              Draft Reminders
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-              Send reminder emails to users who have submitted an application
-              but have not completed the payment.
-            </p>
-            <AlertDialog
-              open={isRemindersModalOpen}
-              onOpenChange={setIsRemindersModalOpen}
-            >
-              <AlertDialogTrigger asChild>
-                <button
-                  disabled={isSendingReminders}
-                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isSendingReminders ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="w-3.5 h-3.5" /> Send Emails
-                    </>
-                  )}
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
-                    Send Draft Reminders?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
-                    This will queue reminder emails for all applicants with a
-                    DRAFT or PAYMENT_PENDING status. Are you sure?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleSendReminders}
-                    className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group">
+              <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+                <Mail className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </div>
+              <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+                Draft Reminders
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+                Send reminder emails to users who have submitted an application
+                but have not completed the payment.
+              </p>
+              <AlertDialog
+                open={isRemindersModalOpen}
+                onOpenChange={setIsRemindersModalOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <button
+                    disabled={isSendingReminders}
+                    className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Yes, Send Emails
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    {isSendingReminders ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-3.5 h-3.5" /> Send Emails
+                      </>
+                    )}
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+                      Send Draft Reminders?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+                      This will queue reminder emails for all applicants with a
+                      DRAFT or PAYMENT_PENDING status. Are you sure?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleSendReminders}
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+                    >
+                      Yes, Send Emails
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      )}
 
       <motion.section variants={itemVariants}>
         <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
