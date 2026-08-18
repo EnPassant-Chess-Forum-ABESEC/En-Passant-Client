@@ -12,6 +12,9 @@ import {
 export default function AdminSearchBar({
   searchQuery,
   setSearchQuery,
+  departmentFilter,
+  setDepartmentFilter,
+  departmentOptions = [],
   statusFilter,
   setStatusFilter,
   statusOptions = [],
@@ -23,7 +26,7 @@ export default function AdminSearchBar({
   onRefresh,
 }) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
+    <div className="flex flex-col md:flex-row gap-4 mb-8 items-start">
       <div className="relative flex-1 w-full">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
         <input
@@ -35,9 +38,42 @@ export default function AdminSearchBar({
         />
       </div>
 
-      <div className="flex items-center gap-4 w-full md:w-auto">
+      <div className="flex flex-wrap items-start gap-4 w-full md:w-auto">
+        {departmentOptions && departmentOptions.length > 0 && (
+          <div className="flex flex-col gap-2 w-full md:w-44 lg:w-48 shrink-0">
+            <Select
+              value={departmentFilter}
+              onValueChange={setDepartmentFilter}
+            >
+              <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
+                <SelectValue placeholder="All Departments" />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+                <SelectItem
+                  value="ALL"
+                  className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
+                >
+                  All Departments
+                </SelectItem>
+                {departmentOptions.map((opt) => (
+                  <SelectItem
+                    key={opt.value}
+                    value={opt.value}
+                    className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
+                  >
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
+              Department
+            </span>
+          </div>
+        )}
+
         {statusOptions.length > 0 && (
-          <div className="w-full md:w-36 shrink-0">
+          <div className="flex flex-col gap-2 w-full md:w-44 lg:w-48 shrink-0">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
                 <SelectValue placeholder="All Status" />
@@ -60,11 +96,14 @@ export default function AdminSearchBar({
                 ))}
               </SelectContent>
             </Select>
+            <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
+              Status
+            </span>
           </div>
         )}
 
         {sortOptions.length > 0 && (
-          <div className="w-full md:w-36 shrink-0">
+          <div className="flex flex-col gap-2 w-full md:w-40 lg:w-44 shrink-0">
             <Select value={sortFilter} onValueChange={setSortFilter}>
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
                 <SelectValue placeholder="Sort By" />
@@ -81,13 +120,21 @@ export default function AdminSearchBar({
                 ))}
               </SelectContent>
             </Select>
+            <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
+              Sort By
+            </span>
           </div>
         )}
 
         {totalCount !== undefined && (
-          <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-xl px-4 flex items-center justify-center shadow-sm h-[46px] shrink-0 min-w-[70px]">
-            <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
-              {totalCount}
+          <div className="flex flex-col gap-2 shrink-0 min-w-[70px]">
+            <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-xl px-4 flex items-center justify-center shadow-sm h-[46px]">
+              <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                {totalCount}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
+              {countLabel}
             </span>
           </div>
         )}

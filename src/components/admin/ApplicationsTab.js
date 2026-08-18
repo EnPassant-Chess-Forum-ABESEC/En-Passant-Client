@@ -58,6 +58,7 @@ export default function ApplicationsTab() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [appDetails, setAppDetails] = useState(null);
@@ -88,6 +89,19 @@ export default function ApplicationsTab() {
     { label: "Selected", value: "SELECTED" },
     { label: "Rejected", value: "REJECTED" },
   ];
+
+  const departmentOptions = useMemo(() => {
+    const deptSet = new Set();
+    applications.forEach((app) => {
+      if (app.preferredDepartmentId?.name) deptSet.add(app.preferredDepartmentId.name);
+      if (app.secondaryDepartmentId) {
+        app.secondaryDepartmentId.forEach((d) => {
+          if (d.name) deptSet.add(d.name);
+        });
+      }
+    });
+    return Array.from(deptSet).sort().map((d) => ({ label: d, value: d }));
+  }, [applications]);
 
   async function loadData() {
     setLoading(true);
@@ -182,6 +196,16 @@ export default function ApplicationsTab() {
       result = result.filter((app) => app.status === statusFilter);
     }
 
+    if (departmentFilter !== "ALL") {
+      result = result.filter((app) => {
+        const matchesPrimary = app.preferredDepartmentId?.name === departmentFilter;
+        const matchesSecondary = app.secondaryDepartmentId?.some(
+          (d) => d.name === departmentFilter
+        );
+        return matchesPrimary || matchesSecondary;
+      });
+    }
+
     if (sortFilter === "NEWEST") {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortFilter === "OLDEST") {
@@ -189,14 +213,14 @@ export default function ApplicationsTab() {
     }
 
     return result;
-  }, [applications, searchQuery, statusFilter, sortFilter]);
+  }, [applications, searchQuery, statusFilter, departmentFilter, sortFilter]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, statusFilter, sortFilter]);
+  }, [searchQuery, statusFilter, departmentFilter, sortFilter]);
 
   const totalPages = Math.ceil(filteredAndSortedApps.length / itemsPerPage);
   const paginatedApps = filteredAndSortedApps.slice(
@@ -486,6 +510,9 @@ export default function ApplicationsTab() {
           onRefresh={loadData}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          departmentFilter={departmentFilter}
+          setDepartmentFilter={setDepartmentFilter}
+          departmentOptions={departmentOptions}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
           statusOptions={statusOptions}

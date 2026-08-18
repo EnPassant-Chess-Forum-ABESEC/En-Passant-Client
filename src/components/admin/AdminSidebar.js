@@ -226,20 +226,17 @@ export default function AdminSidebar() {
         {user ? (
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex items-center gap-3 px-3 py-2 w-full hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors text-left outline-none">
+              <button className="flex items-center gap-4 px-4 py-3 w-full hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors text-left outline-none">
                 <Image
                   src={user.imageUrl}
                   alt="Profile"
-                  width={36}
-                  height={36}
+                  width={32}
+                  height={32}
                   className="rounded-full border border-slate-200 dark:border-slate-700 shrink-0"
                 />
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
                     {user.fullName || "Admin"}
-                  </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                    {user.primaryEmailAddress?.emailAddress}
                   </span>
                 </div>
               </button>
