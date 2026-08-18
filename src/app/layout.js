@@ -57,6 +57,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import SmoothScroll from "@/components/SmoothScroll";
 import PreloaderWrapper from "@/components/PreloaderWrapper";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({ children }) {
   return (
@@ -76,6 +77,7 @@ export default function RootLayout({ children }) {
               </SmoothScroll>
             </PreloaderWrapper>
             <Toaster />
+            <Analytics />
           </ThemeProvider>
         </body>
       </html>
