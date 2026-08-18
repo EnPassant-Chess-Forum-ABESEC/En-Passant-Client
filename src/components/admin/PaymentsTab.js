@@ -7,6 +7,7 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  RefreshCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -141,6 +142,21 @@ export default function PaymentsTab() {
     setRejectionReason("");
   };
 
+  const [isRetrying, setIsRetrying] = useState(false);
+  const handleRetryReceipts = async () => {
+    setIsRetrying(true);
+    try {
+      const res = await fetchApi(`/admin/payments/retry-receipts`, {
+        method: "POST",
+      });
+      toast.success(res.message || "Receipt retry initiated");
+    } catch (err) {
+      toast.error("Error: " + err.message);
+    }
+    setIsRetrying(false);
+  };
+
+
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     setCopiedId(text);
@@ -162,27 +178,41 @@ export default function PaymentsTab() {
       animate="show"
       className="space-y-6"
     >
-      <motion.div variants={itemVariants}>
-        <AdminSearchBar
-          onRefresh={loadData}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          statusOptions={[
-            { label: "Pending", value: "PENDING" },
-            { label: "Success", value: "SUCCESS" },
-            { label: "Failed", value: "FAILED" },
-          ]}
-          sortFilter={sortFilter}
-          setSortFilter={setSortFilter}
-          sortOptions={[
-            { label: "Newest First", value: "NEWEST" },
-            { label: "Oldest First", value: "OLDEST" },
-          ]}
-          totalCount={filteredPayments.length}
-          countLabel="Total Payments"
-        />
+      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="flex-1 w-full">
+          <AdminSearchBar
+            onRefresh={loadData}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            statusOptions={[
+              { label: "Pending", value: "PENDING" },
+              { label: "Success", value: "SUCCESS" },
+              { label: "Failed", value: "FAILED" },
+            ]}
+            sortFilter={sortFilter}
+            setSortFilter={setSortFilter}
+            sortOptions={[
+              { label: "Newest First", value: "NEWEST" },
+              { label: "Oldest First", value: "OLDEST" },
+            ]}
+            totalCount={filteredPayments.length}
+            countLabel="Total Payments"
+          />
+        </div>
+        <button
+          onClick={handleRetryReceipts}
+          disabled={isRetrying}
+          className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
+        >
+          {isRetrying ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <RefreshCcw className="w-4 h-4" />
+          )}
+          Retry Missing Receipts
+        </button>
       </motion.div>
       <motion.div
         variants={itemVariants}
