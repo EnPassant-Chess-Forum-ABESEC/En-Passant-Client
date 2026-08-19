@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,22 @@ export default function AdminSearchBar({
   countLabel = "Total",
   onRefresh,
 }) {
+  const [inputValue, setInputValue] = useState(searchQuery || "");
+
+  useEffect(() => {
+    setInputValue(searchQuery || "");
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (inputValue !== searchQuery) {
+        setSearchQuery(inputValue);
+      }
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [inputValue, setSearchQuery, searchQuery]);
+
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8 items-start">
       <div className="relative flex-1 w-full">
@@ -32,8 +49,8 @@ export default function AdminSearchBar({
         <input
           type="text"
           placeholder="Search by ID, Name, or Email..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-colors"
         />
       </div>
