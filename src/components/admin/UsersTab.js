@@ -38,34 +38,51 @@ export default function UsersTab() {
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [sortFilter, setSortFilter] = useState("NEWEST");
 
+  const filteredUsers = useMemo(() => {
+    let result = users.filter((user) => {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        (user._id || "").toLowerCase().includes(q) ||
+        (user.userName || "").toLowerCase().includes(q) ||
+        (user.email || "").toLowerCase().includes(q);
+
+      const matchesRole = roleFilter === "ALL" || user.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+
+    if (sortFilter === "NEWEST") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortFilter === "OLDEST") {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
+
+    return result;
+  }, [users, searchQuery, roleFilter, sortFilter]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const [totalCount, setTotalCount] = useState(0);
-
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, roleFilter, sortFilter]);
 
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredUsers, currentPage]);
+
+  // Total pages
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
   useEffect(() => {
     loadData();
-  }, [currentPage, searchQuery, roleFilter, sortFilter]);
+  }, []);
 
   async function loadData() {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        pageSize: itemsPerPage,
-        pageNumber: currentPage,
-      });
-      if (searchQuery) params.append("search", searchQuery);
-      if (roleFilter && roleFilter !== "ALL") params.append("role", roleFilter);
-      if (sortFilter) params.append("sort", sortFilter);
-
-      const res = await fetchApi(`/admin/users?${params.toString()}`);
+      const res = await fetchApi("/admin/users?pageSize=1000");
       setUsers(res.users || []);
-      setTotalCount(res.metadata?.total || 0);
     } catch (err) {
       alert("Error: " + err.message);
     }
@@ -117,7 +134,7 @@ export default function UsersTab() {
             { label: "Newest First", value: "NEWEST" },
             { label: "Oldest First", value: "OLDEST" },
           ]}
-          totalCount={totalCount}
+          totalCount={filteredUsers.length}
           countLabel="Total Users"
         />
       </motion.div>
@@ -140,7 +157,7 @@ export default function UsersTab() {
               variants={containerVariants}
               className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
             >
-              {users.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <motion.tr variants={itemVariants}>
                   <td
                     colSpan="5"
@@ -150,7 +167,7 @@ export default function UsersTab() {
                   </td>
                 </motion.tr>
               ) : (
-                users.map((user) => (
+                paginatedUsers.map((user) => (
                   <motion.tr
                     variants={itemVariants}
                     key={user._id}
@@ -200,12 +217,12 @@ export default function UsersTab() {
             </motion.tbody>
           </table>
           <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
-            {users.length === 0 ? (
+            {paginatedUsers.length === 0 ? (
               <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
                 No users found
               </div>
             ) : (
-              users.map((user) => (
+              paginatedUsers.map((user) => (
                 <div key={user._id} className="p-4 flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <div className="flex flex-col min-w-0 pr-4">

@@ -51,15 +51,41 @@ export default function PaymentsTab() {
   const [sortFilter, setSortFilter] = useState("NEWEST");
   const [loading, setLoading] = useState(true);
 
+  const filteredPayments = useMemo(() => {
+    let result = payments.filter((payment) => {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        payment.applicationId?.toLowerCase().includes(q) ||
+        (payment.userId?.userName || "").toLowerCase().includes(q) ||
+        (payment.userId?.email || "").toLowerCase().includes(q);
+
+      const matchesStatus =
+        statusFilter === "ALL" || payment.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+
+    if (sortFilter === "NEWEST") {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortFilter === "OLDEST") {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
+
+    return result;
+  }, [payments, searchQuery, statusFilter, sortFilter]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const [totalCount, setTotalCount] = useState(0);
-
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, statusFilter, sortFilter]);
+
+  const paginatedPayments = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredPayments.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredPayments, currentPage]);
+
+  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -70,22 +96,13 @@ export default function PaymentsTab() {
 
   useEffect(() => {
     loadData();
-  }, [currentPage, searchQuery, statusFilter, sortFilter]);
+  }, []);
 
   async function loadData() {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        pageSize: itemsPerPage,
-        pageNumber: currentPage,
-      });
-      if (searchQuery) params.append("search", searchQuery);
-      if (statusFilter && statusFilter !== "ALL") params.append("status", statusFilter);
-      if (sortFilter) params.append("sort", sortFilter);
-
-      const res = await fetchApi(`/admin/payments?${params.toString()}`);
+      const res = await fetchApi("/admin/payments?pageSize=1000");
       setPayments(res.payments || []);
-      setTotalCount(res.metadata?.total || 0);
     } catch (err) {
       toast.error("Error: " + err.message);
     }
@@ -180,7 +197,7 @@ export default function PaymentsTab() {
               { label: "Newest First", value: "NEWEST" },
               { label: "Oldest First", value: "OLDEST" },
             ]}
-            totalCount={totalCount}
+            totalCount={filteredPayments.length}
             countLabel="Total Payments"
           />
         </div>
@@ -218,7 +235,7 @@ export default function PaymentsTab() {
               variants={containerVariants}
               className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
             >
-              {payments.length === 0 ? (
+              {paginatedPayments.length === 0 ? (
                 <motion.tr variants={itemVariants}>
                   <td
                     colSpan="7"
@@ -228,7 +245,7 @@ export default function PaymentsTab() {
                   </td>
                 </motion.tr>
               ) : (
-                payments.map((payment) => (
+                paginatedPayments.map((payment) => (
                   <motion.tr
                     variants={itemVariants}
                     key={payment._id}
@@ -345,12 +362,12 @@ export default function PaymentsTab() {
           </table>
 
           <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
-            {payments.length === 0 ? (
+            {paginatedPayments.length === 0 ? (
               <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
                 No payments found
               </div>
             ) : (
-              payments.map((payment) => (
+              paginatedPayments.map((payment) => (
                 <div key={payment._id} className="p-4 flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <div className="flex flex-col min-w-0 pr-4">
