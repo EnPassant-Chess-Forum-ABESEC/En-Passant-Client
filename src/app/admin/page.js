@@ -8,7 +8,8 @@ import {
   CheckSquare,
   Users,
   CreditCard,
-  Download,
+  Layers,
+  RefreshCw,
   ChevronRight,
   Loader2,
   Database,
@@ -321,7 +322,7 @@ export default function AdminDashboard() {
                     </>
                   ) : (
                     <>
-                      <Download className="w-3.5 h-3.5" />
+                      <RefreshCw className="w-3.5 h-3.5" />
                       Update Sheet
                     </>
                   )}
@@ -367,7 +368,7 @@ export default function AdminDashboard() {
                       </>
                     ) : (
                       <>
-                        <Database className="w-3.5 h-3.5" /> Clean Redis
+                        <Layers className="w-3.5 h-3.5" /> Clean Redis
                       </>
                     )}
                   </button>
