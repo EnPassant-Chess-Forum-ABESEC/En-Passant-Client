@@ -328,7 +328,7 @@ export default function AdminDashboard() {
                       dataKey="PRIMARY"
                       stroke="#22c55e"
                       strokeWidth={3}
-                      dot={{ r: 4, strokeWidth: 2, fill: "#a8aab2" }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#fdfdfd" }}
                       activeDot={{ r: 6, fill: "#22c55e" }}
                     />
                     <Line
@@ -337,7 +337,7 @@ export default function AdminDashboard() {
                       dataKey="SECONDARY"
                       stroke="#eab308"
                       strokeWidth={3}
-                      dot={{ r: 4, strokeWidth: 2, fill: "#a8aab2" }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#fdfdfd" }}
                       activeDot={{ r: 6, fill: "#eab308" }}
                     />
                   </LineChart>
