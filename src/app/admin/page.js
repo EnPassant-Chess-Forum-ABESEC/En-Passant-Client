@@ -324,8 +324,8 @@ export default function AdminDashboard() {
                     />
                     <Line
                       type="monotone"
-                      name="Active Applications"
-                      dataKey="ACTIVE"
+                      name="Primary Preference"
+                      dataKey="PRIMARY"
                       stroke="#22c55e"
                       strokeWidth={3}
                       dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
@@ -333,8 +333,8 @@ export default function AdminDashboard() {
                     />
                     <Line
                       type="monotone"
-                      name="Pending Payment"
-                      dataKey="PAYMENT_PENDING"
+                      name="Secondary Preference"
+                      dataKey="SECONDARY"
                       stroke="#eab308"
                       strokeWidth={3}
                       dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
