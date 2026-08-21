@@ -14,6 +14,7 @@ import {
   Loader2,
   Database,
   CloudLightning,
+  ChartLine,
   Mail,
 } from "lucide-react";
 import {
@@ -30,6 +31,16 @@ import {
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -156,6 +167,7 @@ export default function AdminDashboard() {
     activeTasks: "...",
     totalMembers: "...",
     totalRevenue: "...",
+    chartData: [],
   });
 
   const [recentApps, setRecentApps] = useState([]);
@@ -182,6 +194,7 @@ export default function AdminDashboard() {
             activeTasks: statsRes.stats.activeTasks || 0,
             totalMembers: statsRes.stats.totalMembers || 0,
             totalRevenue: `Rs. ${((statsRes.stats.totalRevenue || 0) / 100).toLocaleString("en-IN")}`,
+            chartData: statsRes.stats.chartData || [],
           });
         }
 
@@ -264,72 +277,146 @@ export default function AdminDashboard() {
       </motion.div>
 
       <motion.section variants={itemVariants} className="mb-16">
-        <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
-          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            Export Sheets
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            {
-              id: "applications",
-              id: "applications_export",
-              title: "Recruitment Applications",
-              description:
-                "Update a spreadsheet of all submitted applications.",
-              icon: FileText,
-              onClick: createExportHandler(
-                "applications_export",
-                "/admin/applications/export",
-              ),
-            },
-            {
-              id: "payments_export",
-              title: "Recruitment Payments",
-              description: "Update a spreadsheet of all payment records.",
-              icon: CreditCard,
-              onClick: createExportHandler(
-                "payments_export",
-                "/admin/payments/export",
-              ),
-            },
-          ].map((doc) => {
-            const DocIcon = doc.icon;
-            const isLoading = exportingId === doc.id;
-            return (
-              <div
-                key={doc.id}
-                className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group"
-              >
-                <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
-                  <DocIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col">
+            <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-6 flex items-center gap-2">
+              <ChartLine className="w-5 h-5 text-blue-500" />
+              Recruitment Trends
+            </h2>
+            <div className="flex-1 min-h-[300px]">
+              {stats.chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={stats.chartData}
+                    margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#334155"
+                      opacity={0.2}
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                      dy={10}
+                    />
+                    <YAxis
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                      dx={-10}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0f172a",
+                        border: "1px solid #1e293b",
+                        borderRadius: "8px",
+                        color: "#f8fafc",
+                      }}
+                      itemStyle={{ fontSize: "13px", fontWeight: "bold" }}
+                    />
+                    <Legend
+                      iconType="circle"
+                      wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }}
+                    />
+                    <Line
+                      type="monotone"
+                      name="Active Applications"
+                      dataKey="ACTIVE"
+                      stroke="#22c55e"
+                      strokeWidth={3}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
+                      activeDot={{ r: 6, fill: "#22c55e" }}
+                    />
+                    <Line
+                      type="monotone"
+                      name="Pending Payment"
+                      dataKey="PAYMENT_PENDING"
+                      stroke="#eab308"
+                      strokeWidth={3}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
+                      activeDot={{ r: 6, fill: "#eab308" }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-400 text-sm font-medium tracking-wide">
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  Loading Chart Data...
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
-                  {doc.title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-                  {doc.description}
-                </p>
-                <button
-                  onClick={doc.onClick}
-                  disabled={isLoading}
-                  className="w-full py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+              )}
+            </div>
+          </div>
+
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 flex items-center gap-2 mb-1">
+              <FileText className="w-5 h-5 text-blue-500" />
+              Export Sheets
+            </h2>
+
+            {[
+              {
+                id: "applications_export",
+                title: "Recruitment Applications",
+                description:
+                  "Update a spreadsheet of all submitted applications.",
+                icon: FileText,
+                onClick: createExportHandler(
+                  "applications_export",
+                  "/admin/applications/export",
+                ),
+              },
+              {
+                id: "payments_export",
+                title: "Recruitment Payments",
+                description: "Update a spreadsheet of all payment records.",
+                icon: CreditCard,
+                onClick: createExportHandler(
+                  "payments_export",
+                  "/admin/payments/export",
+                ),
+              },
+            ].map((doc) => {
+              const DocIcon = doc.icon;
+              const isLoading = exportingId === doc.id;
+              return (
+                <div
+                  key={doc.id}
+                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group h-full"
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      Update Sheet
-                    </>
-                  )}
-                </button>
-              </div>
-            );
-          })}
+                  <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+                    <DocIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+                    {doc.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
+                    {doc.description}
+                  </p>
+                  <button
+                    onClick={doc.onClick}
+                    disabled={isLoading}
+                    className="w-full mt-auto py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Update Sheet
+                      </>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </motion.section>
 
