@@ -40,17 +40,17 @@ export default function TaskCountdown({ targetDate }) {
   }
 
   const renderCounterBlock = (value, label) => (
-    <div className="flex flex-col items-center justify-center bg-black/40 border border-white/5 rounded-xl px-4 py-4 min-w-[80px]">
+    <div className="flex flex-col items-center justify-center bg-black/40 border border-white/5 rounded-xl px-2 sm:px-4 py-3 sm:py-4 min-w-[70px] sm:min-w-[80px]">
       <div className="flex items-center text-white font-bold font-mono">
-        <Counter value={Math.floor(value / 10)} fontSize={36} padding={0} />
-        <Counter value={value % 10} fontSize={36} padding={0} />
+        <Counter value={Math.floor(value / 10)} fontSize={32} padding={0} />
+        <Counter value={value % 10} fontSize={32} padding={0} />
       </div>
       <span className="text-[10px] text-white/50 tracking-widest uppercase mt-2">{label}</span>
     </div>
   );
 
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex items-center justify-center gap-1.5 sm:gap-3">
       {timeLeft.days > 0 && (
         <>
           {renderCounterBlock(timeLeft.days, "Days")}

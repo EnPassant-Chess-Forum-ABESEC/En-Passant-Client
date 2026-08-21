@@ -244,11 +244,11 @@ export default function RecruitmentDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15 }}
-                className="flex flex-col items-center justify-center p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl"
+                className="flex flex-col items-center justify-center p-6 sm:p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
               >
                 <h2
-                  className="font-black uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] mb-8 text-center"
-                  style={{ fontSize: "clamp(30px, 5vw, 60px)" }}
+                  className="font-black uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] mb-6 sm:mb-8 text-center"
+                  style={{ fontSize: "clamp(24px, 5vw, 60px)" }}
                 >
                   TASKS REVEALING IN
                 </h2>
