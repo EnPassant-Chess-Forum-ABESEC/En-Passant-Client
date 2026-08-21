@@ -319,7 +319,7 @@ export default function AdminDashboard() {
                       itemStyle={{ fontSize: "13px", fontWeight: "bold" }}
                     />
                     <Legend
-                      iconType="circle"
+                      iconType="plainline"
                       wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }}
                     />
                     <Line
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
                       dataKey="PRIMARY"
                       stroke="#22c55e"
                       strokeWidth={3}
-                      dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#a8aab2" }}
                       activeDot={{ r: 6, fill: "#22c55e" }}
                     />
                     <Line
@@ -337,7 +337,7 @@ export default function AdminDashboard() {
                       dataKey="SECONDARY"
                       stroke="#eab308"
                       strokeWidth={3}
-                      dot={{ r: 4, strokeWidth: 2, fill: "#0f172a" }}
+                      dot={{ r: 4, strokeWidth: 2, fill: "#a8aab2" }}
                       activeDot={{ r: 6, fill: "#eab308" }}
                     />
                   </LineChart>
