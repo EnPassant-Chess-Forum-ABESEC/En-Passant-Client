@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SiChessdotcom } from "react-icons/si";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import FoldText from "./FoldText";
 
 const SQUARE_SIZE = 140;
@@ -311,7 +312,9 @@ export default function EnPassantPreloader({ onFinish }) {
                   className="whitespace-nowrap"
                 />
               </div>
-              <div style={{ display: "flex", gap: "clamp(0.5rem, 3vw, 1.5rem)" }}>
+              <div
+                style={{ display: "flex", gap: "clamp(0.5rem, 3vw, 1.5rem)" }}
+              >
                 <FoldText
                   text="EN"
                   fontSize="clamp(3.5rem, 14vw, 8rem)"
@@ -334,6 +337,16 @@ export default function EnPassantPreloader({ onFinish }) {
           )}
         </div>
       </div>
+
+      <button
+        onClick={onFinish}
+        className="absolute bottom-8 right-8 px-5 py-2.5 text-white/50 hover:text-white/90 text-[10px] sm:text-sm font-bold normal-case tracking-[0.04em] rounded-full transition-all duration-300 z-[100000] flex items-center gap-1 group"
+      >
+        Skip
+        <span className="group-hover:translate-x-1 transition-transform duration-300">
+          <ArrowRight size={12} />
+        </span>
+      </button>
     </div>
   );
 }
