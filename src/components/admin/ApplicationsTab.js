@@ -471,7 +471,7 @@ export default function ApplicationsTab() {
                   className="flex items-center gap-2 px-4 py-2 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl text-xs font-bold transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Delete account
+                  Delete Application
                 </button>
               </div>
             </div>
