@@ -8,9 +8,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import AdminSearchBar from "./AdminSearchBar";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import {
+  User,
+  Eye,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Loader2,
+  Trash2,
+} from "lucide-react";
+
+function timeAgo(dateString) {
+  if (!dateString) return "Unknown";
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now - date) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const weeks = Math.round(days / 7);
+
+  if (seconds < 60) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (hours < 24) return `${hours} hr ago`;
+  if (days < 7) return `${days} days ago`;
+  return `${weeks} weeks ago`;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -102,6 +138,24 @@ export default function UsersTab() {
     }
   };
 
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState(null);
+
+  const executeDeleteUser = async () => {
+    if (!confirmDeleteUser) return;
+    const id = confirmDeleteUser;
+    setConfirmDeleteUser(null);
+
+    try {
+      await fetchApi(`/admin/users/${id}`, {
+        method: "DELETE",
+      });
+      toast.success("User deleted successfully");
+      loadData();
+    } catch (err) {
+      toast.error(err.message || "Failed to delete user");
+    }
+  };
+
   if (loading)
     return (
       <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
@@ -138,139 +192,132 @@ export default function UsersTab() {
           countLabel="Total Users"
         />
       </motion.div>
-      <motion.div
-        variants={itemVariants}
-        className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl"
-      >
-        <div className="overflow-x-auto">
-          <table className="hidden md:table w-full text-left whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
-              <tr>
-                <th className="px-6 py-4 font-normal">User ID</th>
-                <th className="px-6 py-4 font-normal">Name</th>
-                <th className="px-6 py-4 font-normal">Email</th>
-                <th className="px-6 py-4 font-normal">Role</th>
-                <th className="px-6 py-4 font-normal text-right">Actions</th>
-              </tr>
-            </thead>
-            <motion.tbody
-              variants={containerVariants}
-              className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-800 dark:text-slate-200"
-            >
-              {paginatedUsers.length === 0 ? (
-                <motion.tr variants={itemVariants}>
-                  <td
-                    colSpan="5"
-                    className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
-                  >
-                    No users found
-                  </td>
-                </motion.tr>
-              ) : (
-                paginatedUsers.map((user) => (
-                  <motion.tr
-                    variants={itemVariants}
-                    key={user._id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
-                  >
-                    <td className="px-6 py-5 font-mono text-sm text-slate-500 dark:text-slate-400">
-                      {user._id}
-                    </td>
-                    <td className="px-6 py-5 font-bold tracking-wide text-slate-900 dark:text-slate-50">
-                      {user.userName}
-                    </td>
-                    <td className="px-6 py-5 text-sm text-slate-600 dark:text-slate-300">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-5 font-mono text-xs text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase">
-                      {user.role}
-                    </td>
-                    <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Select
-                        value={user.role}
-                        onValueChange={(val) =>
-                          updateUserRole(user.clerkId, val)
-                        }
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginatedUsers.length === 0 ? (
+            <div className="col-span-full p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl">
+              No users found
+            </div>
+          ) : (
+            paginatedUsers.map((user) => {
+              const relativeTime = timeAgo(user.createdAt);
+              const isMissingCollegeEmail = !user.collegeEmail;
+              const isMissingPhone = !user.phoneNumber;
+              const isMissingBranch = !user.branch;
+
+              return (
+                <motion.div
+                  variants={itemVariants}
+                  key={user._id}
+                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative flex flex-col gap-5 hover:shadow-lg transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-500/10 dark:to-blue-500/10 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-500/20">
+                      <User className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3
+                          className="font-bold text-slate-900 dark:text-slate-50 text-lg truncate"
+                          title={user.userName}
+                        >
+                          {user.userName}
+                        </h3>
+                        <Select
+                          value={user.role}
+                          onValueChange={(val) =>
+                            updateUserRole(user.clerkId, val)
+                          }
+                        >
+                          <SelectTrigger className="w-20 h-7 px-2 shrink-0 text-[9px] font-black uppercase tracking-wider bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 focus:ring-0">
+                            <SelectValue placeholder="Role" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 min-w-0">
+                            <SelectItem
+                              value="user"
+                              className="text-[9px] font-bold uppercase tracking-wider cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800/50"
+                            >
+                              USER
+                            </SelectItem>
+                            <SelectItem
+                              value="admin"
+                              className="text-[9px] font-bold uppercase tracking-wider cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800/50"
+                            >
+                              ADMIN
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <p
+                        className="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5"
+                        title={user.email}
                       >
-                        <SelectTrigger className="w-28 text-[10px] font-bold uppercase tracking-wider h-8 bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 ml-auto">
-                          <SelectValue placeholder="Role" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                          <SelectItem
-                            value="user"
-                            className="text-[10px] font-bold uppercase tracking-wider cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800/50"
-                          >
-                            USER
-                          </SelectItem>
-                          <SelectItem
-                            value="admin"
-                            className="text-[10px] font-bold uppercase tracking-wider cursor-pointer focus:bg-slate-100 dark:focus:bg-slate-800/50"
-                          >
-                            ADMIN
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </td>
-                  </motion.tr>
-                ))
-              )}
-            </motion.tbody>
-          </table>
-          <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/50">
-            {paginatedUsers.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
-                No users found
-              </div>
-            ) : (
-              paginatedUsers.map((user) => (
-                <div key={user._id} className="p-4 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex flex-col min-w-0 pr-4">
-                      <span className="font-bold tracking-wide text-slate-900 dark:text-slate-50 truncate">
-                        {user.userName}
-                      </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-1">
                         {user.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-y-4 gap-x-2 bg-slate-50 dark:bg-[#020617] rounded-2xl p-4 border border-slate-100 dark:border-slate-800/50 mt-2">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] uppercase tracking-widest font-bold text-slate-400">
+                        Phone
+                      </span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
+                        {user.phoneNumber || (
+                          <span className="text-slate-400 dark:text-slate-500">
+                            -
+                          </span>
+                        )}
                       </span>
                     </div>
-                    <span className="font-mono text-[10px] text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase px-2 py-1 rounded shrink-0">
-                      {user.role}
-                    </span>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] uppercase tracking-widest font-bold text-slate-400">
+                        Academics
+                      </span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
+                        {user.branch ? (
+                          `${user.branch} (Yr ${user.year || "1"})`
+                        ) : (
+                          <span className="text-slate-400 dark:text-slate-500">
+                            -
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-1 col-span-2">
+                      <span className="text-[9px] uppercase tracking-widest font-bold text-slate-400">
+                        College Email
+                      </span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate font-mono">
+                        {user.collegeEmail || (
+                          <span className="text-slate-400 dark:text-slate-500 font-sans">
+                            -
+                          </span>
+                        )}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2 mt-2">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
-                      Change Role
+
+                  <div className="mt-auto flex justify-between items-center pt-2">
+                    <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      Joined {relativeTime}
                     </span>
-                    <Select
-                      value={user.role}
-                      onValueChange={(val) => updateUserRole(user.clerkId, val)}
+                    <button
+                      onClick={() => setConfirmDeleteUser(user.clerkId)}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                      title="Delete User"
                     >
-                      <SelectTrigger className="w-full text-xs font-bold uppercase tracking-wider h-10 bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800">
-                        <SelectValue placeholder="Role" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                        <SelectItem
-                          value="user"
-                          className="text-xs font-bold uppercase tracking-wider cursor-pointer"
-                        >
-                          USER
-                        </SelectItem>
-                        <SelectItem
-                          value="admin"
-                          className="text-xs font-bold uppercase tracking-wider cursor-pointer"
-                        >
-                          ADMIN
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
+                </motion.div>
+              );
+            })
+          )}
         </div>
         {totalPages > 1 && (
-          <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-[#020617]">
+          <div className="flex flex-row items-center justify-between mt-6 px-6 py-4 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
             <span className="text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider">
               Page {currentPage} of {totalPages}
             </span>
@@ -278,7 +325,7 @@ export default function UsersTab() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -287,7 +334,7 @@ export default function UsersTab() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
@@ -295,6 +342,36 @@ export default function UsersTab() {
           </div>
         )}
       </motion.div>
+      <AlertDialog
+        open={!!confirmDeleteUser}
+        onOpenChange={(open) => {
+          if (!open) setConfirmDeleteUser(null);
+        }}
+      >
+        <AlertDialogContent className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-slate-900 dark:text-slate-50 font-bold">
+              Confirm Deletion
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+              Are you sure you want to delete this user? This action will
+              permanently remove their account from Clerk and the database. This
+              cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={executeDeleteUser}
+              className="rounded-xl text-white bg-rose-600 hover:bg-rose-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 }

@@ -2,7 +2,19 @@ import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import AdminSearchBar from "./AdminSearchBar";
-import { User, Eye, Mail, ChevronLeft, ChevronRight, Trash2, Loader2 } from "lucide-react";
+import {
+  User,
+  Eye,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  Loader2,
+  Activity,
+  CreditCard,
+  Phone,
+  CheckCircle,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -15,7 +27,11 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 import {
@@ -93,14 +109,17 @@ export default function ApplicationsTab() {
   const departmentOptions = useMemo(() => {
     const deptSet = new Set();
     applications.forEach((app) => {
-      if (app.preferredDepartmentId?.name) deptSet.add(app.preferredDepartmentId.name);
+      if (app.preferredDepartmentId?.name)
+        deptSet.add(app.preferredDepartmentId.name);
       if (app.secondaryDepartmentId) {
         app.secondaryDepartmentId.forEach((d) => {
           if (d.name) deptSet.add(d.name);
         });
       }
     });
-    return Array.from(deptSet).sort().map((d) => ({ label: d, value: d }));
+    return Array.from(deptSet)
+      .sort()
+      .map((d) => ({ label: d, value: d }));
   }, [applications]);
 
   async function loadData() {
@@ -112,7 +131,7 @@ export default function ApplicationsTab() {
       toast.error("Error loading applications: " + err.message);
     }
     setLoading(false);
-  };
+  }
 
   useEffect(() => {
     loadData();
@@ -198,9 +217,10 @@ export default function ApplicationsTab() {
 
     if (departmentFilter !== "ALL") {
       result = result.filter((app) => {
-        const matchesPrimary = app.preferredDepartmentId?.name === departmentFilter;
+        const matchesPrimary =
+          app.preferredDepartmentId?.name === departmentFilter;
         const matchesSecondary = app.secondaryDepartmentId?.some(
-          (d) => d.name === departmentFilter
+          (d) => d.name === departmentFilter,
         );
         return matchesPrimary || matchesSecondary;
       });
@@ -225,7 +245,7 @@ export default function ApplicationsTab() {
   const totalPages = Math.ceil(filteredAndSortedApps.length / itemsPerPage);
   const paginatedApps = filteredAndSortedApps.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const deleteDialog = (
@@ -277,26 +297,20 @@ export default function ApplicationsTab() {
         animate="show"
         className="space-y-6"
       >
-        <motion.div variants={itemVariants} className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-lg p-8 transition-colors">
-          <div className="mb-6 flex justify-between items-center">
-            <button
-              onClick={() => setSelectedAppId(null)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#020617] hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-full text-xs font-bold transition-colors shadow-sm"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back to List
-            </button>
-            {appDetails && (
-              <button
-                onClick={() => deleteApplication(appDetails._id)}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete
-              </button>
-            )}
-          </div>
+        <motion.div variants={itemVariants}>
+          <button
+            onClick={() => setSelectedAppId(null)}
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#020617] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold transition-colors shadow-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back to List
+          </button>
+        </motion.div>
 
+        <motion.div
+          variants={itemVariants}
+          className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm"
+        >
           {loadingDetails ? (
             <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
@@ -304,78 +318,161 @@ export default function ApplicationsTab() {
             </div>
           ) : appDetails ? (
             <div>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200 dark:border-slate-800 pb-6 mb-6 gap-6">
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-black  text-slate-800 dark:text-slate-50 tracking-tight mb-2">
-                    {appDetails._id}
-                  </h2>
-                  <div className="text-slate-500 dark:text-slate-400 font-mono text-[10px] md:text-xs mb-4">
-                    {appDetails.userId?.userName || "Unknown User"} &bull;{" "}
-                    {appDetails.userId?.email || "No Email"}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold">
-                    <span className="text-slate-500 dark:text-slate-400">
-                      Applied For:
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
-                        Primary:{" "}
-                        <span className="text-slate-600 dark:text-slate-400">
-                          {appDetails.preferredDepartmentId?.name || "N/A"}
-                        </span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 py-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200 dark:border-slate-700">
+                    {appDetails.userId?.profilePictureUrl ? (
+                      <img
+                        src={appDetails.userId.profilePictureUrl}
+                        alt={appDetails.userId?.userName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm font-black text-slate-600 dark:text-slate-300 tracking-wide">
+                        {(appDetails.userId?.userName || "??")
+                          .split(" ")
+                          .map((w) => w[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()}
                       </span>
-                      {appDetails.secondaryDepartmentId &&
-                        appDetails.secondaryDepartmentId.length > 0 && (
-                          <span className="text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#020617] border dark:border-slate-800 px-2 py-1 rounded">
-                            Secondary:{" "}
-                            <span className="text-slate-600 dark:text-slate-400">
-                              {appDetails.secondaryDepartmentId
-                                .map((d) => d.name)
-                                .join(", ")}
-                            </span>
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
+                      {appDetails.userId?.userName || "Unknown User"}
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-3 mt-1 text-slate-500 dark:text-slate-400 text-xs">
+                      <span className="flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5" />
+                        {appDetails.userId?.email || "No Email"}
+                      </span>
+                      {appDetails.userId?.phoneNumber && (
+                        <>
+                          <span className="text-slate-300 dark:text-slate-600">
+                            &bull;
                           </span>
-                        )}
+                          <span className="flex items-center gap-1.5">
+                            <Phone className="w-3.5 h-3.5" />
+                            {appDetails.userId?.phoneNumber}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4 text-right min-w-[200px]">
-                  <div className="flex items-center justify-end gap-3">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
-                      Status:
-                    </span>
-                    <Select
-                      value={appDetails.status}
-                      onValueChange={(value) =>
-                        updateApplicationStatus(appDetails._id, value)
-                      }
+
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 pr-1">
+                    Status
+                  </span>
+                  <Select
+                    value={appDetails.status}
+                    onValueChange={(value) =>
+                      updateApplicationStatus(appDetails._id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-auto min-w-[110px] h-8 px-3 gap-2 border-green-200 dark:border-green-500/30 bg-green-50 dark:bg-green-500/10 rounded-full text-xs font-bold text-green-700 dark:text-green-400 shadow-none focus:ring-0 focus:ring-offset-0">
+                      <span className="w-2 h-2 rounded-full bg-green-500 inline-block shrink-0" />
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent
+                      align="end"
+                      style={{ maxHeight: "none" }}
+                      className="min-w-[220px] bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-xl"
                     >
-                      <SelectTrigger className="w-[190px] bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg h-9 text-[10px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase shadow-lg focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                        {statusOptions.map((s) => (
-                          <SelectItem
-                            key={s.value}
-                            value={s.value}
-                            className="font-bold text-xs uppercase tracking-widest focus:bg-blue-50 dark:focus:bg-slate-800/50 focus:text-blue-600 dark:focus:text-blue-400"
+                      {statusOptions.map((s) => (
+                        <SelectItem
+                          key={s.value}
+                          value={s.value}
+                          className="text-xs font-semibold cursor-pointer focus:bg-slate-50 dark:focus:bg-slate-800/50"
+                        >
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 dark:border-slate-800 mx-6" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800 px-6 py-6 gap-6 md:gap-0">
+                <div className="md:pr-8">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">
+                    Application
+                  </p>
+                  <div className="space-y-4">
+                    {appDetails.preferredDepartmentId && (
+                      <div className="pl-3 border-l-2 border-indigo-400 dark:border-indigo-500">
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">
+                          Primary
+                        </p>
+                        <p className="text-base font-bold text-slate-800 dark:text-slate-100">
+                          {appDetails.preferredDepartmentId.name}
+                        </p>
+                      </div>
+                    )}
+                    {appDetails.secondaryDepartmentId?.length > 0 && (
+                      <>
+                        <div className="border-t border-slate-100 dark:border-slate-800" />
+                        {appDetails.secondaryDepartmentId.map((dept) => (
+                          <div
+                            key={dept._id}
+                            className="pl-3 border-l-2 border-slate-300 dark:border-slate-600"
                           >
-                            {s.label}
-                          </SelectItem>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">
+                              Secondary
+                            </p>
+                            <p className="text-base font-bold text-slate-800 dark:text-slate-100">
+                              {dept.name}
+                            </p>
+                          </div>
                         ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center justify-end gap-3 pr-2">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
-                      Payment:
-                    </span>
-                    <span
-                      className={`text-[10px] font-black tracking-[0.1em] ${appDetails.paymentStatus === "SUCCESS" ? "text-green-500 dark:text-green-400" : "text-yellow-500 dark:text-yellow-400"}`}
-                    >
-                      {appDetails.paymentStatus}
-                    </span>
+                      </>
+                    )}
                   </div>
                 </div>
+
+                <div className="md:pl-8 pt-6 md:pt-0">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">
+                    Payment
+                  </p>
+                  {appDetails.paymentStatus === "SUCCESS" ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 w-fit px-3 py-1.5 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-full">
+                        <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+                          Paid
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Payment completed successfully
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 w-fit px-3 py-1.5 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-full">
+                        <span className="text-sm font-bold text-yellow-700 dark:text-yellow-400">
+                          {appDetails.paymentStatus || "Pending"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Payment not yet completed
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 dark:border-slate-800 mx-6 px-0 py-4 flex justify-end">
+                <button
+                  onClick={() => deleteApplication(appDetails._id)}
+                  className="flex items-center gap-2 px-4 py-2 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl text-xs font-bold transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete account
+                </button>
               </div>
             </div>
           ) : (
@@ -500,11 +597,7 @@ export default function ApplicationsTab() {
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.div variants={itemVariants} className="mt-6 mb-8">
         <AdminSearchBar
           onRefresh={loadData}
@@ -529,7 +622,10 @@ export default function ApplicationsTab() {
 
       <motion.div variants={itemVariants} className="space-y-4">
         {paginatedApps.length === 0 ? (
-          <motion.div variants={itemVariants} className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs">
+          <motion.div
+            variants={itemVariants}
+            className="p-12 text-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] rounded-2xl text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
+          >
             No applications match your criteria
           </motion.div>
         ) : (
@@ -626,7 +722,7 @@ export default function ApplicationsTab() {
             );
           })
         )}
-        
+
         {totalPages > 1 && (
           <div className="flex flex-row items-center justify-between border-t border-slate-200 dark:border-slate-800 px-6 py-4 mt-4 bg-white dark:bg-[#0F172A] rounded-2xl shadow-sm">
             <span className="text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider">
@@ -641,7 +737,9 @@ export default function ApplicationsTab() {
                 <ChevronLeft size={16} />
               </button>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
               >
