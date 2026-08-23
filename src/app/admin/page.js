@@ -16,6 +16,7 @@ import {
   CloudLightning,
   ChartLine,
   Mail,
+  ExternalLink,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -364,6 +365,8 @@ export default function AdminDashboard() {
                 description:
                   "Update a spreadsheet of all submitted applications.",
                 icon: FileText,
+                sheetUrl:
+                  "https://docs.google.com/spreadsheets/d/11f8MfcIZXmUZo5ENSVohHFfqxgUFMFg1ANFy1ASbn0M/edit?gid=0#gid=0",
                 onClick: createExportHandler(
                   "applications_export",
                   "/admin/applications/export",
@@ -374,6 +377,8 @@ export default function AdminDashboard() {
                 title: "Recruitment Payments",
                 description: "Update a spreadsheet of all payment records.",
                 icon: CreditCard,
+                sheetUrl:
+                  "https://docs.google.com/spreadsheets/d/1awc6omtU9hJ4l7ZqDo8O3R1hW1o0GezAOFqsbU87ckk/edit?gid=0#gid=0",
                 onClick: createExportHandler(
                   "payments_export",
                   "/admin/payments/export",
@@ -385,8 +390,19 @@ export default function AdminDashboard() {
               return (
                 <div
                   key={doc.id}
-                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group h-full"
+                  className="relative bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group h-full"
                 >
+                  {doc.sheetUrl && (
+                    <a
+                      href={doc.sheetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                      title="Open Sheet"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
                   <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
                     <DocIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                   </div>
