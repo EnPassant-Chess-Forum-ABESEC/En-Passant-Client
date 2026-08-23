@@ -21,6 +21,7 @@ export default function TaskAccordion({
   const [direction, setDirection] = useState(1);
   const [selectedTaskForSubmit, setSelectedTaskForSubmit] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [localSubmittedTasks, setLocalSubmittedTasks] = useState(submittedTasks);
 
   const handleSelect = (index) => {
     setDirection(index > activeIndex ? 1 : -1);
@@ -60,7 +61,7 @@ export default function TaskAccordion({
   }
 
   const activeTask = tasks[activeIndex];
-  const isSubmitted = submittedTasks.includes(activeTask._id);
+  const isSubmitted = localSubmittedTasks.includes(activeTask._id);
 
   const contentVariants = {
     enter: (dir) => ({
@@ -87,7 +88,7 @@ export default function TaskAccordion({
       <div className="flex lg:hidden flex-row gap-2 overflow-x-auto hide-scrollbar pb-1 snap-x shrink-0">
         {tasks.map((task, index) => {
           const isActive = activeIndex === index;
-          const submitted = submittedTasks.includes(task._id);
+          const submitted = localSubmittedTasks.includes(task._id);
           return (
             <button
               key={task._id}
@@ -119,7 +120,7 @@ export default function TaskAccordion({
       <div className="hidden lg:flex shrink-0 lg:w-[380px] flex-col gap-4 overflow-y-auto overflow-x-hidden hide-scrollbar">
         {tasks.map((task, index) => {
           const isActive = activeIndex === index;
-          const submitted = submittedTasks.includes(task._id);
+          const submitted = localSubmittedTasks.includes(task._id);
           return (
             <motion.button
               key={task._id}
@@ -336,6 +337,10 @@ export default function TaskAccordion({
         isOpen={!!selectedTaskForSubmit}
         onClose={() => setSelectedTaskForSubmit(null)}
         task={selectedTaskForSubmit}
+        onSuccess={(taskId) => {
+          setLocalSubmittedTasks((prev) => [...prev, taskId]);
+          setSelectedTaskForSubmit(null);
+        }}
       />
     </div>
   );

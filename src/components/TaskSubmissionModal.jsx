@@ -6,6 +6,7 @@ import {
   Link as LinkIcon,
   FileText,
   AlertTriangle,
+  AlertCircle,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useApi } from "@/lib/api";
@@ -13,7 +14,7 @@ import { toast } from "sonner";
 import { useLenis } from "lenis/react";
 import SpecularButton from "./SpecularButton";
 
-export default function TaskSubmissionModal({ isOpen, onClose, task }) {
+export default function TaskSubmissionModal({ isOpen, onClose, task, onSuccess }) {
   const lenis = useLenis();
   const [isDragging, setIsDragging] = useState(false);
   const [links, setLinks] = useState([""]);
@@ -21,6 +22,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
   const [files, setFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [applicationId, setApplicationId] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
 
   const fileInputRef = useRef(null);
   const fetchApi = useApi();
@@ -39,6 +41,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
       setLinks([""]);
       setTexts([""]);
       setFiles([]);
+      setSubmitError(null);
     }
   }, [isOpen, fetchApi]);
 
@@ -112,6 +115,7 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
 
     try {
       setIsSubmitting(true);
+      setSubmitError(null);
       const formData = new FormData();
 
       if (filteredTexts.length > 0) {
@@ -132,9 +136,11 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
       });
 
       toast.success("Task submitted successfully!");
+      if (onSuccess) onSuccess(task._id);
       onClose();
     } catch (err) {
       console.error(err);
+      setSubmitError(err.message || "Failed to submit task.");
       toast.error(err.message || "Failed to submit task.");
     } finally {
       setIsSubmitting(false);
@@ -186,6 +192,16 @@ export default function TaskSubmissionModal({ isOpen, onClose, task }) {
             </p>
           </div>
         </div>
+
+        {/* Error Banner */}
+        {submitError && (
+          <div className="bg-red-500/10 border-b border-red-500/20 p-4 shrink-0 flex items-center justify-center">
+            <div className="text-red-400 text-xs md:text-sm tracking-wide flex items-start text-left gap-3 max-w-lg">
+              <AlertCircle className="w-4 h-4 md:w-5 md:h-5 shrink-0 mt-0.5" />
+              <p className="font-medium leading-relaxed">{submitError}</p>
+            </div>
+          </div>
+        )}
 
         {/* Body */}
         <div 
