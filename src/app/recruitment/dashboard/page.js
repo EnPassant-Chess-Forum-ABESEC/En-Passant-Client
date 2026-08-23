@@ -247,7 +247,7 @@ export default function RecruitmentDashboard() {
                 className="flex flex-col items-center justify-center p-6 sm:p-10 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
               >
                 <h2
-                  className="font-black uppercase tracking-tighter leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] mb-6 sm:mb-8 text-center"
+                  className="font-black uppercase tracking-wide leading-[0.85] text-white font-pezula drop-shadow-[0_0_15px_rgba(155,26,26,0.25)] mb-6 sm:mb-8 text-center"
                   style={{ fontSize: "clamp(24px, 5vw, 60px)" }}
                 >
                   TASKS REVEALING IN
