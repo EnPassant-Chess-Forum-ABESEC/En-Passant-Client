@@ -9,7 +9,9 @@ const NumbersSection = dynamic(() => import("@/components/NumbersSection"));
 const CommunityDesc = dynamic(() => import("@/components/CommunityDesc"));
 const AboutClub = dynamic(() => import("@/components/AboutClub"));
 const DriftWallSection = dynamic(() => import("@/components/DriftWallSection"));
-const ClubJournalSection = dynamic(() => import("@/components/ClubJournalSection"));
+const ClubJournalSection = dynamic(
+  () => import("@/components/ClubJournalSection"),
+);
 
 export default async function Home() {
   const { userId } = await auth();
@@ -44,7 +46,7 @@ export default async function Home() {
             </div>
             <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
               <Link
-                href={userId ? "/recruitment" : "/sign-up"}
+                href={userId ? "/recruitment/dashboard" : "/sign-up"}
                 className="btn-bracket group cursor-good"
               >
                 <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-pezula font-normal text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
@@ -55,23 +57,23 @@ export default async function Home() {
           </div>
         </div>
       </HeroSection>
-      
+
       <LazyLoad minHeight="100vh">
         <NumbersSection />
       </LazyLoad>
-      
+
       <LazyLoad minHeight="100vh">
         <CommunityDesc />
       </LazyLoad>
-      
+
       <LazyLoad minHeight="100vh">
         <AboutClub />
       </LazyLoad>
-      
+
       <LazyLoad minHeight="100vh">
         <DriftWallSection />
       </LazyLoad>
-      
+
       <LazyLoad minHeight="100vh">
         <ClubJournalSection />
       </LazyLoad>
