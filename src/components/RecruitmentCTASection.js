@@ -92,8 +92,11 @@ export default function RecruitmentCTASection() {
           }}
           className="absolute bottom-[8%] md:bottom-[12%] w-full md:w-auto left-0 md:left-auto md:right-[6%] z-30 flex flex-col items-center md:items-end text-center md:text-right px-6 md:px-0"
         >
-          <div className="btn-bracket group" style={{ display: "inline-flex", opacity: 0.5 }}>
-            <div className="btn-inner bg-[#333] text-white/50 px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs w-full md:w-auto text-center cursor-not-allowed border border-[#444]">
+          <div
+            className="btn-bracket group"
+            style={{ display: "inline-flex", opacity: 0.5 }}
+          >
+            <div className="btn-inner bg-[#333] text-white/50 px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs w-full md:w-auto text-center cursor-bad border border-[#444]">
               Recruitments Closed
             </div>
           </div>
