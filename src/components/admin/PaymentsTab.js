@@ -166,7 +166,6 @@ export default function PaymentsTab() {
     return (
       <div className="p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-sm gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
-        <span>Loading Data...</span>
       </div>
     );
 
