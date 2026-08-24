@@ -28,6 +28,7 @@ export default function ProfilePage() {
   const fetchApi = useApi();
 
   const [profile, setProfile] = useState(null);
+  const [myApplication, setMyApplication] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -61,8 +62,12 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const data = await fetchApi("/users/me");
+      const [data, appRes] = await Promise.all([
+        fetchApi("/users/me"),
+        fetchApi("/recruitment/my-application").catch(() => null)
+      ]);
       if (data.success) setProfile(data.user);
+      if (appRes?.myApplication) setMyApplication(appRes.myApplication);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -84,6 +89,12 @@ export default function ProfilePage() {
   }
 
   const chess = profile?.chessAccounts?.chessCom;
+
+  const recruitmentPath =
+    myApplication?.status &&
+    !["DRAFT", "PAYMENT_FAILED"].includes(myApplication.status)
+      ? "/recruitment/dashboard"
+      : "/recruitment";
 
   return (
     <div className="relative min-h-screen bg-[#050505] text-white font-sans overflow-hidden">
@@ -161,7 +172,7 @@ export default function ProfilePage() {
                   </Link>
                 </div>
                 <Link
-                  href="/recruitment"
+                  href={recruitmentPath}
                   className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider uppercase bg-[#c21818]/90 text-white hover:bg-[#c21818] rounded-lg transition-all shadow-[0_0_15px_rgba(194,24,24,0.3)] w-full"
                 >
                   Recruitment
