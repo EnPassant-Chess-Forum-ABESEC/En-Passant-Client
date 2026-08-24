@@ -134,12 +134,7 @@ export default function RecruitmentHero() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="flex flex-col items-center gap-2 cursor-pointer pointer-events-auto group"
-          onClick={() => {
-            document
-              .getElementById("recruitment-cta")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }}
+          className="flex flex-col items-center gap-2 cursor-default pointer-events-auto group"
         >
           <span className="text-[12px] uppercase tracking-[0.2em] text-white/40 font-bold ml-[0.2em] group-hover:text-white transition-colors duration-300">
             Scroll
