@@ -58,14 +58,19 @@ export default function RecruitmentApplyPage() {
   const [settings, setSettings] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [isBeforeStart, setIsBeforeStart] = useState(false);
+  const [isAfterEnd, setIsAfterEnd] = useState(false);
 
   useEffect(() => {
-    if (settings?.applicationStartDate) {
+    if (settings?.applicationStartDate && settings?.applicationEndDate) {
       const start = new Date(settings.applicationStartDate);
+      const end = new Date(settings.applicationEndDate);
+      
       setIsBeforeStart(new Date() < start);
+      setIsAfterEnd(new Date() > end);
 
       const interval = setInterval(() => {
         setIsBeforeStart(new Date() < start);
+        setIsAfterEnd(new Date() > end);
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -638,6 +643,18 @@ export default function RecruitmentApplyPage() {
               <p className="text-white/40 text-[12px] uppercase tracking-widest mt-8">
                 Stay tuned
               </p>
+            </div>
+          ) : isAfterEnd ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10 px-4">
+              <h2 className="text-[1.8rem] md:text-[2.2rem] font-pezula uppercase tracking-tight text-[#ff3333] mb-4 leading-tight">
+                Recruitments are Closed
+              </h2>
+              <p className="text-white/60 text-sm md:text-base mb-8 max-w-md">
+                The application window for this recruitment cycle has closed. Thank you for your interest!
+              </p>
+              <SpecularButton onClick={() => window.location.href = "/"}>
+                Return to Home
+              </SpecularButton>
             </div>
           ) : (
             <>

@@ -5,13 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { useApi } from "@/lib/api";
-import {
-  Loader2,
-  ArrowRight,
-  FileText,
-  Upload,
-  Link as LinkIcon,
-} from "lucide-react";
+import { Loader2, ArrowRight, Link as LinkIcon } from "lucide-react";
 import SpecularButton from "@/components/SpecularButton";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -27,21 +21,20 @@ export default function RecruitmentDashboard() {
   const [tasks, setTasks] = useState([]);
   const [isRevealed, setIsRevealed] = useState(true);
   const [revealDate, setRevealDate] = useState(null);
+  const [submissionEndDate, setSubmissionEndDate] = useState(null);
   const [activeDeptId, setActiveDeptId] = useState(null);
+  const [settings, setSettings] = useState(null);
+  const [isAfterApplyEnd, setIsAfterApplyEnd] = useState(false);
+  const [isAfterSubmissionEnd, setIsAfterSubmissionEnd] = useState(false);
 
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], ["0%", "5%"]);
 
   useEffect(() => {
-    if (isLoaded && !userId) {
-      router.push("/");
-      return;
-    }
-
-    if (userId) {
+    if (isLoaded) {
       loadDashboardData();
     }
-  }, [userId, isLoaded, router]);
+  }, [isLoaded, userId]);
 
   useEffect(() => {
     if (application && !activeDeptId) {
@@ -52,10 +45,21 @@ export default function RecruitmentDashboard() {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      const [appRes, tasksRes] = await Promise.all([
-        fetchApi("/recruitment/my-application"),
-        fetchApi("/tasks?year=2026").catch(() => ({ tasks: [] })),
-      ]);
+      let appRes = null;
+      let tasksRes = { tasks: [] };
+      let settingsRes = null;
+
+      if (userId) {
+        [appRes, tasksRes, settingsRes] = await Promise.all([
+          fetchApi("/recruitment/my-application").catch(() => null),
+          fetchApi("/tasks?year=2026").catch(() => ({ tasks: [] })),
+          fetchApi("/settings/recruitment-phases").catch(() => null),
+        ]);
+      } else {
+        settingsRes = await fetchApi("/settings/recruitment-phases").catch(
+          () => null,
+        );
+      }
 
       setApplication(appRes?.myApplication || null);
       setTasks(tasksRes.tasks || []);
@@ -66,6 +70,12 @@ export default function RecruitmentDashboard() {
       if (tasksRes.revealDate) {
         setRevealDate(tasksRes.revealDate);
       }
+      if (tasksRes.submissionEndDate) {
+        setSubmissionEndDate(tasksRes.submissionEndDate);
+      }
+      if (settingsRes?.data) {
+        setSettings(settingsRes.data);
+      }
     } catch (err) {
       console.error(err);
       router.push("/recruitment");
@@ -73,6 +83,22 @@ export default function RecruitmentDashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (settings) {
+      const applyEnd = new Date(settings.applicationEndDate);
+      const subEnd = new Date(settings.submissionEndDate);
+
+      setIsAfterApplyEnd(new Date() > applyEnd);
+      setIsAfterSubmissionEnd(new Date() > subEnd);
+
+      const interval = setInterval(() => {
+        setIsAfterApplyEnd(new Date() > applyEnd);
+        setIsAfterSubmissionEnd(new Date() > subEnd);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [settings]);
 
   if (!isLoaded || loading) {
     return (
@@ -84,13 +110,45 @@ export default function RecruitmentDashboard() {
 
   if (!application) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050505]">
-        <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-4">No Application Found</h2>
-          <SpecularButton onClick={() => router.push("/recruitment")}>
-            Go Back
-          </SpecularButton>
-        </div>
+      <div className="min-h-screen bg-[#050505] pt-20 pb-24 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="w-full max-w-2xl mx-auto bg-white/[0.02] border border-white/10 rounded-[2rem] p-12 text-center backdrop-blur-xl shadow-2xl relative overflow-hidden"
+        >
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+          <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
+            {isAfterApplyEnd ? "Recruitments are Closed" : "Access Restricted"}
+          </h3>
+          <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
+            {isAfterApplyEnd
+              ? "The application window for this recruitment cycle has closed. Stay tuned for future opportunities!"
+              : "You must have an active recruitment application to view and participate in tasks. Please ensure you have filled the recruitment form."}
+          </p>
+          {!isAfterApplyEnd && (
+            <div className="max-w-[280px] mx-auto">
+              <SpecularButton
+                onClick={() => router.push("/recruitment/apply")}
+                className="w-full h-14 group"
+                radius={12}
+                lineColor="#ff4444"
+                baseColor="#550000"
+                textColor="#ffffff"
+                tint="#9b1a1a"
+                tintOpacity={0.15}
+                autoAnimate={true}
+              >
+                <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
+                  <span>Complete Application</span>
+                  <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                    <ArrowRight className="w-5 h-5" />
+                  </span>
+                </div>
+              </SpecularButton>
+            </div>
+          )}
+        </motion.div>
       </div>
     );
   }
@@ -315,6 +373,25 @@ export default function RecruitmentDashboard() {
                         </p>
                       )}
 
+                      {/* {submissionEndDate && (
+                        <div className="mt-3 flex items-center gap-2.5 text-white/70 text-[11px] font-bold tracking-widest uppercase bg-[#0a0a0a] w-fit px-4 py-2.5 rounded-lg border border-white/10 shadow-lg">
+                          <Clock className="w-4 h-4 text-[#ff3333]" />
+                          <span>
+                            Submission Deadline:{' '}
+                            <span className="text-white">
+                              {new Date(submissionEndDate).toLocaleString(undefined, {
+                                weekday: 'short', 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </span>
+                        </div>
+                      )} */}
+
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                         {getTasksForDept(activeDept._id).length > 0 ? (
                           getTasksForDept(activeDept._id).map((task, i) =>
@@ -368,33 +445,37 @@ export default function RecruitmentDashboard() {
             ) : (
               <>
                 <h3 className="text-xl md:text-2xl font-pezula font-bold text-white uppercase tracking-widest mb-4">
-                  Access Restricted
+                  {isAfterApplyEnd
+                    ? "Recruitments are Closed"
+                    : "Access Restricted"}
                 </h3>
                 <p className="text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
-                  You must have an active recruitment application to view and
-                  participate in tasks. Please ensure you have filled the
-                  recruitment form.
+                  {isAfterApplyEnd
+                    ? "The application window for this recruitment cycle has closed. Stay tuned for future opportunities!"
+                    : "You must have an active recruitment application to view and participate in tasks. Please ensure you have filled the recruitment form."}
                 </p>
-                <div className="max-w-[280px] mx-auto">
-                  <SpecularButton
-                    onClick={() => router.push("/recruitment/apply")}
-                    className="w-full h-14 group"
-                    radius={12}
-                    lineColor="#ff4444"
-                    baseColor="#550000"
-                    textColor="#ffffff"
-                    tint="#9b1a1a"
-                    tintOpacity={0.15}
-                    autoAnimate={true}
-                  >
-                    <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
-                      <span>Complete Application</span>
-                      <span className="text-[11px] group-hover:translate-x-1 transition-transform">
-                        <ArrowRight className="w-5 h-5" />
-                      </span>
-                    </div>
-                  </SpecularButton>
-                </div>
+                {!isAfterApplyEnd && (
+                  <div className="max-w-[280px] mx-auto">
+                    <SpecularButton
+                      onClick={() => router.push("/recruitment/apply")}
+                      className="w-full h-14 group"
+                      radius={12}
+                      lineColor="#ff4444"
+                      baseColor="#550000"
+                      textColor="#ffffff"
+                      tint="#9b1a1a"
+                      tintOpacity={0.15}
+                      autoAnimate={true}
+                    >
+                      <div className="flex justify-center items-center gap-3 font-normal uppercase tracking-[0.2em] text-[13px] relative z-10">
+                        <span>Complete Application</span>
+                        <span className="text-[11px] group-hover:translate-x-1 transition-transform">
+                          <ArrowRight className="w-5 h-5" />
+                        </span>
+                      </div>
+                    </SpecularButton>
+                  </div>
+                )}
               </>
             )}
           </motion.div>

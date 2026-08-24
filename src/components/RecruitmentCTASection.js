@@ -73,10 +73,10 @@ export default function RecruitmentCTASection() {
         >
           <p className="text-[#888] text-md md:text-lg leading-relaxed font-light">
             <strong className="text-white font-bold">
-              Applications are now open !!
+              Applications are now closed.
               <br />
             </strong>{" "}
-            Prove your worth and earn your seat.
+            Stay tuned for our next recruitment cycle.
           </p>
         </motion.div>
 
@@ -92,20 +92,11 @@ export default function RecruitmentCTASection() {
           }}
           className="absolute bottom-[8%] md:bottom-[12%] w-full md:w-auto left-0 md:left-auto md:right-[6%] z-30 flex flex-col items-center md:items-end text-center md:text-right px-6 md:px-0"
         >
-          <p className="text-[#444] text-[15px] tracking-[0.2em] normalcase font-semibold mb-5">
-            Recruitment Open
-          </p>
-          <Link
-            href="/recruitment/apply"
-            className="btn-bracket group cursor-good"
-            style={{ display: "inline-flex" }}
-          >
-            <div
-              className="btn-inner bg-[#9b1a1a] hover:bg-[#c0392b] text-white px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs transition-colors shadow-[0_0_30px_rgba(155,26,26,0.3)] w-full md:w-auto text-center cursor-good"
-            >
-              Apply Now
+          <div className="btn-bracket group" style={{ display: "inline-flex", opacity: 0.5 }}>
+            <div className="btn-inner bg-[#333] text-white/50 px-10 md:px-8 py-5 md:py-4 uppercase font-bold tracking-widest text-sm md:text-xs w-full md:w-auto text-center cursor-not-allowed border border-[#444]">
+              Recruitments Closed
             </div>
-          </Link>
+          </div>
         </motion.div>
 
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] to-transparent z-20 pointer-events-none" />

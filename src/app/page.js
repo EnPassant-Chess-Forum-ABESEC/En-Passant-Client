@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import LazyLoad from "@/components/LazyLoad";
 import HeroSection from "@/components/HeroSection";
+import HeroRecruitmentButton from "@/components/HeroRecruitmentButton";
 
 const NumbersSection = dynamic(() => import("@/components/NumbersSection"));
 const CommunityDesc = dynamic(() => import("@/components/CommunityDesc"));
@@ -45,14 +46,7 @@ export default async function Home() {
               Dedicated to spread the game of chess
             </div>
             <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
-              <Link
-                href={userId ? "/recruitment/dashboard" : "/sign-up"}
-                className="btn-bracket group cursor-good"
-              >
-                <div className="btn-inner bg-[#990000] hover:bg-[#cc0000] text-white px-6 md:px-8 py-4 uppercase font-pezula font-normal text-[14px] tracking-[0.12em] transition-colors duration-200 ease-in-out whitespace-nowrap">
-                  {userId ? "Go to Recruitment" : "Sign Up Here"}
-                </div>
-              </Link>
+              <HeroRecruitmentButton />
             </div>
           </div>
         </div>
