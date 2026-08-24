@@ -156,7 +156,6 @@ export default function PaymentsTab() {
     setIsRetrying(false);
   };
 
-
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     setCopiedId(text);
@@ -178,7 +177,10 @@ export default function PaymentsTab() {
       animate="show"
       className="space-y-6"
     >
-      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-4 items-start justify-between">
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col lg:flex-row gap-4 items-start justify-between"
+      >
         <div className="flex-1 w-full">
           <AdminSearchBar
             onRefresh={loadData}
@@ -223,7 +225,6 @@ export default function PaymentsTab() {
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-4 py-4 font-normal">Applicant Name</th>
-                <th className="px-4 py-4 font-normal">App ID</th>
                 <th className="px-6 py-4 font-normal">Amount</th>
                 <th className="px-6 py-4 font-normal">ScreenShot & UTR</th>
                 <th className="px-6 py-4 font-normal">Status</th>
@@ -259,26 +260,7 @@ export default function PaymentsTab() {
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-5">
-                      {payment.applicationId ? (
-                        <button
-                          onClick={() => handleCopy(payment.applicationId)}
-                          className="font-mono text-xs text-slate-600 dark:text-slate-400 tracking-wider hover:text-slate-800 dark:hover:text-slate-200 transition-colors flex items-center gap-2"
-                          title="Click to copy Application ID"
-                        >
-                          {`${payment.applicationId.substring(0, 6)}...${payment.applicationId.substring(payment.applicationId.length - 4)}`}
-                          {copiedId === payment.applicationId && (
-                            <span className="text-[10px] text-green-500 dark:text-green-400 font-sans tracking-widest uppercase">
-                              Copied!
-                            </span>
-                          )}
-                        </button>
-                      ) : (
-                        <span className="font-mono text-xs text-slate-400 dark:text-slate-500">
-                          N/A
-                        </span>
-                      )}
-                    </td>
+
                     <td className="px-6 py-5 font-mono font-bold tracking-wide text-slate-800 dark:text-slate-50">
                       {payment.amount / 100}
                     </td>
@@ -394,37 +376,6 @@ export default function PaymentsTab() {
                         }`}
                       >
                         {payment.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
-                        App ID
-                      </span>
-                      {payment.applicationId ? (
-                        <button
-                          onClick={() => handleCopy(payment.applicationId)}
-                          className="font-mono text-xs text-slate-600 dark:text-slate-400 text-left hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
-                        >
-                          {`${payment.applicationId.substring(0, 6)}...${payment.applicationId.substring(payment.applicationId.length - 4)}`}
-                          {copiedId === payment.applicationId && (
-                            <span className="ml-2 text-green-500 text-[10px]">
-                              Copied!
-                            </span>
-                          )}
-                        </button>
-                      ) : (
-                        <span className="font-mono text-slate-400">N/A</span>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
-                        Date
-                      </span>
-                      <span className="text-slate-600 dark:text-slate-300">
-                        {new Date(payment.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
