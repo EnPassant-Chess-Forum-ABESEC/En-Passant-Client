@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { useApi } from "@/lib/api";
-import { Loader2, ArrowRight, Link as LinkIcon } from "lucide-react";
+import { Clock, Loader2, ArrowRight, Link as LinkIcon } from "lucide-react";
 import SpecularButton from "@/components/SpecularButton";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
