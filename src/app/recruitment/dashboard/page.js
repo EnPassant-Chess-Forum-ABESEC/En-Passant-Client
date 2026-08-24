@@ -373,24 +373,27 @@ export default function RecruitmentDashboard() {
                         </p>
                       )}
 
-                      {/* {submissionEndDate && (
+                      {submissionEndDate && (
                         <div className="mt-3 flex items-center gap-2.5 text-white/70 text-[11px] font-bold tracking-widest uppercase bg-[#0a0a0a] w-fit px-4 py-2.5 rounded-lg border border-white/10 shadow-lg">
                           <Clock className="w-4 h-4 text-[#ff3333]" />
                           <span>
-                            Submission Deadline:{' '}
+                            Submission Deadline:{" "}
                             <span className="text-white">
-                              {new Date(submissionEndDate).toLocaleString(undefined, {
-                                weekday: 'short', 
-                                year: 'numeric', 
-                                month: 'short', 
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
+                              {new Date(submissionEndDate).toLocaleString(
+                                undefined,
+                                {
+                                  weekday: "short",
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}
                             </span>
                           </span>
                         </div>
-                      )} */}
+                      )}
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                         {getTasksForDept(activeDept._id).length > 0 ? (
