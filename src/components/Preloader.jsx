@@ -340,10 +340,10 @@ export default function EnPassantPreloader({ onFinish }) {
 
       <button
         onClick={onFinish}
-        className="absolute bottom-8 right-8 px-5 py-2.5 text-white/50 hover:text-white/90 text-[10px] sm:text-sm font-bold normal-case tracking-[0.04em] rounded-full transition-all duration-300 z-[100000] flex items-center gap-1 group"
+        className="absolute bottom-8 right-8 px-5 py-2.5 text-white/50 hover:text-white/90 text-[10px] sm:text-sm font-bold normal-case tracking-[0.04em] rounded-full transition-all duration-300 z-[100000] flex items-center gap-1.5 group"
       >
-        Skip
-        <span className="group-hover:translate-x-1 transition-transform duration-300">
+        <span>Skip</span>
+        <span className="group-hover:translate-x-1 transition-transform duration-300 relative top-[1.5px]">
           <ArrowRight size={12} />
         </span>
       </button>
