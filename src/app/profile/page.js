@@ -20,6 +20,7 @@ import {
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
 import CustomProfileForm from "@/components/profile/CustomProfileForm";
+import ChessVerificationModal from "@/components/profile/ChessVerificationModal";
 import { userProfileAppearance } from "@/lib/clerkAppearance";
 import ChessGridBackground from "@/components/ChessGridBackground";
 
@@ -34,6 +35,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [chessError, setChessError] = useState(false);
+  const [isVerifyingChess, setIsVerifyingChess] = useState(false);
 
   useEffect(() => {
     if (isLoaded && clerkUser) loadProfile();
@@ -50,18 +52,18 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    const locked = isEditing || showOnboardingModal;
+    const locked = isEditing || showOnboardingModal || isVerifyingChess;
     document.documentElement.style.overflow = locked ? "hidden" : "unset";
     document.body.style.overflow = locked ? "hidden" : "unset";
     return () => {
       document.documentElement.style.overflow = "unset";
       document.body.style.overflow = "unset";
     };
-  }, [isEditing, showOnboardingModal]);
+  }, [isEditing, showOnboardingModal, isVerifyingChess]);
 
-  const loadProfile = async () => {
+  const loadProfile = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const [data, appRes] = await Promise.all([
         fetchApi("/users/me"),
         fetchApi("/recruitment/my-application").catch(() => null)
@@ -71,7 +73,7 @@ export default function ProfilePage() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -261,13 +263,28 @@ export default function ProfilePage() {
                           <p className="text-[10px] normalcase tracking-wider text-white/40 mb-0.5">
                             Chess.com
                           </p>
-                          <p className="text-sm font-semibold text-white/90">
-                            {chess?.username
-                              ? `@${chess.username}`
-                              : "Not linked"}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-white/90">
+                              {chess?.username
+                                ? `@${chess.username}`
+                                : "Not linked"}
+                            </span>
+                            {chess?.username && chess?.verified && (
+                              <span className="text-[10px] font-bold text-green-500 bg-green-500/10 border border-green-500/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider scale-90">
+                                Verified
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      {chess?.username && !chess?.verified && (
+                        <button
+                          onClick={() => setIsVerifyingChess(true)}
+                          className="text-[10px] font-bold px-2.5 py-1 bg-[#c21818]/20 hover:bg-[#c21818] text-white rounded border border-[#c21818]/30 transition-all uppercase tracking-wider"
+                        >
+                          Verify
+                        </button>
+                      )}
                       {!chess?.username && profile.isOnboardingComplete && (
                         <button
                           onClick={() => setIsEditing(true)}
@@ -415,6 +432,13 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
+      <ChessVerificationModal
+        isOpen={isVerifyingChess}
+        onClose={() => setIsVerifyingChess(false)}
+        username={chess?.username}
+        onVerified={() => loadProfile(true)}
+      />
     </div>
   );
 }

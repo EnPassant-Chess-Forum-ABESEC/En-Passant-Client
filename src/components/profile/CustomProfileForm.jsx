@@ -255,9 +255,16 @@ export default function CustomProfileForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
-            Chess.com Username
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
+              Chess.com Username
+            </label>
+            {profile?.chessAccounts?.chessCom?.verified && (
+              <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">
+                ✓ Verified
+              </span>
+            )}
+          </div>
           <input
             type="text"
             value={chessComUsername}
@@ -265,6 +272,11 @@ export default function CustomProfileForm() {
             placeholder="Username"
             className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
           />
+          {profile?.chessAccounts?.chessCom?.verified && (
+            <p className="text-[10px] text-white/30 italic mt-0.5">
+              Note: Changing your username will reset verification status.
+            </p>
+          )}
         </div>
 
         <div className="pt-4 border-t border-white/[0.06] flex justify-end">
