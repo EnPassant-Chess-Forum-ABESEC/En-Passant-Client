@@ -8,22 +8,42 @@ export default function TermsPage() {
     {
       title: "Fair Play & Integrity",
       content:
-        "Strict adherence to fair play is required. The use of chess engines, unauthorized assistance, or rating manipulation during club events will result in immediate expulsion.",
+        "Strict adherence to fair play is required. The use of chess engines, unauthorized assistance, or rating manipulation during club events will result in disciplinary action, up to and including immediate expulsion.",
     },
     {
       title: "Equipment Handling",
       content:
-        "Members are expected to treat all club property, including chess boards, pieces, and digital clocks, with the utmost care and respect. Intentional damage is strictly prohibited.",
+        "Members are expected to treat all club property, including chess boards, pieces, and digital clocks, with the utmost care and respect. Intentional damage is strictly prohibited, and members may be held responsible for damage caused through intentional or negligent behavior.",
     },
     {
       title: "Conduct Standards",
       content:
-        "We maintain a competitive yet respectful environment. Harassment, discrimination, or disruptive behavior towards other members will not be tolerated under any circumstances.",
+        "We maintain a competitive yet respectful environment. Harassment, discrimination, bullying, threats, or disruptive behavior towards other members will not be tolerated.",
     },
     {
       title: "Event Participation",
       content:
         "Registration for limited-capacity events requires a commitment to attend. Unnotified absences disrupt event organization and may adversely affect your future event prioritization.",
+    },
+    {
+      title: "Account & Identity",
+      content:
+        "Members must provide accurate information and must not impersonate another person or attempt to associate another member's account, chess account, or other external identity with their own club profile. Unauthorized access to another member's account is strictly prohibited.",
+    },
+    {
+      title: "Platform Usage",
+      content:
+        "The club platform is provided for legitimate club-related activities, including membership, events, recruitment, chess profiles, and communication. Members must not misuse the platform, attempt to circumvent security controls, interfere with its operation, or use it for unlawful or abusive purposes.",
+    },
+    {
+      title: "External Services",
+      content:
+        "The platform may integrate with external services such as Chess.com, and other third-party providers. Use of these services may also be subject to their respective terms and policies. Members are responsible for complying with applicable rules when using linked external accounts.",
+    },
+    {
+      title: "Enforcement",
+      content:
+        "The club reserves the right to suspend or restrict access to club facilities, events, or the online platform when necessary to address violations of these terms, protect members, or maintain the integrity of club activities. Serious violations may result in removal from the club.",
     },
   ];
 

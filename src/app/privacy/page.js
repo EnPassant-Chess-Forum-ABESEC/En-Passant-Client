@@ -13,7 +13,12 @@ export default function PrivacyPage() {
     {
       title: "Data Usage",
       content:
-        "Your information is securely maintained and strictly used for club operations. We do not distribute, share, or sell member data to any third parties under any circumstances.",
+        "Your information is securely maintained and used only for club operations and services provided through the platform. We do not sell member data or share it with third parties for advertising or unrelated purposes.",
+    },
+    {
+      title: "Chess Account Integration",
+      content:
+        "Members may optionally link external chess accounts, such as Chess.com, to their club profile. We may receive account identifiers, usernames, ratings, and other chess-related information made available by these platforms. This information is used to verify account ownership, maintain chess profiles, and operate club rankings and related features.",
     },
     {
       title: "Media & Photography",
@@ -28,12 +33,17 @@ export default function PrivacyPage() {
     {
       title: "Third-Party Services",
       content:
-        "We utilize trusted infrastructure providers (like Clerk) for secure authentication. They process your login credentials directly to ensure industry-standard security for your account.",
+        "We use trusted third-party service providers where necessary to operate the platform, including services for authentication, cloud storage, email delivery, and chess account integration. These providers process only the information necessary for the services they provide and are not permitted to use member information for unrelated purposes.",
     },
     {
       title: "Data Retention",
       content:
-        "You maintain the right to request the deletion of your personal records from our active club rosters at any time upon officially leaving or concluding your tenure with the club.",
+        "We retain personal information only for as long as reasonably necessary for club operations, membership records, and legitimate administrative purposes. Members may request deletion of their personal records from active club rosters after leaving or concluding their tenure with the club, subject to records that may need to be retained for legitimate administrative or legal purposes.",
+    },
+    {
+      title: "Account Security",
+      content:
+        "Members are responsible for maintaining the security of their club accounts and must not share account credentials or attempt to access another member's account. We may suspend or remove accounts involved in unauthorized access, impersonation, abuse, or other violations of our Terms of Service.",
     },
   ];
 
