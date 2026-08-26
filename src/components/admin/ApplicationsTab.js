@@ -506,9 +506,16 @@ export default function ApplicationsTab() {
                         key={sub._id}
                         className="p-6 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
                       >
-                        <h5 className="text-blue-600 dark:text-blue-400 text-sm font-bold tracking-tight mb-4">
-                          {sub.taskId?.title || `Task ${index + 1}`}
-                        </h5>
+                        <div className="flex justify-between items-center mb-4">
+                          <h5 className="text-blue-600 dark:text-blue-400 text-sm font-bold tracking-tight">
+                            {sub.taskId?.title || `Task ${index + 1}`}
+                          </h5>
+                          {sub.updatedAt && (
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 px-2 py-0.5 rounded-full">
+                              Submitted: {new Date(sub.updatedAt).toLocaleString()}
+                            </span>
+                          )}
+                        </div>
 
                         {sub.text && (
                           <div className="mb-4">
