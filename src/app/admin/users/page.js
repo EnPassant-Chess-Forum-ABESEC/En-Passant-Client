@@ -29,9 +29,6 @@ export default function UsersPage() {
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             Users
           </h1>
-          <p className="text-slate-400 dark:text-slate-500 text-xs md:text-sm tracking-widest uppercase font-bold">
-            View and manage registered platform users.
-          </p>
         </div>
 
         <button
@@ -47,12 +44,12 @@ export default function UsersPage() {
           ) : (
             <>
               <RefreshCw className="w-3.5 h-3.5" />
-              Manual Sync All Users
+              Manual Sync Chess Accounts
             </>
           )}
         </button>
       </header>
-      
+
       <UsersTab />
     </>
   );
