@@ -91,7 +91,7 @@ export default function AdminSidebar() {
           <Link href="/admin" className="flex items-center group">
             <div
               className={`transition-all duration-300 shrink-0 ${
-                isCollapsed ? "translate-x-3" : "translate-x-0"
+                isCollapsed ? "translate-x-2" : "translate-x-0"
               }`}
             >
               <Image
