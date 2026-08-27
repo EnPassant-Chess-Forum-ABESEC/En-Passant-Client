@@ -40,6 +40,7 @@ export default function AdminSidebar() {
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(isPaymentsActive);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -75,38 +76,57 @@ export default function AdminSidebar() {
         />
       )}
 
+      <div
+        className={`hidden lg:block flex-shrink-0 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out ${isCollapsed ? "w-[88px]" : "w-[280px]"}`}
+      />
+
       <aside
-        className={`w-full lg:w-[280px] h-screen fixed top-0 right-0 lg:left-0 lg:right-auto flex-shrink-0 flex flex-col py-10 px-6 border-l lg:border-l-0 lg:border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] z-50 transition-transform duration-300 ease-in-out ${
+        className={`h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-4 lg:px-6 bg-white dark:bg-[#0F172A] z-50 transition-all duration-300 ease-in-out ${
           isMobileMenuOpen
-            ? "translate-x-0"
-            : "translate-x-full lg:translate-x-0"
-        }`}
+            ? "translate-x-0 w-full"
+            : "-translate-x-full lg:translate-x-0"
+        } ${isCollapsed ? "lg:w-[88px] lg:px-4" : "lg:w-[280px]"}`}
       >
-        <div className="mb-14 px-4 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-3 group">
-            <Image
-              src="/common/logo.png"
-              alt="logo"
-              width={32}
-              height={32}
-              className="object-contain"
-            />
-            <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+        <div className="mb-14 flex items-center justify-between">
+          <Link href="/admin" className="flex items-center group">
+            <div
+              className={`transition-all duration-300 shrink-0 ${
+                isCollapsed ? "translate-x-3" : "translate-x-0"
+              }`}
+            >
+              <Image
+                src="/common/logo.png"
+                alt="logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
+            <h2
+              className={`text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 whitespace-nowrap transition-all duration-300 overflow-hidden ${
+                isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[200px] opacity-100 ml-4"
+              }`}
+            >
               EN PASSANT
             </h2>
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="lg:hidden p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-8 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+        <nav
+          data-lenis-prevent="true"
+          className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-2 pb-8 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700"
+        >
           <Link
             href="/admin"
-            className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+            title="Dashboard"
+            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+            ${isCollapsed ? "justify-center px-0" : "px-4"}
             ${
               pathname === "/admin"
                 ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
@@ -114,33 +134,46 @@ export default function AdminSidebar() {
             }`}
           >
             <LayoutDashboard
-              className={`w-5 h-5 transition-transform duration-300 ${pathname === "/admin" ? "scale-110" : "group-hover:scale-110"}`}
+              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname === "/admin" ? "scale-110" : "group-hover:scale-110"}`}
             />
-            <span className="text-sm font-semibold">Dashboard</span>
-            {pathname === "/admin" && (
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate">Dashboard</span>
+            )}
+            {!isCollapsed && pathname === "/admin" && (
               <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
             )}
           </Link>
 
           <div className="mt-2">
             <button
-              onClick={() => setIsRecruitmentOpen(!isRecruitmentOpen)}
-              className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+              onClick={() => {
+                if (isCollapsed) setIsCollapsed(false);
+                setIsRecruitmentOpen(!isRecruitmentOpen);
+              }}
+              title="Recruitment"
+              className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+              ${isCollapsed ? "justify-center px-0" : "px-4"}
               ${
-                isRecruitmentActive && !isRecruitmentOpen
+                isRecruitmentActive && (!isRecruitmentOpen || isCollapsed)
                   ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               }`}
             >
-              <Briefcase className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-sm font-semibold">Recruitment</span>
-              <ChevronDown
-                className={`w-4 h-4 ml-auto transition-transform duration-300 ${isRecruitmentOpen ? "rotate-180" : ""}`}
-              />
+              <Briefcase className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-110" />
+              {!isCollapsed && (
+                <span className="text-sm font-semibold truncate">
+                  Recruitment
+                </span>
+              )}
+              {!isCollapsed && (
+                <ChevronDown
+                  className={`w-4 h-4 ml-auto transition-transform duration-300 ${isRecruitmentOpen ? "rotate-180" : ""}`}
+                />
+              )}
             </button>
 
             <div
-              className={`overflow-hidden transition-all duration-500 ease-in-out ${isRecruitmentOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${isRecruitmentOpen && !isCollapsed ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
             >
               <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
                 <Link
@@ -199,7 +232,9 @@ export default function AdminSidebar() {
 
           <Link
             href="/admin/users"
-            className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            title="Users"
+            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            ${isCollapsed ? "justify-center px-0" : "px-4"}
             ${
               pathname === "/admin/users"
                 ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
@@ -207,17 +242,21 @@ export default function AdminSidebar() {
             }`}
           >
             <Users
-              className={`w-5 h-5 transition-transform duration-300 ${pathname === "/admin/users" ? "scale-110" : "group-hover:scale-110"}`}
+              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname === "/admin/users" ? "scale-110" : "group-hover:scale-110"}`}
             />
-            <span className="text-sm font-semibold">Users</span>
-            {pathname === "/admin/users" && (
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate">Users</span>
+            )}
+            {!isCollapsed && pathname === "/admin/users" && (
               <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
             )}
           </Link>
 
           <Link
             href="/admin/queries"
-            className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            title="User Queries"
+            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            ${isCollapsed ? "justify-center px-0" : "px-4"}
             ${
               pathname === "/admin/queries"
                 ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
@@ -225,33 +264,46 @@ export default function AdminSidebar() {
             }`}
           >
             <Mail
-              className={`w-5 h-5 transition-transform duration-300 ${pathname === "/admin/queries" ? "scale-110" : "group-hover:scale-110"}`}
+              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname === "/admin/queries" ? "scale-110" : "group-hover:scale-110"}`}
             />
-            <span className="text-sm font-semibold">User Queries</span>
-            {pathname === "/admin/queries" && (
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate">
+                User Queries
+              </span>
+            )}
+            {!isCollapsed && pathname === "/admin/queries" && (
               <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
             )}
           </Link>
 
           <div className="mt-2">
             <button
-              onClick={() => setIsPaymentsOpen(!isPaymentsOpen)}
-              className={`group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+              onClick={() => {
+                if (isCollapsed) setIsCollapsed(false);
+                setIsPaymentsOpen(!isPaymentsOpen);
+              }}
+              title="Payments"
+              className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+              ${isCollapsed ? "justify-center px-0" : "px-4"}
               ${
-                isPaymentsActive && !isPaymentsOpen
+                isPaymentsActive && (!isPaymentsOpen || isCollapsed)
                   ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               }`}
             >
-              <CreditCard className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-sm font-semibold">Payments</span>
-              <ChevronDown
-                className={`w-4 h-4 ml-auto transition-transform duration-300 ${isPaymentsOpen ? "rotate-180" : ""}`}
-              />
+              <CreditCard className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-110" />
+              {!isCollapsed && (
+                <span className="text-sm font-semibold truncate">Payments</span>
+              )}
+              {!isCollapsed && (
+                <ChevronDown
+                  className={`w-4 h-4 ml-auto transition-transform duration-300 ${isPaymentsOpen ? "rotate-180" : ""}`}
+                />
+              )}
             </button>
 
             <div
-              className={`overflow-hidden transition-all duration-500 ease-in-out ${isPaymentsOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${isPaymentsOpen && !isCollapsed ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
             >
               <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
                 <Link
@@ -271,11 +323,26 @@ export default function AdminSidebar() {
           </div>
         </nav>
 
-        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex items-center justify-center gap-4 px-4 py-2 w-full text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            <Menu className="w-5 h-5 shrink-0" />
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate flex-1 text-left">
+                Collapse
+              </span>
+            )}
+          </button>
+
           {user ? (
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-4 px-4 py-3 w-full hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors text-left outline-none">
+                <button
+                  className={`flex items-center gap-4 py-2 w-full hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors text-left outline-none ${isCollapsed ? "justify-center px-0" : "px-4"}`}
+                >
                   <Image
                     src={user.imageUrl}
                     alt="Profile"
@@ -283,11 +350,13 @@ export default function AdminSidebar() {
                     height={32}
                     className="rounded-full border border-slate-200 dark:border-slate-700 shrink-0"
                   />
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
-                      {user.fullName || "Admin"}
-                    </span>
-                  </div>
+                  {!isCollapsed && (
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-sm font-bold text-slate-800 dark:text-slate-50 truncate">
+                        {user.fullName || "Admin"}
+                      </span>
+                    </div>
+                  )}
                 </button>
               </PopoverTrigger>
               <PopoverContent
@@ -322,10 +391,13 @@ export default function AdminSidebar() {
           ) : (
             <button
               onClick={() => signOut({ redirectUrl: "/" })}
-              className="flex items-center gap-4 px-4 py-3 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
+              title="Sign Out"
+              className={`flex items-center gap-4 py-3 w-full text-left text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 ${isCollapsed ? "justify-center px-0" : "px-4"}`}
             >
-              <LogOut className="w-5 h-5" />
-              <span className="text-sm font-semibold">Sign Out</span>
+              <LogOut className="w-5 h-5 shrink-0" />
+              {!isCollapsed && (
+                <span className="text-sm font-semibold truncate">Sign Out</span>
+              )}
             </button>
           )}
         </div>

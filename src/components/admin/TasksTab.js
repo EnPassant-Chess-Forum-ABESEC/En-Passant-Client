@@ -230,74 +230,80 @@ export default function TasksTab() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
-              Department
-            </label>
-            <Select
-              value={departmentId || undefined}
-              onValueChange={setDepartmentId}
-            >
-              <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                <SelectValue placeholder="Select Department">
-                  {departments.find(
-                    (d) => d._id.toString() === (departmentId || "").toString(),
-                  )?.name || "Select Department"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
-                {departments.map((d) => (
-                  <SelectItem
-                    key={d._id}
-                    value={d._id.toString()}
-                    className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
-                  >
-                    {d.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1 flex flex-col gap-6">
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+                Department
+              </label>
+              <Select
+                value={departmentId || undefined}
+                onValueChange={setDepartmentId}
+              >
+                <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
+                  <SelectValue placeholder="Select Department">
+                    {departments.find(
+                      (d) =>
+                        d._id.toString() === (departmentId || "").toString(),
+                    )?.name || "Select Department"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+                  {departments.map((d) => (
+                    <SelectItem
+                      key={d._id}
+                      value={d._id.toString()}
+                      className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
+                    >
+                      {d.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+                Title
+              </label>
+              <input
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Write an Instagram Caption"
+                className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20"
+              />
+            </div>
+
+            <div className="space-y-2 flex-1 flex flex-col">
+              <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
+                Summary
+              </label>
+              <textarea
+                required
+                data-lenis-prevent="true"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                placeholder="Brief description of what needs to be done..."
+                className="w-full flex-1 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-y min-h-[100px]"
+                rows="4"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
-              Title
-            </label>
-            <input
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Write an Instagram Caption"
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20"
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-2">
-            <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
-              Summary
-            </label>
-            <textarea
-              required
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              placeholder="Brief description of what needs to be done..."
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none"
-              rows="2"
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-2">
+          {/* Right Column (Instructions) */}
+          <div className="lg:col-span-2 space-y-2 flex flex-col">
             <label className="block text-xs font-semibold tracking-normal text-slate-500 dark:text-slate-400">
               Instructions (One per line)
             </label>
             <textarea
               required
+              data-lenis-prevent="true"
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               placeholder="1. Read the guidelines\n2. Draft the caption\n3. Submit for review"
-              className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-none font-mono"
-              rows="4"
+              className="w-full flex-1 bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-all outline-none placeholder:text-slate-800/20 dark:placeholder:text-slate-200/20 resize-y font-mono min-h-[250px]"
+              rows="12"
             />
           </div>
         </div>

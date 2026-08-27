@@ -15,7 +15,7 @@ const adminMono = Roboto_Mono({
   display: "swap",
 });
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }) {
   try {
@@ -37,8 +37,12 @@ export default async function AdminLayout({ children }) {
     });
 
     if (!res.ok) {
-      const errorText = await res.text().catch(() => "Could not read error body");
-      console.error(`Backend returned ${res.status} ${res.statusText} for /users/me`);
+      const errorText = await res
+        .text()
+        .catch(() => "Could not read error body");
+      console.error(
+        `Backend returned ${res.status} ${res.statusText} for /users/me`,
+      );
       console.error(`Error details:`, errorText);
       notFound();
     }
@@ -50,10 +54,12 @@ export default async function AdminLayout({ children }) {
     }
 
     return (
-      <div className={`flex min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 dark:bg-[#020617] font-adminSans ${adminSans.variable} ${adminMono.variable} text-slate-800 dark:text-slate-200 transition-colors duration-500`}>
+      <div
+        className={`flex min-h-screen w-full bg-slate-50 dark:bg-[#020617] font-adminSans ${adminSans.variable} ${adminMono.variable} text-slate-800 dark:text-slate-200 transition-colors duration-500`}
+      >
         <AdminSidebar />
-        <main className="flex-1 relative bg-slate-50 dark:bg-[#020617] min-h-screen w-full min-w-0 overflow-x-hidden ml-0 lg:ml-[280px] mt-16 lg:mt-0 transition-colors duration-500">
-          <div className="relative z-10 px-4 py-8 md:px-8 md:py-12 lg:px-12 lg:py-16 max-w-[1800px] mx-auto w-full min-h-full">
+        <main className="flex-1 relative bg-slate-50 dark:bg-[#020617] min-w-0 overflow-x-hidden transition-colors duration-500 mt-16 lg:mt-0">
+          <div className="relative z-10 px-4 py-8 md:px-8 md:py-12 lg:px-12 lg:py-16 max-w-[1800px] mx-auto w-full min-h-screen">
             {children}
           </div>
         </main>

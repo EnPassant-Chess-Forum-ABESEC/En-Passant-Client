@@ -135,7 +135,6 @@ export default function RecruitmentApplyPage() {
           if (
             app.status === "ACTIVE" ||
             app.status === "TASK_SUBMITTED" ||
-            app.status === "SHORTLISTED" ||
             app.status === "UNDER_REVIEW" ||
             app.status === "INTERVIEW" ||
             app.status === "SELECTED" ||

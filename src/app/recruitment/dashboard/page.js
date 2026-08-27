@@ -156,7 +156,6 @@ export default function RecruitmentDashboard() {
   const isActiveOrFurther = [
     "ACTIVE",
     "TASK_SUBMITTED",
-    "SHORTLISTED",
     "UNDER_REVIEW",
     "INTERVIEW",
     "SELECTED",
@@ -237,8 +236,6 @@ export default function RecruitmentDashboard() {
     TASK_SUBMITTED:
       ". Your tasks have been successfully received and are awaiting evaluation.",
     UNDER_REVIEW: ". Our core team is currently reviewing your submissions.",
-    SHORTLISTED:
-      ". Congratulations! You have been shortlisted. Await further instructions regarding the interview.",
     INTERVIEW: ". You are currently in the interview phase. Best of luck!",
     SELECTED: ". Congratulations! Welcome to the En Passant family.",
     REJECTED:

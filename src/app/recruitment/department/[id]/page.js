@@ -82,7 +82,6 @@ export default function DepartmentTasksPage() {
     [
       "ACTIVE",
       "TASK_SUBMITTED",
-      "SHORTLISTED",
       "UNDER_REVIEW",
       "INTERVIEW",
       "SELECTED",

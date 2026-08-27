@@ -69,7 +69,7 @@ function timeAgo(dateString) {
   return `${weeks} weeks ago`;
 }
 
-export default function ApplicationsTab() {
+export default function ApplicationsTab({ onSwitchToPipeline }) {
   const fetchApi = useApi();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +100,6 @@ export default function ApplicationsTab() {
     { label: "Active", value: "ACTIVE" },
     { label: "Task Submitted", value: "TASK_SUBMITTED" },
     { label: "Under Review", value: "UNDER_REVIEW" },
-    { label: "Shortlisted", value: "SHORTLISTED" },
     { label: "Interview", value: "INTERVIEW" },
     { label: "Selected", value: "SELECTED" },
     { label: "Rejected", value: "REJECTED" },
@@ -289,6 +288,7 @@ export default function ApplicationsTab() {
     );
 
   if (selectedAppId) {
+    /* 
     return (
       <motion.div
         variants={containerVariants}
@@ -599,6 +599,7 @@ export default function ApplicationsTab() {
         {deleteDialog}
       </motion.div>
     );
+    */
   }
 
   return (
@@ -649,79 +650,112 @@ export default function ApplicationsTab() {
               <motion.div
                 variants={itemVariants}
                 key={app._id}
-                className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 group cursor-pointer"
-                onClick={() => viewDetails(app._id)}
+                className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden transition-all hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 group cursor-pointer"
+                onClick={() => {
+                  if (onSwitchToPipeline) onSwitchToPipeline();
+                }}
               >
-                <div className="flex flex-col xl:flex-row gap-6 xl:items-center justify-between">
-                  <div className="flex items-center gap-4 xl:w-[30%]">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0">
-                      <User className="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors" />
+                <div className="flex items-center justify-between gap-4 px-6 pt-5 pb-4">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
+                      {app.userId?.profilePictureUrl ? (
+                        <img
+                          src={app.userId.profilePictureUrl}
+                          alt={app.userId?.userName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm font-black text-blue-600 dark:text-blue-400">
+                          {(app.userId?.userName || "?")
+                            .charAt(0)
+                            .toUpperCase()}
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <h3 className="font-bold  tracking-tight text-slate-800 dark:text-slate-50 text-sm md:text-base truncate max-w-[200px] md:max-w-[300px]">
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-50 text-base truncate">
                         {app.userId?.userName || "Unknown User"}
                       </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                          {relativeTime}
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                        <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 truncate">
+                          <Mail className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                          <span className="truncate">
+                            {app.userId?.email || "No Email"}
+                          </span>
                         </span>
+                        {app.userId?.phoneNumber && (
+                          <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 shrink-0">
+                            <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                            {app.userId?.phoneNumber}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 flex-1 md:pl-8 md:border-l border-slate-100 dark:border-slate-800">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                      <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">
-                        Applied
-                      </span>
-                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                        {appDate}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                      <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold">
-                        Status
-                      </span>
-                      <span
-                        className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${app.status === "ACTIVE" ? "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400" : "bg-slate-100 text-slate-700 dark:bg-[#020617] dark:text-slate-300 dark:border dark:border-slate-700"}`}
-                      >
-                        {app.status.replace(/_/g, " ")}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 xl:w-[20%] justify-end mt-4 xl:mt-0">
-                    <button
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        viewDetails(app._id);
-                      }}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span
+                      className={`hidden sm:inline-flex px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest ${
+                        app.status === "SELECTED"
+                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                          : app.status === "ACTIVE"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400"
+                            : app.status === "REJECTED"
+                              ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400"
+                              : app.status === "TASK_SUBMITTED"
+                                ? "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-400"
+                                : app.status === "UNDER_REVIEW" ||
+                                    app.status === "INTERVIEW"
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
+                                  : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                      }`}
                     >
-                      <Eye className="w-4 h-4" />
-                      View
-                    </button>
+                      {app.status.replace(/_/g, " ")}
+                    </span>
                     <button
-                      className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-full text-xs font-bold transition-colors shadow-sm"
+                      className="p-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-500 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-xl transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteApplication(app._id);
                       }}
                     >
                       <Trash2 className="w-4 h-4" />
-                      Delete
                     </button>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-6 text-[10px] md:text-xs text-slate-500 dark:text-slate-400 tracking-widest">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-slate-800/30 dark:text-slate-400/50" />
-                    <span className="font-mono lowercase">
-                      {app.userId?.email || "no-email@provided"}
-                    </span>
+                <div className="flex flex-wrap items-center gap-3 px-6 pb-5 border-t border-slate-100 dark:border-slate-800 pt-4">
+                  <div
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border ${
+                      app.paymentStatus === "SUCCESS"
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400"
+                        : "bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-800/60 dark:border-slate-700 dark:text-slate-400"
+                    }`}
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    {app.paymentStatus === "SUCCESS" ? "Paid" : "Unpaid"}
                   </div>
+
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800/60 dark:border-slate-700 dark:text-slate-300">
+                    Applied {appDate}
+                  </div>
+
+                  {app.preferredDepartmentId?.name && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                      {app.preferredDepartmentId.name}
+                    </div>
+                  )}
+
+                  {app.secondaryDepartmentId?.map((dept) => (
+                    <div
+                      key={dept._id}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800/60 dark:border-slate-700 dark:text-slate-300"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                      {dept.name}
+                    </div>
+                  ))}
                 </div>
               </motion.div>
             );
