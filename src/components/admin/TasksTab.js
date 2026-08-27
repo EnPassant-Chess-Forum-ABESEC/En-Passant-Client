@@ -58,6 +58,7 @@ export default function TasksTab() {
   const [maxLinks, setMaxLinks] = useState(1);
   const [maxFiles, setMaxFiles] = useState(1);
   const [fileCategory, setFileCategory] = useState("image");
+  const [containsAssets, setContainsAssets] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function TasksTab() {
         instructions: instructions.split("\n").filter((i) => i.trim() !== ""),
         order: parseInt(order),
         isRequired,
+        containsAssets,
         submission: {
           acceptsText,
           acceptsLinks,
@@ -136,13 +138,10 @@ export default function TasksTab() {
     setYear(task.year);
     setTitle(task.title);
     setSummary(task.summary);
-    setInstructions(
-      Array.isArray(task.instructions)
-        ? task.instructions.join("\n")
-        : task.instructions,
-    );
-    setOrder(task.order);
-    setIsRequired(task.isRequired);
+    setInstructions(task.instructions?.join("\n") || "");
+    setOrder(task.order || 1);
+    setIsRequired(task.isRequired ?? true);
+    setContainsAssets(task.containsAssets ?? false);
     setAcceptsText(task.submission?.acceptsText || false);
     setAcceptsLinks(task.submission?.acceptsLinks || false);
     setAcceptsFiles(task.submission?.acceptsFiles || false);
@@ -179,6 +178,7 @@ export default function TasksTab() {
     setInstructions("");
     setOrder(1);
     setIsRequired(true);
+    setContainsAssets(false);
     setAcceptsText(false);
     setAcceptsLinks(false);
     setAcceptsFiles(false);
@@ -326,6 +326,27 @@ export default function TasksTab() {
                 Required Task
               </span>
             </label>
+
+            <label className="group flex items-center gap-3 cursor-pointer">
+              <div
+                className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${containsAssets ? "bg-blue-600 border-transparent" : "bg-transparent border border-slate-300 dark:border-slate-700 group-hover:border-slate-400 dark:group-hover:border-slate-600"}`}
+              >
+                {containsAssets && (
+                  <span className="text-white text-xs">✓</span>
+                )}
+              </div>
+              <input
+                type="checkbox"
+                checked={containsAssets}
+                onChange={(e) => setContainsAssets(e.target.checked)}
+                className="hidden"
+              />
+              <span className="text-xs tracking-tight text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">
+                Contains Assets
+              </span>
+            </label>
+
+
 
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden md:block" />
 
@@ -489,9 +510,6 @@ export default function TasksTab() {
             <table className="hidden md:table w-full text-left whitespace-nowrap">
               <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4 font-normal w-16 text-center">
-                    Ord
-                  </th>
                   <th className="px-6 py-4 font-normal">Title</th>
                   <th className="px-6 py-4 font-normal">Accepts</th>
                   <th className="px-6 py-4 font-normal text-right">Actions</th>
@@ -504,7 +522,7 @@ export default function TasksTab() {
                 {activeTasks.length === 0 ? (
                   <motion.tr variants={itemVariants}>
                     <td
-                      colSpan="4"
+                      colSpan="3"
                       className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
                     >
                       No tasks found for this department
@@ -517,9 +535,6 @@ export default function TasksTab() {
                       key={task._id}
                       className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                     >
-                      <td className="px-6 py-5 text-center text-slate-500 dark:text-slate-400 font-mono text-sm">
-                        {task.order}
-                      </td>
                       <td className="px-6 py-5 font-bold text-slate-800 dark:text-slate-200 tracking-wide">
                         {task.title}
                       </td>
@@ -542,7 +557,7 @@ export default function TasksTab() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                      <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-3">
                           <button
                             onClick={() => handleEdit(task)}
@@ -577,11 +592,6 @@ export default function TasksTab() {
                       <div className="flex flex-col min-w-0 pr-2">
                         <span className="font-bold text-slate-800 dark:text-slate-200 tracking-wide text-sm">
                           {task.title}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full">
-                        <span className="text-slate-500 dark:text-slate-400 font-mono text-xs font-normal">
-                          {task.order}
                         </span>
                       </div>
                     </div>
