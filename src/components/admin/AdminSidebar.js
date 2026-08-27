@@ -81,11 +81,11 @@ export default function AdminSidebar() {
       />
 
       <aside
-        className={`h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-4 lg:px-6 bg-white dark:bg-[#0F172A] z-50 transition-all duration-300 ease-in-out ${
+        className={`h-screen fixed top-0 left-0 flex-shrink-0 flex flex-col py-10 px-4 bg-white dark:bg-[#0F172A] z-50 transition-all duration-300 ease-in-out ${
           isMobileMenuOpen
             ? "translate-x-0 w-full"
             : "-translate-x-full lg:translate-x-0"
-        } ${isCollapsed ? "lg:w-[88px] lg:px-4" : "lg:w-[280px]"}`}
+        } ${isCollapsed ? "lg:w-[88px] lg:px-4" : "lg:w-[280px] lg:px-6"}`}
       >
         <div className="mb-14 flex items-center justify-between">
           <Link href="/admin" className="flex items-center group">
