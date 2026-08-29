@@ -31,16 +31,18 @@ export default function TaskAccordion({
   const handleDownloadAllAssets = async () => {
     setIsDownloading(true);
     try {
+      const currentTask = tasks[activeIndex];
+      const taskNum = currentTask.order || (activeIndex + 1);
       const { saveAs } = await import("file-saver");
       const response = await fetch(
-        `/api/download-assets?dept=${departmentId}&task=${activeIndex + 1}`,
+        `/api/download-assets?dept=${departmentId}&task=${taskNum}`,
       );
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to download assets");
       }
       const blob = await response.blob();
-      saveAs(blob, `Task_${activeIndex + 1}_Assets.zip`);
+      saveAs(blob, `Task_${taskNum}_Assets.zip`);
     } catch (error) {
       console.error("Error downloading static assets:", error);
       alert(
@@ -108,7 +110,7 @@ export default function TaskAccordion({
                       : "bg-white/20"
                 }`}
               />
-              Task {index + 1}
+              Task {task.order || index + 1}
               {submitted && (
                 <CheckCircle2 className="w-3 h-3 text-green-500 shrink-0" />
               )}
@@ -136,7 +138,7 @@ export default function TaskAccordion({
               <span
                 className={`relative z-10 absolute top-4 left-5 text-[11px] uppercase tracking-[0.25em] font-black transition-colors duration-300 ${isActive ? "text-[#ff4444]" : "text-white/50"}`}
               >
-                Task {index + 1}
+                Task {task.order || index + 1}
               </span>
 
               <div className="relative z-10 flex w-full flex-col items-center justify-center mt-3">
@@ -186,7 +188,7 @@ export default function TaskAccordion({
             >
               <div className="flex items-center gap-3 mb-2 sm:mb-4">
                 <span className="text-[#9b1a1a] text-xs font-bold uppercase tracking-[0.3em]">
-                  Task {(activeIndex + 1).toString().padStart(2, "0")}
+                  Task {(activeTask.order || (activeIndex + 1)).toString().padStart(2, "0")}
                 </span>
                 <div className="h-px bg-[#9b1a1a]/30 flex-grow" />
                 {activeTask.isRequired && (
