@@ -238,10 +238,11 @@ export default function SubmissionReviewDrawer({
                                               href={link}
                                               target="_blank"
                                               rel="noopener noreferrer"
-                                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 border border-blue-100 dark:border-blue-500/20 transition-colors truncate max-w-xs"
+                                              title={link}
+                                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 border border-blue-100 dark:border-blue-500/20 transition-colors max-w-full"
                                             >
                                               <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                                              {link}
+                                              <span className="truncate">{link}</span>
                                             </a>
                                           ))}
                                         </div>
