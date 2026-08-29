@@ -10,6 +10,7 @@ export default function TaskAccordion({
   initialTaskId,
   submittedTasks = [],
   departmentId,
+  submissionEndDate,
 }) {
   const initialIndex = initialTaskId
     ? tasks.findIndex((t) => t._id === initialTaskId)
@@ -64,6 +65,7 @@ export default function TaskAccordion({
 
   const activeTask = tasks[activeIndex];
   const isSubmitted = localSubmittedTasks.includes(activeTask._id);
+  const isDeadlinePassed = submissionEndDate ? new Date() > new Date(submissionEndDate) : false;
 
   const contentVariants = {
     enter: (dir) => ({
@@ -322,6 +324,13 @@ export default function TaskAccordion({
                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-8 py-2.5 sm:py-3.5 bg-green-500/10 text-green-500 rounded-full font-bold uppercase tracking-widest text-[10px] sm:text-xs border border-green-500/20 cursor-not-allowed opacity-80"
               >
                 <CheckCircle2 className="w-4 h-4" /> Task Submitted
+              </button>
+            ) : isDeadlinePassed ? (
+              <button
+                disabled
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-8 py-2.5 sm:py-3.5 bg-red-500/10 text-red-500 rounded-full font-bold uppercase tracking-widest text-[10px] sm:text-xs border border-red-500/20 cursor-not-allowed opacity-80"
+              >
+                Deadline Passed
               </button>
             ) : (
               <button

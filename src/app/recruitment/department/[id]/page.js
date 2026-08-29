@@ -27,6 +27,7 @@ export default function DepartmentTasksPage() {
   const [application, setApplication] = useState(null);
   const [isRevealed, setIsRevealed] = useState(true);
   const [revealDate, setRevealDate] = useState(null);
+  const [submissionEndDate, setSubmissionEndDate] = useState(null);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -48,6 +49,9 @@ export default function DepartmentTasksPage() {
         }
         if (data.revealDate) {
           setRevealDate(data.revealDate);
+        }
+        if (data.submissionEndDate) {
+          setSubmissionEndDate(data.submissionEndDate);
         }
 
         if (appData?.myApplication) {
@@ -196,6 +200,7 @@ export default function DepartmentTasksPage() {
               initialTaskId={initialTaskId}
               submittedTasks={submittedTasks}
               departmentId={id}
+              submissionEndDate={submissionEndDate}
             />
           )}
         </motion.div>
