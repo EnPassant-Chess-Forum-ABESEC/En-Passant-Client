@@ -230,20 +230,6 @@ export default function RecruitmentDashboard() {
     );
   };
 
-  const statusDescriptions = {
-    ACTIVE:
-      ". Complete the designated tasks for your selected departments below.",
-    TASK_SUBMITTED:
-      ". Your tasks have been successfully received and are awaiting evaluation.",
-    UNDER_REVIEW: ". Our core team is currently reviewing your submissions.",
-    INTERVIEW: ". You are currently in the interview phase. Best of luck!",
-    SELECTED: ". Congratulations! Welcome to the En Passant family.",
-    REJECTED:
-      ". Unfortunately, we will not be moving forward with your application at this time.",
-    PAYMENT_PENDING:
-      ". Complete your application process to unlock access to the designated tasks.",
-  };
-
   return (
     <div className="min-h-screen bg-[#050505] pt-20 pb-24">
       <section className="relative w-full h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
@@ -278,16 +264,16 @@ export default function RecruitmentDashboard() {
           >
             RECRUITMENT <span className="text-[#9b1a1a]">DASHBOARD</span>
           </h1>
-          <p className="font-sans font-light text-[#999] max-w-2xl mx-auto text-sm md:text-lg tracking-wide mt-6">
+          {/* <p className="font-sans font-light text-[#999] max-w-2xl mx-auto text-sm md:text-lg tracking-wide mt-6">
             Your application status is{" "}
             <span className="font-bold text-[#9b1a1a] uppercase">
               {application.status === "PAYMENT_PENDING"
                 ? "PAYMENT RECEIVED"
                 : application.status?.replace(/_/g, " ")}
             </span>
-            {/* {statusDescriptions[application.status] ||
-              ". Complete your application process to unlock access to the designated tasks."} */}
-          </p>
+            {statusDescriptions[application.status] ||
+              ". Complete your application process to unlock access to the designated tasks."}
+          </p> */}
         </motion.div>
       </section>
 
