@@ -253,7 +253,7 @@ export default function KanbanTab() {
                   draggable
                   onDragStart={(e) => handleDragStart(e, app._id)}
                   onClick={() => openDrawer(app._id)}
-                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl p-4 cursor-grab active:cursor-grabbing hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-md transition-all shadow-sm group"
+                  className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl p-4 cursor-pointer hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-md transition-all shadow-sm group"
                 >
                   <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
                     {app.userId?.userName || "Unknown"}
