@@ -22,7 +22,7 @@ This repository contains the frontend client, built with Next.js 16 (App Router)
 - **Admin Dashboard** — Manage applications (list and Kanban views), tasks, departments, users, payments, queries, and recruitment settings (deadlines, open/close dates).
 - **Leaderboard** — Global chess rankings with chess.com and Lichess rating integration.
 - **Event Gallery** — Accordion gallery, masonry layout, and a drift wall for past and upcoming events.
-- **Payments** — Razorpay integration for membership and event fees.
+- **Payments** — Manual UPI payment flow with an admin verification dashboard.
 - **User Profiles** — Personal settings, chess rating cards, and public profile pages (`/u/[userName]`).
 - **Analytics** — Vercel Analytics for page views and performance tracking.
 - **Theming** — Dark/light mode support via `next-themes` with CSS variable design tokens.
@@ -40,7 +40,6 @@ This repository contains the frontend client, built with Next.js 16 (App Router)
 | **Authentication** | Clerk (`@clerk/nextjs`, `@clerk/themes`) |
 | **Animations** | Framer Motion 12, GSAP 3.15, Lenis 1.3 |
 | **3D Graphics** | React Three Fiber 9, Drei 10, Three.js, OGL |
-| **Payments** | Razorpay (`react-razorpay`) |
 | **Charts** | Recharts 3 |
 | **UI Primitives** | shadcn/ui, Base UI, Lucide React, React Icons, Sonner (toasts) |
 | **Utilities** | clsx, tailwind-merge, class-variance-authority, date-fns, JSZip, FileSaver |
@@ -209,8 +208,6 @@ flowchart LR
 
     subgraph Services ["External Services"]
         Clerk["Clerk\n(Auth and Sessions)"]
-        Razorpay["Razorpay\n(Payments)"]
-        VA["Vercel Analytics"]
     end
 
     Backend["Node.js Backend\n(REST API)"]
@@ -220,10 +217,8 @@ flowchart LR
     CC -->|useApi + JWT| Backend
     CC -->|useAuth, useUser| Clerk
     SC -->|auth| Clerk
-    CC -->|payment flow| Razorpay
     Backend -->|verify JWT| Clerk
     SC --> API
-    CC --> VA
 ```
 
 ### Key Architectural Decisions
@@ -276,9 +271,6 @@ flowchart LR
 
    # Backend API
    NEXT_PUBLIC_API_URL=http://localhost:8080/api
-
-   # Razorpay Payments
-   NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_...
    ```
 
 4. **Start the development server**
@@ -368,7 +360,7 @@ Additional measures:
 1. **Fork** the repository.
 2. **Create** a feature branch:
    ```bash
-   git checkout -b feat/your-feature-name
+   git checkout -b <your-name>:feat/your-feature-name
    ```
 3. **Commit** your changes with clear, descriptive messages:
    ```bash
@@ -376,7 +368,7 @@ Additional measures:
    ```
 4. **Push** to your branch:
    ```bash
-   git push origin feat/your-feature-name
+   git push origin <your-name>:feat/your-feature-name
    ```
 5. **Open a Pull Request** against `main`.
 
@@ -393,11 +385,11 @@ Additional measures:
 
 | Prefix | Use Case | Example |
 |---|---|---|
-| `feat/` | New feature | `feat/add-puzzle-section` |
-| `fix/` | Bug fix | `fix/navbar-mobile-overflow` |
-| `refactor/` | Code improvement | `refactor/admin-sidebar` |
-| `docs/` | Documentation | `docs/update-readme` |
-| `style/` | Styling change | `style/hero-responsive-fix` |
+| `<name>:feat/` | New feature | `tanishq:feat/add-puzzle-section` |
+| `<name>:fix/` | Bug fix | `tanishq:fix/navbar-mobile-overflow` |
+| `<name>:refactor/` | Code improvement | `tanishq:refactor/admin-sidebar` |
+| `<name>:docs/` | Documentation | `tanishq:docs/update-readme` |
+| `<name>:style/` | Styling change | `tanishq:style/hero-responsive-fix` |
 
 ---
 
