@@ -18,6 +18,7 @@ import {
   Mail,
   Menu,
   X,
+  Trophy,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
@@ -42,9 +43,11 @@ export default function AdminSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <>
@@ -140,6 +143,28 @@ export default function AdminSidebar() {
               <span className="text-sm font-semibold truncate">Dashboard</span>
             )}
             {!isCollapsed && pathname === "/admin" && (
+              <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
+            )}
+          </Link>
+
+          <Link
+            href="/admin/tournaments"
+            title="Tournaments"
+            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-1
+            ${isCollapsed ? "justify-center px-0" : "px-4"}
+            ${
+              pathname.startsWith("/admin/tournaments")
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+            }`}
+          >
+            <Trophy
+              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname.startsWith("/admin/tournaments") ? "scale-110" : "group-hover:scale-110"}`}
+            />
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate">Tournaments</span>
+            )}
+            {!isCollapsed && pathname.startsWith("/admin/tournaments") && (
               <div className="ml-auto w-2 h-2 rounded-full bg-blue-600" />
             )}
           </Link>
