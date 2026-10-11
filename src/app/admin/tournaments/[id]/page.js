@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use, useMemo } from "react";
+import { useState, useEffect, use, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
