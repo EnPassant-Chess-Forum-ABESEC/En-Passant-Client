@@ -390,9 +390,3 @@ Additional measures:
 | `<name>:refactor/` | Code improvement | `tanishq:refactor/admin-sidebar` |
 | `<name>:docs/` | Documentation | `tanishq:docs/update-readme` |
 | `<name>:style/` | Styling change | `tanishq:style/hero-responsive-fix` |
-
----
-
-## License
-
-This project is maintained by the **En Passant Chess Forum, ABESEC**.
