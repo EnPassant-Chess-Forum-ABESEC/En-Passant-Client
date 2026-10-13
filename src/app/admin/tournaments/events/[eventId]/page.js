@@ -10,12 +10,10 @@ import {
   Layers,
   PlayCircle,
   Users,
-  CheckCircle2,
   RefreshCw,
   Loader2,
-  ExternalLink,
-  Sparkles,
   ChevronRight,
+  UserCheck,
 } from "lucide-react";
 
 export default function EventTournamentsDashboardPage({ params }) {
@@ -31,7 +29,7 @@ export default function EventTournamentsDashboardPage({ params }) {
       const res = await fetchApi(`/events/${eventId}/tournaments/dashboard`);
       setDashboard(res?.dashboard || null);
     } catch (err) {
-      toast.error("Failed to load event tournament dashboard: " + err.message);
+      toast.error("Failed to load event tournaments: " + err.message);
     }
   };
 
@@ -45,7 +43,7 @@ export default function EventTournamentsDashboardPage({ params }) {
         }
       } catch (err) {
         if (!ignore) {
-          toast.error("Failed to load event tournament dashboard: " + err.message);
+          toast.error("Failed to load event tournaments: " + err.message);
         }
       } finally {
         if (!ignore) {
@@ -62,10 +60,22 @@ export default function EventTournamentsDashboardPage({ params }) {
   const handlePairAll = async () => {
     setActionLoading(true);
     try {
-      await fetchApi(`/events/${eventId}/tournaments/pair`, {
+      const res = await fetchApi(`/events/${eventId}/tournaments/pair`, {
         method: "POST",
+        body: {},
       });
-      toast.success("Round paired across all active event brackets!");
+      const pairedCount = (res?.result || []).filter((r) => r.success).length;
+      if (pairedCount > 0) {
+        toast.success(`Paired round for ${pairedCount} bracket(s)!`);
+      } else {
+        const skippedReasons = (res?.result || [])
+          .map((r) => r.reason)
+          .filter(Boolean);
+        toast.warning(
+          skippedReasons[0] ||
+            "No brackets paired. Seed players into brackets first.",
+        );
+      }
       await handleRefresh();
     } catch (err) {
       toast.error("Pairing Error: " + err.message);
@@ -95,9 +105,9 @@ export default function EventTournamentsDashboardPage({ params }) {
   if (loading) {
     return (
       <div className="py-32 text-center">
-        <Loader2 className="w-10 h-10 animate-spin mx-auto text-purple-500 mb-4" />
+        <Loader2 className="w-10 h-10 animate-spin mx-auto text-blue-500 mb-4" />
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          Loading Multi-Bracket Dashboard...
+          Loading Event Tournaments…
         </p>
       </div>
     );
@@ -105,16 +115,19 @@ export default function EventTournamentsDashboardPage({ params }) {
 
   if (!dashboard) {
     return (
-      <div className="py-24 text-center">
-        <p className="text-base font-bold text-slate-700 dark:text-slate-300">
-          No Tournament Brackets Initialized
+      <div className="p-16 text-center border border-slate-200 dark:border-slate-800 rounded-3xl bg-white/50 dark:bg-[#0F172A]/50">
+        <p className="text-base font-bold text-slate-700 dark:text-slate-300 mb-2">
+          No Tournaments Initialized
+        </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+          This event does not have active tournament brackets initialized yet.
         </p>
         <Link
-          href="/admin/tournaments"
-          className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:underline"
+          href={`/admin/events/${eventId}`}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Tournaments
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Event Details</span>
         </Link>
       </div>
     );
@@ -124,25 +137,26 @@ export default function EventTournamentsDashboardPage({ params }) {
     <>
       <div className="mb-6">
         <Link
-          href="/admin/tournaments"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+          href={`/admin/events/${eventId}`}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Tournaments Hub</span>
+          <span>Back to Event</span>
         </Link>
       </div>
 
       <header className="mb-8 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold mb-2">
             <Layers className="w-3.5 h-3.5" />
-            <span>Multi-Bracket Event</span>
+            <span>Event Tournaments</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100">
             {dashboard.eventTitle}
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            {dashboard.totalBrackets} Brackets Configured • Participation Mode: {dashboard.participationMode?.toUpperCase()}
+            {dashboard.totalBrackets} Brackets • Mode:{" "}
+            {dashboard.participationMode === "team" ? "Team" : "Individual"}
           </p>
         </div>
 
@@ -152,6 +166,7 @@ export default function EventTournamentsDashboardPage({ params }) {
             disabled={actionLoading}
             className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             title="Refresh"
+            aria-label="Refresh"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -159,18 +174,24 @@ export default function EventTournamentsDashboardPage({ params }) {
           <button
             onClick={handleSeedPlayers}
             disabled={actionLoading}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 hover:bg-purple-100 rounded-xl transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all shadow-xs"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Auto-Seed from Registrations</span>
+            <span>Seed Players from Registrations</span>
           </button>
 
           <button
             onClick={handlePairAll}
-            disabled={actionLoading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl shadow-md transition-all"
+            disabled={
+              actionLoading ||
+              (dashboard.brackets || []).every((b) => (b.playerCount || 0) < 2)
+            }
+            title={
+              (dashboard.brackets || []).every((b) => (b.playerCount || 0) < 2)
+                ? "At least one bracket must have at least 2 registered players to generate pairings"
+                : "Pair next round across all active brackets"
+            }
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm shadow-blue-500/20 transition-all active:scale-[0.98]"
           >
-            <PlayCircle className="w-4 h-4" />
             <span>Pair All Brackets</span>
           </button>
         </div>
@@ -180,16 +201,12 @@ export default function EventTournamentsDashboardPage({ params }) {
         {dashboard.brackets.map((b) => (
           <div
             key={b.tournamentId}
-            className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs flex flex-col justify-between"
+            className="p-6 rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="px-2.5 py-1 text-xs font-black uppercase rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                <span className="px-2.5 py-1 text-xs font-bold font-mono uppercase rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   {b.bracket}
-                </span>
-
-                <span className="text-[11px] font-semibold text-slate-400">
-                  Sec: {b.section}
                 </span>
               </div>
 
@@ -199,44 +216,19 @@ export default function EventTournamentsDashboardPage({ params }) {
 
               <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-2 mb-4">
                 <span className="flex items-center gap-1 font-semibold">
-                  <PlayCircle className="w-3.5 h-3.5 text-blue-500" />
                   Round {b.currentRoundNumber} / {b.totalRounds}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5 text-purple-500" />
                   {b.playerCount} Players
                 </span>
               </div>
-
-              {b.topStandings && b.topStandings.length > 0 && (
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#020617] border border-slate-100 dark:border-slate-800 mb-4">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    Top Leaders
-                  </p>
-                  <div className="space-y-1.5 text-xs">
-                    {b.topStandings.slice(0, 3).map((lead, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between text-slate-700 dark:text-slate-300"
-                      >
-                        <span className="truncate font-semibold">
-                          #{lead.rank} {lead.name}
-                        </span>
-                        <span className="font-mono font-bold text-blue-600 dark:text-blue-400 text-xs">
-                          {Number(lead.points || lead.score || 0).toFixed(1)} pts
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             <Link
               href={`/admin/tournaments/${b.tournamentId}`}
-              className="inline-flex items-center justify-between w-full px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors mt-2"
+              className="inline-flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors mt-2"
             >
-              <span>Open Bracket Cockpit</span>
+              <span>View Bracket</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>

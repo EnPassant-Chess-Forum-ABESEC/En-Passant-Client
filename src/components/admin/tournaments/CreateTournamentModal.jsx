@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
-import { Plus, Loader2, X, Users, Trophy } from "lucide-react";
+import { Plus, Loader2, X, Trophy } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
   const fetchApi = useApi();
@@ -103,7 +110,7 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. En-Passant Inter-College Masters 2026"
-              className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-[42px] px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             />
           </div>
 
@@ -112,15 +119,31 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                 Pairing Format
               </label>
-              <select
-                value={format}
-                onChange={(e) => setFormat(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="swiss">FIDE Dutch Swiss</option>
-                <option value="round_robin">Round-Robin</option>
-                <option value="knockout">Knockout</option>
-              </select>
+              <Select value={format} onValueChange={setFormat}>
+                <SelectTrigger className="w-full h-[42px] px-3.5 bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-900 dark:text-slate-100 focus:ring-blue-500">
+                  <SelectValue placeholder="Select Format" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 z-[250]">
+                  <SelectItem
+                    value="swiss"
+                    className="font-semibold text-xs focus:bg-slate-100 dark:focus:bg-slate-800/50"
+                  >
+                    FIDE Dutch Swiss
+                  </SelectItem>
+                  <SelectItem
+                    value="round_robin"
+                    className="font-semibold text-xs focus:bg-slate-100 dark:focus:bg-slate-800/50"
+                  >
+                    Round-Robin
+                  </SelectItem>
+                  <SelectItem
+                    value="knockout"
+                    className="font-semibold text-xs focus:bg-slate-100 dark:focus:bg-slate-800/50"
+                  >
+                    Knockout
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -133,7 +156,7 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
                 max="50"
                 value={totalRounds}
                 onChange={(e) => setTotalRounds(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-[42px] px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
@@ -141,14 +164,28 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                 Round 1 Top Color
               </label>
-              <select
+              <Select
                 value={round1TopSeedColor}
-                onChange={(e) => setRound1TopSeedColor(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={setRound1TopSeedColor}
               >
-                <option value="W">White (W)</option>
-                <option value="B">Black (B)</option>
-              </select>
+                <SelectTrigger className="w-full h-[42px] px-3.5 bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-900 dark:text-slate-100 focus:ring-blue-500">
+                  <SelectValue placeholder="Top Seed Color" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 z-[250]">
+                  <SelectItem
+                    value="W"
+                    className="font-semibold text-xs focus:bg-slate-100 dark:focus:bg-slate-800/50"
+                  >
+                    White (W)
+                  </SelectItem>
+                  <SelectItem
+                    value="B"
+                    className="font-semibold text-xs focus:bg-slate-100 dark:focus:bg-slate-800/50"
+                  >
+                    Black (B)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -162,7 +199,7 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
                 value={section}
                 onChange={(e) => setSection(e.target.value)}
                 placeholder="open, solo, section-a"
-                className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-[42px] px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
@@ -175,7 +212,7 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
                 value={bracket}
                 onChange={(e) => setBracket(e.target.value)}
                 placeholder="beginner, intermediate, advanced"
-                className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-[42px] px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
           </div>
@@ -190,12 +227,19 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
               </span>
             </div>
             <textarea
-              rows={4}
+              rows={3}
               value={playersText}
               onChange={(e) => setPlayersText(e.target.value)}
-              placeholder={"Magnus Carlsen, 2830\nHikaru Nakamura, 2802\nFabiano Caruana, 2795"}
-              className="w-full px-4 py-3 font-mono text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={
+                "Magnus Carlsen, 2830\nHikaru Nakamura, 2802\nFabiano Caruana, 2795"
+              }
+              className="w-full px-4 py-3 font-mono text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
+            <p className="mt-1.5 text-[11px] text-slate-400">
+              Note: For official events (like ACC), players are pulled directly
+              from Event Registrations. This manual field is only for ad-hoc
+              standalone tournaments.
+            </p>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
@@ -203,14 +247,14 @@ export default function CreateTournamentModal({ isOpen, onClose, onSuccess }) {
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl shadow-md transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white disabled:opacity-50 rounded-xl shadow-xs transition-all active:scale-[0.98]"
             >
               {loading ? (
                 <>

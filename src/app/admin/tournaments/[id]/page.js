@@ -50,6 +50,7 @@ export default function TournamentDetailPage({ params }) {
   const [activeTab, setActiveTab] = useState("pairings");
   const [selectedRoundNum, setSelectedRoundNum] = useState(1);
   const [isRollbackOpen, setIsRollbackOpen] = useState(false);
+  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
   const loadSupplementaryData = useCallback(async () => {
     try {
@@ -63,10 +64,10 @@ export default function TournamentDetailPage({ params }) {
         setStandings(stdRes.value?.standings || []);
       }
       if (ctRes.status === "fulfilled") {
-        setCrossTable(ctRes.value?.crossTable || []);
+        setCrossTable(ctRes.value?.crossTable || ctRes.value?.matrix || []);
       }
       if (auditRes.status === "fulfilled") {
-        setAudit(auditRes.value?.audit || null);
+        setAudit(auditRes.value?.audit || auditRes.value?.auditReport || null);
       }
     } catch (err) {
       console.error("Supplementary load error:", err);
@@ -107,10 +108,12 @@ export default function TournamentDetailPage({ params }) {
             setStandings(stdRes.value?.standings || []);
           }
           if (ctRes.status === "fulfilled") {
-            setCrossTable(ctRes.value?.crossTable || []);
+            setCrossTable(ctRes.value?.crossTable || ctRes.value?.matrix || []);
           }
           if (auditRes.status === "fulfilled") {
-            setAudit(auditRes.value?.audit || null);
+            setAudit(
+              auditRes.value?.audit || auditRes.value?.auditReport || null,
+            );
           }
         }
       } catch (err) {
@@ -137,7 +140,9 @@ export default function TournamentDetailPage({ params }) {
 
   const selectedRound = useMemo(() => {
     if (!tournament?.rounds) return null;
-    return tournament.rounds.find((r) => r.roundNumber === selectedRoundNum) || null;
+    return (
+      tournament.rounds.find((r) => r.roundNumber === selectedRoundNum) || null
+    );
   }, [tournament, selectedRoundNum]);
 
   const handlePairNextRound = async () => {
@@ -188,7 +193,9 @@ export default function TournamentDetailPage({ params }) {
       );
       toast.success(`Round ${selectedRound.roundNumber} rolled back!`);
       setTournament(res?.tournament);
-      setSelectedRoundNum(Math.max(1, (res?.tournament?.currentRoundNumber || 1)));
+      setSelectedRoundNum(
+        Math.max(1, res?.tournament?.currentRoundNumber || 1),
+      );
       await loadSupplementaryData();
     } catch (err) {
       toast.error("Error rolling back round: " + err.message);
@@ -198,12 +205,29 @@ export default function TournamentDetailPage({ params }) {
     }
   };
 
+  const handleCompleteTournament = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetchApi(`/tournaments/${id}/complete`, {
+        method: "POST",
+      });
+      toast.success("Tournament completed! Final standings are locked.");
+      setTournament(res?.tournament);
+      await loadSupplementaryData();
+    } catch (err) {
+      toast.error("Error completing tournament: " + err.message);
+    } finally {
+      setActionLoading(false);
+      setIsCompleteOpen(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-32 text-center">
         <Loader2 className="w-10 h-10 animate-spin mx-auto text-blue-500 mb-4" />
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          Loading Tournament Cockpit...
+          Loading Tournament Details...
         </p>
       </div>
     );
@@ -226,15 +250,31 @@ export default function TournamentDetailPage({ params }) {
     );
   }
 
+  const isTournamentCompleted =
+    tournament.status?.toLowerCase() === "completed";
+  const isAllRoundsPaired = Boolean(
+    tournament.rounds?.length >= tournament.totalRounds &&
+    tournament.currentRoundNumber >= tournament.totalRounds,
+  );
+  const allGamesFinished = Boolean(
+    isAllRoundsPaired &&
+    tournament.rounds?.every(
+      (r) => r.games?.length > 0 && r.games.every((g) => g.result !== null),
+    ),
+  );
+  const activePlayersCount = (tournament.players || []).filter(
+    (p) => p.active !== false,
+  ).length;
+  const hasEnoughPlayers = activePlayersCount >= 2;
   const isCurrentRoundCompleted = Boolean(selectedRound?.isCompleted);
   const canPairNext =
-    tournament.currentRoundNumber === 0 ||
-    (isCurrentRoundCompleted &&
-      tournament.currentRoundNumber < tournament.totalRounds);
+    !isAllRoundsPaired &&
+    hasEnoughPlayers &&
+    (tournament.currentRoundNumber === 0 || isCurrentRoundCompleted);
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/tournaments"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
@@ -244,118 +284,122 @@ export default function TournamentDetailPage({ params }) {
         </Link>
       </div>
 
-      <header className="mb-8 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                tournament.status === "completed"
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                  : tournament.status === "in_progress"
-                    ? "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-                    : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-              }`}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  tournament.status === "completed"
-                    ? "bg-emerald-500"
-                    : tournament.status === "in_progress"
-                      ? "bg-blue-500 animate-pulse"
-                      : "bg-slate-400"
-                }`}
-              />
-              {tournament.status?.replace("_", " ")?.toUpperCase()}
-            </span>
-
-            <span className="px-2 py-0.5 text-[10px] font-bold font-mono uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded">
-              {tournament.format}
-            </span>
-
-            {tournament.section && tournament.section !== "open" && (
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
-                Section: {tournament.section}
-              </span>
-            )}
-            {tournament.bracket && tournament.bracket !== "open" && (
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded">
-                Bracket: {tournament.bracket}
-              </span>
-            )}
-          </div>
-
+      <header className="mb-8 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100">
             {tournament.title}
           </h1>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Round {tournament.currentRoundNumber} of {tournament.totalRounds} • {tournament.players?.length || 0} registered players
+            Round {tournament.currentRoundNumber} of {tournament.totalRounds} •{" "}
+            {tournament.players?.length || 0} registered players
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
-            onClick={() => loadTournament(true)}
+            onClick={handleRefresh}
             disabled={actionLoading || pairingLoading}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
-            title="Refresh"
+            className="w-10 h-10 p-0 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+            title="Refresh Tournament"
+            aria-label="Refresh Tournament"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
 
-          {selectedRound && !selectedRound.isCompleted && (
-            <button
-              onClick={handleCompleteRound}
-              disabled={actionLoading}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 rounded-xl transition-all shadow-xs"
-            >
-              <CheckCircle className="w-4 h-4" />
-              Complete Round {selectedRound.roundNumber}
-            </button>
-          )}
-
-          {selectedRound && (
+          {!isTournamentCompleted && selectedRound && (
             <button
               onClick={() => setIsRollbackOpen(true)}
               disabled={actionLoading}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 rounded-xl transition-all shadow-xs"
+              className="h-10 inline-flex items-center gap-1.5 px-3.5 text-xs font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors shadow-2xs"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Rollback Round
+              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+              <span>Rollback Round</span>
             </button>
           )}
 
-          <button
-            onClick={handlePairNextRound}
-            disabled={pairingLoading || !canPairNext}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-md transition-all"
-          >
-            {pairingLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Pairing Dutch Swiss...
-              </>
-            ) : (
-              <>
-                <PlayCircle className="w-4 h-4" />
-                {tournament.currentRoundNumber === 0
-                  ? "Pair Round 1"
-                  : `Pair Next Round (${tournament.currentRoundNumber + 1})`}
-              </>
+          {!isTournamentCompleted &&
+            selectedRound &&
+            !selectedRound.isCompleted && (
+              <button
+                onClick={handleCompleteRound}
+                disabled={actionLoading}
+                className="h-10 inline-flex items-center gap-1.5 px-3.5 text-xs font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors shadow-2xs"
+              >
+                <CheckCircle className="w-3.5 h-3.5 text-slate-400" />
+                <span>Complete Round {selectedRound.roundNumber}</span>
+              </button>
             )}
-          </button>
+
+          {isTournamentCompleted ? (
+            <div className="h-10 inline-flex items-center gap-2 px-4 text-xs font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xs">
+              Tournament Completed
+            </div>
+          ) : isAllRoundsPaired ? (
+            <button
+              onClick={() => setIsCompleteOpen(true)}
+              disabled={actionLoading || !allGamesFinished}
+              title={
+                !allGamesFinished
+                  ? "All games in all rounds must have recorded results before completing the tournament"
+                  : "Finalize tournament and lock standings"
+              }
+              className="h-10 inline-flex items-center gap-2 px-5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-xs transition-all"
+            >
+              {actionLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Finalizing...</span>
+                </>
+              ) : (
+                <>
+                  <Award className="w-4 h-4" />
+                  <span>Complete Tournament</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={handlePairNextRound}
+              disabled={pairingLoading || !canPairNext}
+              title={
+                !hasEnoughPlayers
+                  ? `Requires at least 2 active players to pair (currently ${activePlayersCount})`
+                  : !canPairNext
+                    ? "Complete current round before pairing the next round"
+                    : undefined
+              }
+              className="h-10 inline-flex items-center gap-2 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm shadow-blue-500/20 transition-all active:scale-[0.98]"
+            >
+              {pairingLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Generating Pairings...</span>
+                </>
+              ) : (
+                <>
+                  <span>
+                    {tournament.currentRoundNumber === 0
+                      ? "Pair Round 1"
+                      : `Pair Next Round (${tournament.currentRoundNumber + 1})`}
+                  </span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </header>
 
       <div className="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto">
         {[
-          { key: "pairings", label: "Pairings & Live Results", icon: PlayCircle },
-          { key: "standings", label: "Standings & Tiebreaks", icon: Trophy },
-          { key: "crosstable", label: "Cross-Table", icon: Grid },
-          { key: "audit", label: "FIDE Arbiter Audit", icon: ShieldCheck },
-          { key: "players", label: `Players (${tournament.players?.length || 0})`, icon: Users },
+          { key: "pairings", label: "Pairings & Results" },
+          { key: "standings", label: "Standings" },
+          { key: "crosstable", label: "Results Matrix" },
+          {
+            key: "players",
+            label: `Players (${tournament.players?.length || 0})`,
+          },
         ].map((tab) => {
-          const Icon = tab.icon;
           const isActive = activeTab === tab.key;
           return (
             <button
@@ -363,11 +407,10 @@ export default function TournamentDetailPage({ params }) {
               onClick={() => setActiveTab(tab.key)}
               className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap ${
                 isActive
-                  ? "bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-xs"
+                  ? "bg-blue-600 text-white shadow-xs"
                   : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />
               {tab.label}
             </button>
           );
@@ -405,8 +448,11 @@ export default function TournamentDetailPage({ params }) {
 
           <RoundPairingsTable
             tournamentId={id}
+            tournament={tournament}
             round={selectedRound}
             playerMap={playerMap}
+            onSelectTab={setActiveTab}
+            onRollbackRequest={() => setIsRollbackOpen(true)}
             onGameUpdated={(updated) => {
               setTournament(updated);
               loadSupplementaryData();
@@ -415,9 +461,7 @@ export default function TournamentDetailPage({ params }) {
         </div>
       )}
 
-      {activeTab === "standings" && (
-        <StandingsTable standings={standings} />
-      )}
+      {activeTab === "standings" && <StandingsTable standings={standings} />}
 
       {activeTab === "crosstable" && (
         <CrossTableMatrix crossTable={crossTable} />
@@ -435,6 +479,7 @@ export default function TournamentDetailPage({ params }) {
         <PlayersManager
           tournamentId={id}
           players={tournament.players || []}
+          tournamentStatus={tournament.status}
           onPlayerUpdated={(updated) => {
             setTournament(updated);
             loadSupplementaryData();
@@ -445,19 +490,51 @@ export default function TournamentDetailPage({ params }) {
       <AlertDialog open={isRollbackOpen} onOpenChange={setIsRollbackOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Rollback Round {selectedRound?.roundNumber}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Rollback Round {selectedRound?.roundNumber}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove all pairings and recorded game results for Round {selectedRound?.roundNumber}. The tournament will revert to the previous round.
+              This will remove all pairings and recorded game results for Round{" "}
+              {selectedRound?.roundNumber}. The tournament will revert to the
+              previous round.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={actionLoading}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRollbackRound}
               disabled={actionLoading}
               className="bg-rose-600 hover:bg-rose-700 text-white"
             >
               {actionLoading ? "Rolling back..." : "Confirm Rollback"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={isCompleteOpen} onOpenChange={setIsCompleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Complete and Finalize Tournament?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              All {tournament.totalRounds} rounds have concluded. Finalizing
+              will mark the tournament as completed and lock official standings
+              and crosstable results.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={actionLoading}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCompleteTournament}
+              disabled={actionLoading}
+              className="bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+            >
+              {actionLoading ? "Finalizing..." : "Complete Tournament"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

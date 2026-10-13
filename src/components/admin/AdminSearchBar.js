@@ -13,12 +13,17 @@ import {
 export default function AdminSearchBar({
   searchQuery,
   setSearchQuery,
+  searchPlaceholder = "Search by ID, Name, or Email...",
   departmentFilter,
   setDepartmentFilter,
   departmentOptions = [],
+  departmentLabel = "Department",
+  departmentPlaceholder = "All Departments",
   statusFilter,
   setStatusFilter,
   statusOptions = [],
+  statusLabel = "Status",
+  statusPlaceholder = "All Status",
   sortFilter,
   setSortFilter,
   sortOptions = [],
@@ -48,7 +53,7 @@ export default function AdminSearchBar({
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
         <input
           type="text"
-          placeholder="Search by ID, Name, or Email..."
+          placeholder={searchPlaceholder}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-500/50 transition-colors"
@@ -63,14 +68,14 @@ export default function AdminSearchBar({
               onValueChange={setDepartmentFilter}
             >
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                <SelectValue placeholder="All Departments" />
+                <SelectValue placeholder={departmentPlaceholder} />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                 <SelectItem
                   value="ALL"
                   className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
                 >
-                  All Departments
+                  {departmentPlaceholder}
                 </SelectItem>
                 {departmentOptions.map((opt) => (
                   <SelectItem
@@ -84,7 +89,7 @@ export default function AdminSearchBar({
               </SelectContent>
             </Select>
             <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
-              Department
+              {departmentLabel}
             </span>
           </div>
         )}
@@ -93,14 +98,14 @@ export default function AdminSearchBar({
           <div className="flex flex-col gap-2 w-full md:w-44 lg:w-48 shrink-0">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                <SelectValue placeholder="All Status" />
+                <SelectValue placeholder={statusPlaceholder} />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                 <SelectItem
                   value="ALL"
                   className="font-semibold text-sm focus:bg-slate-100 dark:focus:bg-slate-800/50 focus:text-slate-900 dark:focus:text-slate-50"
                 >
-                  All Status
+                  {statusPlaceholder}
                 </SelectItem>
                 {statusOptions.map((opt) => (
                   <SelectItem
@@ -114,7 +119,7 @@ export default function AdminSearchBar({
               </SelectContent>
             </Select>
             <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
-              Status
+              {statusLabel}
             </span>
           </div>
         )}

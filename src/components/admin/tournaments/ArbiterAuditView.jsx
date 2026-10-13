@@ -1,51 +1,66 @@
 "use client";
 
-import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import {
+  ShieldCheck,
+  ShieldAlert,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  RefreshCw,
+} from "lucide-react";
 
 export default function ArbiterAuditView({ audit, onRefresh, loading }) {
   if (!audit) {
     return (
-      <div className="p-12 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+      <div className="p-12 text-center border border-slate-200 dark:border-slate-800 rounded-2xl">
         <ShieldCheck className="w-8 h-8 mx-auto text-slate-400 mb-2" />
         <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           No audit report generated yet
         </p>
         <button
           onClick={onRefresh}
-          className="mt-3 px-4 py-2 text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-500/10 rounded-xl hover:bg-blue-100 transition-colors"
+          className="mt-3 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
         >
-          Generate FIDE Audit
+          Check Tournament Rules
         </button>
       </div>
     );
   }
 
-  const { isValid, c1Passed, c2Passed, c3Passed, c4Passed, statistics = {}, violations = [] } = audit;
+  const {
+    isValid,
+    c1Passed,
+    c2Passed,
+    c3Passed,
+    c4Passed,
+    statistics = {},
+    violations = [],
+  } = audit;
 
   const RULES = [
     {
       code: "C1",
       name: "No Rematches",
       passed: c1Passed,
-      desc: "No two players shall be paired together more than once.",
+      desc: "No two players are paired against each other more than once.",
     },
     {
       code: "C2",
       name: "No Repeat Byes",
       passed: c2Passed,
-      desc: "No player shall receive more than 1 pairing-allocated bye.",
+      desc: "No player receives more than one unplayed bye.",
     },
     {
       code: "C3",
-      name: "Max 2 Same Colors",
+      name: "Color Alternation",
       passed: c3Passed,
-      desc: "No player shall be assigned the same color 3 times consecutively.",
+      desc: "No player gets the same color (White/Black) 3 rounds in a row.",
     },
     {
       code: "C4",
-      name: "Color Imbalance <= 2",
+      name: "Color Balance",
       passed: c4Passed,
-      desc: "The difference between White and Black games shall not exceed 2.",
+      desc: "The difference between White and Black games does not exceed 2.",
     },
   ];
 
@@ -75,12 +90,12 @@ export default function ArbiterAuditView({ audit, onRefresh, loading }) {
           <div>
             <h3 className="text-lg font-black text-slate-900 dark:text-slate-100">
               {isValid
-                ? "100% FIDE Dutch C.04.3 Compliant"
-                : "FIDE Swiss Rule Violations Detected"}
+                ? "All Pairing Rules Verified & Fair"
+                : "Pairing Rule Violations Detected"}
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
               {isValid
-                ? "All absolute criteria (C1 through C4) are fully verified and satisfied."
+                ? "All fairness rules (no rematches, no duplicate byes, balanced colors) are satisfied."
                 : `${violations.length} pairing or color allocation rule violation(s) found.`}
             </p>
           </div>
@@ -91,8 +106,10 @@ export default function ArbiterAuditView({ audit, onRefresh, loading }) {
           disabled={loading}
           className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-all shadow-xs"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          Re-Audit Engine
+          <RefreshCw
+            className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+          />
+          Re-check Rules
         </button>
       </div>
 
@@ -142,7 +159,9 @@ export default function ArbiterAuditView({ audit, onRefresh, loading }) {
             Average Color Imbalance
           </p>
           <p className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400 mt-1">
-            {statistics.colorBalanceAvg !== undefined ? statistics.colorBalanceAvg : "0.0"}
+            {statistics.colorBalanceAvg !== undefined
+              ? statistics.colorBalanceAvg
+              : "0.0"}
           </p>
         </div>
         <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A]">
@@ -150,7 +169,10 @@ export default function ArbiterAuditView({ audit, onRefresh, loading }) {
             Maximum Color Imbalance
           </p>
           <p className="text-2xl font-black font-mono text-slate-900 dark:text-slate-100 mt-1">
-            ±{statistics.maxColorDiff !== undefined ? statistics.maxColorDiff : "0"}
+            ±
+            {statistics.maxColorDiff !== undefined
+              ? statistics.maxColorDiff
+              : "0"}
           </p>
         </div>
       </div>
@@ -173,7 +195,9 @@ export default function ArbiterAuditView({ audit, onRefresh, loading }) {
                   </span>
                   <span>{v.title || "Rule Infraction"}</span>
                 </div>
-                <p className="text-slate-600 dark:text-slate-400">{v.description}</p>
+                <p className="text-slate-600 dark:text-slate-400">
+                  {v.description}
+                </p>
               </div>
             ))}
           </div>

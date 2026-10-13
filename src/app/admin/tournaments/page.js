@@ -1,29 +1,35 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
-import {
-  Trophy,
-  Plus,
-  Layers,
-  RefreshCw,
-  Loader2,
-  Users,
-  CheckCircle2,
-  PlayCircle,
-  ShieldCheck,
-} from "lucide-react";
+import { Layers, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import TournamentList from "@/components/admin/tournaments/TournamentList";
-import CreateTournamentModal from "@/components/admin/tournaments/CreateTournamentModal";
 import InitEventBracketsModal from "@/components/admin/tournaments/InitEventBracketsModal";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export default function AdminTournamentsPage() {
   const fetchApi = useApi();
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isInitBracketsOpen, setIsInitBracketsOpen] = useState(false);
 
   const handleRefresh = async () => {
@@ -56,131 +62,148 @@ export default function AdminTournamentsPage() {
     };
   }, [fetchApi]);
 
-  const activeCount = tournaments.filter((t) => t.status === "in_progress").length;
-  const completedCount = tournaments.filter((t) => t.status === "completed").length;
+  const activeCount = tournaments.filter(
+    (t) => t.status === "in_progress",
+  ).length;
+  const completedCount = tournaments.filter(
+    (t) => t.status === "completed",
+  ).length;
   const totalPlayers = tournaments.reduce(
     (acc, t) => acc + (t.players?.length || 0),
     0,
   );
 
   return (
-    <>
-      <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold mb-3">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>FIDE Dutch Swiss Pairing Engine</span>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8"
+    >
+      <div>
+        <motion.header
+          variants={itemVariants}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-5"
+        >
+          <div>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
+              Tournaments
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm font-medium">
+              Manage tournament brackets, rounds, and pairings
+            </p>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
-            Tournaments
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm uppercase tracking-widest font-bold">
-            Tournament Cockpit & Multi-Bracket Pairings
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={handleRefresh}
-            disabled={loading || refreshing}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors shadow-2xs"
-            title="Refresh list"
-          >
-            <RefreshCw
-              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-            />
-          </button>
-
-          <button
-            onClick={() => setIsInitBracketsOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold rounded-xl transition-all shadow-xs"
-          >
-            <Layers className="w-4 h-4" />
-            <span>Event Brackets</span>
-          </button>
-
-          <button
-            onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-md"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Tournament</span>
-          </button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-2xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Total Events</span>
-            <Trophy className="w-4 h-4 text-blue-500" />
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setIsInitBracketsOpen((prev) => !prev)}
+              className="h-[44px] inline-flex items-center gap-2 px-5 text-sm font-semibold rounded-xl transition-all shadow-sm active:scale-[0.98] bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 hover:shadow-blue-500/30"
+            >
+              <span>
+                {isInitBracketsOpen
+                  ? "Close Brackets Setup"
+                  : "Initialize Event Brackets"}
+              </span>
+            </button>
           </div>
-          <p className="text-2xl font-black font-mono text-slate-900 dark:text-slate-100">
-            {tournaments.length}
-          </p>
-        </div>
+        </motion.header>
 
-        <div className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-2xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">In Progress</span>
-            <PlayCircle className="w-4 h-4 text-blue-500" />
-          </div>
-          <p className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400">
-            {activeCount}
-          </p>
-        </div>
-
-        <div className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-2xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Completed</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          </div>
-          <p className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
-            {completedCount}
-          </p>
-        </div>
-
-        <div className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-2xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold">Total Players</span>
-            <Users className="w-4 h-4 text-purple-500" />
-          </div>
-          <p className="text-2xl font-black font-mono text-slate-900 dark:text-slate-100">
-            {totalPlayers}
-          </p>
-        </div>
+        <AnimatePresence initial={false}>
+          {isInitBracketsOpen && (
+            <motion.div
+              key="init-brackets-panel"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: "auto",
+                transition: {
+                  height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                  opacity: { duration: 0.25, ease: "easeOut" },
+                },
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                transition: {
+                  opacity: { duration: 0.2, ease: "easeIn" },
+                  height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                },
+              }}
+              className="overflow-hidden"
+            >
+              <div className="pt-6">
+                <InitEventBracketsModal
+                  onClose={() => setIsInitBracketsOpen(false)}
+                  onSuccess={() => {
+                    setIsInitBracketsOpen(false);
+                    handleRefresh();
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {loading ? (
-        <div className="py-24 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500 mb-3" />
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Loading Tournaments...
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5"
+      >
+        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-5 md:p-6 rounded-2xl md:rounded-3xl relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <h3 className="text-2xl md:text-3xl font-black font-mono text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+            {tournaments.length}
+          </h3>
+          <p className="text-[10px] md:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            Total Tournaments
           </p>
         </div>
-      ) : (
-        <TournamentList
-          tournaments={tournaments}
-          onDeleted={(id) =>
-            setTournaments((prev) => prev.filter((t) => t._id !== id))
-          }
-        />
-      )}
 
-      <CreateTournamentModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSuccess={(created) => {
-          if (created) setTournaments((prev) => [created, ...prev]);
-          else handleRefresh();
-        }}
-      />
+        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-5 md:p-6 rounded-2xl md:rounded-3xl relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <h3 className="text-2xl md:text-3xl font-black font-mono text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+            {activeCount}
+          </h3>
+          <p className="text-[10px] md:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            In Progress
+          </p>
+        </div>
 
-      <InitEventBracketsModal
-        isOpen={isInitBracketsOpen}
-        onClose={() => setIsInitBracketsOpen(false)}
-        onSuccess={() => handleRefresh()}
-      />
-    </>
+        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-5 md:p-6 rounded-2xl md:rounded-3xl relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <h3 className="text-2xl md:text-3xl font-black font-mono text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+            {completedCount}
+          </h3>
+          <p className="text-[10px] md:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            Completed
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 p-5 md:p-6 rounded-2xl md:rounded-3xl relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <h3 className="text-2xl md:text-3xl font-black font-mono text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
+            {totalPlayers}
+          </h3>
+          <p className="text-[10px] md:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            Total Players
+          </p>
+        </div>
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        {loading ? (
+          <div className="py-24 text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500 mb-3" />
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Loading Tournaments...
+            </p>
+          </div>
+        ) : (
+          <TournamentList
+            tournaments={tournaments}
+            onDeleted={(id) =>
+              setTournaments((prev) => prev.filter((t) => t._id !== id))
+            }
+            onRefresh={handleRefresh}
+          />
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
