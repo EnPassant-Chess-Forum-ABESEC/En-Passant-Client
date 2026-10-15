@@ -80,7 +80,10 @@ export default function EventHero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="relative z-10 flex items-center justify-center gap-6 sm:gap-11 md:gap-16">
+            <div
+              className="relative z-10 flex items-center justify-center"
+              style={{ gap: "clamp(14px, 2.1vw, 32px)" }}
+            >
               {[
                 { char: "A", delay: 0.35 },
                 { char: "C", delay: 0.48 },
