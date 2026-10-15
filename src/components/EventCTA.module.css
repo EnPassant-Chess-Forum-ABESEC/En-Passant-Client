@@ -113,7 +113,7 @@
   }
 }
 
-/* Layer 3: Central Register Button with Corner Brackets */
+/* Layer 3: Botanical Vine & Rose CTA Button */
 .ctaWrapper {
   position: absolute;
   top: 50%;
@@ -124,6 +124,456 @@
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* Layer 3: Final Register CTA Button with Vine Canes & Roses */
+.redBracketVineBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  overflow: visible;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.redBracketVineBtn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Layer A: Leaves Layer (Positioned behind the vine cane path) */
+.leafLayer {
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+/* Layer B: Red Center Button with Roughened Straight Lines */
+.redBtnInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 16px 52px;
+  min-width: 215px;
+  overflow: visible;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85));
+  transition: filter 0.3s ease;
+  z-index: 4;
+}
+
+.redBracketVineBtn:hover .redBtnInner {
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.92));
+}
+
+/* Outer weathered chiseled border */
+.redBtnInner::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  background: #380404;
+  clip-path: polygon(
+    0% 2px,
+    3% 0px,
+    7% 1.5px,
+    12% 0px,
+    17% 2px,
+    23% 0.5px,
+    29% 2px,
+    35% 0px,
+    41% 2px,
+    47% 0.5px,
+    53% 2px,
+    59% 0px,
+    65% 2px,
+    71% 0.5px,
+    77% 2px,
+    83% 0px,
+    89% 2px,
+    95% 0.5px,
+    100% 2px,
+    calc(100% - 0.5px) 10%,
+    calc(100% - 2px) 22%,
+    calc(100% - 0px) 34%,
+    calc(100% - 2.5px) 48%,
+    calc(100% - 0.5px) 62%,
+    calc(100% - 2px) 76%,
+    calc(100% - 0px) 88%,
+    100% 100%,
+    98% calc(100% - 1.5px),
+    93% calc(100% - 0px),
+    87% calc(100% - 2px),
+    81% calc(100% - 0.5px),
+    75% calc(100% - 2px),
+    69% calc(100% - 0px),
+    63% calc(100% - 2.5px),
+    57% calc(100% - 0.5px),
+    51% calc(100% - 2px),
+    45% calc(100% - 0px),
+    39% calc(100% - 2px),
+    33% calc(100% - 0.5px),
+    27% calc(100% - 2px),
+    21% calc(100% - 0px),
+    15% calc(100% - 2px),
+    9% calc(100% - 0.5px),
+    3% calc(100% - 1.5px),
+    0% calc(100% - 2px),
+    0.5px 88%,
+    2px 76%,
+    0px 62%,
+    2.5px 48%,
+    0.5px 34%,
+    2px 22%,
+    0px 10%
+  );
+  z-index: 1;
+}
+
+/* Inner roughened red face */
+.redBtnInner::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: linear-gradient(180deg, #a80e0e 0%, #8f0000 55%, #720000 100%);
+  clip-path: polygon(
+    0% 2px,
+    3% 0px,
+    7% 1.5px,
+    12% 0px,
+    17% 2px,
+    23% 0.5px,
+    29% 2px,
+    35% 0px,
+    41% 2px,
+    47% 0.5px,
+    53% 2px,
+    59% 0px,
+    65% 2px,
+    71% 0.5px,
+    77% 2px,
+    83% 0px,
+    89% 2px,
+    95% 0.5px,
+    100% 2px,
+    calc(100% - 0.5px) 10%,
+    calc(100% - 2px) 22%,
+    calc(100% - 0px) 34%,
+    calc(100% - 2.5px) 48%,
+    calc(100% - 0.5px) 62%,
+    calc(100% - 2px) 76%,
+    calc(100% - 0px) 88%,
+    100% 100%,
+    98% calc(100% - 1.5px),
+    93% calc(100% - 0px),
+    87% calc(100% - 2px),
+    81% calc(100% - 0.5px),
+    75% calc(100% - 2px),
+    69% calc(100% - 0px),
+    63% calc(100% - 2.5px),
+    57% calc(100% - 0.5px),
+    51% calc(100% - 2px),
+    45% calc(100% - 0px),
+    39% calc(100% - 2px),
+    33% calc(100% - 0.5px),
+    27% calc(100% - 2px),
+    21% calc(100% - 0px),
+    15% calc(100% - 2px),
+    9% calc(100% - 0.5px),
+    3% calc(100% - 1.5px),
+    0% calc(100% - 2px),
+    0.5px 88%,
+    2px 76%,
+    0px 62%,
+    2.5px 48%,
+    0.5px 34%,
+    2px 22%,
+    0px 10%
+  );
+  z-index: 2;
+  transition: background 0.3s ease;
+}
+
+.redBracketVineBtn:hover .redBtnInner::after {
+  background: linear-gradient(180deg, #b81414 0%, #9b0000 55%, #7c0000 100%);
+}
+
+/* Button Text */
+.redBtnText {
+  position: relative;
+  z-index: 10;
+  font-family: pezula, sans-serif;
+  font-size: clamp(14px, 1.25vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  transition: letter-spacing 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .redBtnText {
+  letter-spacing: 0.22em;
+}
+
+/* Layer C: Outer Vine Frame SVG (Z-INDEX 6: Passes IN FRONT OF leaf stems!) */
+.bracketVineSvg {
+  position: absolute;
+  inset: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 6;
+}
+
+.vineCaneMain {
+  stroke: #7a1c1c;
+  stroke-width: 3.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    stroke 0.35s ease,
+    filter 0.35s ease;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+}
+
+.redBracketVineBtn:hover .vineCaneMain {
+  stroke: #8f2020;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+}
+
+.vineCaneTendril {
+  stroke: #661818;
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+  transition:
+    stroke 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.redBracketVineBtn:hover .vineCaneTendril {
+  stroke: #8a2222;
+  opacity: 1;
+}
+
+.bracketThorn {
+  fill: #451313;
+  transition: fill 0.35s ease;
+}
+
+.redBracketVineBtn:hover .bracketThorn {
+  fill: #6e1c1c;
+}
+
+.bracketTendril {
+  stroke: #5c1616;
+  stroke-width: 1.2;
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0.8;
+  transition:
+    stroke 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.redBracketVineBtn:hover .bracketTendril {
+  stroke: #8a2020;
+  opacity: 1;
+}
+
+/* Layer D: Roses Layer (Z-INDEX 8: Placed on top of the vine canes & plaque edge) */
+.rosesLayer {
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 8;
+}
+
+/* Organic Roses placed along edges */
+.organicRose1 {
+  position: absolute;
+  top: -15px;
+  left: 14%;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicRose1 {
+  transform: scale(1.12) rotate(-5deg);
+}
+
+/* Leaf 1: Stem tucked behind top vine cane near left corner */
+.organicLeaf1 {
+  position: absolute;
+  top: -33px;
+  left: 4px;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  transform-origin: 9% 93%;
+  transform: rotate(-44deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicLeaf1 {
+  transform: rotate(-50deg) scale(1.05);
+}
+
+/* Leaf 2: Stem tucked behind top vine cane at center */
+.organicLeaf2 {
+  position: absolute;
+  top: -33px;
+  left: 45%;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  transform-origin: 9% 93%;
+  transform: rotate(-10deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicLeaf2 {
+  transform: rotate(16deg) scale(1.05);
+}
+
+.organicRose2 {
+  position: absolute;
+  top: -14px;
+  left: 74%;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicRose2 {
+  transform: scale(1.12) rotate(7deg) translateY(-2px);
+}
+
+/* Leaf 3: Stem tucked behind right vine cane */
+.organicLeaf3 {
+  position: absolute;
+  top: 12px;
+  right: -35px;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  transform-origin: 9% 93%;
+  transform: rotate(72deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicLeaf3 {
+  transform: rotate(78deg) scale(1.05);
+}
+
+.organicRose3 {
+  position: absolute;
+  bottom: -15px;
+  left: 75%;
+  width: 34px;
+  height: 34px;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicRose3 {
+  transform: scale(1.12) rotate(6deg);
+}
+
+/* Leaf 4: Stem tucked behind bottom vine cane */
+.organicLeaf4 {
+  position: absolute;
+  bottom: -4px;
+  left: 48%;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  transform-origin: 9% 93%;
+  transform: rotate(165deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicLeaf4 {
+  transform: rotate(160deg) scale(1.05);
+}
+
+.organicRose4 {
+  position: absolute;
+  bottom: -14px;
+  left: 28%;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicRose4 {
+  transform: scale(1.12) rotate(-6deg) translateY(2px);
+}
+
+/* Leaf 5: Stem tucked behind left vine cane */
+.organicLeaf5 {
+  position: absolute;
+  top: 10px;
+  left: -4px;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  transform-origin: 9% 93%;
+  transform: rotate(-100deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redBracketVineBtn:hover .organicLeaf5 {
+  transform: rotate(-106deg) scale(1.05);
+}
+
+.edgeRoseImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.92));
+  transition:
+    filter 0.35s ease,
+    transform 0.35s ease;
+}
+
+.redBracketVineBtn:hover .edgeRoseImg {
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.96));
+}
+
+.edgeLeafImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.96;
+  filter: brightness(1.15) contrast(1.1)
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9));
+  transition: filter 0.35s ease;
+}
+
+.redBracketVineBtn:hover .edgeLeafImg {
+  filter: brightness(1.22) contrast(1.12)
+    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95));
+}
 
 /* Layer 4: The Typographic Headline (Top Right) */
 .headingWrapper {
@@ -202,7 +652,6 @@
     top: 36px;
   }
 
-
   .wreathContainer {
     width: clamp(300px, 85vw, 440px);
   }
@@ -216,7 +665,6 @@
   .handsImg {
     object-position: center;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,6 +2,7 @@ import EventHero from "@/components/EventHero";
 import EventDesc from "@/components/EventDesc";
 import EventDetailsTree from "@/components/EventDetailsTree";
 import EventTimeFormat from "@/components/EventTimeFormat";
+import EventSponsors from "@/components/EventSponsors";
 import EventCTA from "@/components/EventCTA";
 
 export const metadata = {
@@ -55,6 +56,7 @@ export default async function EventsPage() {
       <EventDesc initialDescription={currentEvent?.description || ""} />
       <EventDetailsTree event={currentEvent} />
       <EventTimeFormat event={currentEvent} />
+      {/* <EventSponsors /> */}
       <EventCTA event={currentEvent} />
     </div>
   );

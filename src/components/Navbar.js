@@ -66,10 +66,12 @@ export default function Navbar() {
       : "/recruitment";
 
   const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Event", path: "/events" },
     { name: "Leaderboard", path: "/leaderboard" },
     // { name: "Gallery", path: "/event-gallery" },
     // { name: "Team", path: "/team" },
-    { name: "Recruitment", path: recruitmentPath },
+    // { name: "Recruitment", path: recruitmentPath },
   ];
 
   const isActive = (path) => pathname.startsWith(path) && path !== "/";
@@ -91,7 +93,12 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="relative z-50 flex items-center hover:opacity-70 transition-opacity"
             >
-              <Image src="/common/logo.png" alt="EnPassant" width={26} height={26} />
+              <Image
+                src="/common/logo.png"
+                alt="EnPassant"
+                width={26}
+                height={26}
+              />
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">

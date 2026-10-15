@@ -3,6 +3,11 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  TREE_DECORATIONS,
+  pickMonogramRoseColor,
+  normalizeTreeElement,
+} from "./roseTreeConfig";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -401,9 +406,11 @@ class TypeGardenEngine {
       const over = tp[1] > -0.78 && tp[1] < 0.05 && Math.abs(tp[0]) < p.w * 0.5;
       const layer = over ? (r() < 0.22 ? 1 : 0) : r() < 0.6 ? 1 : tl;
 
+      const roseColor = o.color || pickMonogramRoseColor(r);
       E.push({
         t: "rose",
         id: nid(),
+        color: roseColor,
         x: tp[0],
         y: tp[1],
         R,
@@ -420,6 +427,7 @@ class TypeGardenEngine {
         E.push({
           t: "rose",
           id: nid(),
+          color: roseColor,
           x: tp[0] + Math.cos(oo) * R * 1.35,
           y: tp[1] + Math.sin(oo) * R * 1.35,
           R: R * (0.65 + r() * 0.25),
@@ -549,6 +557,7 @@ class TypeGardenEngine {
         E.push({
           t: "rose",
           id: nid(),
+          color: pickMonogramRoseColor(r),
           x: midPt[0],
           y: midPt[1],
           R: 0.16 * p.big,
@@ -731,175 +740,34 @@ class TypeGardenEngine {
 
   getEdgeBranchConfig(edge) {
     const id = edge.id;
+    const entry = TREE_DECORATIONS[id];
 
-    // 1. Top Section Vines from ACC Monogram (Open: Red, Women's: White, Inter-Club: Black)
-    if (id === "section-0") {
+    if (entry) {
       return {
         id,
-        color: "red",
-        isLetterAnchored: true,
-        letterIdx: 0,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.2, side: -1, L: 26, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.35,
-            side: -1,
-            R: 21,
-            id: 9101,
-            color: "red",
-            rot: -0.2,
-          },
-          { t: "leaf", u: 0.37, side: 1, L: 24, bend: -0.1 },
-          { t: "leaf", u: 0.52, side: -1, L: 26, bend: 0.2 },
-          {
-            t: "rose",
-            u: 0.68,
-            side: 1,
-            R: 23,
-            id: 9102,
-            color: "red",
-            rot: 0.25,
-          },
-          { t: "leaf", u: 0.7, side: 1, L: 25, bend: -0.15 },
-          { t: "leaf", u: 0.84, side: -1, L: 26, bend: 0.1 },
-          // Terminal crown cluster at Open Section header arrival
-          { t: "leaf", u: 0.94, side: -1, L: 27, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 27, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.96,
-            side: -1,
-            R: 20,
-            id: 9104,
-            color: "red",
-            rot: -0.35,
-          },
-          {
-            t: "rose",
-            u: 0.98,
-            side: 0,
-            R: 27,
-            id: 9103,
-            color: "red",
-            rot: 0.1,
-          },
-        ],
-      };
-    }
-    if (id === "section-1") {
-      return {
-        id,
-        color: "white",
-        isLetterAnchored: true,
-        letterIdx: 1,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.19, side: 1, L: 26, bend: -0.15 },
-          {
-            t: "rose",
-            u: 0.34,
-            side: 1,
-            R: 21,
-            id: 9201,
-            color: "white",
-            rot: 0.2,
-          },
-          { t: "leaf", u: 0.36, side: -1, L: 24, bend: 0.1 },
-          { t: "leaf", u: 0.51, side: 1, L: 26, bend: -0.2 },
-          {
-            t: "rose",
-            u: 0.67,
-            side: -1,
-            R: 23,
-            id: 9202,
-            color: "white",
-            rot: -0.25,
-          },
-          { t: "leaf", u: 0.69, side: -1, L: 25, bend: 0.15 },
-          { t: "leaf", u: 0.83, side: 1, L: 26, bend: -0.1 },
-          // Terminal crown cluster at Women's Section header arrival
-          { t: "leaf", u: 0.94, side: -1, L: 27, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 27, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.96,
-            side: 1,
-            R: 21,
-            id: 9204,
-            color: "white",
-            rot: 0.35,
-          },
-          {
-            t: "rose",
-            u: 0.98,
-            side: 0,
-            R: 27,
-            id: 9203,
-            color: "white",
-            rot: -0.1,
-          },
-        ],
-      };
-    }
-    if (id === "section-2") {
-      return {
-        id,
-        color: "black",
-        isLetterAnchored: true,
-        letterIdx: 2,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.19, side: -1, L: 26, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.34,
-            side: 1,
-            R: 22,
-            id: 9301,
-            color: "black",
-            rot: 0.2,
-          },
-          { t: "leaf", u: 0.36, side: -1, L: 24, bend: -0.1 },
-          { t: "leaf", u: 0.51, side: 1, L: 26, bend: 0.2 },
-          {
-            t: "rose",
-            u: 0.67,
-            side: -1,
-            R: 23,
-            id: 9302,
-            color: "black",
-            rot: -0.25,
-          },
-          { t: "leaf", u: 0.69, side: 1, L: 25, bend: -0.15 },
-          { t: "leaf", u: 0.83, side: -1, L: 26, bend: 0.1 },
-          // Terminal crown cluster at Inter-Club Section header arrival
-          { t: "leaf", u: 0.94, side: -1, L: 27, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 27, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.96,
-            side: 1,
-            R: 21,
-            id: 9304,
-            color: "black",
-            rot: 0.35,
-          },
-          {
-            t: "rose",
-            u: 0.98,
-            side: 0,
-            R: 27,
-            id: 9303,
-            color: "black",
-            rot: 0.1,
-          },
-        ],
+        color: entry.stemColor || "stem",
+        isLetterAnchored: !!entry.isLetterAnchored,
+        letterIdx: entry.letterIdx ?? -1,
+        stemWidth: entry.stemWidth || 1.0,
+        elements: (entry.elements || []).map((el, i) =>
+          normalizeTreeElement(el, i)
+        ),
       };
     }
 
-    // 2. Open and Different Rating Brackets (STEM ONLY with sparse thorns, NO roses/leaves)
+    // Pattern-based fallback for dynamic bracket stems and merges
+    if (id.startsWith("tier-stem-")) {
+      const base = TREE_DECORATIONS["tier-stem-0"];
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 1.0,
+        elements: (base?.elements || []).map((el, i) =>
+          normalizeTreeElement(el, i)
+        ),
+      };
+    }
     if (id.startsWith("tier-")) {
       return {
         id,
@@ -909,239 +777,20 @@ class TypeGardenEngine {
         elements: [],
       };
     }
-
-    // 3. Convergence paths once brackets are crossed (Airy combination of all roses - strictly restrained)
-    if (id === "merge-0") {
-      return {
-        id,
-        color: "mixed",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.3, side: -1, L: 22, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.5,
-            side: 1,
-            R: 21,
-            id: 9401,
-            color: "red",
-            rot: 0.2,
-          },
-          { t: "leaf", u: 0.68, side: -1, L: 22, bend: -0.15 },
-        ],
-      };
-    }
-    if (id === "merge-1") {
-      return {
-        id,
-        color: "mixed",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.3, side: 1, L: 22, bend: -0.15 },
-          {
-            t: "rose",
-            u: 0.5,
-            side: -1,
-            R: 21,
-            id: 9411,
-            color: "white",
-            rot: -0.2,
-          },
-          { t: "leaf", u: 0.68, side: 1, L: 22, bend: 0.15 },
-        ],
-      };
-    }
-    if (id === "merge-2") {
-      return {
-        id,
-        color: "mixed",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.3, side: 1, L: 22, bend: -0.15 },
-          {
-            t: "rose",
-            u: 0.5,
-            side: -1,
-            R: 21,
-            id: 9421,
-            color: "black",
-            rot: -0.2,
-          },
-          { t: "leaf", u: 0.68, side: -1, L: 22, bend: 0.15 },
-        ],
-      };
-    }
     if (id.startsWith("merge-")) {
+      const base = TREE_DECORATIONS["merge-0"];
       return {
         id,
         color: "mixed",
         isLetterAnchored: false,
         stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.35, side: 1, L: 22, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.55,
-            side: -1,
-            R: 21,
-            id: 9451,
-            color: "red",
-            rot: 0.2,
-          },
-        ],
+        elements: (base?.elements || []).map((el, i) =>
+          normalizeTreeElement(el, i)
+        ),
       };
     }
 
-    // 4. Converge to Prizes Header (Delicate, elegant triad crown right above PRIZES)
-    if (id === "prizes-stem") {
-      return {
-        id,
-        color: "mixed",
-        isLetterAnchored: false,
-        stemWidth: 1.15,
-        elements: [
-          { t: "leaf", u: 0.38, side: -1, L: 23, bend: 0.15 },
-          // Delicate triad arrival crown above Prizes heading (Red, White, and Black)
-          { t: "leaf", u: 0.91, side: -1, L: 25, bend: 0.25 },
-          { t: "leaf", u: 0.93, side: 1, L: 25, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.95,
-            side: -1,
-            R: 21,
-            id: 9501,
-            color: "red",
-            rot: -0.25,
-          },
-          {
-            t: "rose",
-            u: 0.97,
-            side: 1,
-            R: 21,
-            id: 9502,
-            color: "white",
-            rot: 0.25,
-          },
-        ],
-      };
-    }
-
-    // 5. Short trunk from Prizes to podium fork
-    if (id === "podium-stem") {
-      return {
-        id,
-        color: "stem",
-        isLetterAnchored: false,
-        stemWidth: 1.1,
-        elements: [],
-      };
-    }
-
-    // 6. Branching according to color roses for prizes: First is Red, White, and Black
-    if (id === "prize-0") {
-      return {
-        id,
-        color: "red",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.32, side: -1, L: 23, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.56,
-            side: 1,
-            R: 21,
-            id: 9601,
-            color: "red",
-            rot: 0.2,
-          },
-          { t: "leaf", u: 0.74, side: -1, L: 23, bend: -0.15 },
-          // Terminal crown on 1st Place card
-          { t: "leaf", u: 0.93, side: -1, L: 25, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 25, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.97,
-            side: 0,
-            R: 26,
-            id: 9602,
-            color: "red",
-            rot: 0.1,
-          },
-        ],
-      };
-    }
-    if (id === "prize-1") {
-      return {
-        id,
-        color: "white",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.32, side: 1, L: 23, bend: -0.15 },
-          {
-            t: "rose",
-            u: 0.56,
-            side: -1,
-            R: 21,
-            id: 9701,
-            color: "white",
-            rot: -0.2,
-          },
-          { t: "leaf", u: 0.74, side: 1, L: 23, bend: 0.15 },
-          // Terminal crown on 2nd Place card
-          { t: "leaf", u: 0.93, side: -1, L: 25, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 25, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.97,
-            side: 0,
-            R: 26,
-            id: 9702,
-            color: "white",
-            rot: -0.1,
-          },
-        ],
-      };
-    }
-    if (id === "prize-2") {
-      return {
-        id,
-        color: "black",
-        isLetterAnchored: false,
-        stemWidth: 1.05,
-        elements: [
-          { t: "leaf", u: 0.28, side: -1, L: 23, bend: 0.15 },
-          {
-            t: "rose",
-            u: 0.5,
-            side: -1,
-            R: 22,
-            id: 9801,
-            color: "black",
-            rot: 0.15,
-          },
-          { t: "leaf", u: 0.72, side: 1, L: 23, bend: -0.15 },
-          // Terminal crown on 3rd Place card
-          { t: "leaf", u: 0.93, side: -1, L: 24, bend: 0.25 },
-          { t: "leaf", u: 0.95, side: 1, L: 24, bend: -0.25 },
-          {
-            t: "rose",
-            u: 0.97,
-            side: 0,
-            R: 25,
-            id: 9802,
-            color: "black",
-            rot: 0.1,
-          },
-        ],
-      };
-    }
-
-    // Default fallback (e.g. root-stem, root-prizes)
+    // Default fallback
     return {
       id,
       color: "stem",
@@ -1291,12 +940,13 @@ class TypeGardenEngine {
     ctx.fill();
 
     // Support e.color: "black", "white", "red_white", "red"
+    const roseColor = e.color || pickMonogramRoseColor();
     let keys = ["red_rose", "red_rose_angle"];
-    if (e.color === "black") {
+    if (roseColor === "black") {
       keys = ["black_rose", "black_rose_angle"];
-    } else if (e.color === "white") {
+    } else if (roseColor === "white") {
       keys = ["white_rose", "white_rose_angle"];
-    } else if (e.color === "red_white") {
+    } else if (roseColor === "red_white") {
       keys =
         Math.abs(e.id || 0) % 2 === 0
           ? ["white_rose", "white_rose_angle"]
@@ -1304,12 +954,12 @@ class TypeGardenEngine {
     }
     const imgKey = keys[Math.abs(e.id || 0) % keys.length];
     let fallback = this.assets ? this.assets["red_rose"] : null;
-    if (e.color === "black" && this.assets) {
+    if (roseColor === "black" && this.assets) {
       fallback =
         this.assets["black_rose"] ||
         this.assets["black_rose_angle"] ||
         fallback;
-    } else if (e.color === "white" && this.assets) {
+    } else if (roseColor === "white" && this.assets) {
       fallback =
         this.assets["white_rose"] ||
         this.assets["white_rose_angle"] ||

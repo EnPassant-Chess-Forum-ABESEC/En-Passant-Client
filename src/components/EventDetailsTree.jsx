@@ -603,8 +603,8 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
       <div className={styles.intro}>
         <h2 id="championship-hierarchy" className={styles.title}>
           <span className={styles.whiteLine}>The</span>
-          <span className={styles.redLine}>Crown's </span>
-          <span className={styles.whiteLineredLine}>Hierarchy</span>
+          <span className={styles.whiteLine}>Crown's </span>
+          <span className={styles.redLine}>Hierarchy</span>
         </h2>
       </div>
 
