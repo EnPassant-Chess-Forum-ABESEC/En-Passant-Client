@@ -18,6 +18,7 @@ export default function EventCTA({ event = null }) {
     event?.link ||
     "/sign-up";
 
+  /*
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -86,6 +87,7 @@ export default function EventCTA({ event = null }) {
       section.removeEventListener("pointerleave", handlePointerLeave);
     };
   }, []);
+  */
 
   return (
     <section
