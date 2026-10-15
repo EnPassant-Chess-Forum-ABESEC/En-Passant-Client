@@ -1,0 +1,183 @@
+.timeSection {
+  --clock-size: clamp(660px, min(68vw, calc(100svh - 50px)), 1100px);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: max(820px, calc(var(--clock-size) + 60px), 100svh);
+  overflow: hidden;
+  background: #050505;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.clockArtwork {
+  position: absolute;
+  z-index: 0;
+  width: var(--clock-size);
+  height: var(--clock-size);
+  left: calc(var(--clock-size) * -0.5);
+  top: 50%;
+  transform: translate3d(0, -50%, 0);
+  filter: brightness(0.65) saturate(0.85);
+  pointer-events: none;
+  user-select: none;
+  contain: layout paint;
+  will-change: transform;
+}
+
+.clockArtwork svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.clockHand {
+  transform-box: view-box;
+  transform-origin: 553px 800px;
+  animation: clockTurn linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+.hourHand {
+  animation-duration: 43200s;
+}
+
+.minuteHand {
+  animation-duration: 3600s;
+}
+
+.secondHand {
+  animation-duration: 60s;
+}
+
+.clockRunning .clockHand {
+  animation-play-state: running;
+}
+
+.formatContent {
+  position: relative;
+  width: min(480px, 42%);
+  margin-left: auto;
+  margin-right: 8%;
+  padding: 80px 0;
+  text-align: right;
+}
+
+.timeSection h2 {
+  margin: 0;
+  font-family: prfaExtrabold, sans-serif;
+  font-size: clamp(64px, 8vw, 116px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+}
+
+.timeSection h2 span {
+  display: block;
+}
+
+.timeSection h2 span + span {
+  margin-top: 12px;
+  color: #9b1a1a;
+}
+
+.formatDetails {
+  margin-top: 60px;
+}
+
+.timeSection dl {
+  margin: 0;
+}
+
+.detail + .detail {
+  margin-top: 36px;
+}
+
+.timeSection dt {
+  color: #aaa;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.timeSection dd {
+  margin: 12px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.control {
+  font-size: clamp(38px, 4.3vw, 64px);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.format {
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1.5;
+  text-transform: capitalize;
+}
+
+.pending {
+  margin: 0;
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+@keyframes clockTurn {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .timeSection {
+    --clock-size: 740px;
+    min-height: 1000px;
+    display: block;
+  }
+
+  .clockArtwork {
+    left: -400px;
+    top: auto;
+    bottom: -60px;
+    transform: none;
+  }
+
+  .formatContent {
+    width: auto;
+    margin: 0;
+    padding: 80px 28px 500px;
+  }
+
+  .timeSection h2 {
+    font-size: clamp(52px, 15vw, 86px);
+  }
+
+  .formatDetails {
+    max-width: 280px;
+    margin: 40px 0 0 auto;
+  }
+
+  .control {
+    font-size: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clockHand {
+    animation: none;
+  }
+}

@@ -104,7 +104,9 @@ export default function AdminSidebar() {
             </div>
             <h2
               className={`text-xl font-black tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-slate-700 dark:group-hover:text-slate-200 whitespace-nowrap transition-all duration-300 overflow-hidden ${
-                isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[200px] opacity-100 ml-4"
+                isCollapsed
+                  ? "max-w-0 opacity-0 ml-0"
+                  : "max-w-[200px] opacity-100 ml-4"
               }`}
             >
               EN PASSANT

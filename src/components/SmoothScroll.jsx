@@ -3,6 +3,12 @@
 import { useEffect, useRef } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { usePathname } from "next/navigation";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 function LenisController() {
   const lenis = useLenis();
@@ -12,7 +18,29 @@ function LenisController() {
     if (!lenis) return;
     window.scrollTo(0, 0);
     lenis.scrollTo(0, { immediate: true });
+    lenis.resize();
   }, [pathname, lenis]);
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    // Sync Lenis scroll with GSAP ScrollTrigger
+    const onScroll = () => {
+      ScrollTrigger.update();
+    };
+    lenis.on("scroll", onScroll);
+
+    // Keep Lenis scroll limit in sync with ScrollTrigger's pin spacers
+    const onRefresh = () => {
+      lenis.resize();
+    };
+    ScrollTrigger.addEventListener("refresh", onRefresh);
+
+    return () => {
+      lenis.off("scroll", onScroll);
+      ScrollTrigger.removeEventListener("refresh", onRefresh);
+    };
+  }, [lenis]);
 
   useEffect(() => {
     if (!lenis) return;

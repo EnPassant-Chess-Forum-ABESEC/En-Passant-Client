@@ -1,4 +1,8 @@
 import EventHero from "@/components/EventHero";
+import EventDesc from "@/components/EventDesc";
+import EventDetailsTree from "@/components/EventDetailsTree";
+import EventTimeFormat from "@/components/EventTimeFormat";
+import EventCTA from "@/components/EventCTA";
 
 export const metadata = {
   title: "Events | En Passant Chess Forum",
@@ -19,11 +23,39 @@ export const metadata = {
   },
 };
 
-export default function EventsPage() {
+async function getEvents() {
+  try {
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080/api";
+
+    const res = await fetch(`${apiUrl}/events`, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(1200),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data?.events || [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function EventsPage() {
+  const events = await getEvents();
+  const currentEvent =
+    events.find(
+      (e) =>
+        e.status === "active" ||
+        e.status === "in_progress" ||
+        e.status === "upcoming",
+    ) || events[0];
+
   return (
     <div className="w-full bg-[#050505] min-h-screen text-white font-sans flex flex-col">
-      {/* Section 1: Hero Section */}
       <EventHero />
+      <EventDesc initialDescription={currentEvent?.description || ""} />
+      <EventDetailsTree />
+      <EventTimeFormat />
+      <EventCTA event={currentEvent} />
     </div>
   );
 }

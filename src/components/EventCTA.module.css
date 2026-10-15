@@ -1,0 +1,355 @@
+.ctaSection {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: max(760px, 100svh);
+  overflow: hidden;
+  background: #050505;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Vignette overlays to blend smoothly into surrounding sections */
+.vignetteTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.vignetteBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0) 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.radialVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 45%,
+    rgba(5, 5, 5, 0.65) 85%,
+    #050505 100%
+  );
+  pointer-events: none;
+  z-index: 9;
+}
+
+/* Layer 1: The two reaching marble hands */
+.handsLayer {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.handsImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: contrast(1.05) brightness(0.92);
+}
+
+/* Layer 2: The central blood & roses wreath circle */
+.wreathContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(380px, 46vw, 680px);
+  aspect-ratio: 1472 / 1840;
+  pointer-events: none;
+  z-index: 4;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wreathBtm,
+.wreathTop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.wreathBtm {
+  opacity: 0.85;
+  filter: blur(1px) brightness(0.6);
+  z-index: 1;
+}
+
+.wreathTop {
+  z-index: 2;
+  filter: drop-shadow(0 0 25px rgba(155, 26, 26, 0.35));
+  animation: wreathPulse 7s ease-in-out infinite alternate;
+}
+
+@keyframes wreathPulse {
+  0% {
+    filter: drop-shadow(0 0 20px rgba(155, 26, 26, 0.25));
+  }
+  100% {
+    filter: drop-shadow(0 0 35px rgba(195, 30, 30, 0.5));
+  }
+}
+
+/* Layer 3: Central Register Button with Corner Brackets */
+.ctaWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bracketBox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* 4 Corner L-Brackets */
+.cornerTL,
+.cornerTR,
+.cornerBL,
+.cornerBR {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cornerTL {
+  top: 0;
+  left: 0;
+  border-top: 1.5px solid #a81c1c;
+  border-left: 1.5px solid #a81c1c;
+}
+
+.cornerTR {
+  top: 0;
+  right: 0;
+  border-top: 1.5px solid #a81c1c;
+  border-right: 1.5px solid #a81c1c;
+}
+
+.cornerBL {
+  bottom: 0;
+  left: 0;
+  border-bottom: 1.5px solid #a81c1c;
+  border-left: 1.5px solid #a81c1c;
+}
+
+.cornerBR {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1.5px solid #a81c1c;
+  border-right: 1.5px solid #a81c1c;
+}
+
+.bracketBox:hover .cornerTL {
+  top: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  border-color: #e62828;
+  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
+}
+
+.bracketBox:hover .cornerTR {
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-color: #e62828;
+  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
+}
+
+.bracketBox:hover .cornerBL {
+  bottom: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  border-color: #e62828;
+  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
+}
+
+.bracketBox:hover .cornerBR {
+  bottom: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-color: #e62828;
+  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
+}
+
+/* The Crimson Register Button */
+.registerBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 44px;
+  background: linear-gradient(180deg, #9b1a1a 0%, #751010 100%);
+  border: 1px solid rgba(255, 90, 90, 0.35);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow:
+    0 4px 24px rgba(155, 26, 26, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.registerBtn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 220%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.65s ease;
+}
+
+.registerBtn:hover {
+  background: linear-gradient(180deg, #b01e1e 0%, #851212 100%);
+  border-color: rgba(255, 120, 120, 0.6);
+  box-shadow:
+    0 6px 35px rgba(200, 30, 30, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: scale(1.03);
+}
+
+.registerBtn:hover::before {
+  transform: translateX(100%);
+}
+
+.registerBtn:active {
+  transform: scale(0.98);
+}
+
+/* Layer 4: The Typographic Headline (Top Right) */
+.headingContainer {
+  position: absolute;
+  top: clamp(35px, 7vh, 85px);
+  right: clamp(24px, 6vw, 110px);
+  text-align: right;
+  z-index: 25;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.title {
+  margin: 0;
+  font-family: prfaExtrabold, system-ui, -apple-system, sans-serif;
+  font-size: clamp(44px, 6.8vw, 102px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.whiteLine {
+  display: block;
+  color: #ffffff;
+  text-shadow: 0 0 35px rgba(255, 255, 255, 0.28);
+}
+
+.redLine {
+  display: block;
+  margin-top: 6px;
+  color: #9b1a1a;
+  text-shadow: 0 0 40px rgba(155, 26, 26, 0.5);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .ctaSection {
+    min-height: 720px;
+    padding: 60px 20px;
+  }
+
+  .headingContainer {
+    top: 36px;
+    right: 20px;
+    left: 20px;
+    text-align: right;
+  }
+
+  .title {
+    font-size: clamp(38px, 12vw, 62px);
+  }
+
+  .wreathContainer {
+    width: clamp(300px, 85vw, 440px);
+  }
+
+  .handsLayer {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .handsImg {
+    object-position: center;
+  }
+
+  .registerBtn {
+    padding: 13px 36px;
+    font-size: 14px;
+    letter-spacing: 0.22em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .handsLayer,
+  .wreathContainer,
+  .ctaWrapper,
+  .headingContainer {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .wreathTop {
+    animation: none !important;
+  }
+}
