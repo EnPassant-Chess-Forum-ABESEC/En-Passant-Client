@@ -208,31 +208,43 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-family: pezula, sans-serif;
-  font-size: clamp(44px, 6.8vw, 96px);
-  font-weight: 700;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(44px, 6.5vw, 92px);
+  font-weight: 900;
   letter-spacing: 0.04em;
-  line-height: 0.82;
+  line-height: 0.9;
   text-transform: uppercase;
 }
 
 @media (min-width: 768px) {
   .title {
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 }
 
 .whiteLine {
   display: block;
-  color: #ffffff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  font-size: clamp(26px, 4vw, 52px);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 35%, #94a3b8 75%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.15));
 }
 
 .redLine {
   display: block;
-  margin-top: 8px;
-  color: #9b1a1a;
-  text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
+  font-size: clamp(54px, 8.8vw, 120px);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 0.9;
+  margin-top: 4px;
+  background: linear-gradient(180deg, #ff7171 0%, #ef4444 18%, #dc2626 38%, #991b1b 62%, #550707 85%, #180202 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(220, 38, 38, 0.25));
 }
 
 .timeBlock {
@@ -249,24 +261,25 @@
 }
 
 .tierBadge {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 10px;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #9b1a1a;
-  border: 1px solid rgba(155, 26, 26, 0.35);
-  padding: 3px 8px;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.06);
+  padding: 3px 9px;
   border-radius: 2px;
 }
 
 .tierBadgeSub {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #888888;
+  color: #94a3b8;
 }
 
 .timeHeader {
@@ -277,13 +290,13 @@
 }
 
 .timeDisplay {
-  font-family: pezula, sans-serif;
-  font-size: clamp(64px, 8.5vw, 116px);
+  font-family: var(--font-gothic), 'Pirata One', serif;
+  font-size: clamp(66px, 9vw, 124px);
   font-weight: 700;
   line-height: 0.92;
   color: #ffffff;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 35px rgba(255, 255, 255, 0.16);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 35px rgba(255, 255, 255, 0.2);
 }
 
 .timeMeta {
@@ -294,20 +307,22 @@
 }
 
 .timeCategory {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #9b1a1a;
+  color: #ef4444;
 }
 
 .timeDesc {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 13px;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(14px, 1.2vw, 17px);
   font-weight: 400;
-  color: #8e8e8e;
-  letter-spacing: 0.02em;
+  color: #cbd5e1;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
 }
 
 .divisionsWrapper {
@@ -325,17 +340,17 @@
 }
 
 .divisionsPip {
-  color: #9b1a1a;
+  color: #ef4444;
   font-size: 11px;
 }
 
 .divisionsKicker {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+  font-size: clamp(12px, 0.95vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: #b0b0b0;
+  color: #e2e8f0;
   margin: 0;
 }
 
@@ -369,16 +384,16 @@
 }
 
 .bracketRow:hover {
-  border-bottom-color: rgba(155, 26, 26, 0.5);
+  border-bottom-color: rgba(239, 68, 68, 0.5);
   transform: translateX(3px);
 }
 
 .bracketName {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(13px, 1.05vw, 15px);
-  font-weight: 500;
-  color: #e6e6e6;
-  letter-spacing: 0.02em;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: 0.025em;
 }
 
 .bracketRangeWrapper {
@@ -389,20 +404,20 @@
 }
 
 .bracketRangeLabel {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #6a6a6a;
+  color: #94a3b8;
 }
 
 .bracketRange {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #9b1a1a;
-  letter-spacing: 0.04em;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(14px, 1.1vw, 16px);
+  font-weight: 700;
+  color: #ef4444;
+  letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

@@ -45,44 +45,8 @@ export default function EventSponsors({ sponsors = [], className = "" }) {
     >
       <div className={styles.headingContainer}>
         <h2 className={styles.heading}>
-          <span className={styles.whiteLine}>
-            {Array.from("OUR").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.redLine}>
-            {Array.from("SPONSORS").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.12 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
+          <span className={styles.whiteLine}>OUR</span>
+          <span className={styles.redLine}>SPONSORS</span>
         </h2>
       </div>
 

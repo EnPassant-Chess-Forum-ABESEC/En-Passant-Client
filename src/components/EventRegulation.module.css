@@ -56,14 +56,36 @@
   display: flex;
   flex-direction: column;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 0.82;
-  font-family: pezula, sans-serif;
-  font-size: clamp(48px, 7vw, 104px);
-  font-weight: 700;
+  line-height: 0.9;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
   margin-bottom: clamp(24px, 4vh, 48px);
   max-width: 100%;
   overflow-wrap: break-word;
+}
+
+.whiteLine {
+  display: block;
+  font-size: clamp(26px, 4vw, 52px);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 35%, #94a3b8 75%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.15));
+}
+
+.redLine {
+  display: block;
+  font-size: clamp(54px, 8.8vw, 120px);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 0.9;
+  margin-top: 4px;
+  background: linear-gradient(180deg, #ff7171 0%, #ef4444 18%, #dc2626 38%, #991b1b 62%, #550707 85%, #180202 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(220, 38, 38, 0.25));
 }
 
 .introBox {
@@ -73,11 +95,11 @@
 }
 
 .introTitle {
-  font-family: pezula, sans-serif;
-  font-size: clamp(26px, 3.6vw, 48px);
+  font-family: var(--font-heading), 'Cinzel', serif;
+  font-size: clamp(24px, 3.2vw, 44px);
   font-weight: 700;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: 0.05em;
   color: #ffffff;
   margin-bottom: 16px;
@@ -87,11 +109,12 @@
 }
 
 .introParagraph {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(15px, 1.2vw, 18px);
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(16px, 1.25vw, 20px);
   font-weight: 400;
-  line-height: 1.8;
-  color: #94a3b8;
+  line-height: 1.85;
+  color: #cbd5e1;
+  letter-spacing: 0.015em;
   max-width: 720px;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -150,36 +173,57 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-cinzel), 'Cinzel', serif;
   font-size: clamp(11px, 0.9vw, 13px);
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: #e52020;
+  color: #ef4444;
   margin-bottom: 20px;
 }
 
 .stageTitle {
-  font-family: pezula, sans-serif;
-  font-size: clamp(28px, 4vw, 56px);
-  font-weight: 700;
+  margin: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   text-transform: uppercase;
   line-height: 1.05;
-  letter-spacing: 0.04em;
-  color: #ffffff;
-  margin-bottom: 24px;
-  text-shadow: 0 0 25px rgba(255, 255, 255, 0.10);
   max-width: 100%;
-  overflow-wrap: break-word;
-  word-break: break-word;
+}
+
+.stageTitleUpper,
+.stageTitleLower {
+  display: block;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(28px, 3.8vw, 54px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 78%, #64748b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.12));
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .stageTitleUpper,
+  .stageTitleLower {
+    font-size: clamp(24px, 6.5vw, 36px);
+    white-space: normal;
+  }
 }
 
 .stageBody {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(15px, 1.2vw, 18px);
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(16px, 1.25vw, 20px);
   font-weight: 400;
   line-height: 1.85;
   color: #cbd5e1;
+  letter-spacing: 0.015em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   max-width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -209,20 +253,42 @@
 
 .giantNumeral {
   display: block;
-  font-family: pezula, sans-serif;
+  font-family: var(--font-numeral), 'Pirata One', 'rothefight', serif;
   font-weight: 700;
   /*
-    Pezula chars are ~0.65em wide each. For 2 chars (e.g. "e3"):
+    Chars in Pirata One / Rothefight are ~0.65em wide each. For 2 chars (e.g. "e3"):
     total width ≈ 1.3em. To fit in the 48% column (~690px at 1440px viewport):
     max font-size ≈ 690/1.3 ≈ 530px ≈ 36vw.
     We also cap at 78vh so it fills the 100vh section without overflow.
   */
   font-size: min(62vh, 28vw);
   line-height: 0.88;
-  letter-spacing: -0.02em;
-  background: linear-gradient(180deg, #c41414 0%, #8f0c0c 50%, #5a0606 100%);
+  letter-spacing: 0.05em;
+  /* Deep blood-red fading into pitch black */
+  background: linear-gradient(
+    180deg,
+    #dc2626 0%,
+    #b91c1c 20%,
+    #881337 42%,
+    #450a0a 65%,
+    #140202 85%,
+    #000000 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* Smooth fade out — reduced: stays opaque until 70%, then fades to 30% at bottom */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
   filter: none;
   text-align: center;
   white-space: nowrap;

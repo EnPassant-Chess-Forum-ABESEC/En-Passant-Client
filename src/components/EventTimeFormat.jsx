@@ -350,44 +350,8 @@ export default function EventTimeFormat({
     >
       <div className={styles.intro}>
         <h2 id={`event-time-title-${id}`} className={styles.title}>
-          <span className={styles.whiteLine}>
-            {Array.from("ROYAL").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.redLine}>
-            {Array.from("HOURS").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.14 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
+          <span className={styles.whiteLine}>ROYAL</span>
+          <span className={styles.redLine}>HOURS</span>
         </h2>
       </div>
 

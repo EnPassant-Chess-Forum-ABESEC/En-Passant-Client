@@ -59,52 +59,38 @@ export default function EventDesc({ initialDescription = "" }) {
     <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-24 md:py-36 px-0 overflow-hidden select-none">
       <div className="absolute top-0 left-0 w-full h-32 sm:h-48 md:h-64 bg-gradient-to-b from-[#050505] via-[#050505]/80 to-transparent z-10 pointer-events-none" />
 
+      <div
+        className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-red-950/20 rounded-full blur-[130px] pointer-events-none z-0"
+        aria-hidden="true"
+      />
+
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-8 md:px-11 flex flex-col items-start text-left">
         <h2
-          className="flex flex-col uppercase tracking-[0.04em] md:tracking-[0.08em] leading-[0.82]"
+          className="flex flex-col uppercase leading-[0.9] select-none"
           style={{
-            fontFamily: "pezula, sans-serif",
-            fontSize: "clamp(44px, 6.8vw, 96px)",
-            fontWeight: 700,
+            fontFamily: "var(--font-playfair), 'Playfair Display', serif",
           }}
         >
-          <span className="flex flex-wrap">
-            {Array.from("MONARCH'S").map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block bg-gradient-to-b from-[#ffffff] via-[#e2e2e2] to-[#777777] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-              >
-                {letter}
-              </motion.span>
-            ))}
+          {/* Line 1: Elegant, Wide-Tracked Royal Prefix */}
+          <span
+            className="block font-black tracking-[0.2em] text-[clamp(26px,4vw,52px)] leading-none bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] bg-clip-text text-transparent"
+            style={{
+              filter:
+                "drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(255,255,255,0.15))",
+            }}
+          >
+            MONARCH&apos;S
           </span>
-          <span className="flex flex-wrap mt-2">
-            {Array.from("MANUSCRIPT").map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.16 + i * 0.035,
-                }}
-                className="inline-block text-[#9b1a1a]"
-              >
-                {letter}
-              </motion.span>
-            ))}
+
+          {/* Line 2: Colossal, Heavyweight Ruby Anchor Title */}
+          <span
+            className="block font-black tracking-[0.03em] text-[clamp(54px,8.8vw,120px)] leading-[0.9] mt-2 bg-gradient-to-b from-[#ff6b6b] via-[#ef4444] via-[#dc2626] to-[#7f1d1d] bg-clip-text text-transparent"
+            style={{
+              filter:
+                "drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(220, 38, 38, 0.25))",
+            }}
+          >
+            MANUSCRIPT
           </span>
         </h2>
 
@@ -125,7 +111,8 @@ export default function EventDesc({ initialDescription = "" }) {
             paragraphs.map((para, idx) => (
               <p
                 key={idx}
-                className="text-sm sm:text-base md:text-lg text-slate-300 font-normal leading-relaxed md:leading-[1.8] tracking-normal"
+                className="text-base sm:text-lg md:text-[20px] text-slate-200 font-normal leading-relaxed md:leading-[1.85] tracking-[0.015em]"
+                style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
               >
                 {para}
               </p>

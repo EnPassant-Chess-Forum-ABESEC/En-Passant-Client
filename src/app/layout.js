@@ -1,4 +1,4 @@
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Pirata_One, Cinzel, Cinzel_Decorative, Cormorant_Garamond } from "next/font/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -9,6 +9,32 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   weight: ["400", "700", "900"],
+  style: ["normal", "italic"],
+});
+
+const pirata = Pirata_One({
+  variable: "--font-pirata",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["700", "900"],
+});
+
+const cinzelDecorative = Cinzel_Decorative({
+  variable: "--font-cinzel-decorative",
+  subsets: ["latin"],
+  weight: ["700", "900"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 import Navbar from "@/components/Navbar";
@@ -67,12 +93,8 @@ import { Analytics } from "@vercel/analytics/react";
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet" />
-        </head>
+      <html lang="en" className={`${inter.variable} ${playfair.variable} ${pirata.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${cormorant.variable}`} suppressHydrationWarning>
+        <head />
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-hidden transition-colors duration-500">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <PreloaderWrapper>

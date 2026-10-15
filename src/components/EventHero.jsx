@@ -70,56 +70,117 @@ export default function EventHero() {
         className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 select-none"
       >
         <div
-          className="relative flex flex-col items-center justify-center"
-          style={{ transform: "translateY(-2%)" }}
+          className="relative flex flex-col items-center justify-center gap-0"
+          style={{ transform: "translateY(-6.5%)" }}
         >
-          <div className="relative flex items-center justify-center">
+          {/* A · C · C — Polished Imperial Monogram */}
+          <motion.div
+            className="relative flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <div className="relative z-10 flex items-center justify-center gap-6 sm:gap-11 md:gap-16">
-              {["A", "C", "C"].map((letter, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ y: 55, opacity: 0, scale: 0.9 }}
+              {[
+                { char: "A", delay: 0.35 },
+                { char: "C", delay: 0.48 },
+                { char: "C", delay: 0.60 },
+              ].map((item, index) => (
+                <motion.div
+                  key={`char-${index}`}
+                  initial={{ y: 50, opacity: 0, scale: 0.92 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
                   transition={{
                     type: "spring",
                     stiffness: 60,
                     damping: 20,
-                    delay: 0.35 + index * 0.15,
+                    delay: item.delay,
                   }}
                   style={{
-                    fontSize: "clamp(4.2rem, 10.5vw, 8.2rem)",
+                    fontSize: "clamp(5.2rem, 12vw, 9.8rem)",
+                    fontFamily: "var(--font-hero-acc)",
+                    fontWeight: 900,
+                    lineHeight: "0.9",
                     WebkitTransform: "translateZ(0)",
                     backfaceVisibility: "hidden",
                   }}
-                  className="font-pezula font-bold bg-gradient-to-b from-[#ffffff] via-[#e0e0e0] to-[#777777] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.25)] leading-none select-none tracking-normal inline-block"
+                  className="relative inline-block select-none"
                 >
-                  {letter}
-                </motion.span>
+                  {/* Layer 1: Symmetrical Foundation Shadow & Ambient Crimson Bloom */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 select-none pointer-events-none text-black"
+                    style={{
+                      transform: "translateY(6px)",
+                      filter:
+                        "drop-shadow(0 20px 40px rgba(0,0,0,0.98)) drop-shadow(0 0 32px rgba(220,38,38,0.32))",
+                    }}
+                  >
+                    {item.char}
+                  </span>
+
+                  {/* Layer 2: 3D Stepped Obsidian Bevel (pure vertical architectural drop) */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 select-none pointer-events-none text-[#0d0203]"
+                    style={{ transform: "translateY(2px)" }}
+                  >
+                    {item.char}
+                  </span>
+
+                  {/* Layer 3: Front Chiseled Luminous Platinum Face */}
+                  <span
+                    className="relative z-10 inline-block bg-gradient-to-b from-[#ffffff] via-[#f8fafc] via-[#cbd5e1] to-[#334155] bg-clip-text text-transparent"
+                    style={{
+                      filter:
+                        "drop-shadow(0 1px 2px rgba(255,255,255,0.4)) drop-shadow(0 4px 14px rgba(0,0,0,0.85))",
+                    }}
+                  >
+                    {item.char}
+                  </span>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
+          {/* Subheading — tightly below A.C.C., regal breathing room */}
           <motion.p
-            initial={{ y: 30, opacity: 0 }}
+            initial={{ y: 16, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{
               type: "spring",
               stiffness: 55,
               damping: 20,
-              delay: 0.8,
+              delay: 0.95,
             }}
             style={{
-              fontSize: "clamp(0.6rem, 1.6vw, 0.95rem)",
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: "clamp(0.72rem, 1.25vw, 0.96rem)",
               letterSpacing: "0.38em",
-              color: "#e2e8f0",
-              marginTop: "clamp(14px, 2.2vw, 26px)",
-              textShadow: "0 2px 14px rgba(0,0,0,0.95)",
+              marginTop: "clamp(14px, 1.8vw, 24px)",
               WebkitTransform: "translateZ(0)",
               backfaceVisibility: "hidden",
             }}
-            className="font-sans font-medium uppercase text-center"
+            className="font-black uppercase text-center select-none"
           >
-            ABES CHESS <span className="text-red-500">CHAMPIONSHIP</span>
+            <span
+              className="inline-block bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] bg-clip-text text-transparent"
+              style={{
+                filter:
+                  "drop-shadow(1px 1px 0px rgba(15,23,42,0.9)) drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 12px rgba(255,255,255,0.18))",
+              }}
+            >
+              ABES CHESS{" "}
+            </span>
+            <span
+              className="inline-block font-black bg-gradient-to-b from-[#ff7171] via-[#ef4444] to-[#991b1b] bg-clip-text text-transparent ml-1"
+              style={{
+                filter:
+                  "drop-shadow(1px 1px 0px rgba(70,4,12,0.95)) drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(220,38,38,0.45))",
+              }}
+            >
+              CHAMPIONSHIP
+            </span>
           </motion.p>
         </div>
       </motion.div>

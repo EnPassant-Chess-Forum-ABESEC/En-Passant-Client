@@ -39,31 +39,43 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  font-family: pezula, sans-serif;
-  font-size: clamp(44px, 6.8vw, 96px);
-  font-weight: 700;
-  line-height: 0.82;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: clamp(44px, 6.5vw, 92px);
+  font-weight: 900;
+  line-height: 0.9;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 @media (min-width: 768px) {
   .heading {
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 }
 
 .whiteLine {
   display: block;
-  color: #ffffff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  font-size: clamp(26px, 4vw, 52px);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 35%, #94a3b8 75%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.15));
 }
 
 .redLine {
   display: block;
-  margin-top: 8px;
-  color: #9b1a1a;
-  text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
+  font-size: clamp(54px, 8.8vw, 120px);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 0.9;
+  margin-top: 4px;
+  background: linear-gradient(180deg, #ff7171 0%, #ef4444 18%, #dc2626 38%, #991b1b 62%, #550707 85%, #180202 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(220, 38, 38, 0.25));
 }
 
 .board {
@@ -134,18 +146,21 @@
 
 .name {
   max-width: 100%;
-  font-family: "pezula", sans-serif;
+  font-family: var(--font-vintage), 'Cinzel Decorative', serif;
   font-size: clamp(14px, 1.8vw, 32px);
   font-weight: 700;
   line-height: 1.1;
+  letter-spacing: 0.04em;
   overflow-wrap: anywhere;
 }
 
 .role {
+  font-family: var(--font-cinzel), 'Cinzel', serif;
   max-width: 100%;
-  font-size: clamp(9px, 0.65vw, 12px);
+  font-size: clamp(10px, 0.75vw, 13px);
+  font-weight: 700;
   line-height: 1.4;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   overflow-wrap: anywhere;
 }

@@ -8,6 +8,30 @@ const premiumEase = [0.16, 1, 0.3, 1];
 
 const STAGE_CODES = ["e3", "e4", "e5"];
 
+function splitStageTitle(rawTitle) {
+  if (!rawTitle) return { upper: "", lower: "" };
+  const cleaned = rawTitle.trim();
+  const lower = cleaned.toLowerCase();
+
+  if (lower.includes("swiss")) {
+    return { upper: "SWISS", lower: "LEAGUE PHASE" };
+  }
+  if (lower.includes("grand") || lower.includes("final")) {
+    return { upper: "THE", lower: "GRAND FINALS" };
+  }
+  if (lower.includes("knockout") || lower.includes("elimination")) {
+    return { upper: "ELIMINATION", lower: "KNOCKOUT STAGE" };
+  }
+
+  const words = cleaned.split(/\s+/);
+  if (words.length <= 1) return { upper: cleaned, lower: "" };
+  if (words.length === 2) return { upper: words[0], lower: words[1] };
+  if (words[0].toLowerCase() === "the") {
+    return { upper: words[0], lower: words.slice(1).join(" ") };
+  }
+  return { upper: words[0], lower: words.slice(1).join(" ") };
+}
+
 function parseFormatText(rawText) {
   if (!rawText || !rawText.trim()) {
     return {
@@ -178,44 +202,8 @@ export default function EventRegulation({
       {/* Top Header: THE REGULATION */}
       <div className={styles.headerContainer}>
         <h2 className={styles.sectionHeader}>
-          <span className="flex flex-wrap">
-            {Array.from("THE").map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block bg-gradient-to-b from-[#ffffff] via-[#e2e2e2] to-[#777777] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </span>
-          <span className="flex flex-wrap mt-2">
-            {Array.from("REGULATION").map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.14 + i * 0.035,
-                }}
-                className="inline-block text-[#9b1a1a]"
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </span>
+          <span className={styles.whiteLine}>THE</span>
+          <span className={styles.redLine}>REGULATION</span>
         </h2>
       </div>
 
@@ -248,9 +236,21 @@ export default function EventRegulation({
                 transition={{ duration: 0.9, ease: premiumEase }}
                 className={styles.contentCol}
               >
-                <h3 className={styles.stageTitle}>
-                  {stg.title || `STAGE ${sIdx + 1}`}
-                </h3>
+                {(() => {
+                  const { upper, lower } = splitStageTitle(
+                    stg.title || `STAGE ${sIdx + 1}`
+                  );
+                  return (
+                    <h3 className={styles.stageTitle}>
+                      {upper && (
+                        <span className={styles.stageTitleUpper}>{upper}</span>
+                      )}
+                      {lower && (
+                        <span className={styles.stageTitleLower}>{lower}</span>
+                      )}
+                    </h3>
+                  );
+                })()}
 
                 <p className={styles.stageBody}>{stg.body}</p>
               </motion.div>
@@ -277,7 +277,8 @@ export default function EventRegulation({
             {parsed.paragraphs.map((p, idx) => (
               <p
                 key={idx}
-                className="text-sm sm:text-base md:text-lg text-slate-300 font-normal leading-relaxed md:leading-[1.8]"
+                className="text-base sm:text-lg md:text-[20px] text-slate-200 font-normal leading-relaxed md:leading-[1.85] tracking-[0.015em]"
+                style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
               >
                 {p}
               </p>

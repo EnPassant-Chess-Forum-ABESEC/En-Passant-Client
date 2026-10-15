@@ -235,44 +235,8 @@ export default function EventCTA({ event = null }) {
       <div className={styles.headingWrapper}>
         <div className={styles.headingContainer}>
           <h2 className={styles.title}>
-            <span className={styles.whiteLine}>
-              {Array.from("THE TIME").map((ch, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ y: 35, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 65,
-                    damping: 18,
-                    delay: i * 0.035,
-                  }}
-                  className="inline-block"
-                >
-                  {ch === " " ? "\u00A0" : ch}
-                </motion.span>
-              ))}
-            </span>
-            <span className={styles.redLine}>
-              {Array.from("HAS COME").map((ch, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ y: 35, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 65,
-                    damping: 18,
-                    delay: 0.16 + i * 0.035,
-                  }}
-                  className="inline-block"
-                >
-                  {ch === " " ? "\u00A0" : ch}
-                </motion.span>
-              ))}
-            </span>
+            <span className={styles.whiteLine}>THE TIME</span>
+            <span className={styles.redLine}>HAS COME</span>
           </h2>
         </div>
       </div>
