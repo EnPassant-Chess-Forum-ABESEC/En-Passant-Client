@@ -218,14 +218,15 @@ function pointOnStem(stem, y) {
 function organicVine(from, to, seed = 1, sway = 1) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
-  const bow =
-    Math.sin(seed * 2.39996) *
-    Math.min(42, Math.abs(dx) * 0.12 + Math.abs(dy) * 0.045) *
-    sway;
+  const dist = Math.hypot(dx, dy);
+  const naturalAmp = Math.max(16, Math.min(36, dist * 0.12));
+  const sine = Math.sin(seed * 2.39996);
+  const dir = sine >= 0 ? 1 : -1;
+  const bow = dir * naturalAmp * (0.65 + 0.35 * Math.abs(sine)) * sway;
   return stemThrough([
     from,
-    { x: from.x + dx * 0.2 + bow, y: from.y + dy * 0.32 },
-    { x: from.x + dx * 0.76 - bow * 0.65, y: from.y + dy * 0.71 },
+    { x: from.x + dx * 0.25 + bow, y: from.y + dy * 0.32 },
+    { x: from.x + dx * 0.75 - bow * 0.6, y: from.y + dy * 0.68 },
     to,
   ]);
 }
@@ -315,73 +316,56 @@ function measureTree(canvas, data) {
     if (!brackets.length) return position.bottom;
     if (brackets.length === 1) {
       const bracket = brackets[0];
-      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 90 };
+      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 100 };
       connect(
         `tier-${index}-0`,
         position.bottom,
         bracket.top,
-        401 + index,
-        0.9,
+        401 + index * 47,
+        0.75,
       );
-      connect(`tier-return-${index}-0`, bracket.bottom, exit, 601 + index, 0.8);
+      connect(
+        `tier-return-${index}-0`,
+        bracket.bottom,
+        exit,
+        601 + index * 53,
+        0.7,
+      );
       return exit;
     }
 
-    const leftX = Math.max(
-      leftMargin + 18,
-      Math.min(...brackets.map((bracket) => bracket.left)) - 30,
+    // Multiple brackets (e.g. Open Section: Beginner -> Intermediate -> Advanced):
+    // Continuous flowing botanical vine from Section heading through each bracket in order:
+    // 1. From Section heading to first bracket
+    connect(
+      `tier-${index}-0`,
+      position.bottom,
+      brackets[0].top,
+      401 + index * 31,
+      0.75,
     );
-    const rightX = Math.min(
-      rightMargin - 18,
-      Math.max(...brackets.map((bracket) => bracket.right)) + 30,
-    );
-    const last = brackets.at(-1);
-    const supply = addStem(
-      `tier-stem-${index}`,
-      stemThrough([
-        position.bottom,
-        ...brackets.map((bracket, bracketIndex) => ({
-          x: leftX + Math.sin(bracketIndex * 1.8 + index) * 10,
-          y: bracket.top.y - 80,
-        })),
-        last.top,
-      ]),
-    );
-    brackets
-      .slice(0, -1)
-      .forEach((bracket, bracketIndex) =>
-        connect(
-          `tier-${index}-${bracketIndex}`,
-          pointOnStem(supply, bracket.top.y - 80),
-          bracket.top,
-          501 + bracketIndex,
-          0.6,
-        ),
-      );
 
-    const exit = { x: position.bottom.x, y: last.bottom.y + 128 };
-    const returning = addStem(
-      `tier-collector-${index}`,
-      stemThrough([
-        brackets[0].bottom,
-        ...brackets.map((bracket, bracketIndex) => ({
-          x: rightX + Math.sin(bracketIndex * 1.6 + index + 0.8) * 10,
-          y: bracket.bottom.y + 64,
-        })),
-        exit,
-      ]),
-    );
-    brackets
-      .slice(1)
-      .forEach((bracket, bracketIndex) =>
-        connect(
-          `tier-return-${index}-${bracketIndex + 1}`,
-          bracket.bottom,
-          pointOnStem(returning, bracket.bottom.y + 64),
-          601 + bracketIndex,
-          0.6,
-        ),
+    // 2. From each bracket to the next bracket
+    for (let b = 0; b < brackets.length - 1; b++) {
+      connect(
+        `tier-${index}-${b + 1}`,
+        brackets[b].bottom,
+        brackets[b + 1].top,
+        501 + (index + b) * 37,
+        0.7,
       );
+    }
+
+    // 3. From last bracket to exit collector
+    const last = brackets.at(-1);
+    const exit = { x: last.bottom.x, y: last.bottom.y + 100 };
+    connect(
+      `tier-collector-${index}`,
+      last.bottom,
+      exit,
+      701 + index * 41,
+      0.7,
+    );
     return exit;
   });
 
@@ -415,19 +399,28 @@ function measureTree(canvas, data) {
     } else {
       exits.forEach((exit, index) => {
         const shoulderY = lowestExit + 40;
-
-        addStem(
-          `merge-${index}`,
-          stemThrough([
-            exit,
-            { x: exit.x + Math.sin(index * 2.1 + 0.4) * 20, y: shoulderY },
-            {
-              x: exit.x + (merge.x - exit.x) * 0.7,
-              y: shoulderY + (mergeY - shoulderY) * 0.6,
-            },
-            merge,
-          ]),
+        const span = shoulderY - exit.y;
+        const waypoints = [exit];
+        if (span > 120) {
+          const steps = Math.min(3, Math.floor(span / 110));
+          for (let s = 1; s <= steps; s++) {
+            const fract = s / (steps + 1);
+            const swayX = Math.sin(index * 3.7 + s * 2.2) * 20;
+            waypoints.push({
+              x: exit.x + swayX,
+              y: exit.y + span * fract,
+            });
+          }
+        }
+        waypoints.push(
+          { x: exit.x + Math.sin(index * 2.1 + 0.4) * 20, y: shoulderY },
+          {
+            x: exit.x + (merge.x - exit.x) * 0.7,
+            y: shoulderY + (mergeY - shoulderY) * 0.6,
+          },
+          merge,
         );
+        addStem(`merge-${index}`, stemThrough(waypoints));
       });
     }
     connect("prizes-stem", merge, prizes.top, 901, 0.8);
