@@ -609,65 +609,17 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
   return (
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
-        <h2 id="championship-hierarchy" className={styles.title}>
-          <span className={styles.whiteLine}>
-            {Array.from("The").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.whiteLine}>
-            {Array.from("Crown's").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.12 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.redLine}>
-            {Array.from("Hierarchy").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.28 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-        </h2>
+        <motion.h2
+          id="championship-hierarchy"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className={styles.title}
+        >
+          <span className={styles.whiteLine}>THE CROWN&apos;S</span>
+          <span className={styles.redLine}>HIERARCHY</span>
+        </motion.h2>
       </div>
 
       <div className={styles.canvas} ref={canvasRef}>
