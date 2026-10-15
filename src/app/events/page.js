@@ -2,6 +2,7 @@ import EventHero from "@/components/EventHero";
 import EventDesc from "@/components/EventDesc";
 import EventDetailsTree from "@/components/EventDetailsTree";
 import EventTimeFormat from "@/components/EventTimeFormat";
+import EventRegulation from "@/components/EventRegulation";
 import EventSponsors from "@/components/EventSponsors";
 import EventCTA from "@/components/EventCTA";
 
@@ -56,7 +57,8 @@ export default async function EventsPage() {
       <EventDesc initialDescription={currentEvent?.description || ""} />
       <EventDetailsTree event={currentEvent} />
       <EventTimeFormat event={currentEvent} />
-      {/* <EventSponsors /> */}
+      <EventRegulation event={currentEvent} initialFormat={currentEvent?.format || currentEvent?.tournamentFormat || ""} />
+      <EventSponsors sponsors={currentEvent?.sponsors || []} />
       <EventCTA event={currentEvent} />
     </div>
   );

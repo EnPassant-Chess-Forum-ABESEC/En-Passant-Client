@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "lenis/react";
@@ -596,28 +597,6 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
           );
         });
 
-        // Also reveal the intro title
-        const introTitle = document.querySelector("#championship-hierarchy");
-        if (introTitle) {
-          gsap.fromTo(
-            introTitle,
-            { opacity: 0, y: 36, filter: "blur(6px)" },
-            {
-              opacity: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.85,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: introTitle,
-                start: "top 88%",
-                toggleActions: "play none none reverse",
-                invalidateOnRefresh: true,
-              },
-            },
-          );
-        }
-
         ScrollTrigger.refresh();
       }, canvas);
       return () => context.revert();
@@ -630,10 +609,64 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
   return (
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
-        <h2 className={styles.title}>
-          <span className={styles.whiteLine}>The</span>
-          <span className={styles.whiteLine}>Crown's </span>
-          <span className={styles.redLine}>Hierarchy</span>
+        <h2 id="championship-hierarchy" className={styles.title}>
+          <span className={styles.whiteLine}>
+            {Array.from("The").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+          <span className={styles.whiteLine}>
+            {Array.from("Crown's").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.12 + i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+          <span className={styles.redLine}>
+            {Array.from("Hierarchy").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.28 + i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
         </h2>
       </div>
 

@@ -1,0 +1,281 @@
+@font-face {
+  font-family: "rothefight";
+  src: url("/fonts/ROTHEFIGHT.otf") format("opentype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  background-color: #050505;
+  color: #ffffff;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Atmospheric fades */
+.topFade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(80px, 12vw, 180px);
+  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0.85) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bottomFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(80px, 12vw, 180px);
+  background: linear-gradient(to top, #050505 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Header container (THE REGULATION) */
+.headerContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(100px, 14vh, 180px) clamp(24px, 5vw, 80px) clamp(60px, 8vh, 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 0.82;
+  font-family: pezula, sans-serif;
+  font-size: clamp(48px, 7vw, 104px);
+  font-weight: 700;
+  margin-bottom: clamp(24px, 4vh, 48px);
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.introBox {
+  width: 100%;
+  max-width: 860px;
+  min-width: 0;
+}
+
+.introTitle {
+  font-family: pezula, sans-serif;
+  font-size: clamp(26px, 3.6vw, 48px);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.introParagraph {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  line-height: 1.8;
+  color: #94a3b8;
+  max-width: 720px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Each stage = a full 100vh desktop section */
+.stageSection {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.stageInner {
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 80px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(32px, 4vw, 80px);
+  box-sizing: border-box;
+}
+
+/* Alternating layout */
+.stageLayoutNormal {
+  flex-direction: row;
+}
+
+.stageLayoutReversed {
+  flex-direction: row-reverse;
+}
+
+/* Content Column */
+.contentCol {
+  flex: 0 1 48%;
+  min-width: 0;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.stageKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(11px, 0.9vw, 13px);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e52020;
+  margin-bottom: 20px;
+}
+
+.stageTitle {
+  font-family: pezula, sans-serif;
+  font-size: clamp(28px, 4vw, 56px);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  margin-bottom: 24px;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.10);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.stageBody {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  line-height: 1.85;
+  color: #cbd5e1;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/*
+  Number Column: occupies the other half of the row.
+  ROTHEFIGHT is a very tall condensed face — 2 chars like "e3" have an
+  aspect ratio of roughly 1:2 (wide:tall). At 100vh sections,
+  we want the numeral to fill ~85% of the viewport height.
+  That means font-size ≈ 85vh. But 2 chars at 85vh tall will be
+  ~85vh * 0.55 (approx width ratio) = ~47vw wide — perfect for the 48%-col.
+  We use min() to cap if it would overflow the column width.
+*/
+.numberCol {
+  flex: 0 1 48%;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  user-select: none;
+  /* Allow the glyph to breathe */
+  overflow: visible;
+}
+
+.giantNumeral {
+  display: block;
+  font-family: pezula, sans-serif;
+  font-weight: 700;
+  /*
+    Pezula chars are ~0.65em wide each. For 2 chars (e.g. "e3"):
+    total width ≈ 1.3em. To fit in the 48% column (~690px at 1440px viewport):
+    max font-size ≈ 690/1.3 ≈ 530px ≈ 36vw.
+    We also cap at 78vh so it fills the 100vh section without overflow.
+  */
+  font-size: min(62vh, 28vw);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #c41414 0%, #8f0c0c 50%, #5a0606 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: none;
+  text-align: center;
+  white-space: nowrap;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stageSection:hover .giantNumeral {
+  transform: scale(1.012);
+}
+
+/* Trailing Container */
+.trailingContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(60px, 8vh, 120px) clamp(24px, 5vw, 80px);
+}
+
+/* Mobile & Tablet */
+@media (max-width: 1024px) {
+  .stageSection {
+    height: auto;
+    min-height: auto;
+    padding: 80px 0;
+    overflow: hidden;
+  }
+
+  .stageInner {
+    flex-direction: column-reverse !important;
+    gap: 40px;
+    align-items: flex-start;
+    height: auto;
+    padding: 0 clamp(20px, 5vw, 40px);
+  }
+
+  .contentCol {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .numberCol {
+    flex: none;
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .giantNumeral {
+    font-size: min(50vw, 240px);
+    line-height: 0.9;
+  }
+}

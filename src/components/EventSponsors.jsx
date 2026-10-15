@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 import styles from "./EventSponsors.module.css";
 
 function SponsorMark({ sponsor }) {
@@ -40,10 +43,48 @@ export default function EventSponsors({ sponsors = [], className = "" }) {
       className={`${styles.section} ${className}`}
       aria-label="Event sponsors"
     >
-      <h2 className={styles.heading}>
-        <span>OUR</span>
-        <span>SPONSOR</span>
-      </h2>
+      <div className={styles.headingContainer}>
+        <h2 className={styles.heading}>
+          <span className={styles.whiteLine}>
+            {Array.from("OUR").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+          <span className={styles.redLine}>
+            {Array.from("SPONSORS").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.12 + i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+        </h2>
+      </div>
 
       <div className={styles.board}>
         {Array.from({ length: 24 }, (_, index) => {
@@ -83,6 +124,9 @@ export default function EventSponsors({ sponsors = [], className = "" }) {
           })}
         </div>
       )}
+
+      {/* Smooth atmospheric bottom blend into EventCTA section */}
+      <div className={styles.bottomBlend} aria-hidden="true" />
     </section>
   );
 }

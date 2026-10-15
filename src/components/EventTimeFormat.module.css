@@ -1,14 +1,25 @@
 .timeSection {
-  --clock-size: clamp(660px, min(68vw, calc(100svh - 50px)), 1100px);
+  --clock-size: clamp(560px, min(56vw, calc(100svh - 40px)), 920px);
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: max(820px, calc(var(--clock-size) + 60px), 100svh);
   overflow: hidden;
   background: #050505;
   color: #fff;
+  padding: clamp(60px, 8vh, 120px) 0 clamp(80px, 10vh, 140px);
+}
+
+.tier {
+  position: relative;
+  width: 100%;
+  min-height: max(560px, 72svh);
   display: flex;
   align-items: center;
+  overflow: hidden;
+}
+
+.tierSecond {
+  margin-top: clamp(40px, 6vh, 80px);
 }
 
 .clockArtwork {
@@ -16,14 +27,37 @@
   z-index: 0;
   width: var(--clock-size);
   height: var(--clock-size);
-  left: calc(var(--clock-size) * -0.5);
   top: 50%;
-  transform: translate3d(0, -50%, 0);
   filter: brightness(0.65) saturate(0.85);
   pointer-events: none;
   user-select: none;
   contain: layout paint;
-  will-change: transform;
+  will-change: transform, opacity;
+  transition:
+    transform 1.25s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clockLeft {
+  left: calc(var(--clock-size) * -0.5);
+  transform: translate3d(-18%, -50%, 0) rotate(-24deg) scale(0.9);
+  opacity: 0;
+}
+
+.clockEntered .clockLeft {
+  transform: translate3d(0, -50%, 0) rotate(0deg) scale(1);
+  opacity: 1;
+}
+
+.clockRight {
+  right: calc(var(--clock-size) * -0.5);
+  transform: translate3d(18%, -50%, 0) rotate(24deg) scale(0.9);
+  opacity: 0;
+}
+
+.clockEntered .clockRight {
+  transform: translate3d(0, -50%, 0) rotate(0deg) scale(1);
+  opacity: 1;
 }
 
 .clockArtwork svg {
@@ -31,6 +65,41 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.handReveal {
+  transform-box: view-box;
+  transform-origin: 553px 800px;
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, opacity;
+}
+
+.needlesRevealed .hubReveal {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.05s;
+}
+
+.needlesRevealed .hourReveal {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.18s;
+}
+
+.needlesRevealed .minuteReveal {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.34s;
+}
+
+.needlesRevealed .secondReveal {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.5s;
 }
 
 .clockHand {
@@ -53,11 +122,62 @@
   animation-duration: 60s;
 }
 
-.clockRunning .clockHand {
+.clockMoving .clockHand {
   animation-play-state: running;
 }
 
-.contentWrapper {
+.tierContentRight {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tierContentLeft {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (min-width: 640px) {
+  .tierContentRight,
+  .tierContentLeft {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tierContentRight {
+    padding-left: clamp(380px, 31vw, 500px);
+    padding-right: clamp(32px, 4vw, 64px);
+  }
+
+  .tierContentLeft {
+    padding-left: clamp(32px, 4vw, 64px);
+    padding-right: clamp(380px, 31vw, 500px);
+  }
+}
+
+.infoBlockRight,
+.infoBlockLeft {
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.intro {
   position: relative;
   z-index: 10;
   width: 100%;
@@ -65,29 +185,25 @@
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  margin-bottom: clamp(48px, 6vh, 80px);
 }
 
 @media (min-width: 640px) {
-  .contentWrapper {
+  .intro {
     padding: 0 32px;
   }
 }
 
 @media (min-width: 768px) {
-  .contentWrapper {
+  .intro {
     padding: 0 44px;
   }
 }
 
-.formatContent {
-  position: relative;
-  width: min(500px, 100%);
-  padding: 80px 0;
-  text-align: right;
-}
-
-.timeSection h2 {
+.title {
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -101,7 +217,7 @@
 }
 
 @media (min-width: 768px) {
-  .timeSection h2 {
+  .title {
     letter-spacing: 0.08em;
   }
 }
@@ -119,59 +235,182 @@
   text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
 }
 
-.formatDetails {
-  margin-top: 60px;
+.timeBlock {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.timeSection dl {
-  margin: 0;
+.tierBadgeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.detail + .detail {
-  margin-top: 36px;
-}
-
-.timeSection dt {
-  color: #aaa;
+.tierBadge {
+  font-family: var(--font-inter), sans-serif;
   font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: #9b1a1a;
+  border: 1px solid rgba(155, 26, 26, 0.35);
+  padding: 3px 8px;
+  border-radius: 2px;
 }
 
-.timeSection dd {
-  margin: 12px 0 0;
-  overflow-wrap: anywhere;
+.tierBadgeSub {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888888;
 }
 
-.control {
-  font-size: clamp(38px, 4.3vw, 64px);
-  font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
+.timeHeader {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: clamp(16px, 2.5vw, 36px);
 }
 
-.format {
-  font-size: 22px;
-  font-weight: 300;
-  line-height: 1.5;
-  text-transform: capitalize;
+.timeDisplay {
+  font-family: pezula, sans-serif;
+  font-size: clamp(64px, 8.5vw, 116px);
+  font-weight: 700;
+  line-height: 0.92;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 35px rgba(255, 255, 255, 0.16);
 }
 
-.pending {
+.timeMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 4px;
+}
+
+.timeCategory {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9b1a1a;
+}
+
+.timeDesc {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #8e8e8e;
+  letter-spacing: 0.02em;
+}
+
+.divisionsWrapper {
+  margin-top: clamp(36px, 4.5vh, 52px);
+  width: 100%;
+}
+
+.divisionsHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.divisionsPip {
+  color: #9b1a1a;
+  font-size: 11px;
+}
+
+.divisionsKicker {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b0b0b0;
   margin: 0;
-  color: #aaa;
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.8;
+}
+
+.bracketGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(28px, 4vw, 56px);
+  row-gap: 0;
+  width: 100%;
+}
+
+.bracketGridSingle {
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
+@media (max-width: 680px) {
+  .bracketGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bracketRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.bracketRow:hover {
+  border-bottom-color: rgba(155, 26, 26, 0.5);
+  transform: translateX(3px);
+}
+
+.bracketName {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 500;
+  color: #e6e6e6;
+  letter-spacing: 0.02em;
+}
+
+.bracketRangeWrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.bracketRangeLabel {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.bracketRange {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9b1a1a;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 @keyframes clockTurn {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
@@ -179,40 +418,65 @@
 
 @media (max-width: 767px) {
   .timeSection {
-    --clock-size: 740px;
-    min-height: 1000px;
+    padding: 60px 0 100px;
+  }
+
+  .tier {
+    min-height: auto;
+    padding: 40px 0 120px;
     display: block;
   }
 
-  .clockArtwork {
-    left: -400px;
+  .tierSecond {
+    margin-top: 40px;
+  }
+
+  .clockLeft {
+    left: -380px;
     top: auto;
     bottom: -60px;
-    transform: none;
+    transform: translate3d(-30px, 0, 0) rotate(-16deg) scale(0.85);
   }
 
-  .contentWrapper {
+  .clockEntered .clockLeft {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+  }
+
+  .clockRight {
+    right: -380px;
+    top: auto;
+    bottom: -60px;
+    transform: translate3d(30px, 0, 0) rotate(16deg) scale(0.85);
+  }
+
+  .clockEntered .clockRight {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+  }
+
+  .tierContentRight,
+  .tierContentLeft {
     display: block;
   }
 
-  .formatContent {
-    width: 100%;
-    margin: 0;
-    padding: 80px 0 500px;
-  }
-
-  .formatDetails {
-    max-width: 280px;
-    margin: 40px 0 0 auto;
-  }
-
-  .control {
-    font-size: 42px;
+  .title {
+    align-items: flex-start;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .clockArtwork {
+    transform: translate3d(0, -50%, 0) rotate(0deg) scale(1) !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .handReveal {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    transition: none !important;
+  }
+
   .clockHand {
-    animation: none;
+    animation: none !important;
   }
 }

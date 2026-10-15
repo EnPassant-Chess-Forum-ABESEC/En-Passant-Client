@@ -2,7 +2,8 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: max(760px, 100svh);
+  min-height: max(960px, calc(100svh + 240px));
+  padding-top: clamp(140px, 18vh, 260px);
   overflow: hidden;
   background: #050505;
   color: #fff;
@@ -18,8 +19,14 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 160px;
-  background: linear-gradient(to bottom, #050505 0%, rgba(5, 5, 5, 0) 100%);
+  height: clamp(240px, 32vh, 440px);
+  background: linear-gradient(
+    to bottom,
+    #050505 0%,
+    #050505 45%,
+    rgba(5, 5, 5, 0.7) 75%,
+    rgba(5, 5, 5, 0) 100%
+  );
   pointer-events: none;
   z-index: 10;
 }
@@ -51,9 +58,12 @@
 /* Layer 1: The two reaching marble hands */
 .handsLayer {
   position: absolute;
-  inset: -4%;
+  top: clamp(80px, 12vh, 180px);
+  left: -4%;
+  right: -4%;
+  bottom: -4%;
   width: 108%;
-  height: 108%;
+  height: calc(100% - clamp(60px, 9vh, 140px));
   pointer-events: none;
   z-index: 1;
   will-change: transform;
@@ -71,7 +81,7 @@
 /* Layer 2: The central blood & roses wreath circle */
 .wreathContainer {
   position: absolute;
-  top: 50%;
+  top: calc(50% + clamp(40px, 6vh, 90px));
   left: 50%;
   transform: translate(-50%, -50%);
   width: clamp(420px, 52vw, 760px);
@@ -116,7 +126,7 @@
 /* Layer 3: Botanical Vine & Rose CTA Button */
 .ctaWrapper {
   position: absolute;
-  top: 50%;
+  top: calc(50% + clamp(40px, 6vh, 90px));
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 20;
@@ -578,7 +588,7 @@
 /* Layer 4: The Typographic Headline (Top Right) */
 .headingWrapper {
   position: absolute;
-  top: clamp(35px, 7vh, 85px);
+  top: clamp(140px, 18vh, 260px);
   left: 0;
   right: 0;
   z-index: 25;
@@ -644,22 +654,26 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .ctaSection {
-    min-height: 720px;
-    padding: 60px 20px;
+    min-height: 820px;
+    padding: 120px 20px 60px;
   }
 
   .headingWrapper {
-    top: 36px;
+    top: 75px;
   }
 
-  .wreathContainer {
-    width: clamp(300px, 85vw, 440px);
+  .wreathContainer,
+  .ctaWrapper {
+    top: calc(50% + 40px);
   }
 
   .handsLayer {
-    inset: 0;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
   }
 
   .handsImg {

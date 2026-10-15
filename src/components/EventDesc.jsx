@@ -57,22 +57,10 @@ export default function EventDesc({ initialDescription = "" }) {
 
   return (
     <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-24 md:py-36 px-0 overflow-hidden select-none">
-      {/* Subtle radial atmosphere to enrich the dark canvas */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{
-          background:
-            "radial-gradient(circle at 20% 30%, rgba(139, 29, 29, 0.08) 0%, transparent 60%)",
-        }}
-      />
+      <div className="absolute top-0 left-0 w-full h-32 sm:h-48 md:h-64 bg-gradient-to-b from-[#050505] via-[#050505]/80 to-transparent z-10 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-8 md:px-11 flex flex-col items-start text-left">
-        {/* Headline: MONARCH'S MANUSCRIPT */}
-        <motion.h2
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 1.2, ease: premiumEase }}
+        <h2
           className="flex flex-col uppercase tracking-[0.04em] md:tracking-[0.08em] leading-[0.82]"
           style={{
             fontFamily: "pezula, sans-serif",
@@ -80,15 +68,46 @@ export default function EventDesc({ initialDescription = "" }) {
             fontWeight: 700,
           }}
         >
-          <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-            MONARCH&apos;S
+          <span className="flex flex-wrap">
+            {Array.from("MONARCH'S").map((letter, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: i * 0.035,
+                }}
+                className="inline-block bg-gradient-to-b from-[#ffffff] via-[#e2e2e2] to-[#777777] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              >
+                {letter}
+              </motion.span>
+            ))}
           </span>
-          <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] mt-2">
-            MANUSCRIPT
+          <span className="flex flex-wrap mt-2">
+            {Array.from("MANUSCRIPT").map((letter, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.16 + i * 0.035,
+                }}
+                className="inline-block text-[#9b1a1a]"
+              >
+                {letter}
+              </motion.span>
+            ))}
           </span>
-        </motion.h2>
+        </h2>
 
-        {/* Event Description Body */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

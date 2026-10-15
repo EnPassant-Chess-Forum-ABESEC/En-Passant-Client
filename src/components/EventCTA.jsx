@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import styles from "./EventCTA.module.css";
 
 export default function EventCTA({ event = null }) {
@@ -112,7 +113,7 @@ export default function EventCTA({ event = null }) {
           {/* Layer B: Solid Red Center Plaque with Roughened Straight Lines */}
           <div className={styles.redBtnInner}>
             {/* Button Text */}
-            <span className={styles.redBtnText}>REGISTER</span>
+            <span className={styles.redBtnText}>COME FORTH</span>
           </div>
 
           {/* Layer C: Sinuous Bramble Vine Cane Frame (in FRONT of leaves so canes hide their stems!) */}
@@ -234,8 +235,44 @@ export default function EventCTA({ event = null }) {
       <div className={styles.headingWrapper}>
         <div className={styles.headingContainer}>
           <h2 className={styles.title}>
-            <span className={styles.whiteLine}>THE TIME</span>
-            <span className={styles.redLine}>HAS COME</span>
+            <span className={styles.whiteLine}>
+              {Array.from("THE TIME").map((ch, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: 35, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 65,
+                    damping: 18,
+                    delay: i * 0.035,
+                  }}
+                  className="inline-block"
+                >
+                  {ch === " " ? "\u00A0" : ch}
+                </motion.span>
+              ))}
+            </span>
+            <span className={styles.redLine}>
+              {Array.from("HAS COME").map((ch, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: 35, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 65,
+                    damping: 18,
+                    delay: 0.16 + i * 0.035,
+                  }}
+                  className="inline-block"
+                >
+                  {ch === " " ? "\u00A0" : ch}
+                </motion.span>
+              ))}
+            </span>
           </h2>
         </div>
       </div>

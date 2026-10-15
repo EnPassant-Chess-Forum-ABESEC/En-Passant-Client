@@ -3,31 +3,67 @@
   isolation: isolate;
   width: 100%;
   padding-top: 8.4%;
+  padding-bottom: clamp(180px, 24vh, 360px);
   overflow: hidden;
   background: #050505;
   color: #fff;
 }
 
-.heading {
+.headingContainer {
   position: absolute;
-  z-index: 1;
   top: 8.4vw;
-  left: 10.5%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .headingContainer {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .headingContainer {
+    padding: 0 44px;
+  }
+}
+
+.heading {
   margin: 0;
-  font-family: "prfaExtrabold", sans-serif;
-  font-size: clamp(48px, 7.6vw, 144px);
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: -0.035em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: pezula, sans-serif;
+  font-size: clamp(44px, 6.8vw, 96px);
+  font-weight: 700;
+  line-height: 0.82;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.heading span {
+@media (min-width: 768px) {
+  .heading {
+    letter-spacing: 0.08em;
+  }
+}
+
+.whiteLine {
   display: block;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
-.heading span + span {
-  margin-top: 0.12em;
+.redLine {
+  display: block;
+  margin-top: 8px;
   color: #9b1a1a;
+  text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
 }
 
 .board {
@@ -35,6 +71,22 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
   width: 93.75%;
   margin-left: auto;
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 55%,
+    rgba(0, 0, 0, 0.65) 75%,
+    rgba(0, 0, 0, 0.2) 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 55%,
+    rgba(0, 0, 0, 0.65) 75%,
+    rgba(0, 0, 0, 0.2) 88%,
+    transparent 100%
+  );
 }
 
 .square {
@@ -103,15 +155,37 @@
   outline-offset: -6px;
 }
 
+/* Atmospheric bottom gradient blend into EventCTA section */
+.bottomBlend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: clamp(280px, 36vh, 520px);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(5, 5, 5, 0.3) 25%,
+    rgba(5, 5, 5, 0.8) 55%,
+    #050505 80%,
+    #050505 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
 @media (max-width: 767px) {
   .section {
-    padding-top: 220px;
+    padding-top: 180px;
+    padding-bottom: 120px;
+  }
+
+  .headingContainer {
+    top: 40px;
   }
 
   .heading {
-    top: 56px;
-    left: 7%;
-    font-size: clamp(48px, 11vw, 80px);
+    font-size: clamp(38px, 9vw, 64px);
   }
 
   .board {
