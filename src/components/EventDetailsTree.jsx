@@ -566,42 +566,71 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!geometry || !canvas) return;
+    if (!canvas) return;
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
       const context = gsap.context(() => {
-        canvas.querySelectorAll("[data-tree-path]").forEach((path, index) => {
-          const edge = geometry.edges[index];
-          const length = path.getTotalLength();
+        // Text content nodes to reveal as scroll reaches them
+        const revealElements = canvas.querySelectorAll("[data-tree-reveal]");
+        revealElements.forEach((el) => {
           gsap.fromTo(
-            path,
-            { strokeDasharray: length, strokeDashoffset: length },
+            el,
             {
-              strokeDashoffset: 0,
-              ease: "none",
+              opacity: 0,
+              y: 32,
+              filter: "blur(6px)",
+            },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.8,
+              ease: "power2.out",
               scrollTrigger: {
-                trigger: canvas,
-                start: `top+=${edge.from} 82%`,
-                end: `top+=${Math.max(edge.to, edge.from + 60)} 68%`,
-                scrub: 0.45,
+                trigger: el,
+                start: "top 86%",
+                toggleActions: "play none none reverse",
                 invalidateOnRefresh: true,
               },
             },
           );
         });
+
+        // Also reveal the intro title
+        const introTitle = document.querySelector("#championship-hierarchy");
+        if (introTitle) {
+          gsap.fromTo(
+            introTitle,
+            { opacity: 0, y: 36, filter: "blur(6px)" },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.85,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: introTitle,
+                start: "top 88%",
+                toggleActions: "play none none reverse",
+                invalidateOnRefresh: true,
+              },
+            },
+          );
+        }
+
         ScrollTrigger.refresh();
       }, canvas);
       return () => context.revert();
     });
     return () => media.revert();
-  }, [geometry]);
+  }, [geometry, data]);
 
   const year = data.eventName.match(/\b20\d{2}\b/)?.[0];
 
   return (
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
-        <h2 id="championship-hierarchy" className={styles.title}>
+        <h2 className={styles.title}>
           <span className={styles.whiteLine}>The</span>
           <span className={styles.whiteLine}>Crown's </span>
           <span className={styles.redLine}>Hierarchy</span>
@@ -655,6 +684,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
               <header
                 className={styles.sectionHeading}
                 data-tree-node={`section-${index}`}
+                data-tree-reveal
               >
                 <h3>{section.title}</h3>
               </header>
@@ -668,6 +698,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
                       className={styles.bracket}
                       key={`${bracket.id}-${bracketIndex}`}
                       data-tree-node={`bracket-${index}-${bracketIndex}`}
+                      data-tree-reveal
                     >
                       <h4>{bracket.name}</h4>
                       <p className={styles.rating}>{bracket.range}</p>
@@ -680,7 +711,11 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
           ))}
         </div>
 
-        <div className={styles.prizeHeading} data-tree-node="prizes">
+        <div
+          className={styles.prizeHeading}
+          data-tree-node="prizes"
+          data-tree-reveal
+        >
           <h3>{data.prizes.label}</h3>
         </div>
         <ol className={styles.podium} aria-label="Championship prizes">
@@ -693,6 +728,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
                 className={styles.prize}
                 key={prize.id || index}
                 data-tree-node={`prize-${index}`}
+                data-tree-reveal
               >
                 <p className={styles.eyebrow}>{prize.place}</p>
                 <p className={styles.amount}>{amount}</p>

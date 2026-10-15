@@ -15,7 +15,7 @@ export default function EventHero() {
           }}
         >
           <Image
-            src="/event/event-hero-1.png"
+            src="/event/hero/event_hero_fg.webp"
             alt="ACC ABES Chess Championship '26"
             fill
             priority
