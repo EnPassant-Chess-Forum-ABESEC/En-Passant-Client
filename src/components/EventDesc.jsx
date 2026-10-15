@@ -56,7 +56,7 @@ export default function EventDesc({ initialDescription = "" }) {
     .filter(Boolean);
 
   return (
-    <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-24 md:py-36 px-6 sm:px-12 md:px-16 lg:px-24 overflow-hidden select-none">
+    <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-24 md:py-36 px-0 overflow-hidden select-none">
       {/* Subtle radial atmosphere to enrich the dark canvas */}
       <div
         className="absolute inset-0 pointer-events-none opacity-40"
@@ -66,27 +66,27 @@ export default function EventDesc({ initialDescription = "" }) {
         }}
       />
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-start text-left">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-8 md:px-11 flex flex-col items-start text-left">
         {/* Headline: MONARCH'S MANUSCRIPT */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+        <motion.h2
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: premiumEase }}
-          className="flex flex-col uppercase font-black tracking-tight"
+          transition={{ duration: 1.2, ease: premiumEase }}
+          className="flex flex-col uppercase tracking-[0.04em] md:tracking-[0.08em] leading-[0.82]"
+          style={{
+            fontFamily: "pezula, sans-serif",
+            fontSize: "clamp(44px, 6.8vw, 96px)",
+            fontWeight: 700,
+          }}
         >
-          <span
-            className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.92]"
-            style={{
-              textShadow: "0 0 35px rgba(255, 255, 255, 0.3)",
-            }}
-          >
+          <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
             MONARCH&apos;S
           </span>
-          <span className="text-[#8b1d1d] text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.92] mt-1 sm:mt-2">
+          <span className="text-[#9b1a1a] drop-shadow-[0_0_20px_rgba(155,26,26,0.4)] mt-2">
             MANUSCRIPT
           </span>
-        </motion.div>
+        </motion.h2>
 
         {/* Event Description Body */}
         <motion.div

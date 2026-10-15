@@ -159,36 +159,38 @@ export default function EventTimeFormat({
         </svg>
       </div>
 
-      <div className={styles.formatContent}>
-        <h2 id={`event-time-title-${id}`}>
-          <span>TIME</span>
-          <span>FORMAT</span>
-        </h2>
-        <div
-          className={styles.formatDetails}
-          aria-live="polite"
-          aria-busy={loading}
-        >
-          {loading ? (
-            <p className={styles.pending}>Loading time format…</p>
-          ) : control || format ? (
-            <dl>
-              {control && (
-                <div className={styles.detail}>
-                  <dt>Time control</dt>
-                  <dd className={styles.control}>{control}</dd>
-                </div>
-              )}
-              {format && (
-                <div className={styles.detail}>
-                  <dt>Format</dt>
-                  <dd className={styles.format}>{format}</dd>
-                </div>
-              )}
-            </dl>
-          ) : (
-            <p className={styles.pending}>Time format to be announced.</p>
-          )}
+      <div className={styles.contentWrapper}>
+        <div className={styles.formatContent}>
+          <h2 id={`event-time-title-${id}`}>
+            <span className={styles.whiteLine}>TIME</span>
+            <span className={styles.redLine}>FORMAT</span>
+          </h2>
+          <div
+            className={styles.formatDetails}
+            aria-live="polite"
+            aria-busy={loading}
+          >
+            {loading ? (
+              <p className={styles.pending}>Loading time format…</p>
+            ) : control || format ? (
+              <dl>
+                {control && (
+                  <div className={styles.detail}>
+                    <dt>Time control</dt>
+                    <dd className={styles.control}>{control}</dd>
+                  </div>
+                )}
+                {format && (
+                  <div className={styles.detail}>
+                    <dt>Format</dt>
+                    <dd className={styles.format}>{format}</dd>
+                  </div>
+                )}
+              </dl>
+            ) : (
+              <p className={styles.pending}>Time format to be announced.</p>
+            )}
+          </div>
         </div>
       </div>
     </section>

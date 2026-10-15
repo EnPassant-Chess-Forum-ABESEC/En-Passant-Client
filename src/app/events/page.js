@@ -29,7 +29,7 @@ async function getEvents() {
 
     const res = await fetch(`${apiUrl}/events`, {
       cache: "no-store",
-      signal: AbortSignal.timeout(1200),
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -53,8 +53,8 @@ export default async function EventsPage() {
     <div className="w-full bg-[#050505] min-h-screen text-white font-sans flex flex-col">
       <EventHero />
       <EventDesc initialDescription={currentEvent?.description || ""} />
-      <EventDetailsTree />
-      <EventTimeFormat />
+      <EventDetailsTree event={currentEvent} />
+      <EventTimeFormat event={currentEvent} />
       <EventCTA event={currentEvent} />
     </div>
   );

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const fallbackData = {
-    root: "ACC",
-    eventName: "ACC - ABES Chess Championship 2026",
+    root: "A C C",
+    eventName: "ACC — ABES Chess Championship 2026",
     description: "ABES chess championship to crown the best player of ABES.",
     sections: [
       {
@@ -11,26 +11,26 @@ export async function GET() {
         title: "Open Section",
         description: "Open Section with rating-tiered brackets",
         brackets: [
-          { id: "beginner", label: "Beginner (0 - 899)" },
-          { id: "intermediate", label: "Intermediate (900 - 1499)" },
-          { id: "advanced", label: "Advanced (1500 - 3000)" },
+          { id: "beginner", name: "Beginner", range: "0 - 899", label: "Beginner (0 - 899)" },
+          { id: "intermediate", name: "Intermediate", range: "900 - 1499", label: "Intermediate (900 - 1499)" },
+          { id: "advanced", name: "Advanced", range: "1500 - 3000", label: "Advanced (1500 - 3000)" },
         ],
       },
       {
         id: "womens",
         title: "Women's Section",
         description: "Women section for female participants",
-        brackets: [{ id: "womens-open", label: "All Ratings (0 - 3000)" }],
+        brackets: [{ id: "womens-open", name: "All Ratings", range: "0 - 3000", label: "All Ratings (0 - 3000)" }],
       },
       {
         id: "interclub",
         title: "Inter-Club",
         description: "Inter club section for different club representatives",
-        brackets: [{ id: "interclub-open", label: "All Ratings (0 - 3000)" }],
+        brackets: [{ id: "interclub-open", name: "All Ratings", range: "0 - 3000", label: "All Ratings (0 - 3000)" }],
       },
     ],
     prizes: {
-      label: "Prizes",
+      label: "Prizes & Accolades",
       items: [
         { id: "p1", place: "1st Place", reward: "₹5,000 + Trophy" },
         { id: "p2", place: "2nd Place", reward: "₹3,000 + Trophy" },
@@ -40,11 +40,13 @@ export async function GET() {
   };
 
   try {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    const apiUrl = (
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+    ).replace(/\/$/, "");
+
     const res = await fetch(`${apiUrl}/events`, {
       cache: "no-store",
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!res.ok) {
@@ -52,7 +54,7 @@ export async function GET() {
     }
 
     const data = await res.json();
-    const eventsList = data?.events || [];
+    const eventsList = Array.isArray(data?.events) ? data.events : [];
     const event =
       eventsList.find(
         (e) =>
@@ -65,17 +67,19 @@ export async function GET() {
       return NextResponse.json(fallbackData);
     }
 
-    // Map backend sections and brackets
     const formattedSections = (event.sections || []).map((sec, idx) => {
-      const sectionId = sec.name || `sec-${idx}`;
+      const sectionId = sec.id || sec.name || `sec-${idx}`;
       const title =
-        sec.name === "open"
+        sec.title ||
+        (sec.name === "open"
           ? "Open Section"
-          : sec.name === "womens"
+          : sec.name === "womens" || sec.name === "women"
             ? "Women's Section"
             : sec.name === "interclub"
               ? "Inter-Club"
-              : sec.name.charAt(0).toUpperCase() + sec.name.slice(1);
+              : sec.name
+                ? sec.name.charAt(0).toUpperCase() + sec.name.slice(1)
+                : `Section ${idx + 1}`);
 
       const rawBrackets = Array.isArray(sec.brackets) ? sec.brackets : [];
       const brackets = rawBrackets.map((brk, bIdx) => {
@@ -87,9 +91,13 @@ export async function GET() {
             : brk.name
               ? brk.name.charAt(0).toUpperCase() + brk.name.slice(1)
               : `Bracket ${bIdx + 1}`;
+        const range = brk.range || `${minR} - ${maxR}`;
+
         return {
-          id: `${sectionId}-${brk.name || bIdx}`,
-          label: `${bName} (${minR} - ${maxR})`,
+          id: brk.id || `${sectionId}-${brk.name || bIdx}`,
+          name: bName,
+          range,
+          label: `${bName} (${range})`,
         };
       });
 
@@ -101,17 +109,24 @@ export async function GET() {
       };
     });
 
+    const prizes =
+      event.prizes && event.prizes.items?.length > 0
+        ? event.prizes
+        : fallbackData.prizes;
+
     return NextResponse.json({
-      root: "ACC",
-      eventName: event.title || "ACC - ABES Chess Championship 2026",
-      description:
-        event.description ||
-        "ABES chess championship to crown the best player of ABES.",
-      sections: formattedSections,
-      prizes: fallbackData.prizes,
+      root: event.root || fallbackData.root,
+      eventName: event.title || fallbackData.eventName,
+      description: event.description || fallbackData.description,
+      sections:
+        formattedSections.length > 0
+          ? formattedSections
+          : fallbackData.sections,
+      prizes,
+      timeControl: event.timeControl || "10 + 5",
+      format: event.format || "Swiss System",
     });
-  } catch (err) {
-    console.error("API /api/event fallback triggered:", err.message);
+  } catch {
     return NextResponse.json(fallbackData);
   }
 }

@@ -74,7 +74,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(380px, 46vw, 680px);
+  width: clamp(420px, 52vw, 760px);
   aspect-ratio: 1472 / 1840;
   pointer-events: none;
   z-index: 4;
@@ -85,9 +85,9 @@
 .wreathBtm,
 .wreathTop {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: 4%;
+  width: 92%;
+  height: 92%;
   object-fit: contain;
   object-position: center;
 }
@@ -124,181 +124,71 @@
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.bracketBox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-
-/* 4 Corner L-Brackets */
-.cornerTL,
-.cornerTR,
-.cornerBL,
-.cornerBR {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cornerTL {
-  top: 0;
-  left: 0;
-  border-top: 1.5px solid #a81c1c;
-  border-left: 1.5px solid #a81c1c;
-}
-
-.cornerTR {
-  top: 0;
-  right: 0;
-  border-top: 1.5px solid #a81c1c;
-  border-right: 1.5px solid #a81c1c;
-}
-
-.cornerBL {
-  bottom: 0;
-  left: 0;
-  border-bottom: 1.5px solid #a81c1c;
-  border-left: 1.5px solid #a81c1c;
-}
-
-.cornerBR {
-  bottom: 0;
-  right: 0;
-  border-bottom: 1.5px solid #a81c1c;
-  border-right: 1.5px solid #a81c1c;
-}
-
-.bracketBox:hover .cornerTL {
-  top: -4px;
-  left: -4px;
-  width: 18px;
-  height: 18px;
-  border-color: #e62828;
-  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
-}
-
-.bracketBox:hover .cornerTR {
-  top: -4px;
-  right: -4px;
-  width: 18px;
-  height: 18px;
-  border-color: #e62828;
-  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
-}
-
-.bracketBox:hover .cornerBL {
-  bottom: -4px;
-  left: -4px;
-  width: 18px;
-  height: 18px;
-  border-color: #e62828;
-  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
-}
-
-.bracketBox:hover .cornerBR {
-  bottom: -4px;
-  right: -4px;
-  width: 18px;
-  height: 18px;
-  border-color: #e62828;
-  filter: drop-shadow(0 0 6px rgba(230, 40, 40, 0.8));
-}
-
-/* The Crimson Register Button */
-.registerBtn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 44px;
-  background: linear-gradient(180deg, #9b1a1a 0%, #751010 100%);
-  border: 1px solid rgba(255, 90, 90, 0.35);
-  color: #ffffff;
-  font-family: inherit;
-  font-size: clamp(14px, 1.2vw, 17px);
-  font-weight: 700;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow:
-    0 4px 24px rgba(155, 26, 26, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-}
-
-.registerBtn::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 220%;
-  height: 200%;
-  background: linear-gradient(
-    60deg,
-    transparent 35%,
-    rgba(255, 255, 255, 0.22) 50%,
-    transparent 65%
-  );
-  transform: translateX(-100%);
-  transition: transform 0.65s ease;
-}
-
-.registerBtn:hover {
-  background: linear-gradient(180deg, #b01e1e 0%, #851212 100%);
-  border-color: rgba(255, 120, 120, 0.6);
-  box-shadow:
-    0 6px 35px rgba(200, 30, 30, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transform: scale(1.03);
-}
-
-.registerBtn:hover::before {
-  transform: translateX(100%);
-}
-
-.registerBtn:active {
-  transform: scale(0.98);
-}
 
 /* Layer 4: The Typographic Headline (Top Right) */
-.headingContainer {
+.headingWrapper {
   position: absolute;
   top: clamp(35px, 7vh, 85px);
-  right: clamp(24px, 6vw, 110px);
-  text-align: right;
+  left: 0;
+  right: 0;
   z-index: 25;
   pointer-events: none;
   will-change: transform;
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+.headingContainer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+@media (min-width: 640px) {
+  .headingContainer {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .headingContainer {
+    padding: 0 44px;
+  }
+}
+
 .title {
   margin: 0;
-  font-family: prfaExtrabold, system-ui, -apple-system, sans-serif;
-  font-size: clamp(44px, 6.8vw, 102px);
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: -0.025em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: pezula, sans-serif;
+  font-size: clamp(44px, 6.8vw, 96px);
+  font-weight: 700;
+  line-height: 0.82;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .title {
+    letter-spacing: 0.08em;
+  }
 }
 
 .whiteLine {
   display: block;
   color: #ffffff;
-  text-shadow: 0 0 35px rgba(255, 255, 255, 0.28);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .redLine {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
   color: #9b1a1a;
-  text-shadow: 0 0 40px rgba(155, 26, 26, 0.5);
+  text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
 }
 
 /* Mobile Responsiveness */
@@ -308,16 +198,10 @@
     padding: 60px 20px;
   }
 
-  .headingContainer {
+  .headingWrapper {
     top: 36px;
-    right: 20px;
-    left: 20px;
-    text-align: right;
   }
 
-  .title {
-    font-size: clamp(38px, 12vw, 62px);
-  }
 
   .wreathContainer {
     width: clamp(300px, 85vw, 440px);
@@ -333,11 +217,6 @@
     object-position: center;
   }
 
-  .registerBtn {
-    padding: 13px 36px;
-    font-size: 14px;
-    letter-spacing: 0.22em;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

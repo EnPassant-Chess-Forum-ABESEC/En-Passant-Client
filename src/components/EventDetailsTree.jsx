@@ -49,39 +49,106 @@ const DEFAULT_TREE_DATA = {
   },
 };
 
+function formatSectionTitle(sec, index) {
+  if (sec.title && sec.title.trim()) return sec.title.trim();
+  const name = sec.name ? String(sec.name).toLowerCase().trim() : "";
+  if (name === "open") return "Open Section";
+  if (name === "womens" || name === "women") return "Women's Section";
+  if (name === "interclub") return "Inter-Club";
+  if (name) return name.charAt(0).toUpperCase() + name.slice(1);
+  return `Section ${index + 1}`;
+}
+
+function formatBracketName(brk, bracketIndex) {
+  if (brk.name && brk.name.trim()) {
+    const raw = brk.name.trim();
+    if (raw.toLowerCase() === "open") return "All Ratings";
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  }
+  return `Bracket ${bracketIndex + 1}`;
+}
+
+function formatBracketRange(brk) {
+  if (brk.range && String(brk.range).trim()) return String(brk.range).trim();
+  if (brk.minRating != null && brk.maxRating != null) {
+    return `${brk.minRating} - ${brk.maxRating}`;
+  }
+  return "All Ratings";
+}
+
+function formatRoot(event) {
+  if (event.root && String(event.root).trim()) return String(event.root).trim();
+  const title = event.title || event.eventName || "";
+  const match = title.match(/^([A-Za-z0-9]+)\s*[—–-]/);
+  if (match) {
+    return match[1].split("").join(" ");
+  }
+  return "A C C";
+}
+
 function normalizeData(json) {
-  return {
-    root: json.root || DEFAULT_TREE_DATA.root,
-    eventName: json.eventName || DEFAULT_TREE_DATA.eventName,
-    description: json.description || "",
-    sections: (Array.isArray(json.sections)
-      ? json.sections
-      : DEFAULT_TREE_DATA.sections
-    )
+  if (!json || typeof json !== "object") return DEFAULT_TREE_DATA;
+
+  const rawSections = Array.isArray(json.sections)
+    ? json.sections
+    : DEFAULT_TREE_DATA.sections;
+
+  const sections = rawSections.filter(Boolean).map((section, index) => {
+    const rawBrackets = Array.isArray(section.brackets) ? section.brackets : [];
+    const brackets = rawBrackets
       .filter(Boolean)
-      .map((section, index) => ({
-        ...section,
-        id: section.id || `section-${index}`,
-        title: section.title || "Tournament section",
-        brackets: (Array.isArray(section.brackets) ? section.brackets : [])
-          .filter(Boolean)
-          .map((bracket, bracketIndex) => {
-            const match = (bracket.label || "").match(/^(.*?)\s*\((.*?)\)$/);
-            return {
-              id: bracket.id || `bracket-${bracketIndex}`,
-              name:
-                bracket.name ||
-                (match ? match[1].trim() : bracket.label) ||
-                "All Ratings",
-              range: bracket.range || (match ? match[2].trim() : "All Ratings"),
-            };
-          }),
-      })),
+      .map((bracket, bracketIndex) => {
+        const match = (bracket.label || "").match(/^(.*?)\s*\((.*?)\)$/);
+        const name =
+          formatBracketName(bracket, bracketIndex) ||
+          (match ? match[1].trim() : bracket.label) ||
+          "All Ratings";
+        const range =
+          formatBracketRange(bracket) ||
+          (match ? match[2].trim() : "All Ratings");
+
+        return {
+          id:
+            bracket.id ||
+            `${section.name || index}-${bracket.name || bracketIndex}`,
+          name,
+          range,
+        };
+      });
+
+    return {
+      id: section.id || section.name || `section-${index}`,
+      title: formatSectionTitle(section, index),
+      description: section.description || "",
+      brackets,
+    };
+  });
+
+  const rawPrizes = json.prizes;
+  let prizesItems = [];
+  let prizesLabel = "Prizes & Accolades";
+
+  if (rawPrizes && typeof rawPrizes === "object") {
+    prizesLabel = rawPrizes.label || "Prizes & Accolades";
+    if (Array.isArray(rawPrizes.items) && rawPrizes.items.length > 0) {
+      prizesItems = rawPrizes.items.filter(Boolean);
+    } else if (Array.isArray(rawPrizes) && rawPrizes.length > 0) {
+      prizesItems = rawPrizes.filter(Boolean);
+    }
+  }
+
+  if (prizesItems.length === 0) {
+    prizesItems = DEFAULT_TREE_DATA.prizes.items;
+  }
+
+  return {
+    root: formatRoot(json),
+    eventName: json.eventName || json.title || DEFAULT_TREE_DATA.eventName,
+    description: json.description || DEFAULT_TREE_DATA.description,
+    sections: sections.length > 0 ? sections : DEFAULT_TREE_DATA.sections,
     prizes: {
-      label: json.prizes?.label || DEFAULT_TREE_DATA.prizes.label,
-      items: Array.isArray(json.prizes?.items)
-        ? json.prizes.items.filter(Boolean)
-        : DEFAULT_TREE_DATA.prizes.items,
+      label: prizesLabel,
+      items: prizesItems,
     },
   };
 }
@@ -396,33 +463,64 @@ function measureTree(canvas, data) {
       organicVine(prizes.bottom, { x: prizes.bottom.x + 8, y: forkY }, 1000),
     );
     const fork = pointOnStem(stem, forkY);
-    prizeNodes.forEach((prize, index) =>
-      connect(`prize-${index}`, fork, prize.top, 1001 + index * 43, 0.9),
-    );
+    prizeNodes.forEach((prize, index) => {
+      if (index === 2) {
+        const dx = prize.top.x - fork.x;
+        const dy = prize.top.y - fork.y;
+        const target = { x: prize.top.x, y: prize.top.y - 14, slope: 0 };
+        addStem(
+          "prize-2",
+          stemThrough([
+            fork,
+            { x: fork.x + dx * 0.38 + 10, y: fork.y + dy * 0.12 },
+            { x: fork.x + dx * 0.72 - 12, y: fork.y + dy * 0.4 },
+            { x: fork.x + dx * 0.94 + 14, y: fork.y + dy * 0.74 },
+            target,
+          ]),
+        );
+      } else {
+        connect(`prize-${index}`, fork, prize.top, 1001 + index * 43, 0.9);
+      }
+    });
   }
   return { width: bounds.width, height: bounds.height, edges, junctions };
 }
-export default function EventDetailsTree() {
-  const [data, setData] = useState(DEFAULT_TREE_DATA);
+export default function EventDetailsTree({ event: initialEvent = null }) {
+  const [data, setData] = useState(() =>
+    initialEvent ? normalizeData(initialEvent) : DEFAULT_TREE_DATA,
+  );
   const [geometry, setGeometry] = useState(null);
   const canvasRef = useRef(null);
   const lenis = useLenis();
 
   useEffect(() => {
+    if (initialEvent) {
+      setData(normalizeData(initialEvent));
+      return;
+    }
+
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 6000);
     async function load() {
       try {
-        const response = await fetch("/api/event", {
+        const apiUrl = (
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+        ).replace(/\/$/, "");
+        const response = await fetch(`${apiUrl}/events`, {
           cache: "no-store",
           signal: controller.signal,
         });
         if (!response.ok) return;
-        const json = await response.json();
-        if (!controller.signal.aborted && json && typeof json === "object")
-          setData(normalizeData(json));
+        const resData = await response.json();
+        const events = Array.isArray(resData?.events) ? resData.events : [];
+        const current =
+          events.find((e) =>
+            ["active", "in_progress", "upcoming"].includes(e.status),
+          ) || events[0];
+        if (!controller.signal.aborted && current) {
+          setData(normalizeData(current));
+        }
       } catch {
-        // The full local fallback stays visible when the backend is unavailable.
       } finally {
         clearTimeout(timeout);
       }
@@ -432,7 +530,7 @@ export default function EventDetailsTree() {
       controller.abort();
       clearTimeout(timeout);
     };
-  }, []);
+  }, [initialEvent]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -503,19 +601,11 @@ export default function EventDetailsTree() {
   return (
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
-        <div className={styles.kicker}>
-          <span /> Tournament structure
-        </div>
         <h2 id="championship-hierarchy" className={styles.title}>
-          CHAMPIONSHIP
-          <br />
-          <span>HIERARCHY.</span>
+          <span className={styles.whiteLine}>The</span>
+          <span className={styles.redLine}>Crown's </span>
+          <span className={styles.whiteLineredLine}>Hierarchy</span>
         </h2>
-        <p className={styles.introNote}>
-          ABES Chess Championship
-          <br />
-          Sections, ratings &amp; prizes
-        </p>
       </div>
 
       <div className={styles.canvas} ref={canvasRef}>
@@ -551,9 +641,6 @@ export default function EventDetailsTree() {
         )}
 
         <div className={styles.root} data-tree-node="root">
-          <p className={styles.eyebrow}>
-            ABES Chess Championship{year ? ` / ${year}` : ""}
-          </p>
           <p
             className={`${styles.monogram} ${geometry ? styles.monogramHidden : ""}`}
             data-tree-node="monogram"
@@ -569,13 +656,7 @@ export default function EventDetailsTree() {
                 className={styles.sectionHeading}
                 data-tree-node={`section-${index}`}
               >
-                <p className={styles.eyebrow}>
-                  Section / {String(index + 1).padStart(2, "0")}
-                </p>
                 <h3>{section.title}</h3>
-                {section.description && (
-                  <p className={styles.description}>{section.description}</p>
-                )}
               </header>
               {section.brackets.length > 0 && (
                 <ul
@@ -600,7 +681,6 @@ export default function EventDetailsTree() {
         </div>
 
         <div className={styles.prizeHeading} data-tree-node="prizes">
-          <p className={styles.eyebrow}>Championship honours</p>
           <h3>{data.prizes.label}</h3>
         </div>
         <ol className={styles.podium} aria-label="Championship prizes">

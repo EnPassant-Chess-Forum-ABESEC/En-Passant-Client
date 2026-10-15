@@ -327,7 +327,15 @@ body {
 @font-face {
   font-family: "pezula";
   src: url("/fonts/Pezula.ttf") format("truetype");
-  font-weight: 400;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "pezula";
+  src: url("/fonts/Pezula.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }

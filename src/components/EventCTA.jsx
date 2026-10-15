@@ -130,23 +130,18 @@ export default function EventCTA({ event = null }) {
       </div>
 
       <div ref={ctaRef} className={styles.ctaWrapper}>
-        <div className={styles.bracketBox}>
-          <span className={styles.cornerTL} aria-hidden="true" />
-          <span className={styles.cornerTR} aria-hidden="true" />
-          <span className={styles.cornerBL} aria-hidden="true" />
-          <span className={styles.cornerBR} aria-hidden="true" />
-
-          <Link href={registerHref} className={styles.registerBtn}>
-            REGISTER
-          </Link>
-        </div>
+        <Link href={registerHref} className="btn-bracket group cursor-good">
+          <div className="btn-inner">REGISTER</div>
+        </Link>
       </div>
 
-      <div ref={headingRef} className={styles.headingContainer}>
-        <h2 className={styles.title}>
-          <span className={styles.whiteLine}>THE TIME</span>
-          <span className={styles.redLine}>HAS COME</span>
-        </h2>
+      <div ref={headingRef} className={styles.headingWrapper}>
+        <div className={styles.headingContainer}>
+          <h2 className={styles.title}>
+            <span className={styles.whiteLine}>THE TIME</span>
+            <span className={styles.redLine}>HAS COME</span>
+          </h2>
+        </div>
       </div>
     </section>
   );
