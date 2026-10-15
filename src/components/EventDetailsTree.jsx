@@ -22,7 +22,7 @@ const DEFAULT_TREE_DATA = {
       brackets: [
         { id: "beginner", name: "Beginner", range: "0 - 899" },
         { id: "intermediate", name: "Intermediate", range: "900 - 1499" },
-        { id: "advanced", name: "Advanced", range: "1500 - 3000" },
+        { id: "advance", name: "Advance", range: "1500 - 3000" },
       ],
     },
     {
@@ -64,6 +64,7 @@ function formatBracketName(brk, bracketIndex) {
   if (brk.name && brk.name.trim()) {
     const raw = brk.name.trim();
     if (raw.toLowerCase() === "open") return "All Ratings";
+    if (raw.toLowerCase() === "advanced" || raw.toLowerCase() === "advance") return "Advance";
     return raw.charAt(0).toUpperCase() + raw.slice(1);
   }
   return `Bracket ${bracketIndex + 1}`;
@@ -334,31 +335,24 @@ function measureTree(canvas, data) {
       return exit;
     }
 
-    // Multiple brackets (e.g. Open Section: Beginner -> Intermediate -> Advanced):
-    // Continuous flowing botanical vine from Section heading through each bracket in order:
-    // 1. From Section heading to first bracket
-    connect(
-      `tier-${index}-0`,
-      position.bottom,
-      brackets[0].top,
-      401 + index * 31,
-      0.75,
-    );
-
-    // 2. From each bracket to the next bracket
-    for (let b = 0; b < brackets.length - 1; b++) {
+    // Multiple brackets (e.g. Open Section: Beginner, Intermediate, Advance):
+    // Cascading 3-way botanical branch directly from Section heading to each category
+    // Exactly matching the smooth, natural botanical structure of Prizes!
+    brackets.forEach((bracket, bracketIndex) => {
       connect(
-        `tier-${index}-${b + 1}`,
-        brackets[b].bottom,
-        brackets[b + 1].top,
-        501 + (index + b) * 37,
-        0.7,
+        `tier-${index}-${bracketIndex}`,
+        position.bottom,
+        bracket.top,
+        401 + index * 31 + bracketIndex * 47,
+        0.8,
       );
-    }
+    });
 
-    // 3. From last bracket to exit collector
+    // Convergence from brackets toward the central merge
     const last = brackets.at(-1);
-    const exit = { x: last.bottom.x, y: last.bottom.y + 100 };
+    const exit = { x: position.bottom.x, y: last.bottom.y + 110 };
+
+    // From lowest bracket (Advance) down into exit
     connect(
       `tier-collector-${index}`,
       last.bottom,
@@ -366,6 +360,27 @@ function measureTree(canvas, data) {
       701 + index * 41,
       0.7,
     );
+
+    // From Beginner and Intermediate downward into the exit convergence
+    if (brackets[0]) {
+      connect(
+        `tier-return-${index}-0`,
+        brackets[0].bottom,
+        { x: position.bottom.x - 24, y: exit.y - 45 },
+        601 + index,
+        0.7,
+      );
+    }
+    if (brackets[1]) {
+      connect(
+        `tier-return-${index}-1`,
+        brackets[1].bottom,
+        { x: position.bottom.x + 12, y: exit.y - 25 },
+        602 + index,
+        0.7,
+      );
+    }
+
     return exit;
   });
 
@@ -668,12 +683,12 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
               </header>
               {section.brackets.length > 0 && (
                 <ul
-                  className={styles.brackets}
+                  className={`${styles.brackets} ${section.brackets.length > 1 ? styles.bracketsCascading : ""}`}
                   aria-label={`${section.title} rating brackets`}
                 >
                   {section.brackets.map((bracket, bracketIndex) => (
                     <li
-                      className={styles.bracket}
+                      className={`${styles.bracket} ${section.brackets.length > 1 ? styles[`bracketStep${bracketIndex}`] : ""}`}
                       key={`${bracket.id}-${bracketIndex}`}
                       data-tree-node={`bracket-${index}-${bracketIndex}`}
                       data-tree-reveal

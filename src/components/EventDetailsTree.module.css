@@ -240,6 +240,51 @@
   margin-top: 130px;
   list-style: none;
 }
+.bracketsCascading {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  margin-top: 130px;
+  list-style: none;
+  gap: 0;
+}
+.bracketsCascading .bracket {
+  width: min(100%, 154px);
+  padding: 22px 6px 20px;
+}
+.bracketStep0 {
+  align-self: flex-start;
+  margin-left: 0;
+  margin-right: auto;
+  margin-top: 0;
+}
+.bracketStep1 {
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 64px;
+}
+.bracketStep2 {
+  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
+  margin-top: 64px;
+}
+@media (max-width: 820px) {
+  .bracketStep0,
+  .bracketStep1,
+  .bracketStep2 {
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 48px;
+    width: min(100%, 180px);
+  }
+  .bracketStep0 {
+    margin-top: 0;
+  }
+}
 .bracket {
   width: min(100%, 196px);
   padding: 25px 5px 23px;

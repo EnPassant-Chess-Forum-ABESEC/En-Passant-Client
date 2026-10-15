@@ -129,47 +129,73 @@ export const TREE_DECORATIONS = {
   // Each bracket transition has harmonious alternating leaves and a central bloom.
   // ==========================================================================
 
-  // Open Section: Header -> Beginner Bracket (0 - 899)
+  // Open Section: Header -> Beginner Bracket (0 - 899, left arch)
   "tier-0-0": {
-    stemColor: "stem",
-    stemWidth: 0.95,
+    stemColor: "red",
+    stemWidth: 1.0,
     elements: [
       { type: "leaf", u: 0.28, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.50, side: -1, size: 20, rot: 0.15 },
-      { type: "leaf", u: 0.72, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.52, side: -1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.74, side: -1, length: 22, bend: 0.15 },
+      { type: "leaf", u: 0.88, side: 1, length: 23, bend: -0.2 },
+      { type: "rose", color: "red", u: 0.93, side: 0, size: 23, rot: 0.1 },
     ],
   },
 
-  // Open Section: Beginner -> Intermediate Bracket (900 - 1499)
+  // Open Section: Header -> Intermediate Bracket (900 - 1499, center drop)
   "tier-0-1": {
-    stemColor: "stem",
-    stemWidth: 0.95,
+    stemColor: "white",
+    stemWidth: 1.0,
     elements: [
       { type: "leaf", u: 0.28, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.50, side: 1, size: 20, rot: -0.15 },
-      { type: "leaf", u: 0.72, side: 1, length: 21, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.52, side: 1, size: 21, rot: -0.2 },
+      { type: "leaf", u: 0.74, side: 1, length: 22, bend: -0.15 },
+      { type: "leaf", u: 0.88, side: -1, length: 23, bend: 0.2 },
+      { type: "rose", color: "white", u: 0.93, side: 0, size: 23, rot: -0.1 },
     ],
   },
 
-  // Open Section: Intermediate -> Advanced Bracket (1500 - 3000)
+  // Open Section: Header -> Advance Bracket (1500 - 3000, right arch)
   "tier-0-2": {
-    stemColor: "stem",
-    stemWidth: 0.95,
+    stemColor: "black",
+    stemWidth: 1.0,
     elements: [
       { type: "leaf", u: 0.28, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.50, side: -1, size: 20, rot: 0.15 },
-      { type: "leaf", u: 0.72, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "black", u: 0.52, side: -1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.74, side: -1, length: 22, bend: 0.15 },
+      { type: "leaf", u: 0.88, side: 1, length: 23, bend: -0.2 },
+      { type: "rose", color: "black", u: 0.93, side: 0, size: 23, rot: 0.1 },
     ],
   },
 
-  // Open Section: Advanced -> Exit Collector Vine
+  // Open Section: Advance -> Exit Collector Vine
   "tier-collector-0": {
     stemColor: "stem",
     stemWidth: 1.0,
     elements: [
-      { type: "leaf", u: 0.26, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.52, side: 1, size: 20, rot: -0.2 },
-      { type: "leaf", u: 0.76, side: 1, length: 21, bend: -0.15 },
+      { type: "leaf", u: 0.30, side: -1, length: 22, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.60, side: 1, size: 20, rot: 0.15 },
+      { type: "leaf", u: 0.82, side: 1, length: 21, bend: -0.15 },
+    ],
+  },
+
+  // Open Section: Beginner -> Exit Convergence Vine
+  "tier-return-0-0": {
+    stemColor: "stem",
+    stemWidth: 0.95,
+    elements: [
+      { type: "leaf", u: 0.35, side: 1, length: 21, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.70, side: -1, size: 19, rot: 0.2 },
+    ],
+  },
+
+  // Open Section: Intermediate -> Exit Convergence Vine
+  "tier-return-0-1": {
+    stemColor: "stem",
+    stemWidth: 0.95,
+    elements: [
+      { type: "leaf", u: 0.35, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "white", u: 0.70, side: 1, size: 19, rot: -0.2 },
     ],
   },
 
