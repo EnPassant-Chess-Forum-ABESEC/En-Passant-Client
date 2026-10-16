@@ -95,14 +95,14 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${playfair.variable} ${pirata.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${cormorant.variable}`} suppressHydrationWarning>
         <head />
-        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-hidden transition-colors duration-500">
+        <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-clip transition-colors duration-500">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <PreloaderWrapper>
               <SmoothScroll>
                 <NavbarWrapper>
                   <Navbar />
                 </NavbarWrapper>
-                <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
+                <main className="flex-1 flex flex-col overflow-x-clip relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
                   {children}
                 </main>
                 <Footer />

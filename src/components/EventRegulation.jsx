@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import ScrollStack, { ScrollStackItem } from "./ScrollStack";
 import styles from "./EventRegulation.module.css";
-
-const premiumEase = [0.16, 1, 0.3, 1];
 
 const STAGE_CODES = ["e3", "e4", "e5"];
 
@@ -207,68 +205,73 @@ export default function EventRegulation({
         </h2>
       </div>
 
-      {/* Full-width Alternating Stage Sections (Left, Right, Left) */}
-      {parsed.stages.map((stg, sIdx) => {
-        const stageCode = STAGE_CODES[sIdx] || `e${sIdx + 3}`;
+      {/* Stacking Cards Container using ReactBits ScrollStack */}
+      <div className={styles.stackOuterWrapper}>
+        <ScrollStack
+          useWindowScroll={true}
+          smoothScroll={false}
+          stackPosition="12%"
+          itemDistance={140}
+          itemStackDistance={28}
+          itemScale={0.045}
+          baseScale={0.88}
+          dimAmount={0.2}
+          tiltAmount={0}
+          rotationAmount={0}
+          holdDistance={180}
+          className={styles.stackWrapper}
+        >
+          {parsed.stages.map((stg, sIdx) => {
+            const stageCode = STAGE_CODES[sIdx] || `e${sIdx + 3}`;
+            const isNormalLayout = sIdx % 2 === 0;
 
-        // Even index (0, 2): Normal layout (Content Left, Numeral Right)
-        // Odd index (1): Reversed layout (Numeral Left, Content Right)
-        const isNormalLayout = sIdx % 2 === 0;
-
-        return (
-          <div
-            key={sIdx}
-            className={styles.stageSection}
-            id={`stage-${stageCode}`}
-          >
-          <div
-            className={`${styles.stageInner} ${
-              isNormalLayout
-                ? styles.stageLayoutNormal
-                : styles.stageLayoutReversed
-            }`}
-          >
-              {/* Content slides in from the LEFT when numeral is right (normal), from RIGHT when numeral is left (reversed) */}
-              <motion.div
-                initial={{ opacity: 0, x: isNormalLayout ? -80 : 80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.9, ease: premiumEase }}
-                className={styles.contentCol}
+            return (
+              <ScrollStackItem
+                key={sIdx}
+                itemClassName={styles.regulationCard}
               >
-                {(() => {
-                  const { upper, lower } = splitStageTitle(
-                    stg.title || `STAGE ${sIdx + 1}`
-                  );
-                  return (
-                    <h3 className={styles.stageTitle}>
-                      {upper && (
-                        <span className={styles.stageTitleUpper}>{upper}</span>
-                      )}
-                      {lower && (
-                        <span className={styles.stageTitleLower}>{lower}</span>
-                      )}
-                    </h3>
-                  );
-                })()}
+                <div
+                  className={`${styles.cardInner} ${
+                    isNormalLayout
+                      ? styles.stageLayoutNormal
+                      : styles.stageLayoutReversed
+                  }`}
+                >
+                  {/* Content Column */}
+                  <div className={styles.contentCol}>
+                    <span className={styles.stageKicker}>
+                      STAGE 0{stg.num || sIdx + 1}
+                    </span>
 
-                <p className={styles.stageBody}>{stg.body}</p>
-              </motion.div>
+                    {(() => {
+                      const { upper, lower } = splitStageTitle(
+                        stg.title || `STAGE ${sIdx + 1}`,
+                      );
+                      return (
+                        <h3 className={styles.stageTitle}>
+                          {upper && (
+                            <span className={styles.stageTitleUpper}>{upper}</span>
+                          )}
+                          {lower && (
+                            <span className={styles.stageTitleLower}>{lower}</span>
+                          )}
+                        </h3>
+                      );
+                    })()}
 
-              {/* Numeral slides in from its own side: right for normal (e3,e5), left for reversed (e4) */}
-              <motion.div
-                initial={{ opacity: 0, x: isNormalLayout ? 80 : -80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.9, delay: 0.06, ease: premiumEase }}
-                className={styles.numberCol}
-              >
-                <span className={styles.giantNumeral}>{stageCode}</span>
-              </motion.div>
-            </div>
-          </div>
-        );
-      })}
+                    <p className={styles.stageBody}>{stg.body}</p>
+                  </div>
+
+                  {/* Numeral Column */}
+                  <div className={styles.numberCol}>
+                    <span className={styles.giantNumeral}>{stageCode}</span>
+                  </div>
+                </div>
+              </ScrollStackItem>
+            );
+          })}
+        </ScrollStack>
+      </div>
 
       {/* Trailing paragraphs (if any) */}
       {parsed.paragraphs.length > 0 && (

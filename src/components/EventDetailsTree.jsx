@@ -22,7 +22,7 @@ const DEFAULT_TREE_DATA = {
       brackets: [
         { id: "beginner", name: "Beginner", range: "0 - 899" },
         { id: "intermediate", name: "Intermediate", range: "900 - 1499" },
-        { id: "advance", name: "Advance", range: "1500 - 3000" },
+        { id: "advanced", name: "Advanced", range: "1500 - 3000" },
       ],
     },
     {
@@ -64,7 +64,6 @@ function formatBracketName(brk, bracketIndex) {
   if (brk.name && brk.name.trim()) {
     const raw = brk.name.trim();
     if (raw.toLowerCase() === "open") return "All Ratings";
-    if (raw.toLowerCase() === "advanced" || raw.toLowerCase() === "advance") return "Advance";
     return raw.charAt(0).toUpperCase() + raw.slice(1);
   }
   return `Bracket ${bracketIndex + 1}`;
@@ -219,15 +218,14 @@ function pointOnStem(stem, y) {
 function organicVine(from, to, seed = 1, sway = 1) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
-  const dist = Math.hypot(dx, dy);
-  const naturalAmp = Math.max(16, Math.min(36, dist * 0.12));
-  const sine = Math.sin(seed * 2.39996);
-  const dir = sine >= 0 ? 1 : -1;
-  const bow = dir * naturalAmp * (0.65 + 0.35 * Math.abs(sine)) * sway;
+  const bow =
+    Math.sin(seed * 2.39996) *
+    Math.min(42, Math.abs(dx) * 0.12 + Math.abs(dy) * 0.045) *
+    sway;
   return stemThrough([
     from,
-    { x: from.x + dx * 0.25 + bow, y: from.y + dy * 0.32 },
-    { x: from.x + dx * 0.75 - bow * 0.6, y: from.y + dy * 0.68 },
+    { x: from.x + dx * 0.2 + bow, y: from.y + dy * 0.32 },
+    { x: from.x + dx * 0.76 - bow * 0.65, y: from.y + dy * 0.71 },
     to,
   ]);
 }
@@ -317,70 +315,73 @@ function measureTree(canvas, data) {
     if (!brackets.length) return position.bottom;
     if (brackets.length === 1) {
       const bracket = brackets[0];
-      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 100 };
+      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 90 };
       connect(
         `tier-${index}-0`,
         position.bottom,
         bracket.top,
-        401 + index * 47,
-        0.75,
+        401 + index,
+        0.9,
       );
-      connect(
-        `tier-return-${index}-0`,
-        bracket.bottom,
-        exit,
-        601 + index * 53,
-        0.7,
-      );
+      connect(`tier-return-${index}-0`, bracket.bottom, exit, 601 + index, 0.8);
       return exit;
     }
 
-    // Multiple brackets (e.g. Open Section: Beginner, Intermediate, Advance):
-    // Cascading 3-way botanical branch directly from Section heading to each category
-    // Exactly matching the smooth, natural botanical structure of Prizes!
-    brackets.forEach((bracket, bracketIndex) => {
-      connect(
-        `tier-${index}-${bracketIndex}`,
-        position.bottom,
-        bracket.top,
-        401 + index * 31 + bracketIndex * 47,
-        0.8,
-      );
-    });
-
-    // Convergence from brackets toward the central merge
-    const last = brackets.at(-1);
-    const exit = { x: position.bottom.x, y: last.bottom.y + 110 };
-
-    // From lowest bracket (Advance) down into exit
-    connect(
-      `tier-collector-${index}`,
-      last.bottom,
-      exit,
-      701 + index * 41,
-      0.7,
+    const leftX = Math.max(
+      leftMargin + 18,
+      Math.min(...brackets.map((bracket) => bracket.left)) - 30,
     );
+    const rightX = Math.min(
+      rightMargin - 18,
+      Math.max(...brackets.map((bracket) => bracket.right)) + 30,
+    );
+    const last = brackets.at(-1);
+    const supply = addStem(
+      `tier-stem-${index}`,
+      stemThrough([
+        position.bottom,
+        ...brackets.map((bracket, bracketIndex) => ({
+          x: leftX + Math.sin(bracketIndex * 1.8 + index) * 10,
+          y: bracket.top.y - 80,
+        })),
+        last.top,
+      ]),
+    );
+    brackets
+      .slice(0, -1)
+      .forEach((bracket, bracketIndex) =>
+        connect(
+          `tier-${index}-${bracketIndex}`,
+          pointOnStem(supply, bracket.top.y - 80),
+          bracket.top,
+          501 + bracketIndex,
+          0.6,
+        ),
+      );
 
-    // From Beginner and Intermediate downward into the exit convergence
-    if (brackets[0]) {
-      connect(
-        `tier-return-${index}-0`,
+    const exit = { x: position.bottom.x, y: last.bottom.y + 128 };
+    const returning = addStem(
+      `tier-collector-${index}`,
+      stemThrough([
         brackets[0].bottom,
-        { x: position.bottom.x - 24, y: exit.y - 45 },
-        601 + index,
-        0.7,
+        ...brackets.map((bracket, bracketIndex) => ({
+          x: rightX + Math.sin(bracketIndex * 1.6 + index + 0.8) * 10,
+          y: bracket.bottom.y + 64,
+        })),
+        exit,
+      ]),
+    );
+    brackets
+      .slice(1)
+      .forEach((bracket, bracketIndex) =>
+        connect(
+          `tier-return-${index}-${bracketIndex + 1}`,
+          bracket.bottom,
+          pointOnStem(returning, bracket.bottom.y + 64),
+          601 + bracketIndex,
+          0.6,
+        ),
       );
-    }
-    if (brackets[1]) {
-      connect(
-        `tier-return-${index}-1`,
-        brackets[1].bottom,
-        { x: position.bottom.x + 12, y: exit.y - 25 },
-        602 + index,
-        0.7,
-      );
-    }
-
     return exit;
   });
 
@@ -414,28 +415,19 @@ function measureTree(canvas, data) {
     } else {
       exits.forEach((exit, index) => {
         const shoulderY = lowestExit + 40;
-        const span = shoulderY - exit.y;
-        const waypoints = [exit];
-        if (span > 120) {
-          const steps = Math.min(3, Math.floor(span / 110));
-          for (let s = 1; s <= steps; s++) {
-            const fract = s / (steps + 1);
-            const swayX = Math.sin(index * 3.7 + s * 2.2) * 20;
-            waypoints.push({
-              x: exit.x + swayX,
-              y: exit.y + span * fract,
-            });
-          }
-        }
-        waypoints.push(
-          { x: exit.x + Math.sin(index * 2.1 + 0.4) * 20, y: shoulderY },
-          {
-            x: exit.x + (merge.x - exit.x) * 0.7,
-            y: shoulderY + (mergeY - shoulderY) * 0.6,
-          },
-          merge,
+
+        addStem(
+          `merge-${index}`,
+          stemThrough([
+            exit,
+            { x: exit.x + Math.sin(index * 2.1 + 0.4) * 20, y: shoulderY },
+            {
+              x: exit.x + (merge.x - exit.x) * 0.7,
+              y: shoulderY + (mergeY - shoulderY) * 0.6,
+            },
+            merge,
+          ]),
         );
-        addStem(`merge-${index}`, stemThrough(waypoints));
       });
     }
     connect("prizes-stem", merge, prizes.top, 901, 0.8);
@@ -617,17 +609,65 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
   return (
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
-        <motion.h2
-          id="championship-hierarchy"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className={styles.title}
-        >
-          <span className={styles.whiteLine}>THE CROWN&apos;S</span>
-          <span className={styles.redLine}>HIERARCHY</span>
-        </motion.h2>
+        <h2 id="championship-hierarchy" className={styles.title}>
+          <span className={styles.whiteLine}>
+            {Array.from("The").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+          <span className={styles.whiteLine}>
+            {Array.from("Crown's").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.12 + i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+          <span className={styles.redLine}>
+            {Array.from("Hierarchy").map((ch, i) => (
+              <motion.span
+                key={i}
+                initial={{ y: 35, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 65,
+                  damping: 18,
+                  delay: 0.28 + i * 0.035,
+                }}
+                className="inline-block"
+              >
+                {ch}
+              </motion.span>
+            ))}
+          </span>
+        </h2>
       </div>
 
       <div className={styles.canvas} ref={canvasRef}>
@@ -683,12 +723,12 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
               </header>
               {section.brackets.length > 0 && (
                 <ul
-                  className={`${styles.brackets} ${section.brackets.length > 1 ? styles.bracketsCascading : ""}`}
+                  className={styles.brackets}
                   aria-label={`${section.title} rating brackets`}
                 >
                   {section.brackets.map((bracket, bracketIndex) => (
                     <li
-                      className={`${styles.bracket} ${section.brackets.length > 1 ? styles[`bracketStep${bracketIndex}`] : ""}`}
+                      className={styles.bracket}
                       key={`${bracket.id}-${bracketIndex}`}
                       data-tree-node={`bracket-${index}-${bracketIndex}`}
                       data-tree-reveal

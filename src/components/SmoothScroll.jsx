@@ -16,6 +16,7 @@ function LenisController() {
 
   useEffect(() => {
     if (!lenis) return;
+    window.__lenis = lenis;
     window.scrollTo(0, 0);
     lenis.scrollTo(0, { immediate: true });
     lenis.resize();

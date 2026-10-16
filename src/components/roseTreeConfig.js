@@ -58,194 +58,192 @@ export function pickMonogramRoseColor(rand = Math.random) {
 export const TREE_DECORATIONS = {
   // ==========================================================================
   // [A] TOP SECTION VINES (Monogram -> Section Headers)
-  // Gracefully crowns headings without covering the title text.
   // ==========================================================================
 
-  // Monogram "A" -> Open Section Header (Red themed)
+  // Monogram "A" -> Open Section Header
   "section-0": {
     stemColor: "red",
     stemWidth: 1.05,
     isLetterAnchored: true,
     letterIdx: 0,
     elements: [
-      { type: "leaf", u: 0.18, side: -1, length: 25, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.32, side: 1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.36, side: -1, length: 23, bend: -0.15 },
-      { type: "leaf", u: 0.50, side: 1, length: 25, bend: 0.2 },
-      { type: "rose", color: "red", u: 0.64, side: -1, size: 22, rot: -0.25 },
-      { type: "leaf", u: 0.68, side: 1, length: 23, bend: -0.15 },
-      // Terminal crown framing above Open Section heading (clear of text)
-      { type: "leaf", u: 0.82, side: -1, length: 24, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.85, side: -1, size: 21, rot: -0.2 },
-      { type: "rose", color: "white", u: 0.86, side: 1, size: 19, rot: 0.2 },
-      { type: "leaf", u: 0.88, side: 1, length: 24, bend: -0.15 },
+      { type: "leaf", u: 0.2, side: -1, length: 26, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.35, side: -1, size: 21, rot: -0.2 },
+      { type: "leaf", u: 0.37, side: 1, length: 24, bend: -0.1 },
+      { type: "leaf", u: 0.52, side: -1, length: 26, bend: 0.2 },
+      { type: "rose", color: "red", u: 0.68, side: 1, size: 23, rot: 0.25 },
+      { type: "leaf", u: 0.7, side: 1, length: 25, bend: -0.15 },
+      { type: "leaf", u: 0.84, side: -1, length: 26, bend: 0.1 },
+      // Terminal crown at Open Section header
+      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
+      { type: "rose", color: "white", u: 0.96, side: -1, size: 20, rot: -0.35 },
+      { type: "rose", color: "red", u: 0.98, side: 0, size: 27, rot: 0.1 },
     ],
   },
 
-  // Monogram "C" (center) -> Women's Section Header (White themed with red accent)
+  // Monogram "C" (center) -> Women's Section Header
   "section-1": {
     stemColor: "white",
     stemWidth: 1.05,
     isLetterAnchored: true,
     letterIdx: 1,
     elements: [
-      { type: "leaf", u: 0.18, side: 1, length: 25, bend: -0.15 },
-      { type: "rose", color: "white", u: 0.32, side: -1, size: 21, rot: -0.2 },
-      { type: "leaf", u: 0.36, side: 1, length: 23, bend: 0.15 },
-      { type: "leaf", u: 0.50, side: -1, length: 25, bend: -0.2 },
-      { type: "rose", color: "white", u: 0.64, side: 1, size: 22, rot: 0.25 },
-      { type: "leaf", u: 0.68, side: -1, length: 23, bend: 0.15 },
-      // Terminal crown framing above Women's Section heading (clear of text)
-      { type: "leaf", u: 0.82, side: 1, length: 24, bend: -0.15 },
-      { type: "rose", color: "white", u: 0.85, side: 1, size: 21, rot: 0.2 },
-      { type: "rose", color: "red", u: 0.86, side: -1, size: 19, rot: -0.2 },
-      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.15 },
+      { type: "leaf", u: 0.19, side: 1, length: 26, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.34, side: 1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.36, side: -1, length: 24, bend: 0.1 },
+      { type: "leaf", u: 0.51, side: 1, length: 26, bend: -0.2 },
+      { type: "rose", color: "white", u: 0.67, side: -1, size: 23, rot: -0.25 },
+      { type: "leaf", u: 0.69, side: -1, length: 25, bend: 0.15 },
+      { type: "leaf", u: 0.83, side: 1, length: 26, bend: -0.1 },
+      // Terminal crown at Women's Section header
+      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
+      { type: "rose", color: "white", u: 0.96, side: 1, size: 21, rot: 0.35 },
+      { type: "rose", color: "white", u: 0.98, side: 0, size: 27, rot: -0.1 },
     ],
   },
 
-  // Monogram "C" (right) -> Inter-Club Section Header (Black themed with red accent)
+  // Monogram "C" (right) -> Inter-Club Section Header
   "section-2": {
     stemColor: "black",
     stemWidth: 1.05,
     isLetterAnchored: true,
     letterIdx: 2,
     elements: [
-      { type: "leaf", u: 0.18, side: -1, length: 25, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.32, side: 1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.36, side: -1, length: 23, bend: -0.15 },
-      { type: "leaf", u: 0.50, side: 1, length: 25, bend: 0.2 },
-      { type: "rose", color: "black", u: 0.64, side: -1, size: 22, rot: -0.25 },
-      { type: "leaf", u: 0.68, side: 1, length: 23, bend: -0.15 },
-      // Terminal crown framing above Inter-Club heading (clear of text)
-      { type: "leaf", u: 0.82, side: -1, length: 24, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.85, side: -1, size: 21, rot: -0.2 },
-      { type: "rose", color: "red", u: 0.86, side: 1, size: 19, rot: 0.2 },
-      { type: "leaf", u: 0.88, side: 1, length: 24, bend: -0.15 },
+      { type: "leaf", u: 0.19, side: -1, length: 26, bend: 0.15 },
+      { type: "rose", color: "black", u: 0.34, side: 1, size: 22, rot: 0.2 },
+      { type: "leaf", u: 0.36, side: -1, length: 24, bend: -0.1 },
+      { type: "leaf", u: 0.51, side: 1, length: 26, bend: 0.2 },
+      { type: "rose", color: "black", u: 0.67, side: -1, size: 23, rot: -0.25 },
+      { type: "leaf", u: 0.69, side: 1, length: 25, bend: -0.15 },
+      { type: "leaf", u: 0.83, side: -1, length: 26, bend: 0.1 },
+      // Terminal crown at Inter-Club Section header
+      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
+      { type: "rose", color: "black", u: 0.96, side: 1, size: 21, rot: 0.35 },
+      { type: "rose", color: "black", u: 0.98, side: 0, size: 27, rot: 0.1 },
     ],
   },
 
   // ==========================================================================
-  // [B] SECTION RATING BRACKET VINES (Continuous Serial Trellis)
-  // Each bracket transition has harmonious alternating leaves and a central bloom.
+  // [B] OPEN SECTION & RATING BRACKET ROOTS
   // ==========================================================================
 
-  // Open Section: Header -> Beginner Bracket (0 - 899, left arch)
+  // Main vertical feeder stem along Open brackets (Beginner, Intermediate, Advanced)
+  "tier-stem-0": {
+    stemColor: "stem",
+    stemWidth: 1.0,
+    elements: [
+      { type: "leaf", u: 0.18, side: -1, length: 22, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.3, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.45, side: 1, length: 21, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.58, side: -1, size: 20, rot: 0.25 },
+      { type: "leaf", u: 0.72, side: -1, length: 22, bend: 0.2 },
+      { type: "rose", color: "red", u: 0.84, side: 1, size: 20, rot: -0.15 },
+    ],
+  },
+
+  // Branch into Beginner Bracket (0 - 899)
   "tier-0-0": {
-    stemColor: "red",
-    stemWidth: 1.0,
+    stemColor: "stem",
+    stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.28, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.52, side: -1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.74, side: -1, length: 22, bend: 0.15 },
-      { type: "leaf", u: 0.88, side: 1, length: 23, bend: -0.2 },
-      { type: "rose", color: "red", u: 0.93, side: 0, size: 23, rot: 0.1 },
+      { type: "leaf", u: 0.35, side: 1, length: 20, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.55, side: -1, size: 19, rot: 0.2 },
     ],
   },
 
-  // Open Section: Header -> Intermediate Bracket (900 - 1499, center drop)
+  // Branch into Intermediate Bracket (900 - 1499)
   "tier-0-1": {
-    stemColor: "white",
-    stemWidth: 1.0,
+    stemColor: "stem",
+    stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.28, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.52, side: 1, size: 21, rot: -0.2 },
-      { type: "leaf", u: 0.74, side: 1, length: 22, bend: -0.15 },
-      { type: "leaf", u: 0.88, side: -1, length: 23, bend: 0.2 },
-      { type: "rose", color: "white", u: 0.93, side: 0, size: 23, rot: -0.1 },
+      { type: "leaf", u: 0.35, side: -1, length: 20, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.55, side: 1, size: 19, rot: -0.2 },
     ],
   },
 
-  // Open Section: Header -> Advance Bracket (1500 - 3000, right arch)
+  // Branch into Advanced Bracket (1500 - 3000)
   "tier-0-2": {
-    stemColor: "black",
-    stemWidth: 1.0,
+    stemColor: "stem",
+    stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.28, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "black", u: 0.52, side: -1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.74, side: -1, length: 22, bend: 0.15 },
-      { type: "leaf", u: 0.88, side: 1, length: 23, bend: -0.2 },
-      { type: "rose", color: "black", u: 0.93, side: 0, size: 23, rot: 0.1 },
+      { type: "leaf", u: 0.35, side: 1, length: 20, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.55, side: -1, size: 20, rot: 0.15 },
     ],
   },
 
-  // Open Section: Advance -> Exit Collector Vine
+  // Returning collector vine gathering from Open brackets
   "tier-collector-0": {
     stemColor: "stem",
     stemWidth: 1.0,
     elements: [
-      { type: "leaf", u: 0.30, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.60, side: 1, size: 20, rot: 0.15 },
-      { type: "leaf", u: 0.82, side: 1, length: 21, bend: -0.15 },
+      { type: "leaf", u: 0.22, side: 1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.36, side: 1, size: 20, rot: 0.2 },
+      { type: "leaf", u: 0.52, side: -1, length: 21, bend: -0.15 },
+      { type: "rose", color: "black", u: 0.66, side: 1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.8, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.9, side: -1, size: 20, rot: 0.15 },
     ],
   },
 
-  // Open Section: Beginner -> Exit Convergence Vine
-  "tier-return-0-0": {
-    stemColor: "stem",
-    stemWidth: 0.95,
-    elements: [
-      { type: "leaf", u: 0.35, side: 1, length: 21, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.70, side: -1, size: 19, rot: 0.2 },
-    ],
-  },
-
-  // Open Section: Intermediate -> Exit Convergence Vine
-  "tier-return-0-1": {
-    stemColor: "stem",
-    stemWidth: 0.95,
-    elements: [
-      { type: "leaf", u: 0.35, side: -1, length: 21, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.70, side: 1, size: 19, rot: -0.2 },
-    ],
-  },
-
-  // Women's Section: Header -> All Ratings Bracket (0 - 3000)
+  // Women's Section: feeder branch into bracket
   "tier-1-0": {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.28, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "white", u: 0.50, side: -1, size: 20, rot: 0.15 },
-      { type: "leaf", u: 0.72, side: -1, length: 21, bend: 0.15 },
+      { type: "leaf", u: 0.18, side: 1, length: 21, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.32, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.42, side: 1, length: 20, bend: 0.15 },
+      { type: "rose", color: "white", u: 0.58, side: 1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.72, side: -1, length: 21, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.85, side: -1, size: 20, rot: 0.15 },
     ],
   },
 
-  // Women's Section: All Ratings -> Exit Collector Vine
+  // Women's Section: return branch from bracket
   "tier-return-1-0": {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.26, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.52, side: 1, size: 20, rot: -0.2 },
-      { type: "leaf", u: 0.76, side: 1, length: 21, bend: -0.15 },
+      { type: "leaf", u: 0.2, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.35, side: 1, size: 20, rot: 0.2 },
+      { type: "leaf", u: 0.52, side: 1, length: 20, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.68, side: -1, size: 21, rot: -0.2 },
+      { type: "leaf", u: 0.82, side: -1, length: 21, bend: 0.15 },
     ],
   },
 
-  // Inter-Club Section: Header -> All Ratings Bracket (0 - 3000)
+  // Inter-Club Section: feeder branch into bracket
   "tier-2-0": {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.28, side: -1, length: 22, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.50, side: 1, size: 20, rot: -0.15 },
-      { type: "leaf", u: 0.72, side: 1, length: 21, bend: -0.15 },
+      { type: "leaf", u: 0.18, side: -1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.32, side: 1, size: 20, rot: 0.2 },
+      { type: "leaf", u: 0.42, side: -1, length: 20, bend: -0.15 },
+      { type: "rose", color: "black", u: 0.58, side: -1, size: 21, rot: -0.2 },
+      { type: "leaf", u: 0.72, side: 1, length: 21, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.85, side: 1, size: 20, rot: 0.15 },
     ],
   },
 
-  // Inter-Club Section: All Ratings -> Exit Collector Vine
+  // Inter-Club Section: return branch from bracket
   "tier-return-2-0": {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.26, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "black", u: 0.52, side: -1, size: 20, rot: 0.2 },
-      { type: "leaf", u: 0.76, side: -1, length: 21, bend: 0.15 },
+      { type: "leaf", u: 0.2, side: 1, length: 21, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.35, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.52, side: -1, length: 20, bend: 0.15 },
+      { type: "rose", color: "black", u: 0.68, side: 1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.82, side: 1, length: 21, bend: -0.15 },
     ],
   },
 
   // ==========================================================================
   // [C] SECTION ROOTS LEADING TO PRIZE MERGER
-  // Cascading gracefully downward to converge into the central prize trunk.
   // ==========================================================================
 
   // Open Section exit vine -> Prizes merger (Red dominant with white accent)
@@ -253,53 +251,55 @@ export const TREE_DECORATIONS = {
     stemColor: "red",
     stemWidth: 1.05,
     elements: [
-      { type: "leaf", u: 0.25, side: -1, length: 23, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.45, side: 1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.65, side: 1, length: 22, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.85, side: -1, size: 20, rot: -0.15 },
+      { type: "leaf", u: 0.22, side: -1, length: 23, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.38, side: 1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.55, side: -1, length: 22, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.7, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.84, side: 1, length: 22, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.92, side: 1, size: 21, rot: 0.15 },
     ],
   },
 
-  // Women's Section exit vine -> Prizes merger (White roses & red accents)
+  // Women's Section exit vine -> Prizes merger (Red & White roses)
   "merge-1": {
     stemColor: "white",
     stemWidth: 1.05,
     elements: [
-      { type: "leaf", u: 0.20, side: 1, length: 23, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.38, side: -1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.55, side: 1, length: 22, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.70, side: 1, size: 22, rot: -0.2 },
-      { type: "leaf", u: 0.84, side: -1, length: 22, bend: -0.15 },
-      { type: "rose", color: "white", u: 0.90, side: -1, size: 20, rot: 0.15 },
+      { type: "leaf", u: 0.2, side: 1, length: 23, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.36, side: -1, size: 21, rot: 0.2 },
+      { type: "leaf", u: 0.5, side: 1, length: 22, bend: 0.15 },
+      { type: "rose", color: "white", u: 0.65, side: 1, size: 22, rot: -0.2 },
+      { type: "leaf", u: 0.78, side: -1, length: 22, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.88, side: -1, size: 20, rot: 0.15 },
     ],
   },
 
-  // Inter-Club Section exit vine -> Prizes merger (Black roses & red accents)
+  // Inter-Club Section exit vine -> Prizes merger (Red & Black roses)
   "merge-2": {
     stemColor: "black",
     stemWidth: 1.05,
     elements: [
-      { type: "leaf", u: 0.20, side: -1, length: 23, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.38, side: 1, size: 21, rot: -0.2 },
-      { type: "leaf", u: 0.55, side: -1, length: 22, bend: -0.15 },
-      { type: "rose", color: "black", u: 0.70, side: -1, size: 22, rot: 0.2 },
-      { type: "leaf", u: 0.84, side: 1, length: 22, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.90, side: 1, size: 20, rot: -0.15 },
+      { type: "leaf", u: 0.2, side: -1, length: 23, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.36, side: 1, size: 21, rot: -0.2 },
+      { type: "leaf", u: 0.5, side: -1, length: 22, bend: -0.15 },
+      { type: "rose", color: "black", u: 0.65, side: -1, size: 22, rot: 0.2 },
+      { type: "leaf", u: 0.78, side: 1, length: 22, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.88, side: 1, size: 20, rot: -0.15 },
     ],
   },
 
-  // Convergence trunk into "Prizes & Accolades" heading (Delicate triad)
+  // Convergence trunk into "Prizes & Accolades" heading (Delicate triad: Red, White, Black)
   "prizes-stem": {
     stemColor: "mixed",
     stemWidth: 1.15,
     elements: [
-      { type: "leaf", u: 0.32, side: -1, length: 23, bend: 0.15 },
-      { type: "leaf", u: 0.52, side: 1, length: 24, bend: -0.15 },
-      // Arrival crown above Prizes heading (flanking, leaves text completely clear)
-      { type: "rose", color: "red", u: 0.84, side: -1, size: 21, rot: -0.25 },
-      { type: "rose", color: "white", u: 0.86, side: 1, size: 21, rot: 0.25 },
-      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.2 },
-      { type: "leaf", u: 0.90, side: 1, length: 24, bend: -0.2 },
+      { type: "leaf", u: 0.35, side: -1, length: 23, bend: 0.15 },
+      // { type: "leaf", u: 0.65, side: 1, length: 24, bend: -0.15 },
+      // Arrival crown above Prizes heading
+      { type: "leaf", u: 0.9, side: -1, length: 25, bend: 0.25 },
+      { type: "leaf", u: 0.92, side: 1, length: 25, bend: -0.25 },
+      { type: "rose", color: "red", u: 0.95, side: -1, size: 22, rot: -0.25 },
+      { type: "rose", color: "white", u: 0.97, side: 1, size: 22, rot: 0.25 },
     ],
   },
 
@@ -315,9 +315,9 @@ export const TREE_DECORATIONS = {
       { type: "leaf", u: 0.32, side: -1, length: 23, bend: 0.15 },
       { type: "rose", color: "red", u: 0.56, side: 1, size: 21, rot: 0.2 },
       { type: "leaf", u: 0.74, side: -1, length: 23, bend: -0.15 },
-      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.25 },
-      { type: "leaf", u: 0.90, side: 1, length: 24, bend: -0.25 },
-      { type: "rose", color: "red", u: 0.93, side: 0, size: 24, rot: 0.1 },
+      { type: "leaf", u: 0.93, side: -1, length: 25, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 25, bend: -0.25 },
+      { type: "rose", color: "red", u: 0.97, side: 0, size: 26, rot: 0.1 },
     ],
   },
 
@@ -329,9 +329,9 @@ export const TREE_DECORATIONS = {
       { type: "leaf", u: 0.32, side: 1, length: 23, bend: -0.15 },
       { type: "rose", color: "white", u: 0.56, side: -1, size: 21, rot: -0.2 },
       { type: "leaf", u: 0.74, side: 1, length: 23, bend: 0.15 },
-      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.25 },
-      { type: "leaf", u: 0.90, side: 1, length: 24, bend: -0.25 },
-      { type: "rose", color: "white", u: 0.93, side: 0, size: 24, rot: -0.1 },
+      { type: "leaf", u: 0.93, side: -1, length: 25, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 25, bend: -0.25 },
+      { type: "rose", color: "white", u: 0.97, side: 0, size: 26, rot: -0.1 },
     ],
   },
 
@@ -341,11 +341,11 @@ export const TREE_DECORATIONS = {
     stemWidth: 1.05,
     elements: [
       { type: "leaf", u: 0.28, side: -1, length: 23, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.50, side: -1, size: 22, rot: 0.15 },
+      { type: "rose", color: "black", u: 0.5, side: -1, size: 22, rot: 0.15 },
       { type: "leaf", u: 0.72, side: 1, length: 23, bend: -0.15 },
-      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.25 },
-      { type: "leaf", u: 0.90, side: 1, length: 24, bend: -0.25 },
-      { type: "rose", color: "black", u: 0.93, side: 0, size: 24, rot: 0.1 },
+      { type: "leaf", u: 0.93, side: -1, length: 24, bend: 0.25 },
+      { type: "leaf", u: 0.95, side: 1, length: 24, bend: -0.25 },
+      { type: "rose", color: "black", u: 0.97, side: 0, size: 25, rot: 0.1 },
     ],
   },
 };
