@@ -57,39 +57,66 @@ export default function Footer() {
     offset: ["start end", "end end"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["30%", "0%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["25%", "0%"]);
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
     <footer
       ref={containerRef}
-      className="w-full relative h-[100dvh] overflow-hidden"
+      className="w-full relative min-h-screen md:h-[100dvh] overflow-hidden"
       style={{ backgroundColor: "#080808" }}
     >
       <motion.div
         style={{ y }}
         className="w-full h-full flex flex-col relative z-0"
       >
-        <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-32 md:pt-[120px] lg:pt-[150px] pb-8">
-          <div className="flex flex-col md:flex-row items-start md:justify-between w-full mb-6 md:mb-8 gap-6 md:gap-0">
+        <div className="relative z-10 flex flex-col justify-between flex-1 max-w-7xl mx-auto w-full px-6 sm:px-10 md:px-14 lg:px-16 pt-24 sm:pt-28 md:pt-32 pb-8">
+          {/* Top Section: Brand Identity & Social Guild */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6 pb-8 border-b border-white/[0.07]">
             <div>
               <span
-                className="font-pezula font-black text-white uppercase"
+                className="font-black uppercase block select-none"
                 style={{
-                  fontSize: "clamp(28px, 4vw, 52px)",
-                  letterSpacing: "0.06em",
+                  fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                  fontSize: "clamp(28px, 4vw, 50px)",
+                  letterSpacing: "0.05em",
                   lineHeight: 1,
                 }}
               >
-                Vive L' EN<span style={{ color: "#9b1a1a" }}>PASSANT</span>
+                <span
+                  className="bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] bg-clip-text text-transparent inline-block"
+                  style={{
+                    filter:
+                      "drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(255,255,255,0.15))",
+                  }}
+                >
+                  Vive L&apos; EN
+                </span>
+                <span
+                  className="bg-gradient-to-b from-[#ff7171] via-[#ef4444] via-[#dc2626] to-[#991b1b] bg-clip-text text-transparent inline-block ml-2"
+                  style={{
+                    filter:
+                      "drop-shadow(0 4px 14px rgba(0,0,0,0.95)) drop-shadow(0 0 20px rgba(220,38,38,0.25))",
+                  }}
+                >
+                  PASSANT
+                </span>
               </span>
-              <p className="text-white/30 text-sm mt-3 font-sans tracking-widest uppercase">
+              <p
+                className="text-white/50 text-[11px] sm:text-xs mt-3 uppercase"
+                style={{
+                  fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                  letterSpacing: "0.26em",
+                  fontWeight: 600,
+                }}
+              >
                 For the game must always go on
               </p>
             </div>
 
-            <div className="flex items-center gap-5 mt-2">
+            {/* Social Guild Links */}
+            <div className="flex items-center gap-6">
               {socials.map((s) => (
                 <a
                   key={s.label}
@@ -97,7 +124,7 @@ export default function Footer() {
                   aria-label={s.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/25 hover:text-[#9b1a1a] transition-all duration-300 hover:scale-110 cursor-pointer"
+                  className="text-white/40 hover:text-[#ff7171] transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.7)] cursor-pointer"
                 >
                   {s.icon}
                 </a>
@@ -105,58 +132,66 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="hidden md:flex flex-col justify-center w-full mb-6 lg:mb-10 flex-1">
-            <div
-              className="w-10 h-[2px] mb-8"
-              style={{
-                background: "linear-gradient(to right, #9b1a1a, transparent)",
-              }}
-            />
-            <blockquote>
-              <p
-                className="font-sans italic leading-relaxed text-white/70"
-                style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
-              >
-                "The beauty of a move lies not in its appearance but in the
-                thought behind it."
-              </p>
-              <footer
-                className="font-sans text-[11px] uppercase tracking-[0.22em] mt-6"
-                style={{ color: "rgba(155,26,26,0.7)" }}
-              >
-                — Savielly Tartakower
-              </footer>
-            </blockquote>
-          </div>
+          {/* Middle Section: Grand Quote (Left) & Nav Columns (Right) in Harmonious Balance */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center my-auto py-8 sm:py-10 md:py-12 w-full">
+            {/* Left: The Grand Chess Maxim */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <blockquote>
+                <p
+                  className="italic leading-[1.6] text-slate-200"
+                  style={{
+                    fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                    fontSize: "clamp(19px, 2.2vw, 30px)",
+                    letterSpacing: "0.015em",
+                  }}
+                >
+                  &ldquo;The beauty of a move lies not in its appearance but in the
+                  thought behind it.&rdquo;
+                </p>
+                <footer
+                  className="mt-5 text-[11px] uppercase"
+                  style={{
+                    fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                    letterSpacing: "0.24em",
+                    fontWeight: 700,
+                    color: "rgba(239, 68, 68, 0.9)",
+                  }}
+                >
+                  — Savielly Tartakower
+                </footer>
+              </blockquote>
+            </div>
 
-          <div className="flex w-full justify-center md:justify-start mt-auto pb-4 lg:pl-[58%] xl:pl-[61%] 2xl:pl-[63%]">
-            <div className="flex justify-between w-full md:grid md:grid-cols-2 md:w-auto md:justify-start gap-x-4 md:gap-x-24 lg:gap-x-32 gap-y-0 lg:min-w-[500px]">
+            {/* Right: Editorial Nav Directories */}
+            <div className="lg:col-span-5 grid grid-cols-2 gap-8 sm:gap-12 w-full lg:pl-6">
               {columns.map((col) => (
                 <div key={col.heading} className="flex flex-col">
                   <h3
-                    className="font-sans font-bold text-[13px] uppercase select-none"
+                    className="uppercase select-none text-[12px] sm:text-[13px]"
                     style={{
-                      letterSpacing: "0.15em",
-                      color: "rgba(255,255,255,0.45)",
-                      borderBottom: "1px solid rgba(155,26,26,0.3)",
-                      paddingBottom: "14px",
-                      marginBottom: "24px",
+                      fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                      fontWeight: 700,
+                      letterSpacing: "0.22em",
+                      color: "rgba(255, 255, 255, 0.65)",
+                      borderBottom: "1px solid rgba(239, 68, 68, 0.35)",
+                      paddingBottom: "12px",
+                      marginBottom: "18px",
                     }}
                   >
                     {col.heading}
                   </h3>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-2.5 items-start">
                     {col.links.map((link) => (
                       <Link
                         key={link.label}
                         href={link.href}
-                        className="group flex items-center font-sans font-normal text-[18px] text-white/85 transition-all duration-300 ease-out hover:text-[#9b1a1a]"
+                        className="text-[13px] sm:text-[14px] text-white/50 hover:text-white transition-colors duration-200 py-0.5"
                         style={{
-                          lineHeight: "2.4",
-                          letterSpacing: "0.015em",
+                          fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                          fontWeight: 600,
+                          letterSpacing: "0.18em",
                         }}
                       >
-                        <span className="h-[1px] bg-[#9b1a1a] transition-all duration-300 ease-out w-0 group-hover:w-6 group-hover:mr-3" />
                         {link.label}
                       </Link>
                     ))}
@@ -166,29 +201,44 @@ export default function Footer() {
             </div>
           </div>
 
-          <div
-            className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 mt-6"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-          >
-            <span className="font-sans text-[10px] text-white/50 uppercase tracking-[0.18em] text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5">
+          {/* Bottom Section: Formal Inscription & Legal Disclaimers */}
+          <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 border-t border-white/[0.08] w-full">
+            <span
+              className="text-[11px] text-white/50 uppercase text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5"
+              style={{
+                fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                letterSpacing: "0.2em",
+                fontWeight: 600,
+              }}
+            >
               <Copyright
                 strokeWidth={2.5}
-                className="w-[11px] h-[11px] mt-px"
+                className="w-[12px] h-[12px] mt-px text-white/40"
               />{" "}
               {new Date().getFullYear()} En Passant · ABESEC
             </span>
 
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-5">
               <Link
                 href="/privacy"
-                className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+                className="text-[11px] text-white/50 hover:text-[#ff7171] uppercase transition-colors duration-200"
+                style={{
+                  fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                  letterSpacing: "0.18em",
+                  fontWeight: 600,
+                }}
               >
                 Privacy
               </Link>
               <span className="text-white/20 pointer-events-none">·</span>
               <Link
                 href="/terms"
-                className="font-sans text-[12px] text-white/50 hover:text-white/80 transition-colors duration-200"
+                className="text-[11px] text-white/50 hover:text-[#ff7171] uppercase transition-colors duration-200"
+                style={{
+                  fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                  letterSpacing: "0.18em",
+                  fontWeight: 600,
+                }}
               >
                 Terms
               </Link>

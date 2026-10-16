@@ -21,7 +21,7 @@ const pirata = Pirata_One({
 const cinzel = Cinzel({
   variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["700", "900"],
+  weight: ["400", "600", "700", "900"],
 });
 
 const cinzelDecorative = Cinzel_Decorative({

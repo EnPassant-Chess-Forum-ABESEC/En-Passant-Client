@@ -74,11 +74,11 @@ export const TREE_DECORATIONS = {
       { type: "rose", color: "red", u: 0.68, side: 1, size: 23, rot: 0.25 },
       { type: "leaf", u: 0.7, side: 1, length: 25, bend: -0.15 },
       { type: "leaf", u: 0.84, side: -1, length: 26, bend: 0.1 },
-      // Terminal crown at Open Section header
-      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
-      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
-      { type: "rose", color: "white", u: 0.96, side: -1, size: 20, rot: -0.35 },
-      { type: "rose", color: "red", u: 0.98, side: 0, size: 27, rot: 0.1 },
+      // Terminal crown framing above Open Section header (clear of text)
+      { type: "leaf", u: 0.82, side: -1, length: 24, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.85, side: -1, size: 21, rot: -0.2 },
+      { type: "rose", color: "white", u: 0.86, side: 1, size: 19, rot: 0.2 },
+      { type: "leaf", u: 0.88, side: 1, length: 24, bend: -0.15 },
     ],
   },
 
@@ -96,11 +96,11 @@ export const TREE_DECORATIONS = {
       { type: "rose", color: "white", u: 0.67, side: -1, size: 23, rot: -0.25 },
       { type: "leaf", u: 0.69, side: -1, length: 25, bend: 0.15 },
       { type: "leaf", u: 0.83, side: 1, length: 26, bend: -0.1 },
-      // Terminal crown at Women's Section header
-      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
-      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
-      { type: "rose", color: "white", u: 0.96, side: 1, size: 21, rot: 0.35 },
-      { type: "rose", color: "white", u: 0.98, side: 0, size: 27, rot: -0.1 },
+      // Terminal crown framing above Women's Section header (clear of text)
+      { type: "leaf", u: 0.82, side: 1, length: 24, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.85, side: 1, size: 21, rot: 0.2 },
+      { type: "rose", color: "red", u: 0.86, side: -1, size: 19, rot: -0.2 },
+      { type: "leaf", u: 0.88, side: -1, length: 24, bend: 0.15 },
     ],
   },
 
@@ -118,11 +118,11 @@ export const TREE_DECORATIONS = {
       { type: "rose", color: "black", u: 0.67, side: -1, size: 23, rot: -0.25 },
       { type: "leaf", u: 0.69, side: 1, length: 25, bend: -0.15 },
       { type: "leaf", u: 0.83, side: -1, length: 26, bend: 0.1 },
-      // Terminal crown at Inter-Club Section header
-      { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
-      { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
-      { type: "rose", color: "black", u: 0.96, side: 1, size: 21, rot: 0.35 },
-      { type: "rose", color: "black", u: 0.98, side: 0, size: 27, rot: 0.1 },
+      // Terminal crown framing above Inter-Club Section header (clear of text)
+      { type: "leaf", u: 0.82, side: -1, length: 24, bend: 0.15 },
+      { type: "rose", color: "black", u: 0.85, side: -1, size: 21, rot: -0.2 },
+      { type: "rose", color: "red", u: 0.86, side: 1, size: 19, rot: 0.2 },
+      { type: "leaf", u: 0.88, side: 1, length: 24, bend: -0.15 },
     ],
   },
 
@@ -193,12 +193,9 @@ export const TREE_DECORATIONS = {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.18, side: 1, length: 21, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.32, side: -1, size: 20, rot: -0.2 },
-      { type: "leaf", u: 0.42, side: 1, length: 20, bend: 0.15 },
-      { type: "rose", color: "white", u: 0.58, side: 1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.72, side: -1, length: 21, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.85, side: -1, size: 20, rot: 0.15 },
+      { type: "leaf", u: 0.25, side: 1, length: 20, bend: -0.15 },
+      { type: "rose", color: "white", u: 0.5, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.75, side: 1, length: 20, bend: 0.15 },
     ],
   },
 
@@ -207,11 +204,9 @@ export const TREE_DECORATIONS = {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.2, side: -1, length: 21, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.35, side: 1, size: 20, rot: 0.2 },
-      { type: "leaf", u: 0.52, side: 1, length: 20, bend: -0.15 },
-      { type: "rose", color: "white", u: 0.68, side: -1, size: 21, rot: -0.2 },
-      { type: "leaf", u: 0.82, side: -1, length: 21, bend: 0.15 },
+      { type: "leaf", u: 0.25, side: -1, length: 20, bend: 0.15 },
+      { type: "rose", color: "red", u: 0.5, side: 1, size: 20, rot: 0.2 },
+      { type: "leaf", u: 0.75, side: -1, length: 20, bend: -0.15 },
     ],
   },
 
@@ -220,12 +215,9 @@ export const TREE_DECORATIONS = {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.18, side: -1, length: 21, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.32, side: 1, size: 20, rot: 0.2 },
-      { type: "leaf", u: 0.42, side: -1, length: 20, bend: -0.15 },
-      { type: "rose", color: "black", u: 0.58, side: -1, size: 21, rot: -0.2 },
-      { type: "leaf", u: 0.72, side: 1, length: 21, bend: 0.15 },
-      { type: "rose", color: "red", u: 0.85, side: 1, size: 20, rot: 0.15 },
+      { type: "leaf", u: 0.25, side: -1, length: 20, bend: 0.15 },
+      { type: "rose", color: "black", u: 0.5, side: 1, size: 20, rot: 0.2 },
+      { type: "leaf", u: 0.75, side: -1, length: 20, bend: -0.15 },
     ],
   },
 
@@ -234,11 +226,9 @@ export const TREE_DECORATIONS = {
     stemColor: "stem",
     stemWidth: 0.95,
     elements: [
-      { type: "leaf", u: 0.2, side: 1, length: 21, bend: -0.15 },
-      { type: "rose", color: "red", u: 0.35, side: -1, size: 20, rot: -0.2 },
-      { type: "leaf", u: 0.52, side: -1, length: 20, bend: 0.15 },
-      { type: "rose", color: "black", u: 0.68, side: 1, size: 21, rot: 0.2 },
-      { type: "leaf", u: 0.82, side: 1, length: 21, bend: -0.15 },
+      { type: "leaf", u: 0.25, side: 1, length: 20, bend: -0.15 },
+      { type: "rose", color: "red", u: 0.5, side: -1, size: 20, rot: -0.2 },
+      { type: "leaf", u: 0.75, side: 1, length: 20, bend: 0.15 },
     ],
   },
 
@@ -294,12 +284,12 @@ export const TREE_DECORATIONS = {
     stemWidth: 1.15,
     elements: [
       { type: "leaf", u: 0.35, side: -1, length: 23, bend: 0.15 },
-      // { type: "leaf", u: 0.65, side: 1, length: 24, bend: -0.15 },
-      // Arrival crown above Prizes heading
-      { type: "leaf", u: 0.9, side: -1, length: 25, bend: 0.25 },
-      { type: "leaf", u: 0.92, side: 1, length: 25, bend: -0.25 },
-      { type: "rose", color: "red", u: 0.95, side: -1, size: 22, rot: -0.25 },
-      { type: "rose", color: "white", u: 0.97, side: 1, size: 22, rot: 0.25 },
+      { type: "leaf", u: 0.52, side: 1, length: 24, bend: -0.15 },
+      // Arrival crown floating gracefully above Prizes heading
+      { type: "rose", color: "red", u: 0.65, side: -1, size: 20, rot: -0.25 },
+      { type: "rose", color: "white", u: 0.68, side: 1, size: 20, rot: 0.25 },
+      { type: "leaf", u: 0.71, side: -1, length: 22, bend: 0.2 },
+      { type: "leaf", u: 0.72, side: 1, length: 22, bend: -0.2 },
     ],
   },
 

@@ -236,12 +236,25 @@ function measureTree(canvas, data) {
   const positions = new Map();
   canvas.querySelectorAll("[data-tree-node]").forEach((element) => {
     const rect = element.getBoundingClientRect();
-    const x = rect.left - bounds.left + rect.width / 2;
+    const style = window.getComputedStyle(element);
+    let ty = 0;
+    let tx = 0;
+    if (style.transform && style.transform !== "none") {
+      try {
+        const matrix = new DOMMatrix(style.transform);
+        tx = matrix.m41;
+        ty = matrix.m42;
+      } catch {}
+    }
+    const left = rect.left - bounds.left - tx;
+    const topY = rect.top - bounds.top - ty;
+    const bottomY = rect.bottom - bounds.top - ty;
+    const x = left + rect.width / 2;
     positions.set(element.dataset.treeNode, {
-      left: rect.left - bounds.left,
-      right: rect.right - bounds.left,
-      top: { x, y: rect.top - bounds.top },
-      bottom: { x, y: rect.bottom - bounds.top },
+      left,
+      right: left + rect.width,
+      top: { x, y: topY },
+      bottom: { x, y: bottomY },
     });
   });
   const edges = [];
@@ -300,7 +313,9 @@ function measureTree(canvas, data) {
       const spread =
         sections.length === 1 ? 0 : (index / (sections.length - 1) - 0.5) * 330;
       const origin = { x: monoCenter + spread, y: monoBottom - 6 };
-      connect(`section-${index}`, origin, position.top, 301 + index * 41, 1.1);
+      const isCenter = sections.length > 1 && Math.abs(spread) < 1;
+      const sway = isCenter ? 0.2 : 0.45;
+      connect(`section-${index}`, origin, position.top, 301 + index * 41, sway);
     });
   } else {
     connect("root-prizes", root.bottom, prizes.top, 105, 0.8);
@@ -315,15 +330,15 @@ function measureTree(canvas, data) {
     if (!brackets.length) return position.bottom;
     if (brackets.length === 1) {
       const bracket = brackets[0];
-      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 90 };
+      const exit = { x: bracket.bottom.x, y: bracket.bottom.y + 60 };
       connect(
         `tier-${index}-0`,
         position.bottom,
         bracket.top,
         401 + index,
-        0.9,
+        0.25,
       );
-      connect(`tier-return-${index}-0`, bracket.bottom, exit, 601 + index, 0.8);
+      connect(`tier-return-${index}-0`, bracket.bottom, exit, 601 + index, 0.3);
       return exit;
     }
 
@@ -341,8 +356,8 @@ function measureTree(canvas, data) {
       stemThrough([
         position.bottom,
         ...brackets.map((bracket, bracketIndex) => ({
-          x: leftX + Math.sin(bracketIndex * 1.8 + index) * 10,
-          y: bracket.top.y - 80,
+          x: leftX + Math.sin(bracketIndex * 1.8 + index) * 8,
+          y: bracket.top.y - 40,
         })),
         last.top,
       ]),
@@ -352,21 +367,21 @@ function measureTree(canvas, data) {
       .forEach((bracket, bracketIndex) =>
         connect(
           `tier-${index}-${bracketIndex}`,
-          pointOnStem(supply, bracket.top.y - 80),
+          pointOnStem(supply, bracket.top.y - 40),
           bracket.top,
           501 + bracketIndex,
-          0.6,
+          0.5,
         ),
       );
 
-    const exit = { x: position.bottom.x, y: last.bottom.y + 128 };
+    const exit = { x: position.bottom.x, y: last.bottom.y + 60 };
     const returning = addStem(
       `tier-collector-${index}`,
       stemThrough([
         brackets[0].bottom,
         ...brackets.map((bracket, bracketIndex) => ({
-          x: rightX + Math.sin(bracketIndex * 1.6 + index + 0.8) * 10,
-          y: bracket.bottom.y + 64,
+          x: rightX + Math.sin(bracketIndex * 1.6 + index + 0.8) * 8,
+          y: bracket.bottom.y + 36,
         })),
         exit,
       ]),
@@ -377,9 +392,9 @@ function measureTree(canvas, data) {
         connect(
           `tier-return-${index}-${bracketIndex + 1}`,
           bracket.bottom,
-          pointOnStem(returning, bracket.bottom.y + 64),
+          pointOnStem(returning, bracket.bottom.y + 36),
           601 + bracketIndex,
-          0.6,
+          0.5,
         ),
       );
     return exit;
@@ -387,7 +402,7 @@ function measureTree(canvas, data) {
 
   if (exits.length) {
     const lowestExit = Math.max(...exits.map((point) => point.y));
-    const mergeY = lowestExit + (prizes.top.y - lowestExit) * 0.58;
+    const mergeY = lowestExit + (prizes.top.y - lowestExit) * 0.52;
     const merge = { x: mobile ? rightMargin : prizes.top.x, y: mergeY };
     if (mobile) {
       const returning = addStem(
@@ -396,7 +411,7 @@ function measureTree(canvas, data) {
           exits[0],
           ...exits.map((exit, index) => ({
             x: rightMargin - Math.sin(index * 1.5) * 6,
-            y: exit.y + 66,
+            y: exit.y + 40,
           })),
           merge,
         ]),
@@ -407,20 +422,20 @@ function measureTree(canvas, data) {
           connect(
             `merge-${index + 1}`,
             exit,
-            pointOnStem(returning, exit.y + 66),
+            pointOnStem(returning, exit.y + 40),
             801 + index,
-            0.7,
+            0.5,
           ),
         );
     } else {
       exits.forEach((exit, index) => {
-        const shoulderY = lowestExit + 40;
+        const shoulderY = lowestExit + 24;
 
         addStem(
           `merge-${index}`,
           stemThrough([
             exit,
-            { x: exit.x + Math.sin(index * 2.1 + 0.4) * 20, y: shoulderY },
+            { x: exit.x + Math.sin(index * 2.1 + 0.4) * 16, y: shoulderY },
             {
               x: exit.x + (merge.x - exit.x) * 0.7,
               y: shoulderY + (mergeY - shoulderY) * 0.6,
@@ -430,7 +445,7 @@ function measureTree(canvas, data) {
         );
       });
     }
-    connect("prizes-stem", merge, prizes.top, 901, 0.8);
+    connect("prizes-stem", merge, prizes.top, 901, 0.35);
   }
 
   const prizeNodes = data.prizes.items
@@ -443,45 +458,29 @@ function measureTree(canvas, data) {
         prizes.bottom,
         ...prizeNodes.map((prize, index) => ({
           x: leftMargin + Math.sin(index * 1.7 + 0.4) * 6,
-          y: prize.top.y - 80,
+          y: prize.top.y - 40,
         })),
       ]),
     );
     prizeNodes.forEach((prize, index) =>
       connect(
         `prize-${index}`,
-        pointOnStem(stem, prize.top.y - 80),
+        pointOnStem(stem, prize.top.y - 40),
         prize.top,
         1001 + index,
-        0.7,
+        0.5,
       ),
     );
   } else if (prizeNodes.length) {
     const forkY =
-      prizes.bottom.y + (prizeNodes[0].top.y - prizes.bottom.y) * 0.28;
+      prizes.bottom.y + (prizeNodes[0].top.y - prizes.bottom.y) * 0.35;
     const stem = addStem(
       "podium-stem",
-      organicVine(prizes.bottom, { x: prizes.bottom.x + 8, y: forkY }, 1000),
+      organicVine(prizes.bottom, { x: prizes.bottom.x, y: forkY }, 1000, 0.2),
     );
     const fork = pointOnStem(stem, forkY);
     prizeNodes.forEach((prize, index) => {
-      if (index === 2) {
-        const dx = prize.top.x - fork.x;
-        const dy = prize.top.y - fork.y;
-        const target = { x: prize.top.x, y: prize.top.y - 14, slope: 0 };
-        addStem(
-          "prize-2",
-          stemThrough([
-            fork,
-            { x: fork.x + dx * 0.38 + 10, y: fork.y + dy * 0.12 },
-            { x: fork.x + dx * 0.72 - 12, y: fork.y + dy * 0.4 },
-            { x: fork.x + dx * 0.94 + 14, y: fork.y + dy * 0.74 },
-            target,
-          ]),
-        );
-      } else {
-        connect(`prize-${index}`, fork, prize.top, 1001 + index * 43, 0.9);
-      }
+      connect(`prize-${index}`, fork, prize.top, 1001 + index * 43, 0.55);
     });
   }
   return { width: bounds.width, height: bounds.height, edges, junctions };
