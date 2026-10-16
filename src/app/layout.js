@@ -67,11 +67,22 @@ import { Analytics } from "@vercel/analytics/react";
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <html
+        lang="en"
+        className={`${inter.variable} ${playfair.variable}`}
+        suppressHydrationWarning
+      >
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossOrigin="anonymous"
+          />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap"
+            rel="stylesheet"
+          />
         </head>
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-hidden transition-colors duration-500">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
