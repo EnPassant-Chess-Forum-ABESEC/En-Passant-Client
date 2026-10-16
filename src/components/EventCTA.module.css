@@ -154,6 +154,12 @@
   transform: translateY(-2px) scale(1.02);
 }
 
+.redBracketVineBtn:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
 .redBracketVineBtn:active {
   transform: translateY(0) scale(0.99);
 }

@@ -4,7 +4,7 @@
   --tree-muted: #a3a3a3;
   position: relative;
   width: 100%;
-  padding: 140px 0 100px;
+  padding: clamp(96px, 12vh, 144px) 0 clamp(80px, 10vh, 128px);
   background: var(--tree-background);
   color: #f3f0eb;
 }
@@ -119,7 +119,7 @@
 .root {
   width: min(100%, 880px);
   margin: 0 auto;
-  padding: 36px 12px 0;
+  padding: 32px 16px 0;
   text-align: center;
 }
 .eyebrow {
@@ -140,10 +140,10 @@
   user-select: none;
 }
 .rootCaption {
-  max-width: 340px;
+  max-width: 360px;
   margin: 18px auto 0;
-  font-size: 12px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.65;
   color: var(--tree-muted);
   min-height: 3em;
 }
@@ -206,10 +206,10 @@
   text-wrap: balance;
 }
 .description {
-  max-width: 235px;
+  max-width: 260px;
   margin: 20px auto 0;
-  font-size: 12px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.65;
   color: var(--tree-muted);
 }
 .brackets {
@@ -222,7 +222,7 @@
 }
 .bracket {
   width: min(100%, 196px);
-  padding: 25px 5px 23px;
+  padding: 24px 8px;
   text-align: center;
 }
 .bracket h4 {
@@ -245,7 +245,9 @@
   display: block;
   margin-top: 10px;
   color: var(--tree-muted);
-  font-size: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
 }
 
 .prizeHeading {
@@ -273,7 +275,7 @@
 }
 .prize {
   min-width: 0;
-  padding: 34px 8px 32px;
+  padding: 32px 8px;
   text-align: center;
 }
 .prize:nth-child(1) {
@@ -307,8 +309,9 @@
   justify-content: center;
   gap: 16px;
   margin-top: 160px;
-  color: #85807a;
-  font-size: 9px;
+  color: #a3a3a3;
+  font-size: 10px;
+  letter-spacing: 0.2em;
 }
 .endMark span {
   width: 64px;
@@ -347,11 +350,11 @@
     font-size: clamp(90px, 20vw, 140px);
   }
   .root .eyebrow {
-    font-size: 8px;
+    font-size: 10px;
     letter-spacing: 0.14em;
   }
   .rootCaption {
-    max-width: 230px;
+    max-width: 260px;
   }
   .divisions {
     grid-template-columns: 1fr;
@@ -369,7 +372,7 @@
     padding: 28px 0 22px;
   }
   .description {
-    font-size: 12px;
+    font-size: 13px;
   }
   .brackets {
     margin-top: 132px;

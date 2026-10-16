@@ -234,11 +234,11 @@ export default function EventHero() {
           transition={{ delay: 1.4, duration: 1 }}
           className="flex flex-col items-center gap-2 cursor-default pointer-events-auto group"
         >
-          <span className="text-[12px] uppercase tracking-[0.2em] text-white/40 font-bold ml-[0.2em] group-hover:text-white transition-colors duration-300">
+          <span className="text-[12px] uppercase tracking-[0.2em] text-white/60 font-bold ml-[0.2em] group-hover:text-white transition-colors duration-300">
             Scroll
           </span>
           <ChevronDown
-            className="w-4 h-4 text-white/40 animate-bounce group-hover:text-white transition-colors duration-300"
+            className="w-4 h-4 text-white/60 animate-bounce group-hover:text-white transition-colors duration-300"
             style={{ animationDuration: "1.5s" }}
           />
         </motion.div>

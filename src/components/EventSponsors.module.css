@@ -166,7 +166,7 @@
 }
 
 .sponsor:focus-visible {
-  outline: 3px solid #9b1a1a;
+  outline: 3px solid #ef4444;
   outline-offset: -6px;
 }
 

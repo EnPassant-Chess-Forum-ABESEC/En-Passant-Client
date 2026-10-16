@@ -99,7 +99,7 @@ export default function EventDesc({ initialDescription = "" }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 1, delay: 0.15, ease: premiumEase }}
-          className="mt-8 sm:mt-10 md:mt-14 space-y-6 max-w-4xl"
+          className="mt-8 sm:mt-10 md:mt-14 space-y-6 max-w-3xl"
         >
           {loading && !description ? (
             <div className="space-y-4 max-w-3xl animate-pulse">
@@ -111,7 +111,7 @@ export default function EventDesc({ initialDescription = "" }) {
             paragraphs.map((para, idx) => (
               <p
                 key={idx}
-                className="text-base sm:text-lg md:text-[20px] text-slate-200 font-normal leading-relaxed md:leading-[1.85] tracking-[0.015em]"
+                className="text-base sm:text-lg md:text-[20px] text-slate-200 font-normal leading-relaxed md:leading-[1.7] tracking-[0.015em]"
                 style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
               >
                 {para}

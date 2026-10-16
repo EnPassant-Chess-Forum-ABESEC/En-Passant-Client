@@ -43,9 +43,9 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: clamp(100px, 14vh, 180px) clamp(24px, 5vw, 80px) clamp(50px, 7vh, 90px);
+  padding: clamp(96px, 12vh, 160px) clamp(24px, 4vw, 44px) clamp(48px, 6vh, 80px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -112,7 +112,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: clamp(16px, 1.25vw, 20px);
   font-weight: 400;
-  line-height: 1.85;
+  line-height: 1.7;
   color: #cbd5e1;
   letter-spacing: 0.015em;
   max-width: 720px;
@@ -124,7 +124,7 @@
 .stackOuterWrapper {
   position: relative;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1400px;
   margin: 0 auto;
   overflow: visible;
 }
@@ -256,7 +256,7 @@
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-size: clamp(16px, 1.25vw, 20px);
   font-weight: 400;
-  line-height: 1.85;
+  line-height: 1.7;
   color: #cbd5e1;
   letter-spacing: 0.015em;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
@@ -314,9 +314,9 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: clamp(60px, 8vh, 120px) clamp(24px, 5vw, 80px);
+  padding: clamp(48px, 6vh, 80px) clamp(24px, 4vw, 44px);
 }
 
 /* Mobile & Tablet */
@@ -333,7 +333,7 @@
 
   .cardInner {
     flex-direction: column-reverse !important;
-    gap: 20px;
+    gap: 16px;
     align-items: flex-start;
     height: auto;
     padding: 24px 0;
