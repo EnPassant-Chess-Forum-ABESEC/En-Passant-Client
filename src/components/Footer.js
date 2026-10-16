@@ -1,11 +1,14 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
 import { SiChessdotcom } from "react-icons/si";
-import { Copyright } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { Copyright, ArrowUp } from "lucide-react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import ChessSilhouetteBackground from "@/components/ui/ChessSilhouetteBackground";
+import FloatingDustParticles from "@/components/ui/FloatingDustParticles";
 
 const columns = [
   {
@@ -29,182 +32,415 @@ const socials = [
   {
     label: "WhatsApp",
     href: "https://chat.whatsapp.com/IoiMk9ru9CpEew7dHJkHve",
-    icon: <FaWhatsapp size={20} />,
+    icon: <FaWhatsapp size={18} />,
   },
   {
     label: "Chess.com",
     href: "https://www.chess.com/club/en-passant-abesec",
-    icon: <SiChessdotcom size={20} />,
+    icon: <SiChessdotcom size={18} />,
   },
   {
     label: "Instagram",
     href: "https://www.instagram.com/enpassant.abesec/",
-    icon: <FaInstagram size={20} />,
+    icon: <FaInstagram size={18} />,
   },
   {
     label: "Discord",
     href: "https://discord.gg/WDF4UXrXC",
-    icon: <FaDiscord size={20} />,
+    icon: <FaDiscord size={18} />,
   },
 ];
 
 export default function Footer() {
   const pathname = usePathname();
-  const containerRef = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
+  const footerRef = useRef(null);
 
+  // Parallax Scroll Tracking: target is the footer, tracking as it enters and leaves viewport
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: footerRef,
     offset: ["start end", "end end"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["25%", "0%"]);
+  // Parallax Layer Transforms (coming in & going out based on scroll):
+  // 1. Content Translation & Smooth Fade In/Out with scroll
+  const yContent = useTransform(scrollYProgress, [0, 1], ["40px", "0px"]);
+  const opacityContent = useTransform(scrollYProgress, [0, 0.45, 1], [0.35, 0.95, 1]);
+  const scaleContent = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
+
+  // 2. Chess Silhouettes: Deep background parallax (moves with scroll from 18% down to -3%)
+  const ySilhouettes = useTransform(scrollYProgress, [0, 1], ["18%", "-3%"]);
+  const opacitySilhouettes = useTransform(scrollYProgress, [0, 0.5, 1], [0.2, 0.75, 1]);
+
+  // 3. Ambient Crimson Glow Parallax
+  const yGlow = useTransform(scrollYProgress, [0, 1], ["14%", "0%"]);
+  const scaleGlow = useTransform(scrollYProgress, [0, 1], [0.88, 1.08]);
+
+  // 4. Atmospheric Transition Fade Overlay at top of footer
+  const fadeOpacity = useTransform(scrollYProgress, [0, 0.35, 1], [0.65, 0.95, 1]);
+
+  const contentStyle = shouldReduceMotion
+    ? {}
+    : {
+        y: yContent,
+        opacity: opacityContent,
+        scale: scaleContent,
+      };
+
+  const silhouettesStyle = shouldReduceMotion
+    ? {}
+    : {
+        y: ySilhouettes,
+        opacity: opacitySilhouettes,
+      };
+
+  const glowStyle = shouldReduceMotion
+    ? {}
+    : {
+        y: yGlow,
+        scale: scaleGlow,
+      };
+
+  const fadeStyle = shouldReduceMotion
+    ? {}
+    : {
+        opacity: fadeOpacity,
+      };
+
+  // Soft cursor-following spotlight tracking (React Bits / Aceternity style)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    if (!footerRef.current) return;
+    const rect = footerRef.current.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  // Scroll into view staggered blur-to-sharp animation variants (Magic UI BlurFade pattern)
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.1,
+        delayChildren: shouldReduceMotion ? 0 : 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: shouldReduceMotion
+      ? { opacity: 0 }
+      : {
+          opacity: 0,
+          y: 18,
+          filter: "blur(6px)",
+        },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.55,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
     <footer
-      ref={containerRef}
-      className="w-full relative min-h-screen md:h-[100dvh] overflow-hidden"
-      style={{ backgroundColor: "#080808" }}
+      ref={footerRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full relative z-20 bg-[#050505] text-[#f1f5f9] select-none"
+      aria-label="Site Footer"
     >
+      {/* 
+        === SEAMLESS FADE-IN / FADE-OUT TRANSITION ZONE === 
+        Ensures the preceding website page dissolves gracefully into the footer
+        with zero sharp cuts or hard lines.
+      */}
+      {/* 1. Upward bleed overlay: dissolves page content above footer into #050505 */}
       <motion.div
-        style={{ y }}
-        className="w-full h-full flex flex-col relative z-0"
+        style={fadeStyle}
+        className="absolute -top-28 sm:-top-36 md:-top-48 inset-x-0 h-28 sm:h-36 md:h-48 bg-gradient-to-t from-[#050505] via-[#050505]/85 via-50% to-transparent pointer-events-none z-30"
+        aria-hidden="true"
+      />
+
+      {/* 2. Atmospheric Crimson Mist bridging the page and footer boundary */}
+      <div
+        className="absolute -top-16 sm:-top-24 inset-x-0 h-28 sm:h-40 bg-[radial-gradient(ellipse_75%_55%_at_50%_100%,rgba(155,26,26,0.06),transparent_75%)] pointer-events-none z-25"
+        aria-hidden="true"
+      />
+
+      {/* 3. Downward feathering overlay: smoothly introduces footer atmosphere */}
+      <motion.div
+        style={fadeStyle}
+        className="absolute top-0 inset-x-0 h-24 sm:h-36 md:h-48 bg-gradient-to-b from-[#050505] via-[#050505]/90 via-40% to-transparent pointer-events-none z-20"
+        aria-hidden="true"
+      />
+
+      {/* Clipped background elements container (ensures no horizontal overflow on mobile) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
+        {/* Film-grain / Noise Texture overlay for cinematic tangible depth */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.025] z-[1]"
+          aria-hidden="true"
+        >
+          <filter id="footer-grain">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.8"
+              numOctaves="3"
+              stitchTiles="stitch"
+            />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#footer-grain)" />
+        </svg>
+
+        {/* Atmospheric Chess Piece Silhouettes with Parallax Rise */}
+        <motion.div
+          style={silhouettesStyle}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        >
+          <ChessSilhouetteBackground />
+        </motion.div>
+
+        {/* Tiny Floating Dust Particles / Embers drifting upward slowly */}
+        <FloatingDustParticles />
+
+        {/* Soft Crimson Radial Glow Behind Title Area with Parallax */}
+        <motion.div
+          style={glowStyle}
+          className="absolute top-10 left-4 sm:left-12 w-[340px] sm:w-[480px] h-[340px] sm:h-[480px] rounded-full pointer-events-none z-0"
+        >
+          <div
+            className="w-full h-full rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(155, 26, 26, 0.08) 0%, rgba(155, 26, 26, 0.02) 45%, transparent 70%)",
+            }}
+          />
+        </motion.div>
+
+        {/* Soft Vignette so edges fall off seamlessly into pure black */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[1]"
+          style={{
+            background:
+              "radial-gradient(ellipse 95% 85% at 50% 50%, transparent 40%, rgba(5, 5, 5, 0.75) 85%, #050505 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Soft Cursor-Following Spotlight Overlay (React Bits / Aceternity style) */}
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-700 ease-out z-[1]"
+          style={{
+            opacity: isHovered && !shouldReduceMotion ? 1 : 0,
+            background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(155, 26, 26, 0.045), transparent 75%)`,
+          }}
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Main Content Container with Scroll Parallax (coming in and going out with scroll) */}
+      <motion.div
+        style={contentStyle}
+        className="relative z-10 w-full"
       >
-        <div className="relative z-10 flex flex-col justify-between flex-1 max-w-7xl mx-auto w-full px-6 sm:px-10 md:px-14 lg:px-16 pt-24 sm:pt-28 md:pt-32 pb-8">
-          {/* Top Section: Brand Identity & Social Guild */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6 pb-8 border-b border-white/[0.07]">
-            <div>
-              <span
-                className="font-black uppercase block select-none"
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="max-w-7xl mx-auto w-full px-6 md:px-10 pt-20 sm:pt-24 lg:pt-28 pb-12 sm:pb-14"
+        >
+          {/* 12-Column Desktop Grid / Single-Column Mobile Stack */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start w-full">
+            {/* Left Column (Brand, Tagline, Socials, Quote) - ~60% Width */}
+            <motion.div
+              variants={itemVariants}
+              className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left"
+            >
+              {/* Brand Title: VIVE L' EN PASSANT */}
+              <h2
+                className="font-black uppercase tracking-[0.04em] leading-[1.05] select-none"
                 style={{
                   fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                  fontSize: "clamp(28px, 4vw, 50px)",
-                  letterSpacing: "0.05em",
-                  lineHeight: 1,
+                  fontSize: "clamp(30px, 4.2vw, 54px)",
                 }}
               >
                 <span
-                  className="bg-gradient-to-b from-[#ffffff] via-[#e2e8f0] to-[#94a3b8] bg-clip-text text-transparent inline-block"
                   style={{
-                    filter:
-                      "drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(255,255,255,0.15))",
+                    background:
+                      "linear-gradient(180deg, #ffffff 0%, #e2e8f0 45%, #94a3b8 80%, #64748b 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    filter: "drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9))",
                   }}
+                  className="inline-block"
                 >
                   Vive L&apos; EN
-                </span>
-                <span
-                  className="bg-gradient-to-b from-[#ff7171] via-[#ef4444] via-[#dc2626] to-[#991b1b] bg-clip-text text-transparent inline-block ml-2"
-                  style={{
-                    filter:
-                      "drop-shadow(0 4px 14px rgba(0,0,0,0.95)) drop-shadow(0 0 20px rgba(220,38,38,0.25))",
+                </span>{" "}
+                {/* PASSANT with gentle breathing ambient crimson glow */}
+                <motion.span
+                  animate={
+                    shouldReduceMotion
+                      ? {}
+                      : {
+                          filter: [
+                            "drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(220, 38, 38, 0.2))",
+                            "drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 24px rgba(220, 38, 38, 0.38))",
+                            "drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(220, 38, 38, 0.2))",
+                          ],
+                        }
+                  }
+                  transition={{
+                    duration: 5,
+                    ease: "easeInOut",
+                    repeat: Infinity,
                   }}
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #ff7171 0%, #ef4444 25%, #dc2626 50%, #991b1b 75%, #550707 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                  className="inline-block"
                 >
                   PASSANT
-                </span>
-              </span>
+                </motion.span>
+              </h2>
+
+              {/* Tagline */}
               <p
-                className="text-white/50 text-[11px] sm:text-xs mt-3 uppercase"
+                className="mt-3.5 text-[11px] sm:text-xs text-[#94a3b8] uppercase font-semibold select-none"
                 style={{
                   fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                   letterSpacing: "0.26em",
-                  fontWeight: 600,
                 }}
               >
                 For the game must always go on
               </p>
-            </div>
 
-            {/* Social Guild Links */}
-            <div className="flex items-center gap-6">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  aria-label={s.label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/40 hover:text-[#ff7171] transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.7)] cursor-pointer"
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </div>
-          </div>
+              {/* Social Outlined Circular Buttons (44px min tap target, silvery refined hover) */}
+              <div className="flex items-center gap-3 mt-7">
+                {socials.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 rounded-full border border-white/10 bg-white/[0.02] flex items-center justify-center text-white/45 transition-all duration-300 ease-out hover:border-white/40 hover:text-white hover:bg-white/[0.05] hover:shadow-[0_0_16px_rgba(255,255,255,0.18)] hover:-translate-y-[2px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer"
+                  >
+                    <span className="transition-transform duration-200">
+                      {s.icon}
+                    </span>
+                  </a>
+                ))}
+              </div>
 
-          {/* Middle Section: Grand Quote (Left) & Nav Columns (Right) in Harmonious Balance */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center my-auto py-8 sm:py-10 md:py-12 w-full">
-            {/* Left: The Grand Chess Maxim */}
-            <div className="lg:col-span-7 flex flex-col justify-center">
-              <blockquote>
-                <p
-                  className="italic leading-[1.6] text-slate-200"
-                  style={{
-                    fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                    fontSize: "clamp(19px, 2.2vw, 30px)",
-                    letterSpacing: "0.015em",
-                  }}
-                >
-                  &ldquo;The beauty of a move lies not in its appearance but in the
-                  thought behind it.&rdquo;
-                </p>
-                <footer
-                  className="mt-5 text-[11px] uppercase"
-                  style={{
-                    fontFamily: "var(--font-cinzel), 'Cinzel', serif",
-                    letterSpacing: "0.24em",
-                    fontWeight: 700,
-                    color: "rgba(239, 68, 68, 0.9)",
-                  }}
-                >
-                  — Savielly Tartakower
-                </footer>
-              </blockquote>
-            </div>
+              {/* Quote Visual Centerpiece in Regal Script / Cursive Font */}
+              <div className="mt-10 sm:mt-12 lg:mt-14 max-w-xl w-full">
+                <blockquote>
+                  <p
+                    className="text-[#f1f5f9] select-none"
+                    style={{
+                      fontFamily: "var(--font-pinyon), 'Pinyon Script', cursive",
+                      fontSize: "clamp(1.85rem, 3.2vw, 2.85rem)",
+                      lineHeight: 1.35,
+                      letterSpacing: "normal",
+                      textShadow: "0 2px 14px rgba(0, 0, 0, 0.9)",
+                    }}
+                  >
+                    &ldquo;The beauty of a move lies not in its appearance but in
+                    the thought behind it.&rdquo;
+                  </p>
+                  {/* Attribution: Stands alone under the quote with small gap, no lines, no dashes */}
+                  <footer className="mt-3 flex items-center justify-center lg:justify-start">
+                    <span
+                      className="text-[11px] uppercase font-bold text-[#ff7171] select-none"
+                      style={{
+                        fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                        letterSpacing: "0.24em",
+                        textShadow: "0 0 14px rgba(239, 68, 68, 0.3)",
+                      }}
+                    >
+                      SAVIELLY TARTAKOWER
+                    </span>
+                  </footer>
+                </blockquote>
+              </div>
+            </motion.div>
 
-            {/* Right: Editorial Nav Directories */}
-            <div className="lg:col-span-5 grid grid-cols-2 gap-8 sm:gap-12 w-full lg:pl-6">
+            {/* Right Column (Directory Link Columns) - ~40% Width */}
+            <div className="lg:col-span-5 grid grid-cols-2 gap-8 sm:gap-12 w-full lg:pl-6 pt-2 lg:pt-4">
               {columns.map((col) => (
-                <div key={col.heading} className="flex flex-col">
+                <motion.nav
+                  key={col.heading}
+                  variants={itemVariants}
+                  aria-label={`${col.heading} Navigation`}
+                  className="flex flex-col"
+                >
+                  {/* Clean Plain Tracked Small-Caps Heading */}
                   <h3
-                    className="uppercase select-none text-[12px] sm:text-[13px]"
+                    className="text-[12px] sm:text-[13px] uppercase font-bold select-none text-[#e2e8f0]"
                     style={{
                       fontFamily: "var(--font-cinzel), 'Cinzel', serif",
-                      fontWeight: 700,
                       letterSpacing: "0.22em",
-                      color: "rgba(255, 255, 255, 0.65)",
-                      borderBottom: "1px solid rgba(239, 68, 68, 0.35)",
-                      paddingBottom: "12px",
-                      marginBottom: "18px",
                     }}
                   >
                     {col.heading}
                   </h3>
-                  <div className="flex flex-col gap-2.5 items-start">
+
+                  {/* Thin Hairline Divider Underneath */}
+                  <div
+                    className="h-[1px] w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent mt-2 mb-4"
+                    aria-hidden="true"
+                  />
+
+                  {/* Directory Links: Smooth Brightening, Soft Text Glow, 3px Nudge (NO RED LINES) */}
+                  <div className="flex flex-col gap-1 items-start">
                     {col.links.map((link) => (
                       <Link
                         key={link.label}
                         href={link.href}
-                        className="text-[13px] sm:text-[14px] text-white/50 hover:text-white transition-colors duration-200 py-0.5"
+                        className="flex items-center min-h-[44px] py-1 text-[13px] sm:text-[14px] text-[#94a3b8] transition-all duration-300 ease-out hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] hover:translate-x-[3px] focus:outline-none focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:shadow-[0_0_12px_rgba(255,255,255,0.2)] rounded px-1 select-none"
                         style={{
                           fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                           fontWeight: 600,
-                          letterSpacing: "0.18em",
+                          letterSpacing: "0.16em",
                         }}
                       >
                         {link.label}
                       </Link>
                     ))}
                   </div>
-                </div>
+                </motion.nav>
               ))}
             </div>
           </div>
 
-          {/* Bottom Section: Formal Inscription & Legal Disclaimers */}
-          <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-3 pt-6 border-t border-white/[0.08] w-full">
+          {/* Bottom Bar: Formal Inscription, Legal Links, and Back to Top */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-16 sm:mt-20 pt-7 border-t border-[#2c1717]/60 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-4 w-full"
+          >
+            {/* Left: Copyright */}
             <span
-              className="text-[11px] text-white/50 uppercase text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5"
+              className="text-[11px] text-[#94a3b8] uppercase text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5 select-none"
               style={{
                 fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                 letterSpacing: "0.2em",
@@ -213,15 +449,17 @@ export default function Footer() {
             >
               <Copyright
                 strokeWidth={2.5}
-                className="w-[12px] h-[12px] mt-px text-white/40"
+                className="w-[12px] h-[12px] mt-px text-[#94a3b8]/60"
+                aria-hidden="true"
               />{" "}
-              {new Date().getFullYear()} En Passant · ABESEC
+              {new Date().getFullYear()} EN PASSANT · ABESEC
             </span>
 
-            <div className="flex items-center justify-center gap-5">
+            {/* Right: Legal & Back to Top (with extra clearance to avoid floating elements) */}
+            <div className="flex items-center justify-center flex-wrap gap-5 sm:gap-6 pr-2 sm:pr-0">
               <Link
                 href="/privacy"
-                className="text-[11px] text-white/50 hover:text-[#ff7171] uppercase transition-colors duration-200"
+                className="text-[11px] text-[#94a3b8] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.35)] uppercase transition-all duration-200 focus:outline-none focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/20 rounded px-1 select-none"
                 style={{
                   fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                   letterSpacing: "0.18em",
@@ -230,10 +468,14 @@ export default function Footer() {
               >
                 Privacy
               </Link>
-              <span className="text-white/20 pointer-events-none">·</span>
+
+              <span className="text-[#94a3b8]/30 pointer-events-none select-none">
+                ·
+              </span>
+
               <Link
                 href="/terms"
-                className="text-[11px] text-white/50 hover:text-[#ff7171] uppercase transition-colors duration-200"
+                className="text-[11px] text-[#94a3b8] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.35)] uppercase transition-all duration-200 focus:outline-none focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/20 rounded px-1 select-none"
                 style={{
                   fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                   letterSpacing: "0.18em",
@@ -242,9 +484,32 @@ export default function Footer() {
               >
                 Terms
               </Link>
+
+              <span className="text-[#94a3b8]/30 pointer-events-none select-none">
+                ·
+              </span>
+
+              {/* Back to Top */}
+              <button
+                type="button"
+                onClick={scrollToTop}
+                className="group flex items-center gap-1.5 text-[11px] uppercase text-[#94a3b8] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.35)] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/20 rounded px-1 select-none"
+                style={{
+                  fontFamily: "var(--font-cinzel), 'Cinzel', serif",
+                  letterSpacing: "0.18em",
+                  fontWeight: 600,
+                }}
+                aria-label="Scroll back to top"
+              >
+                <span>Top</span>
+                <ArrowUp
+                  className="w-3.5 h-3.5 text-white/50 group-hover:text-white transition-all duration-300 ease-out group-hover:-translate-y-1"
+                  aria-hidden="true"
+                />
+              </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </motion.div>
     </footer>
   );

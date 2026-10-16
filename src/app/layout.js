@@ -1,4 +1,4 @@
-import { Inter, Playfair_Display, Pirata_One, Cinzel, Cinzel_Decorative, Cormorant_Garamond } from "next/font/google";
+import { Inter, Playfair_Display, Pirata_One, Cinzel, Cinzel_Decorative, Cormorant_Garamond, Pinyon_Script } from "next/font/google";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -35,6 +35,12 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "600", "700"],
   style: ["normal", "italic"],
+});
+
+const pinyon = Pinyon_Script({
+  variable: "--font-pinyon",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 import Navbar from "@/components/Navbar";
@@ -93,7 +99,7 @@ import { Analytics } from "@vercel/analytics/react";
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${playfair.variable} ${pirata.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${cormorant.variable}`} suppressHydrationWarning>
+      <html lang="en" className={`${inter.variable} ${playfair.variable} ${pirata.variable} ${cinzel.variable} ${cinzelDecorative.variable} ${cormorant.variable} ${pinyon.variable}`} suppressHydrationWarning>
         <head />
         <body className="min-h-screen flex flex-col bg-[#0a0a0a] text-white font-sans antialiased overflow-x-clip transition-colors duration-500">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -102,7 +108,7 @@ export default function RootLayout({ children }) {
                 <NavbarWrapper>
                   <Navbar />
                 </NavbarWrapper>
-                <main className="flex-1 flex flex-col overflow-x-clip relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
+                <main className="flex-1 flex flex-col overflow-x-clip relative z-10 bg-[#0a0a0a]">
                   {children}
                 </main>
                 <Footer />
