@@ -7,7 +7,6 @@ import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
 import { SiChessdotcom } from "react-icons/si";
 import { Copyright, ArrowUp } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import ChessSilhouetteBackground from "@/components/ui/ChessSilhouetteBackground";
 import FloatingDustParticles from "@/components/ui/FloatingDustParticles";
 
 const columns = [
@@ -64,19 +63,15 @@ export default function Footer() {
 
   // Parallax Layer Transforms (coming in & going out based on scroll):
   // 1. Content Translation & Smooth Fade In/Out with scroll
-  const yContent = useTransform(scrollYProgress, [0, 1], ["40px", "0px"]);
-  const opacityContent = useTransform(scrollYProgress, [0, 0.45, 1], [0.35, 0.95, 1]);
-  const scaleContent = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
+  const yContent = useTransform(scrollYProgress, [0, 1], ["36px", "0px"]);
+  const opacityContent = useTransform(scrollYProgress, [0, 0.45, 1], [0.4, 0.95, 1]);
+  const scaleContent = useTransform(scrollYProgress, [0, 1], [0.985, 1]);
 
-  // 2. Chess Silhouettes: Deep background parallax (moves with scroll from 18% down to -3%)
-  const ySilhouettes = useTransform(scrollYProgress, [0, 1], ["18%", "-3%"]);
-  const opacitySilhouettes = useTransform(scrollYProgress, [0, 0.5, 1], [0.2, 0.75, 1]);
-
-  // 3. Ambient Crimson Glow Parallax
+  // 2. Ambient Crimson Glow Parallax
   const yGlow = useTransform(scrollYProgress, [0, 1], ["14%", "0%"]);
   const scaleGlow = useTransform(scrollYProgress, [0, 1], [0.88, 1.08]);
 
-  // 4. Atmospheric Transition Fade Overlay at top of footer
+  // 3. Atmospheric Transition Fade Overlay at top of footer
   const fadeOpacity = useTransform(scrollYProgress, [0, 0.35, 1], [0.65, 0.95, 1]);
 
   const contentStyle = shouldReduceMotion
@@ -85,13 +80,6 @@ export default function Footer() {
         y: yContent,
         opacity: opacityContent,
         scale: scaleContent,
-      };
-
-  const silhouettesStyle = shouldReduceMotion
-    ? {}
-    : {
-        y: ySilhouettes,
-        opacity: opacitySilhouettes,
       };
 
   const glowStyle = shouldReduceMotion
@@ -207,14 +195,6 @@ export default function Footer() {
           </filter>
           <rect width="100%" height="100%" filter="url(#footer-grain)" />
         </svg>
-
-        {/* Atmospheric Chess Piece Silhouettes with Parallax Rise */}
-        <motion.div
-          style={silhouettesStyle}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        >
-          <ChessSilhouetteBackground />
-        </motion.div>
 
         {/* Tiny Floating Dust Particles / Embers drifting upward slowly */}
         <FloatingDustParticles />
@@ -352,30 +332,28 @@ export default function Footer() {
                 ))}
               </div>
 
-              {/* Quote Visual Centerpiece in Regal Script / Cursive Font */}
-              <div className="mt-10 sm:mt-12 lg:mt-14 max-w-xl w-full">
+              {/* Quote: Subtle, minimal, clean & understated */}
+              <div className="mt-8 sm:mt-10 max-w-lg w-full">
                 <blockquote>
                   <p
-                    className="text-[#f1f5f9] select-none"
+                    className="text-[#e2e8f0]/90 select-none font-normal"
                     style={{
                       fontFamily: "var(--font-pinyon), 'Pinyon Script', cursive",
-                      fontSize: "clamp(1.85rem, 3.2vw, 2.85rem)",
-                      lineHeight: 1.35,
-                      letterSpacing: "normal",
-                      textShadow: "0 2px 14px rgba(0, 0, 0, 0.9)",
+                      fontSize: "clamp(1.15rem, 1.35vw, 1.35rem)",
+                      lineHeight: 1.6,
+                      letterSpacing: "0.01em",
                     }}
                   >
                     &ldquo;The beauty of a move lies not in its appearance but in
                     the thought behind it.&rdquo;
                   </p>
-                  {/* Attribution: Stands alone under the quote with small gap, no lines, no dashes */}
-                  <footer className="mt-3 flex items-center justify-center lg:justify-start">
+                  {/* Attribution: Clean, minimal small-caps standing alone under the quote */}
+                  <footer className="mt-2.5 flex items-center justify-center lg:justify-start">
                     <span
-                      className="text-[11px] uppercase font-bold text-[#ff7171] select-none"
+                      className="text-[10px] uppercase font-bold text-[#ff7171]/85 select-none"
                       style={{
                         fontFamily: "var(--font-cinzel), 'Cinzel', serif",
                         letterSpacing: "0.24em",
-                        textShadow: "0 0 14px rgba(239, 68, 68, 0.3)",
                       }}
                     >
                       SAVIELLY TARTAKOWER
