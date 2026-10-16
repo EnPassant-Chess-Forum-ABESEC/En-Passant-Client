@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 import styles from "./EventCTA.module.css";
 
 export default function EventCTA({ event = null }) {
-  const registerHref = "events/ACC/register";
+  const eventSlug = event?._id || event?.title || "ACC";
+  const registerHref = `/events/${eventSlug}/register`;
 
   return (
     <section
