@@ -7,6 +7,7 @@
   padding: 140px 0 100px;
   background: var(--tree-background);
   color: #f3f0eb;
+  overflow-x: hidden;
 }
 
 .intro {
@@ -16,6 +17,7 @@
   margin: 0 auto;
   padding: 0 24px;
   text-align: left;
+  z-index: 2;
 }
 
 @media (min-width: 640px) {
@@ -90,12 +92,16 @@
   max-width: 1240px;
   margin: 160px auto 0;
 }
+
+/* Decoration layer: strictly below text with pointer-events: none */
 .paths {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: visible;
+  z-index: 1;
 }
+
 .track,
 .ink {
   fill: none;
@@ -103,37 +109,57 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
 .track {
-  stroke: #2c1717;
+  stroke: rgba(65, 32, 32, 0.35);
 }
+
 .canvasStem {
   opacity: 0;
 }
+
 .ink {
   stroke: var(--tree-red);
+  filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.45));
 }
+
 .junction {
   display: none;
 }
 
-.root,
 .sectionHeading,
-.bracket,
+.bracket {
+  position: relative;
+  z-index: 2;
+  background: var(--tree-background);
+  /* 16-20px safe-zone soft fade mask so passing vines stay behind text */
+  box-shadow: 0 0 18px 14px var(--tree-background);
+  border-radius: 6px;
+}
+
 .prizeHeading,
 .prize {
   position: relative;
-  z-index: 1;
-  background: var(--tree-background);
+  z-index: 2;
+  background: transparent !important;
+  box-shadow: none !important;
 }
+
 .root {
+  position: relative;
   width: min(100%, 880px);
   margin: 0 auto;
   padding: 36px 12px 0;
   text-align: center;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
 }
+
 .eyebrow {
   color: var(--tree-muted);
 }
+
 .monogram {
   margin-top: 48px;
   margin-bottom: 0;
@@ -144,10 +170,12 @@
   line-height: 1.1;
   transition: opacity 0.3s ease;
 }
+
 .monogramHidden {
   opacity: 0 !important;
   user-select: none;
 }
+
 .rootCaption {
   max-width: 340px;
   margin: 18px auto 0;
@@ -156,6 +184,7 @@
   color: var(--tree-muted);
   min-height: 3em;
 }
+
 .caret {
   display: inline-block;
   width: 2px;
@@ -165,6 +194,7 @@
   vertical-align: middle;
   animation: blink 0.9s step-end infinite;
 }
+
 @keyframes blink {
   0%,
   100% {
@@ -174,10 +204,12 @@
     opacity: 0;
   }
 }
+
 .anchor,
 .smallAnchor {
   display: none !important;
 }
+
 .root > .anchor {
   display: none;
 }
@@ -190,18 +222,23 @@
   row-gap: 80px;
   margin-top: clamp(140px, 18vh, 200px);
   padding: 0 32px;
+  z-index: 2;
 }
+
 .division {
   min-width: 0;
 }
+
 .division:nth-child(3n + 2),
 .division:nth-child(3n) {
   padding-top: 0;
 }
+
 .sectionHeading {
-  padding: 14px 0 10px;
+  padding: 14px 12px 10px;
   text-align: center;
 }
+
 .sectionHeading h3 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   max-width: 320px;
@@ -217,6 +254,7 @@
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
 }
+
 .description {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-style: italic;
@@ -227,6 +265,7 @@
   color: #cbd5e1;
   letter-spacing: 0.02em;
 }
+
 .brackets {
   display: flex;
   flex-direction: column;
@@ -235,11 +274,13 @@
   margin-top: 60px;
   list-style: none;
 }
+
 .bracket {
   width: min(100%, 196px);
-  padding: 20px 5px 18px;
+  padding: 20px 12px 18px;
   text-align: center;
 }
+
 .bracket h4 {
   font-family: var(--font-cinzel), 'Cinzel', serif;
   font-size: clamp(14px, 1.1vw, 17px);
@@ -249,6 +290,7 @@
   text-transform: uppercase;
   color: #f8fafc;
 }
+
 .rating {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   margin-top: 8px;
@@ -261,6 +303,7 @@
   white-space: nowrap;
   text-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
 }
+
 .ratingLabel {
   display: block;
   font-family: var(--font-cinzel), 'Cinzel', serif;
@@ -275,10 +318,11 @@
 .prizeHeading {
   width: min(100%, 880px);
   max-width: 900px;
-  margin: clamp(140px, 16vh, 200px) auto 0;
-  padding: 40px 24px 20px;
+  margin: 72px auto 0;
+  padding: 16px 20px 12px;
   text-align: center;
 }
+
 .prizeHeading h3 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   margin: 0 auto;
@@ -293,24 +337,38 @@
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(220, 38, 38, 0.25));
 }
+
 .podium {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 40px;
-  margin: clamp(70px, 9vh, 100px) 0 0;
-  padding: 0 24px;
+  column-gap: clamp(24px, 4vw, 64px);
+  row-gap: 40px;
+  margin: 48px auto 0;
+  padding: 0 32px;
   list-style: none;
+  z-index: 2;
 }
+
 .prize {
   min-width: 0;
-  padding: 30px 8px 28px;
+  padding: 16px 12px 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.prize:first-child {
+  filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.12));
+}
+
 .prize:nth-child(1),
 .prize:nth-child(2),
 .prize:nth-child(3) {
   margin-top: 0;
 }
+
 .prize .eyebrow {
   font-family: var(--font-cinzel), 'Cinzel', serif;
   font-size: clamp(11px, 0.9vw, 13px);
@@ -318,14 +376,18 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #e2e8f0;
+  margin: 0;
+  line-height: 1.2;
 }
+
 .prize:first-child .eyebrow {
   color: #facc15;
   text-shadow: 0 0 14px rgba(250, 204, 21, 0.45);
 }
+
 .amount {
   font-family: var(--font-gothic), 'Pirata One', serif;
-  margin-top: 20px;
+  margin-top: 16px;
   font-size: clamp(36px, 5.3vw, 72px);
   font-weight: 700;
   line-height: 1;
@@ -334,14 +396,17 @@
   text-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
   overflow-wrap: anywhere;
 }
+
 .accolade {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-style: italic;
-  margin-top: 16px;
+  margin-top: 12px;
   color: #cbd5e1;
   font-size: clamp(14px, 1.1vw, 16px);
   letter-spacing: 0.03em;
+  line-height: 1.2;
 }
+
 .endMark {
   display: flex;
   align-items: center;
@@ -355,6 +420,7 @@
   text-transform: uppercase;
   color: #ef4444;
 }
+
 .endMark span {
   width: 64px;
   height: 1px;
@@ -371,7 +437,8 @@
 }
 
 @media (min-width: 821px) and (max-width: 1100px) {
-  .divisions {
+  .divisions,
+  .podium {
     column-gap: 30px;
     padding: 0;
   }

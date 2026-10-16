@@ -157,13 +157,28 @@ class TypeGardenEngine {
   }
 
   at(P, u) {
+    if (!P || !P.length) return [[0, 0], 0];
     const n = P.length;
-    if (n < 2) return [P[0] || [0, 0], 0];
-    const i = Math.min(n - 2, Math.max(1, Math.round(u * (n - 1))));
-    return [
-      P[i],
-      Math.atan2(P[i + 1][1] - P[i - 1][1], P[i + 1][0] - P[i - 1][0]),
-    ];
+    if (n === 1) return [P[0], 0];
+
+    const clampedU = Math.max(0, Math.min(1, u != null ? u : 0.5));
+    const t = clampedU * (n - 1);
+    const i = Math.min(n - 2, Math.max(0, Math.floor(t)));
+    const frac = t - i;
+
+    const p0 = P[i];
+    const p1 = P[i + 1];
+
+    if (!p0 || !p1) {
+      const fallback = p0 || p1 || P[0] || [0, 0];
+      return [fallback, 0];
+    }
+
+    const x = p0[0] + (p1[0] - p0[0]) * frac;
+    const y = p0[1] + (p1[1] - p0[1]) * frac;
+    const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+
+    return [[x, y], ang];
   }
 
   jit(id, f, amp) {
@@ -404,7 +419,7 @@ class TypeGardenEngine {
     if (tip === "rose") {
       const R = (0.14 + r() * 0.16) * p.big * (o.depth ? 0.78 : 1);
       const over = tp[1] > -0.78 && tp[1] < 0.05 && Math.abs(tp[0]) < p.w * 0.5;
-      const layer = over ? (r() < 0.22 ? 1 : 0) : r() < 0.6 ? 1 : tl;
+      const layer = over ? 0 : r() < 0.5 ? 1 : tl;
 
       const roseColor = o.color || pickMonogramRoseColor(r);
       E.push({
@@ -790,6 +805,165 @@ class TypeGardenEngine {
       };
     }
 
+    // Secondary side laterals (branch hierarchy)
+    if (id.startsWith("lateral-")) {
+      const isLeft =
+        id.includes("open") || id.includes("-0") || id.includes("left");
+      const isRed = id.includes("open") || id.includes("podium-0");
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 0.68,
+        elements: [
+          // Node leaf at branch emergence
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.05,
+              side: isLeft ? -1 : 1,
+              length: 22,
+              bend: 0.15,
+            },
+            0,
+          ),
+          // Cluster of leaflets along lateral with decreasing size toward tip
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.36,
+              side: isLeft ? 1 : -1,
+              length: 19,
+              bend: -0.18,
+            },
+            1,
+          ),
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.62,
+              side: isLeft ? -1 : 1,
+              length: 16,
+              bend: 0.15,
+            },
+            2,
+          ),
+          // Tight rosebud near tip
+          normalizeTreeElement(
+            {
+              type: "rose",
+              color: isRed ? "red" : "white",
+              u: 0.86,
+              side: isLeft ? 1 : -1,
+              size: 13,
+              rot: 0.2,
+            },
+            3,
+          ),
+        ],
+      };
+    }
+
+    // Twining runner for leftmost Open cane
+    if (id === "tier-stem-0-runner") {
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 0.68,
+        elements: [
+          normalizeTreeElement(
+            { type: "leaf", u: 0.2, side: 1, length: 18, bend: -0.15 },
+            1,
+          ),
+          normalizeTreeElement(
+            { type: "leaf", u: 0.48, side: -1, length: 18, bend: 0.15 },
+            2,
+          ),
+          normalizeTreeElement(
+            { type: "leaf", u: 0.78, side: 1, length: 18, bend: -0.15 },
+            3,
+          ),
+        ],
+      };
+    }
+
+    // Companion twist runner for the center prizes stem
+    if (id === "prizes-stem-runner") {
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 0.72,
+        elements: [
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.35,
+              side: -1,
+              length: 20,
+              bend: 0.18,
+            },
+            1,
+          ),
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.7,
+              side: 1,
+              length: 20,
+              bend: -0.18,
+            },
+            2,
+          ),
+        ],
+      };
+    }
+
+    // Tertiary twigs off laterals
+    if (id.startsWith("twig-")) {
+      const isLeft = id.includes("open") || id.includes("-0");
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 0.52,
+        elements: [
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.08,
+              side: isLeft ? -1 : 1,
+              length: 16,
+              bend: 0.15,
+            },
+            0,
+          ),
+          normalizeTreeElement(
+            {
+              type: "leaf",
+              u: 0.68,
+              side: isLeft ? 1 : -1,
+              length: 14,
+              bend: -0.15,
+            },
+            1,
+          ),
+        ],
+      };
+    }
+
+    // Fine crown tendrils
+    if (id.startsWith("crown-tendril-")) {
+      return {
+        id,
+        color: "stem",
+        isLetterAnchored: false,
+        stemWidth: 0.45,
+        elements: [],
+      };
+    }
+
     // Default fallback
     return {
       id,
@@ -844,15 +1018,24 @@ class TypeGardenEngine {
           pts[k][1] - pts[k - 1][1],
         );
       }
-      // Natural sparse thorn spacing: roughly 1 thorn every 125px, max 6 per stem
-      const thornCount = Math.min(6, Math.floor(totalLen / 125));
+      // Natural sparse thorn spacing: twigs get 1-2 small thorns, main stems get 1 every ~125px
+      const isTwig =
+        (cfg.stemWidth || 1) < 0.8 ||
+        cfg.id.startsWith("twig-") ||
+        cfg.id.startsWith("lateral-");
+      const thornSpacing = isTwig ? 45 : 125;
+      const maxThorns = isTwig ? 2 : 6;
+      const thornCount = Math.min(
+        maxThorns,
+        Math.floor(totalLen / thornSpacing),
+      );
       const thorns = [];
       for (let i = 0; i < thornCount; i++) {
-        const u = thornCount === 1 ? 0.5 : 0.22 + (i / (thornCount - 1)) * 0.58;
+        const u = thornCount === 1 ? 0.5 : 0.25 + (i / (thornCount - 1)) * 0.52;
         thorns.push({
           u,
           s: (i + idx) % 2 === 0 ? 1 : -1,
-          size: 0.72,
+          size: isTwig ? 0.48 : 0.72,
           curve: 0.3,
         });
       }
@@ -873,20 +1056,28 @@ class TypeGardenEngine {
         let x = pt[0],
           y = pt[1],
           a = ang;
+        const caneX = pt[0];
+        const caneY = pt[1];
+
         if (def.t === "leaf") {
-          x = pt[0] + Math.cos(nAng) * 4;
-          y = pt[1] + Math.sin(nAng) * 4;
+          const petioleLen = def.petiole || 10;
+          x = pt[0] + Math.cos(nAng) * petioleLen;
+          y = pt[1] + Math.sin(nAng) * petioleLen;
           a = ang + (def.side > 0 ? 0.72 : -0.72);
         } else if (def.t === "rose") {
-          const lat = def.side === 0 ? 0 : 13;
-          x = def.side === 0 ? pt[0] : pt[0] + Math.cos(nAng) * lat;
-          y = def.side === 0 ? pt[1] : pt[1] + Math.sin(nAng) * lat;
+          const peduncleLen = def.peduncle || (def.side === 0 ? 0 : 18);
+          x = pt[0] + Math.cos(nAng) * peduncleLen;
+          y = pt[1] + Math.sin(nAng) * peduncleLen + (def.side === 0 ? 0 : 5);
+          a = ang + (def.side > 0 ? 0.18 : -0.18);
         }
         return {
           ...def,
           x,
           y,
           a,
+          caneX,
+          caneY,
+          caneAng: ang,
           absolute: true,
           bloomedAt: null,
           bloomScale: 0,
@@ -899,6 +1090,8 @@ class TypeGardenEngine {
 
       nextBranches.push({
         id: cfg.id,
+        parentEdgeId: edge.parentEdgeId || null,
+        parentNodeU: edge.parentNodeU ?? null,
         stem,
         elements,
         fr,
@@ -919,6 +1112,37 @@ class TypeGardenEngine {
   }
 
   // --- Realistic Rendering Pipeline ---
+  drawPeduncle(ctx, caneX, caneY, rx, ry, caneAng, scale, C) {
+    if (scale <= 0.01) return;
+    const midX = (caneX + rx) * 0.5 + Math.cos(caneAng || 0) * 2;
+    const midY = (caneY + ry) * 0.5 + 3.5; // slight gravity nod
+
+    ctx.save();
+    // 1. Soft shadow under peduncle
+    ctx.beginPath();
+    ctx.moveTo(caneX + 0.8, caneY + 1.6);
+    ctx.quadraticCurveTo(midX + 0.8, midY + 1.6, rx + 0.8, ry + 1.6);
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.42)";
+    ctx.lineWidth = Math.max(1.0, 2.2 * scale);
+    ctx.stroke();
+
+    // 2. Woody flower stalk
+    ctx.beginPath();
+    ctx.moveTo(caneX, caneY);
+    ctx.quadraticCurveTo(midX, midY, rx, ry);
+    ctx.strokeStyle = C?.stem || "#302622";
+    ctx.lineWidth = Math.max(1.1, 1.9 * scale);
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    // 3. Green calyx receptacle right at the rose base
+    ctx.beginPath();
+    ctx.arc(rx, ry, Math.max(1.5, 3.2 * scale), 0, Math.PI * 2);
+    ctx.fillStyle = "#1e2918";
+    ctx.fill();
+    ctx.restore();
+  }
+
   drawRealisticRose(ctx, cx, cy, R, rot, e, a, tl, C) {
     if (R <= 1) return;
     const bloomSpring =
@@ -1129,6 +1353,8 @@ class TypeGardenEngine {
       ];
     };
 
+    const isTwig = stemWidth < 2.9;
+    const isMainCane = stemWidth >= 3.2;
     const rBase = stemWidth * 0.5;
     for (let j = 0; j <= distSeg; j++) {
       const fr = j / distSeg;
@@ -1136,10 +1362,16 @@ class TypeGardenEngine {
       const t = u * n;
       const p = lerp(t);
 
-      const taper = 1.0 - 0.44 * u;
-      const nodeSwell = 1.0 + 0.14 * Math.pow(Math.sin(u * Math.PI * 4), 2);
-      const barkWobble = 1.0 + 0.04 * Math.sin(u * 36 + seedVar);
-      const r = Math.max(1.15, rBase * taper * nodeSwell * barkWobble);
+      // Smooth variable width botanical tapering:
+      // - Main canes: 5-6px at base, tapering to 3-4px at ends
+      // - Laterals / twigs: 2-3px, tapering to fine 0.8-1.0px curling tendril tips
+      const taper = isMainCane
+        ? 1.0 - 0.36 * Math.pow(u, 0.85)
+        : 1.0 - 0.64 * Math.pow(u, 0.75);
+      const nodeSwell = 1.0 + 0.16 * Math.pow(Math.sin(u * Math.PI * 6), 6);
+      const barkWobble = 1.0 + 0.035 * Math.sin(u * 36 + seedVar);
+      const minRadius = isTwig ? 0.42 : 1.35;
+      const r = Math.max(minRadius, rBase * taper * nodeSwell * barkWobble);
 
       pts.push({ p, u, r });
     }
@@ -1170,7 +1402,7 @@ class TypeGardenEngine {
     const P = e.absolute
       ? e.pts
       : e.pts.map((p) => this.wpt(st, l, l.x + p[0] * S, l.y + p[1] * S));
-    const stemWidth = Math.max(2.6, S * 0.034 * (e.w || 1));
+    const stemWidth = Math.max(1.8, S * 0.034 * (e.w || 1));
     const seedVar = ((e.id || 1) * 37) % 100;
     const segs = e.segs || [{ u0: 0, u1: 1, layer: 0 }];
 
@@ -1229,7 +1461,7 @@ class TypeGardenEngine {
         );
       }
       ctx.closePath();
-      ctx.fillStyle = "#1c1410";
+      ctx.fillStyle = "#150d0a";
       ctx.fill();
 
       // 3. Core wood body
@@ -1305,8 +1537,8 @@ class TypeGardenEngine {
         if (i === 0) ctx.moveTo(hx, hy);
         else ctx.lineTo(hx, hy);
       }
-      ctx.strokeStyle = "rgba(240, 228, 214, 0.22)";
-      ctx.lineWidth = Math.max(0.7, stemWidth * 0.22);
+      ctx.strokeStyle = "rgba(240, 228, 214, 0.30)";
+      ctx.lineWidth = Math.max(0.8, stemWidth * 0.22);
       ctx.lineCap = "round";
       ctx.stroke();
 
@@ -1508,12 +1740,14 @@ class TypeGardenEngine {
       ctx.textAlign = "center";
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = pal.text;
+      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
+      ctx.shadowBlur = 12;
 
       for (const l of L) {
         if (l.ch !== " " && !l.dead && now >= l.birth) {
           const textAge = now - l.birth;
-          if (textAge < 400) isAnimating = true;
-          const textAlpha = Math.min(1, textAge / 250);
+          if (textAge < 400 && !this.reducedMotion) isAnimating = true;
+          const textAlpha = this.reducedMotion ? 1 : Math.min(1, textAge / 250);
           ctx.save();
           ctx.globalAlpha = textAlpha;
           const p = this.wpt(st, l, l.x, l.y);
@@ -1546,6 +1780,25 @@ class TypeGardenEngine {
     let isAnimating = false;
 
     for (const b of this.branches) {
+      // Delayed growth for laterals / twigs: dormant until parent growth reaches node
+      const isPrizeBranch =
+        b.id.startsWith("prizes-") ||
+        b.id.startsWith("prize-") ||
+        b.id.startsWith("crown-tendril-");
+
+      if (b.parentEdgeId && !isPrizeBranch) {
+        const parent = this.branches.find((p) => p.id === b.parentEdgeId);
+        if (parent) {
+          const nodeU = b.parentNodeU ?? 0;
+          if (parent.fr < nodeU) {
+            b.targetFr = 0;
+          } else {
+            const sprout = Math.min(1.0, (parent.fr - nodeU) / 0.16);
+            b.targetFr = sprout;
+          }
+        }
+      }
+
       // Smooth lerp progress towards targetFr
       const diff = b.targetFr - b.fr;
       if (Math.abs(diff) > 0.0005) {
@@ -1577,7 +1830,7 @@ class TypeGardenEngine {
       // 1. Draw living cane with thorns
       this.drawStem(ctx, b.stem, null, 0, 1, st, 0, 0, 0, b.fr);
 
-      // 2. Draw gothic leaves first
+      // 2. Draw gothic leaves with petiole stalks
       for (const el of b.elements) {
         if (el.t !== "leaf") continue;
         if (b.fr < el.u - 0.02) {
@@ -1596,18 +1849,35 @@ class TypeGardenEngine {
         el.bloomScale = spring * scrubGate;
         if (el.bloomScale <= 0.005) continue;
 
+        // Subtle idle breeze sway (+/- 1.5 deg, slow ~7.8s period)
+        const breezeAmp = this.reducedMotion ? 0 : 0.026;
+        const breeze = Math.sin(now * 0.0008 + (el.id || 0) * 0.53) * breezeAmp;
+
+        // Draw petiole stalk connecting cane to leaf base
+        if (el.caneX != null && el.caneY != null) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(el.caneX, el.caneY);
+          ctx.lineTo(el.x, el.y);
+          ctx.strokeStyle = "#241812";
+          ctx.lineWidth = Math.max(0.8, 1.4 * el.bloomScale);
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.restore();
+        }
+
         this.drawLeaf(
           ctx,
           el.x,
           el.y,
-          el.a,
+          el.a + breeze,
           el.L * el.bloomScale,
           el.bend,
           st.C,
         );
       }
 
-      // 3. Draw realistic roses second (sitting over leaves and stem)
+      // 3. Draw realistic roses with curved peduncle stalks (sitting over leaves and stem)
       for (const el of b.elements) {
         if (el.t !== "rose") continue;
         if (b.fr < el.u - 0.02) {
@@ -1626,19 +1896,48 @@ class TypeGardenEngine {
         el.bloomScale = spring * scrubGate;
         if (el.bloomScale <= 0.005) continue;
 
+        // Subtle idle breeze sway (+/- 1.5 deg)
+        const breezeAmp = this.reducedMotion ? 0 : 0.026;
+        const breeze = Math.sin(now * 0.0008 + (el.id || 0) * 0.47) * breezeAmp;
+
+        // Draw curved flower stalk (peduncle) connecting cane to nodding rose
+        if (el.caneX != null && el.caneY != null) {
+          this.drawPeduncle(
+            ctx,
+            el.caneX,
+            el.caneY,
+            el.x,
+            el.y,
+            el.caneAng,
+            el.bloomScale,
+            st.C,
+          );
+        }
+
         const tl = st.face ? this.faceTurn(el, el.x, el.y) : null;
         this.drawRealisticRose(
           ctx,
           el.x,
           el.y,
           el.R,
-          el.rot + (tl ? tl[0] * 0.22 : 0),
+          el.rot + breeze + (tl ? tl[0] * 0.22 : 0),
           el,
           age,
           tl,
           st.C,
         );
       }
+    }
+
+    const anyInView = this.branches.some(
+      (b) =>
+        b.fr > 0.05 &&
+        viewTop != null &&
+        b.maxY >= viewTop &&
+        b.minY <= viewBottom,
+    );
+    if (!this.reducedMotion && anyInView) {
+      isAnimating = true;
     }
 
     return isAnimating;
@@ -1714,7 +2013,9 @@ export default function RoseTreeCanvas({ geometry, data, canvasRef }) {
 
       // Align vertical center with the DOM root monogram
       const rootNode = canvasContainer.querySelector("[data-tree-node='root']");
-      const monogramEl = rootNode?.querySelector("p:nth-child(2)");
+      const monogramEl =
+        rootNode?.querySelector("[data-tree-node='monogram']") ||
+        rootNode?.querySelector("p");
       if (rootNode && monogramEl) {
         const canvasBounds = canvas.getBoundingClientRect();
         const mgBounds = monogramEl.getBoundingClientRect();
@@ -1730,8 +2031,12 @@ export default function RoseTreeCanvas({ geometry, data, canvasRef }) {
       // Staggered blooming for A C C while maintaining permanent, perfect horizontal centering
       const baseNow = performance.now();
       const sequence = ["A", " ", "C", " ", "C"];
+      const birthOffset = engine.reducedMotion ? -10000 : 0;
       sequence.forEach((ch, idx) => {
-        engine.add(ch, baseNow + idx * 300);
+        engine.add(
+          ch,
+          baseNow + birthOffset + (engine.reducedMotion ? 0 : idx * 300),
+        );
       });
       engine.layout(true);
       engine.buildBranches(geometry);
@@ -1763,8 +2068,18 @@ export default function RoseTreeCanvas({ geometry, data, canvasRef }) {
 
     engine.buildBranches(geometry);
 
+    const isPrizeEdge = (id) =>
+      id.startsWith("prizes-") ||
+      id.startsWith("prize-") ||
+      id.startsWith("crown-tendril-");
+
+    let cleanupListeners = null;
+
     const ctx = gsap.context(() => {
+      // (1) Non-prize edges use their established scroll triggers
       geometry.edges.forEach((edge) => {
+        if (isPrizeEdge(edge.id)) return;
+
         const startY = Math.round(Math.min(edge.from, edge.to));
         const endY = Math.round(Math.max(edge.from, edge.to, startY + 60));
 
@@ -1786,9 +2101,158 @@ export default function RoseTreeCanvas({ geometry, data, canvasRef }) {
           branch.fr = trigger.progress;
         }
       });
+
+      // (2) Dedicated Prizes Growth Controller
+      const applyPrizesProgress = (progress) => {
+        const p = Math.max(0, Math.min(1, progress));
+
+        // Center trunk & runner descending to crown (reaches 100% by p = 0.45)
+        const stemFr = Math.min(1, p / 0.45);
+        engine.setBranchProgress("prizes-stem", stemFr);
+        engine.setBranchProgress("prizes-stem-runner", stemFr);
+
+        // Crown tendrils curling out as crown arrives (blooms p = 0.35 to 0.50)
+        const tendrilFr = Math.max(0, Math.min(1, (p - 0.35) / 0.15));
+        engine.setBranchProgress("crown-tendril-left", tendrilFr);
+        engine.setBranchProgress("crown-tendril-right", tendrilFr);
+
+        // Continuous bough under heading (grows p = 0.45 to 0.75)
+        const boughFr = Math.max(0, Math.min(1, (p - 0.45) / 0.30));
+        engine.setBranchProgress("prizes-bough-left", boughFr);
+        engine.setBranchProgress("prizes-bough-right", boughFr);
+
+        // Three hanging branches dropping down to prizes (grows p = 0.70 to 1.0)
+        const hangFr = Math.max(0, Math.min(1, (p - 0.70) / 0.30));
+        engine.setBranchProgress("prize-hang-0", hangFr);
+        engine.setBranchProgress("prize-hang-1", hangFr);
+        engine.setBranchProgress("prize-hang-2", hangFr);
+
+        if (engine.wakeUp) engine.wakeUp();
+      };
+
+      const prizeHeadingEl = canvasContainer.querySelector("[data-tree-node='prizes']");
+      const podiumEl = canvasContainer.querySelector("ol");
+
+      // Check prefers-reduced-motion: if enabled, render at 100% immediately
+      const prefersReduced =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReduced) {
+        applyPrizesProgress(1.0);
+        const prizeEdgeIds = [
+          "prizes-stem",
+          "prizes-stem-runner",
+          "crown-tendril-left",
+          "crown-tendril-right",
+          "prizes-bough-left",
+          "prizes-bough-right",
+          "prize-hang-0",
+          "prize-hang-1",
+          "prize-hang-2",
+        ];
+        prizeEdgeIds.forEach((id) => {
+          const br = engine.branches.find((b) => b.id === id);
+          if (br) {
+            br.fr = 1.0;
+            br.targetFr = 1.0;
+            br.elements.forEach((el) => {
+              el.bloomScale = 1.0;
+              el.bloomedAt = performance.now() - 1000;
+            });
+          }
+        });
+      } else {
+        let currentPrizesP = 0;
+        let prizesTrigger = null;
+
+        if (prizeHeadingEl) {
+          prizesTrigger = ScrollTrigger.create({
+            trigger: prizeHeadingEl,
+            endTrigger: podiumEl || prizeHeadingEl,
+            start: "top 95%",
+            end: "bottom 90%",
+            scrub: 0.35,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              currentPrizesP = Math.max(currentPrizesP, self.progress);
+              applyPrizesProgress(self.progress);
+            },
+          });
+
+          if (prizesTrigger.progress > 0) {
+            currentPrizesP = prizesTrigger.progress;
+            applyPrizesProgress(prizesTrigger.progress);
+          }
+        }
+
+        // Bottom of page guarantee:
+        const handleScrollOrResize = () => {
+          const scrollY =
+            window.scrollY ||
+            window.pageYOffset ||
+            document.documentElement.scrollTop;
+          const viewportH = window.innerHeight;
+          const totalH = document.documentElement.scrollHeight;
+          if (scrollY + viewportH >= totalH - 30) {
+            applyPrizesProgress(1.0);
+          }
+        };
+        window.addEventListener("scroll", handleScrollOrResize, { passive: true });
+        window.addEventListener("resize", handleScrollOrResize, { passive: true });
+        handleScrollOrResize();
+
+        // 1.5s Fallback timer: if section is in view for >1.5s, animate to 100%
+        let fallbackDone = false;
+        let fallbackTimer = null;
+        const triggerEl = prizeHeadingEl || canvasContainer;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && !fallbackDone) {
+                if (!fallbackTimer) {
+                  fallbackTimer = setTimeout(() => {
+                    fallbackDone = true;
+                    gsap.to(
+                      { p: currentPrizesP },
+                      {
+                        p: 1.0,
+                        duration: 0.85,
+                        ease: "power2.out",
+                        onUpdate: function () {
+                          const val = this.targets()[0].p;
+                          currentPrizesP = val;
+                          applyPrizesProgress(val);
+                        },
+                      },
+                    );
+                  }, 1500);
+                }
+              } else if (!entry.isIntersecting) {
+                if (fallbackTimer && !fallbackDone) {
+                  clearTimeout(fallbackTimer);
+                  fallbackTimer = null;
+                }
+              }
+            });
+          },
+          { threshold: 0.1 },
+        );
+        observer.observe(triggerEl);
+
+        cleanupListeners = () => {
+          window.removeEventListener("scroll", handleScrollOrResize);
+          window.removeEventListener("resize", handleScrollOrResize);
+          if (fallbackTimer) clearTimeout(fallbackTimer);
+          observer.disconnect();
+        };
+      }
     }, canvasContainer);
 
-    return () => ctx.revert();
+    return () => {
+      if (cleanupListeners) cleanupListeners();
+      ctx.revert();
+    };
   }, [geometry, canvasRef]);
 
   // 4. Main Render Loop
@@ -1910,7 +2374,7 @@ export default function RoseTreeCanvas({ geometry, data, canvasRef }) {
         width: `${geometry.width}px`,
         height: `${geometry.height}px`,
         pointerEvents: "none",
-        zIndex: 2,
+        zIndex: 1,
       }}
       aria-hidden="true"
     />

@@ -5,20 +5,31 @@ import { motion } from "framer-motion";
 
 const premiumEase = [0.16, 1, 0.3, 1];
 
+const DEFAULT_DESCRIPTION =
+  "The ABES Chess Championship stands as the pinnacle of tactical combat and collegiate mastery. Warriors of the sixty-four squares assemble to test their intellect, precision, and relentless ambition in a battle for supremacy.\n\nEvery move carves destiny into the board. From calculated opening gambits to heart-stopping endgame tactics, legends are forged under the ticking of the clock.";
+
 export default function EventDesc({ initialDescription = "" }) {
-  const [description, setDescription] = useState(initialDescription);
-  const [loading, setLoading] = useState(!initialDescription);
+  const [fetchedDescription, setFetchedDescription] = useState("");
+  const description =
+    initialDescription || fetchedDescription || DEFAULT_DESCRIPTION;
 
   useEffect(() => {
+    if (initialDescription) return;
+
     let isMounted = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+
     async function loadEventDescription() {
       try {
-        const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+        const apiUrl = (
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+        ).replace(/\/$/, "");
         const res = await fetch(`${apiUrl}/events`, {
           cache: "no-store",
+          signal: controller.signal,
         });
-        if (!res.ok) throw new Error("Failed to fetch events");
+        if (!res.ok) return;
         const data = await res.json();
         const eventsList = data?.events || [];
 
@@ -30,25 +41,23 @@ export default function EventDesc({ initialDescription = "" }) {
               e.status === "upcoming",
           ) || eventsList[0];
 
-        if (isMounted) {
-          if (targetEvent?.description) {
-            setDescription(targetEvent.description);
-          }
-          setLoading(false);
+        if (isMounted && targetEvent?.description) {
+          setFetchedDescription(targetEvent.description);
         }
-      } catch (err) {
-        console.error("Error loading event description from API:", err);
-        if (isMounted) {
-          setLoading(false);
-        }
+      } catch {
+        // Fallback gracefully when backend API is offline
+      } finally {
+        clearTimeout(timeout);
       }
     }
 
     loadEventDescription();
     return () => {
       isMounted = false;
+      clearTimeout(timeout);
+      controller.abort();
     };
-  }, []);
+  }, [initialDescription]);
 
   const paragraphs = (description || "")
     .split(/\n\s*\n/)
