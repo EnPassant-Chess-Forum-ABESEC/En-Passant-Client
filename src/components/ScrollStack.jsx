@@ -49,6 +49,7 @@ const ScrollStack = ({
   smoothScroll = true,
   snap = false,
   useWindowScroll = false,
+  fadeOut = false,
   onStackComplete
 }) => {
   const rootRef = useRef(null);
@@ -72,6 +73,7 @@ const ScrollStack = ({
       holdDistance,
       smoothScroll,
       snap,
+      fadeOut,
       onStackComplete
     };
     scheduleRef.current?.();
@@ -170,9 +172,21 @@ const ScrollStack = ({
         const turn = lean * settings.rotationAmount * (i % 2 ? -1 : 1);
         const blur = depth * settings.blurAmount;
         const dim = 1 - Math.pow(1 - dimStep, depth);
-        const transform = `perspective(1200px) rotateX(${tilt.toFixed(2)}deg) rotate(${turn.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+
+        const opacity = settings.fadeOut
+          ? Math.max(0, Math.min(1, 1 - depth * 1.35))
+          : 1;
+        const translateY = settings.fadeOut ? -depth * 45 : 0;
+
+        const transform = `perspective(1200px) translate3d(0, ${translateY.toFixed(2)}px, 0) rotateX(${tilt.toFixed(2)}deg) rotate(${turn.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
         write(`transform${i}`, transform, value => {
           card.style.transform = value;
+        });
+        write(`opacity${i}`, opacity.toFixed(3), value => {
+          card.style.opacity = value;
+        });
+        write(`pointer${i}`, opacity < 0.05 ? 'none' : 'auto', value => {
+          card.style.pointerEvents = value;
         });
         write(`filter${i}`, blur > 0.01 ? `blur(${blur.toFixed(2)}px)` : '', value => {
           card.style.filter = value;

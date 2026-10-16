@@ -610,63 +610,33 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
     <section className={styles.tree} aria-labelledby="championship-hierarchy">
       <div className={styles.intro}>
         <h2 id="championship-hierarchy" className={styles.title}>
-          <span className={styles.whiteLine}>
-            {Array.from("The").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.whiteLine}>
-            {Array.from("Crown's").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.12 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
-          <span className={styles.redLine}>
-            {Array.from("Hierarchy").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 35, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 65,
-                  damping: 18,
-                  delay: 0.28 + i * 0.035,
-                }}
-                className="inline-block"
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </span>
+          <motion.span
+            initial={{ y: 25, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className={styles.whiteLine}
+          >
+            THE
+          </motion.span>
+          <motion.span
+            initial={{ y: 25, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+            className={styles.whiteLine}
+          >
+            CROWN&apos;S
+          </motion.span>
+          <motion.span
+            initial={{ y: 35, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.7, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            className={styles.redLine}
+          >
+            HIERARCHY
+          </motion.span>
         </h2>
       </div>
 

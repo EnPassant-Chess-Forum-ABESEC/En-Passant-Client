@@ -205,20 +205,20 @@ export default function EventRegulation({
         </h2>
       </div>
 
-      {/* Stacking Cards Container using ReactBits ScrollStack */}
+      {/* Frameless Floating Stack Container with Fade-Out Effect */}
       <div className={styles.stackOuterWrapper}>
         <ScrollStack
           useWindowScroll={true}
           smoothScroll={false}
-          stackPosition="12%"
-          itemDistance={140}
-          itemStackDistance={28}
-          itemScale={0.045}
+          fadeOut={true}
+          stackPosition="15%"
+          itemDistance={160}
+          itemStackDistance={0}
+          itemScale={0.05}
           baseScale={0.88}
-          dimAmount={0.2}
           tiltAmount={0}
           rotationAmount={0}
-          holdDistance={180}
+          holdDistance={220}
           className={styles.stackWrapper}
         >
           {parsed.stages.map((stg, sIdx) => {
