@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useApi } from "@/lib/api";
+import { CheckCircle2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -290,24 +291,42 @@ export default function CustomProfileForm() {
             Chess.com Account
           </label>
           <div className="flex items-center justify-between w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white">
-            <span
-              className={
-                profile?.chessAccounts?.chessCom?.username
-                  ? "text-white"
-                  : "text-white/40"
-              }
-            >
-              {profile?.chessAccounts?.chessCom?.username
-                ? `@${profile.chessAccounts.chessCom.username}`
-                : "Not linked yet"}
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={
+                  profile?.chessAccounts?.chessCom?.username
+                    ? "text-white font-medium"
+                    : "text-white/40"
+                }
+              >
+                {profile?.chessAccounts?.chessCom?.username
+                  ? `@${profile.chessAccounts.chessCom.username}`
+                  : "Not linked yet"}
+              </span>
+              {profile?.chessAccounts?.chessCom?.username &&
+                (profile?.chessAccounts?.chessCom?.verified ? (
+                  <CheckCircle2
+                    size={13}
+                    className="text-emerald-400 fill-emerald-400/20 shrink-0"
+                    title="Verified Chess.com Account"
+                  />
+                ) : (
+                  <span className="text-[9px] font-mono font-medium text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                    Unverified
+                  </span>
+                ))}
+            </div>
             <button
               type="button"
               onClick={handleLinkChesscom}
               disabled={saving}
-              className="text-xs font-semibold bg-[#c21818] hover:bg-[#ff3333] px-3 py-1 rounded transition-colors disabled:opacity-50"
+              className="text-xs font-medium px-3 py-1 rounded-md bg-white/10 hover:bg-white/15 text-white border border-white/10 transition-colors disabled:opacity-50 cursor-pointer"
             >
-              {profile?.chessAccounts?.chessCom?.username ? "Update" : "Link"}
+              {profile?.chessAccounts?.chessCom?.username
+                ? profile?.chessAccounts?.chessCom?.verified
+                  ? "Update"
+                  : "Verify Account"
+                : "Link"}
             </button>
           </div>
           <p className="text-[10px] text-white/30 mt-1">

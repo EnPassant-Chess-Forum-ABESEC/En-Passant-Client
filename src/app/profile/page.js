@@ -17,6 +17,8 @@ import {
   Trophy,
   MailCheck,
   AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
@@ -289,31 +291,50 @@ export default function ProfilePage() {
 
                     <div className="w-full h-px bg-white/5" />
 
-                    <div className="flex items-center justify-between group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50">
+                    <div className="flex items-center justify-between group gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50 shrink-0">
                           <SiChessdotcom />
                         </div>
-                        <div>
-                          <p className="text-[10px] normalcase tracking-wider text-white/40 mb-0.5">
-                            Chess.com
-                          </p>
-                          <p className="text-sm font-semibold text-white/90">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] tracking-wider text-white/40 uppercase">
+                              Chess.com
+                            </span>
+                            {chess?.username &&
+                              (chess?.verified ? (
+                                <CheckCircle2
+                                  size={13}
+                                  className="text-emerald-400 fill-emerald-400/20 shrink-0"
+                                  title="Verified Chess.com Account"
+                                />
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-medium text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                                  <AlertCircle size={9} /> Unverified
+                                </span>
+                              ))}
+                          </div>
+                          <p className="text-sm font-semibold text-white/90 truncate">
                             {chess?.username
                               ? `@${chess.username}`
                               : "Not linked"}
                           </p>
                         </div>
                       </div>
-                      {!chess?.username && profile.isOnboardingComplete && (
-                        <button
-                          onClick={handleLinkChesscom}
-                          disabled={isLinking}
-                          className="text-xs font-semibold px-3 py-1.5 bg-[#c21818] hover:bg-[#ff3333] text-white rounded transition-colors disabled:opacity-50"
-                        >
-                          {isLinking ? "Redirecting..." : "Link Account"}
-                        </button>
-                      )}
+                      {(!chess?.username || !chess?.verified) &&
+                        profile.isOnboardingComplete && (
+                          <button
+                            onClick={handleLinkChesscom}
+                            disabled={isLinking}
+                            className="text-[11px] font-medium tracking-wide px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/90 hover:text-white border border-white/10 hover:border-white/20 transition-all duration-200 shrink-0 disabled:opacity-50 cursor-pointer"
+                          >
+                            {isLinking
+                              ? "Redirecting..."
+                              : chess?.username && !chess?.verified
+                                ? "Verify"
+                                : "Link"}
+                          </button>
+                        )}
                     </div>
 
                     <div className="w-full h-px bg-white/5" />
