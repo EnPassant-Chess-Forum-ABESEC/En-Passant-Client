@@ -38,7 +38,6 @@ export default function CustomProfileForm() {
   const [year, setYear] = useState(1);
   const [collegeEmail, setCollegeEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [chessComUsername, setChessComUsername] = useState("");
 
   const loadProfile = async () => {
     try {
@@ -50,7 +49,6 @@ export default function CustomProfileForm() {
         setYear(data.user.year || 1);
         setCollegeEmail(data.user.collegeEmail || "");
         setPhoneNumber(data.user.phoneNumber || "");
-        setChessComUsername(data.user.chessAccounts?.chessCom?.username || "");
       }
     } catch (err) {
       setError(err.message);
@@ -65,14 +63,18 @@ export default function CustomProfileForm() {
     loadProfile();
   }, []);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setSuccess(false);
-    setError(null);
-
+  const saveProfileData = async () => {
     const sanitizedCollegeEmail = collegeEmail.trim().toLowerCase();
     const sanitizedPhone = phoneNumber.replace(/\D/g, "");
+
+    if (!profile?.isOnboardingComplete) {
+      if (!branch || !year || !sanitizedCollegeEmail || !sanitizedPhone) {
+        setError(
+          "Please fill out all details above before linking your account.",
+        );
+        return false;
+      }
+    }
 
     if (sanitizedCollegeEmail) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -81,32 +83,39 @@ export default function CustomProfileForm() {
         !sanitizedCollegeEmail.endsWith("@abes.ac.in")
       ) {
         setError("Invalid college email. Must be a valid @abes.ac.in address.");
-        setSaving(false);
-        return;
+        return false;
       }
     }
 
     if (sanitizedPhone && sanitizedPhone.length !== 10) {
       setError("Phone number must be exactly 10 digits.");
-      setSaving(false);
-      return;
+      return false;
     }
 
-    try {
-      const endpoint = profile?.isOnboardingComplete
-        ? "/users/me"
-        : "/users/onboard";
-      const method = profile?.isOnboardingComplete ? "PUT" : "POST";
-      const body = {
-        branch,
-        year: parseInt(year),
-        collegeEmail: sanitizedCollegeEmail,
-        phoneNumber: sanitizedPhone,
-        chessAccounts: { chessCom: { username: chessComUsername } },
-      };
+    const endpoint = profile?.isOnboardingComplete
+      ? "/users/me"
+      : "/users/onboard";
+    const method = profile?.isOnboardingComplete ? "PUT" : "POST";
+    const body = {
+      branch,
+      year: parseInt(year),
+      collegeEmail: sanitizedCollegeEmail,
+      phoneNumber: sanitizedPhone,
+    };
 
-      const data = await fetchApi(endpoint, { method, body });
-      if (data.success) {
+    const data = await fetchApi(endpoint, { method, body });
+    return data.success;
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setSuccess(false);
+    setError(null);
+
+    try {
+      const isSaved = await saveProfileData();
+      if (isSaved) {
         setSuccess(true);
         setTimeout(() => {
           window.location.href = window.location.pathname;
@@ -115,6 +124,28 @@ export default function CustomProfileForm() {
     } catch (err) {
       setError(err.message);
     } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLinkChesscom = async () => {
+    setSaving(true);
+    setSuccess(false);
+    setError(null);
+
+    try {
+      const isSaved = await saveProfileData();
+      if (!isSaved) {
+        setSaving(false);
+        return;
+      }
+
+      const res = await fetchApi("/auth/chesscom/login", { method: "POST" });
+      if (res.authorizeUrl) {
+        window.location.href = res.authorizeUrl;
+      }
+    } catch (err) {
+      setError(err.message || "Failed to initiate Chess.com linking.");
       setSaving(false);
     }
   };
@@ -256,15 +287,33 @@ export default function CustomProfileForm() {
 
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold uppercase tracking-widest text-white/50">
-            Chess.com Username
+            Chess.com Account
           </label>
-          <input
-            type="text"
-            value={chessComUsername}
-            onChange={(e) => setChessComUsername(e.target.value)}
-            placeholder="Username"
-            className="w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c21818]/70 focus:ring-1 focus:ring-[#c21818]/30"
-          />
+          <div className="flex items-center justify-between w-full bg-white/5 border border-white/15 rounded-md px-3 py-2 text-sm text-white">
+            <span
+              className={
+                profile?.chessAccounts?.chessCom?.username
+                  ? "text-white"
+                  : "text-white/40"
+              }
+            >
+              {profile?.chessAccounts?.chessCom?.username
+                ? `@${profile.chessAccounts.chessCom.username}`
+                : "Not linked yet"}
+            </span>
+            <button
+              type="button"
+              onClick={handleLinkChesscom}
+              disabled={saving}
+              className="text-xs font-semibold bg-[#c21818] hover:bg-[#ff3333] px-3 py-1 rounded transition-colors disabled:opacity-50"
+            >
+              {profile?.chessAccounts?.chessCom?.username ? "Update" : "Link"}
+            </button>
+          </div>
+          <p className="text-[10px] text-white/30 mt-1">
+            Linking will auto-save your details above before redirecting you
+            securely to Chess.com.
+          </p>
         </div>
 
         <div className="pt-4 border-t border-white/[0.06] flex justify-end">
