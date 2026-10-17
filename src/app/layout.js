@@ -14,6 +14,7 @@ const playfair = Playfair_Display({
 import Navbar from "@/components/Navbar";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
+import FooterWrapper from "@/components/FooterWrapper";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
@@ -94,7 +95,9 @@ export default function RootLayout({ children }) {
                 <main className="flex-1 flex flex-col overflow-x-hidden relative z-10 bg-[#0a0a0a] rounded-b-[2rem] md:rounded-b-[3rem]  border-b border-white/5">
                   {children}
                 </main>
-                <Footer />
+                <FooterWrapper>
+                  <Footer />
+                </FooterWrapper>
               </SmoothScroll>
             </PreloaderWrapper>
             <Toaster />
