@@ -35,83 +35,154 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const FALLBACK_EVENT = {
-  _id: "6ad20250a2f66658e43ccf6f",
-  title: "ACC",
-  root: "ACC",
+  _id: "6acd6528d1a511d94bdb427d",
+  title: "ACC — ABES Chess Championship 2026",
+  root: "A C C",
   eventName: "ACC — ABES Chess Championship 2026",
   description:
-    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner.",
-  format: "Swiss League & Knockout Finals",
+    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open, Women's, and Inter-Club divisions. Contenders duel across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
+  format:
+    "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered contenders compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
   timeControl: "10 + 5",
   participationMode: "solo",
   status: "upcoming",
-  registrationDeadline: "2026-10-24T00:00:00.000Z",
+  startDate: "2026-10-25T18:30:00.000Z",
+  endDate: "2026-10-31T18:29:00.000Z",
+  registrationDeadline: "2026-10-25T18:29:00.000Z",
   sections: [
     {
       name: "open",
-      title: "Open Championship",
-      description: "Open Section with rating-tiered divisions",
-      timeControl: "10 + 5",
+      title: "Open Section",
+      description: "Open Section with rating-tiered brackets",
       brackets: [
         {
           name: "beginner",
           minRating: 0,
           maxRating: 899,
-          range: "< 900 ELO",
+          range: "0 - 899",
           totalRounds: 5,
           timeControl: "10 + 5",
+          timeFormat: "10 + 5",
         },
         {
           name: "intermediate",
           minRating: 900,
-          maxRating: 1500,
-          range: "900 - 1500 ELO",
+          maxRating: 1499,
+          range: "900 - 1499",
           totalRounds: 5,
           timeControl: "10 + 5",
+          timeFormat: "10 + 5",
         },
         {
           name: "advanced",
-          minRating: 1501,
+          minRating: 1500,
           maxRating: 3000,
-          range: "1500+ ELO",
+          range: "1500 - 3000",
           totalRounds: 5,
           timeControl: "15 + 2",
+          timeFormat: "15 + 2",
         },
       ],
     },
     {
-      name: "women",
-      title: "Women's Championship",
-      description: "Exclusive division for female competitors",
+      name: "womens",
+      title: "Women's Section",
+      description: "women section for female participants",
       timeControl: "10 + 5",
+      timeFormat: "10 + 5",
       brackets: [
         {
           name: "open",
           minRating: 0,
           maxRating: 3000,
-          range: "Open Rating",
+          range: "0 - 3000",
           totalRounds: 5,
           timeControl: "10 + 5",
+          timeFormat: "10 + 5",
         },
       ],
     },
     {
       name: "interclub",
-      title: "Inter-College Club",
-      description: "Inter-College Club Solo Showdown",
+      title: "Inter-Club",
+      description: "inter club section for different club representatives",
       timeControl: "10 + 5",
+      timeFormat: "10 + 5",
       brackets: [
         {
           name: "open",
           minRating: 0,
           maxRating: 3000,
-          range: "Open Rating",
+          range: "0 - 3000",
           totalRounds: 5,
           timeControl: "10 + 5",
+          timeFormat: "10 + 5",
         },
       ],
     },
   ],
+  prizes: {
+    label: "Prizes",
+    items: [
+      {
+        id: "p1",
+        place: "1st Place",
+        reward: "Goodies + Medals, Certificate",
+      },
+      {
+        id: "p2",
+        place: "2nd Place",
+        reward: "Goodies + Medals, Certificate",
+      },
+      {
+        id: "p3",
+        place: "3rd Place",
+        reward: "Medal + Certificate",
+      },
+    ],
+  },
+  formatDetails: {
+    overview:
+      "The championship follows a two-stage hybrid progression: a comprehensive Swiss-system league phase followed by high-stakes single-elimination knockouts to crown the champion.",
+    stages: [
+      {
+        stage: "Stage 01",
+        badge: "SWISS SYSTEM",
+        title: "Swiss League Phase",
+        summary:
+          "All registered contenders begin in competitive Swiss-system league rounds. There are no early eliminations; every participant plays all scheduled rounds against opponents with equal match points.",
+        bullets: [
+          "Non-elimination league matches ensuring equal play opportunities for all participants.",
+          "Players paired each round based on matching scores and progressive tournament records.",
+          "Buchholz and Sonneborn-Berger tiebreak metrics compute definitive qualifying standings.",
+        ],
+      },
+      {
+        stage: "Stage 02",
+        badge: "KNOCKOUT PLAYOFFS",
+        title: "Single-Elimination Knockouts",
+        summary:
+          "Following the conclusion of the Swiss league rounds, the highest-ranking seeds advance directly into single-elimination knockout brackets.",
+        bullets: [
+          "Head-to-head sudden death duels where only victorious players advance.",
+          "Seeding strictly determined by performance and tiebreak ranks from the Swiss league.",
+          "High-pressure playoff encounters filtering down until only two contenders remain.",
+        ],
+      },
+      {
+        stage: "Stage 03",
+        badge: "THE FINALS",
+        title: "The Grand Finals (Top 2)",
+        summary:
+          "The knockout gauntlet narrows the entire field down to the top two finalists, who battle head-to-head in the championship decider.",
+        bullets: [
+          "The top 2 surviving grand finalists clash in the definitive championship match.",
+          "Official arbiter oversight with standard classical/rapid clock regulations.",
+          "Winner is crowned the ACC Champion and claims the 1st Place trophy and top cash prize.",
+        ],
+      },
+    ],
+  },
 };
 
 const slideVariants = {
