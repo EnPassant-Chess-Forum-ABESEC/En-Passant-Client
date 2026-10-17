@@ -69,6 +69,7 @@ export default function Navbar() {
     { name: "Leaderboard", path: "/leaderboard" },
     // { name: "Gallery", path: "/event-gallery" },
     // { name: "Team", path: "/team" },
+    { name: "Links", path: "/links" },
     { name: "Recruitment", path: recruitmentPath },
   ];
 
