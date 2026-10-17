@@ -1,11 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLenis } from "lenis/react";
 import styles from "./EventRegulation.module.css";
 
-const premiumEase = [0.16, 1, 0.3, 1];
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
+const premiumEase = [0.16, 1, 0.3, 1];
 const STAGE_CODES = ["e3", "e4", "e5"];
 
 function parseFormatText(rawText) {
@@ -118,6 +124,12 @@ export default function EventRegulation({
   );
   const [loading, setLoading] = useState(!format && !providedEvent);
 
+  const lenis = useLenis();
+  const stackWrapperRef = useRef(null);
+  const cardRefs = useRef([]);
+  const overlayRefs = useRef([]);
+  const numeralRefs = useRef([]);
+
   useEffect(() => {
     if (initialFormat || providedEvent) {
       const f =
@@ -157,7 +169,7 @@ export default function EventRegulation({
           }
           setLoading(false);
         }
-      } catch (err) {
+      } catch {
         if (isMounted) setLoading(false);
       }
     }
@@ -169,6 +181,164 @@ export default function EventRegulation({
   }, [initialFormat, providedEvent]);
 
   const parsed = parseFormatText(format);
+
+  // GSAP Stacking Cards Parallax Timeline (Desktop)
+  useEffect(() => {
+    if (loading || !parsed.stages || parsed.stages.length === 0) return;
+    if (!stackWrapperRef.current) return;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) return;
+
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (!isDesktop) return;
+
+    const ctx = gsap.context(() => {
+      const cards = cardRefs.current.filter(Boolean);
+      const overlays = overlayRefs.current.filter(Boolean);
+      const numerals = numeralRefs.current.filter(Boolean);
+      const totalStages = cards.length;
+      if (totalStages <= 1) return;
+
+      // Card 0 starts locked in at top: 0, scale: 1
+      gsap.set(cards[0], { yPercent: 0, scale: 1, zIndex: 10 });
+
+      // Cards 1..N start below the viewport at yPercent: 100 with ascending zIndex
+      for (let i = 1; i < totalStages; i++) {
+        gsap.set(cards[i], {
+          yPercent: 100,
+          scale: 1,
+          zIndex: 10 + i,
+        });
+      }
+
+      // Master ScrollTrigger timeline that pins stackWrapperRef
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stackWrapperRef.current,
+          start: "top top",
+          end: `+=${(totalStages - 1) * 115}%`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onRefresh: () => {
+            lenis?.resize();
+          },
+        },
+      });
+
+      // Animate each subsequent stage stacking over the previous ones
+      for (let i = 1; i < totalStages; i++) {
+        const incomingCard = cards[i];
+        const prevCard = cards[i - 1];
+        const prevOverlay = overlays[i - 1];
+        const incomingNumeral = numerals[i];
+        const prevNumeral = numerals[i - 1];
+
+        const label = `stage-stack-${i}`;
+
+        // 1. Incoming card slides up onto the stack
+        tl.to(
+          incomingCard,
+          {
+            yPercent: 0,
+            duration: 1,
+            ease: "none",
+          },
+          label,
+        );
+
+        // 2. Incoming card's giant numeral glides up with subtle parallax
+        if (incomingNumeral) {
+          gsap.set(incomingNumeral, { yPercent: 16 });
+          tl.to(
+            incomingNumeral,
+            {
+              yPercent: 0,
+              duration: 1,
+              ease: "none",
+            },
+            label,
+          );
+        }
+
+        // 3. Previous card scales down slightly (0.94) and darkens
+        if (prevCard) {
+          tl.to(
+            prevCard,
+            {
+              scale: 0.94,
+              duration: 1,
+              ease: "none",
+            },
+            label,
+          );
+        }
+
+        if (prevOverlay) {
+          tl.to(
+            prevOverlay,
+            {
+              opacity: 0.45,
+              duration: 1,
+              ease: "none",
+            },
+            label,
+          );
+        }
+
+        if (prevNumeral) {
+          tl.to(
+            prevNumeral,
+            {
+              yPercent: -12,
+              duration: 1,
+              ease: "none",
+            },
+            label,
+          );
+        }
+
+        // 4. If there is an older card (i - 2), recede it further
+        if (i >= 2) {
+          const olderCard = cards[i - 2];
+          const olderOverlay = overlays[i - 2];
+          if (olderCard) {
+            tl.to(
+              olderCard,
+              {
+                scale: 0.89,
+                duration: 1,
+                ease: "none",
+              },
+              label,
+            );
+          }
+          if (olderOverlay) {
+            tl.to(
+              olderOverlay,
+              {
+                opacity: 0.7,
+                duration: 1,
+                ease: "none",
+              },
+              label,
+            );
+          }
+        }
+      }
+
+      ScrollTrigger.refresh();
+      lenis?.resize();
+    }, stackWrapperRef);
+
+    return () => ctx.revert();
+  }, [loading, parsed.stages, lenis]);
 
   return (
     <section className={styles.section} aria-label="Tournament Regulation">
@@ -219,56 +389,70 @@ export default function EventRegulation({
         </h2>
       </div>
 
-      {/* Full-width Alternating Stage Sections (Left, Right, Left) */}
-      {parsed.stages.map((stg, sIdx) => {
-        const stageCode = STAGE_CODES[sIdx] || `e${sIdx + 3}`;
+      {/* Pinned Stacking Cards Wrapper */}
+      <div ref={stackWrapperRef} className={styles.stackWrapper}>
+        {parsed.stages.map((stg, sIdx) => {
+          const stageCode = STAGE_CODES[sIdx] || `e${sIdx + 3}`;
+          const isNormalLayout = sIdx % 2 === 0;
 
-        // Even index (0, 2): Normal layout (Content Left, Numeral Right)
-        // Odd index (1): Reversed layout (Numeral Left, Content Right)
-        const isNormalLayout = sIdx % 2 === 0;
+          return (
+            <div
+              key={sIdx}
+              ref={(el) => (cardRefs.current[sIdx] = el)}
+              className={styles.stageSection}
+              data-card-index={sIdx}
+              id={`stage-${stageCode}`}
+            >
+              <div
+                ref={(el) => (overlayRefs.current[sIdx] = el)}
+                className={styles.cardDimOverlay}
+              />
 
-        return (
-          <div
-            key={sIdx}
-            className={styles.stageSection}
-            id={`stage-${stageCode}`}
-          >
-          <div
-            className={`${styles.stageInner} ${
-              isNormalLayout
-                ? styles.stageLayoutNormal
-                : styles.stageLayoutReversed
-            }`}
-          >
-              {/* Content slides in from the LEFT when numeral is right (normal), from RIGHT when numeral is left (reversed) */}
-              <motion.div
-                initial={{ opacity: 0, x: isNormalLayout ? -80 : 80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.9, ease: premiumEase }}
-                className={styles.contentCol}
+              <div
+                className={`${styles.stageInner} ${
+                  isNormalLayout
+                    ? styles.stageLayoutNormal
+                    : styles.stageLayoutReversed
+                }`}
               >
-                <h3 className={styles.stageTitle}>
-                  {stg.title || `STAGE ${sIdx + 1}`}
-                </h3>
+                {/* Content Column */}
+                <motion.div
+                  initial={{ opacity: 0, x: isNormalLayout ? -60 : 60 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.8, ease: premiumEase }}
+                  className={styles.contentCol}
+                >
+                  <h3 className={styles.stageTitle}>
+                    {stg.title || `STAGE ${sIdx + 1}`}
+                  </h3>
 
-                <p className={styles.stageBody}>{stg.body}</p>
-              </motion.div>
+                  <p className={styles.stageBody}>{stg.body}</p>
+                </motion.div>
 
-              {/* Numeral slides in from its own side: right for normal (e3,e5), left for reversed (e4) */}
-              <motion.div
-                initial={{ opacity: 0, x: isNormalLayout ? 80 : -80 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.9, delay: 0.06, ease: premiumEase }}
-                className={styles.numberCol}
-              >
-                <span className={styles.giantNumeral}>{stageCode}</span>
-              </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: isNormalLayout ? 60 : -60 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.05,
+                    ease: premiumEase,
+                  }}
+                  className={styles.numberCol}
+                >
+                  <span
+                    ref={(el) => (numeralRefs.current[sIdx] = el)}
+                    className={styles.giantNumeral}
+                  >
+                    {stageCode}
+                  </span>
+                </motion.div>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       {/* Trailing paragraphs (if any) */}
       {parsed.paragraphs.length > 0 && (
