@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   CheckCircle2,
   AlertCircle,
   Loader2,
@@ -17,6 +18,8 @@ import {
   ExternalLink,
   Copy,
   Check,
+  Search,
+  X,
   User as UserIcon,
 } from "lucide-react";
 
@@ -33,29 +36,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const CLUB_OPTIONS = [
-  "ABES Engineering College",
-  "AKGEC Ghaziabad",
-  "KIET Group of Institutions",
-  "JSS Academy of Technical Education",
-  "Galgotias University",
-  "Bennett University",
-  "IIT Delhi",
-  "DTU Delhi",
-  "NSUT Delhi",
-  "Jaypee Institute (JIIT)",
-  "GL Bajaj Institute",
-  "Sharda University",
-  "IMS Ghaziabad",
-  "Other / External Club",
+  "Cultural Club",
+  "Dramatics Club",
+  "Talentrove Club",
+  "Geeksforgeeks",
+  "Salaah Mentor Community",
+  "Picturesque Club",
+  "ENIGMA",
+  "ECell ABES",
+  "Technical Club",
+  "Mechnophilla Club",
+  "ABESEC ACM Students Chapter",
+  "ACM",
+  "ABESEC IEEE",
+  "Women Progresscell",
+  "Codechef",
+  "Techovation Club",
+  "ACES ABES",
+  "Sports Club",
+  "En Passant Chess Club",
+  "Spritualandyoga Club",
+  "Dare2Compete",
+  "DataVerse Club",
+  "Google DSC",
+  "Creativeu Club",
+  "Environ Club",
+  "NSS",
+  "Internal Complaints Committee and STAMBH",
+  "Trishul Club",
 ];
 
 const FALLBACK_INTERCLUB_SECTION = {
@@ -96,9 +106,9 @@ const FALLBACK_EVENT = {
 };
 
 const slideVariants = {
-  initial: { opacity: 0, x: 16 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -16 },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.15, ease: "easeOut" } },
+  exit: { opacity: 0, transition: { duration: 0.08, ease: "easeIn" } },
 };
 
 export default function EventInterClubRegistrationPage() {
@@ -116,8 +126,13 @@ export default function EventInterClubRegistrationPage() {
   const [bracketPreview, setBracketPreview] = useState(null);
   const [loadingBracketPreview, setLoadingBracketPreview] = useState(false);
 
+  const [gender, setGender] = useState("");
   const [clubName, setClubName] = useState("");
   const [customClubName, setCustomClubName] = useState("");
+  const [clubSearchQuery, setClubSearchQuery] = useState("");
+  const [isClubOpen, setIsClubOpen] = useState(false);
+  const clubDropdownRef = useRef(null);
+  const clubSearchInputRef = useRef(null);
   const [paymentUtr, setPaymentUtr] = useState("");
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
 
@@ -128,7 +143,38 @@ export default function EventInterClubRegistrationPage() {
     return clubName.trim();
   }, [clubName, customClubName]);
 
+  const filteredClubOptions = useMemo(() => {
+    const query = clubSearchQuery.trim();
+    if (!query) return CLUB_OPTIONS;
+    try {
+      const regex = new RegExp(query, "i");
+      return CLUB_OPTIONS.filter((club) => regex.test(club));
+    } catch {
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const fallbackRegex = new RegExp(escaped, "i");
+      return CLUB_OPTIONS.filter((club) => fallbackRegex.test(club));
+    }
+  }, [clubSearchQuery]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        clubDropdownRef.current &&
+        !clubDropdownRef.current.contains(event.target)
+      ) {
+        setIsClubOpen(false);
+      }
+    }
+    if (isClubOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [isClubOpen]);
+
   const [myRegistration, setMyRegistration] = useState(null);
+  const [allRegistrations, setAllRegistrations] = useState([]);
   const [copiedUtr, setCopiedUtr] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -219,13 +265,26 @@ export default function EventInterClubRegistrationPage() {
         const data = await fetchApi(
           `/event-registrations/${event._id}/my-registration`,
         );
-        if (data?.success && data?.registration) {
-          setMyRegistration(data.registration);
+        if (data?.success) {
+          if (data.allRegistrations && Array.isArray(data.allRegistrations)) {
+            setAllRegistrations(data.allRegistrations);
+            if (
+              data.allRegistrations.length > 0 &&
+              data.allRegistrations[0].gender
+            ) {
+              setGender(data.allRegistrations[0].gender);
+            }
+          }
+          if (data.registration) {
+            setMyRegistration(data.registration);
+          }
         } else {
           setMyRegistration(null);
+          setAllRegistrations([]);
         }
       } catch {
         setMyRegistration(null);
+        setAllRegistrations([]);
       }
     }
 
@@ -270,12 +329,46 @@ export default function EventInterClubRegistrationPage() {
     return new Date() <= new Date(event.registrationDeadline);
   }, [event]);
 
+  const hasSoloRegistration = useMemo(() => {
+    return (
+      allRegistrations.some(
+        (r) =>
+          r.section === "open" ||
+          r.section === "womens" ||
+          r.section === "women",
+      ) ||
+      (myRegistration &&
+        myRegistration.section !== "interclub" &&
+        myRegistration.section !== "inter-club")
+    );
+  }, [allRegistrations, myRegistration]);
+
+  const interclubRegistration = useMemo(() => {
+    if (allRegistrations?.length) {
+      return (
+        allRegistrations.find(
+          (r) =>
+            r.section === "interclub" ||
+            r.section === "inter-club" ||
+            r.section === "inter club",
+        ) || null
+      );
+    }
+    if (
+      myRegistration?.section === "interclub" ||
+      myRegistration?.section === "inter-club"
+    ) {
+      return myRegistration;
+    }
+    return null;
+  }, [allRegistrations, myRegistration]);
+
   const isPaymentConfirmed = useMemo(() => {
     return (
-      myRegistration?.paymentStatus?.toLowerCase() === "success" ||
-      myRegistration?.status?.toLowerCase() === "confirmed"
+      interclubRegistration?.paymentStatus?.toLowerCase() === "success" ||
+      interclubRegistration?.status?.toLowerCase() === "confirmed"
     );
-  }, [myRegistration]);
+  }, [interclubRegistration]);
 
   const chessAccount = userProfile?.chessAccounts?.chessCom;
 
@@ -326,7 +419,7 @@ export default function EventInterClubRegistrationPage() {
   };
 
   const isStepValid = (step) => {
-    if (step === 0) return Boolean(effectiveClubName);
+    if (step === 0) return Boolean(gender) && Boolean(effectiveClubName);
     if (step === 1) return true;
     if (step === 2)
       return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
@@ -335,6 +428,10 @@ export default function EventInterClubRegistrationPage() {
 
   const handleNext = () => {
     if (currentStep === 0) {
+      if (!gender) {
+        toast.error("Please select your gender (Male or Female).");
+        return;
+      }
       if (!effectiveClubName) {
         toast.error("Please select or enter your representing club / college.");
         return;
@@ -376,6 +473,11 @@ export default function EventInterClubRegistrationPage() {
       return;
     }
 
+    if (!gender) {
+      toast.error("Please select your gender (Male or Female).");
+      return;
+    }
+
     if (!effectiveClubName) {
       toast.error("Please select or enter your representing club / college.");
       return;
@@ -396,6 +498,7 @@ export default function EventInterClubRegistrationPage() {
       const formData = new FormData();
       formData.append("section", "interclub");
       formData.append("bracket", placedBracket?.name || "open");
+      formData.append("gender", gender);
       formData.append("isHosteler", "false");
       formData.append("utr", paymentUtr.trim());
       formData.append("screenshot", paymentScreenshot);
@@ -419,20 +522,26 @@ export default function EventInterClubRegistrationPage() {
         toast.success(
           `Registration submitted for Inter-Club in ${event.title || "the event"}! Pending payment verification.`,
         );
-        setMyRegistration(
-          res.registration || {
-            eventId: event._id,
-            section: "interclub",
-            bracket: placedBracket?.name || "open",
-            clubName: effectiveClubName,
-            teamName: effectiveClubName,
-            status: "pending",
-            paymentStatus: "pending",
-            utr: paymentUtr.trim(),
-            paymentAmount: 80,
-            createdAt: new Date().toISOString(),
-          },
-        );
+        const newReg = res.registration || {
+          eventId: event._id,
+          section: "interclub",
+          bracket: placedBracket?.name || "open",
+          gender: gender,
+          clubName: effectiveClubName,
+          teamName: effectiveClubName,
+          status: "pending",
+          paymentStatus: "pending",
+          utr: paymentUtr.trim(),
+          paymentAmount: 80,
+          createdAt: new Date().toISOString(),
+        };
+        setMyRegistration(newReg);
+        setAllRegistrations((prev) => [
+          ...prev.filter(
+            (r) => r.section !== "interclub" && r.section !== "inter-club",
+          ),
+          newReg,
+        ]);
       } else {
         toast.error(res?.message || "Failed to complete registration.");
       }
@@ -452,12 +561,20 @@ export default function EventInterClubRegistrationPage() {
 
     try {
       setIsWithdrawing(true);
-      const res = await fetchApi(`/event-registrations/${event._id}/delete`, {
-        method: "DELETE",
-      });
+      const res = await fetchApi(
+        `/event-registrations/${event._id}/delete?section=interclub`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (res?.success) {
         toast.success("Your inter-club registration has been withdrawn.");
+        setAllRegistrations((prev) =>
+          prev.filter(
+            (r) => r.section !== "interclub" && r.section !== "inter-club",
+          ),
+        );
         setMyRegistration(null);
         setCurrentStep(0);
       } else {
@@ -545,24 +662,26 @@ export default function EventInterClubRegistrationPage() {
                 </div>
               </div>
 
-              {!myRegistration && isRegistrationOpen && (
-                <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
-                  <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
-                    {getStepTitle()}
-                  </h2>
+              {!interclubRegistration &&
+                isRegistrationOpen &&
+                !hasSoloRegistration && (
+                  <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
+                    <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
+                      {getStepTitle()}
+                    </h2>
 
-                  {currentStep > 0 && (
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest shrink-0 cursor-pointer"
-                    >
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                      <span>Back</span>
-                    </button>
-                  )}
-                </div>
-              )}
+                    {currentStep > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest shrink-0 cursor-pointer"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>Back</span>
+                      </button>
+                    )}
+                  </div>
+                )}
 
               <div
                 className="flex-1 min-h-0 relative overflow-y-auto custom-scrollbar pr-1 py-1"
@@ -578,9 +697,36 @@ export default function EventInterClubRegistrationPage() {
                 }}
               >
                 <AnimatePresence mode="wait">
-                  {myRegistration ? (
+                  {hasSoloRegistration ? (
                     <motion.div
-                      key="registered-view"
+                      key="solo-guardrail"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      className="p-5 rounded-2xl bg-amber-500/[0.05] border border-amber-500/20 text-center space-y-3 my-auto"
+                    >
+                      <AlertCircle className="w-8 h-8 text-amber-400 mx-auto" />
+                      <h3 className="font-pezula text-base uppercase tracking-wide text-white">
+                        Solo Participant Guardrail
+                      </h3>
+                      <p className="text-white/60 text-xs max-w-md mx-auto leading-relaxed">
+                        You are registered in a solo division (Open /
+                        Women&apos;s) for this tournament. Participants in solo
+                        divisions cannot register for the Inter-Club division.
+                      </p>
+                      <div className="pt-2">
+                        <Link
+                          href={`/events/${event?._id || id}/register`}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold uppercase tracking-wider transition-colors border border-white/10"
+                        >
+                          <span>View Solo Registration</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  ) : interclubRegistration ? (
+                    <motion.div
+                      key={`registered-view-${interclubRegistration._id || "interclub"}`}
                       variants={slideVariants}
                       initial="initial"
                       animate="animate"
@@ -592,17 +738,21 @@ export default function EventInterClubRegistrationPage() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
-                                {myRegistration.paymentStatus === "success" ||
-                                myRegistration.status === "confirmed"
+                                {interclubRegistration.paymentStatus ===
+                                  "success" ||
+                                interclubRegistration.status === "confirmed"
                                   ? "Registration Confirmed"
-                                  : myRegistration.paymentStatus === "failed"
+                                  : interclubRegistration.paymentStatus ===
+                                      "failed"
                                     ? "Payment Rejected"
                                     : "Payment Verification Pending"}
                               </h3>
-                              {myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed" ? (
+                              {interclubRegistration.paymentStatus ===
+                                "success" ||
+                              interclubRegistration.status === "confirmed" ? (
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              ) : myRegistration.paymentStatus === "failed" ? (
+                              ) : interclubRegistration.paymentStatus ===
+                                "failed" ? (
                                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                               ) : (
                                 <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
@@ -610,10 +760,12 @@ export default function EventInterClubRegistrationPage() {
                             </div>
 
                             <p className="text-white/40 text-[11px] font-mono leading-relaxed">
-                              {myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed"
+                              {interclubRegistration.paymentStatus ===
+                                "success" ||
+                              interclubRegistration.status === "confirmed"
                                 ? `Confirmed registration for ${event?.title || "ACC 2026"}`
-                                : myRegistration.paymentStatus === "failed"
+                                : interclubRegistration.paymentStatus ===
+                                    "failed"
                                   ? "Payment verification was rejected."
                                   : "Your registration was recorded and is awaiting payment verification."}
                             </p>
@@ -621,18 +773,21 @@ export default function EventInterClubRegistrationPage() {
 
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
-                              myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed"
+                              interclubRegistration.paymentStatus ===
+                                "success" ||
+                              interclubRegistration.status === "confirmed"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : myRegistration.paymentStatus === "failed"
+                                : interclubRegistration.paymentStatus ===
+                                    "failed"
                                   ? "bg-red-500/10 text-red-400 border-red-500/30"
                                   : "bg-amber-500/10 text-amber-400 border-amber-500/30"
                             }`}
                           >
-                            {myRegistration.paymentStatus === "success" ||
-                            myRegistration.status === "confirmed"
+                            {interclubRegistration.paymentStatus ===
+                              "success" ||
+                            interclubRegistration.status === "confirmed"
                               ? "CONFIRMED"
-                              : myRegistration.paymentStatus === "failed"
+                              : interclubRegistration.paymentStatus === "failed"
                                 ? "FAILED"
                                 : "PENDING"}
                           </span>
@@ -655,52 +810,53 @@ export default function EventInterClubRegistrationPage() {
                               Rating Bracket
                             </span>
                             <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate capitalize">
-                              {myRegistration.bracket
-                                ? `${myRegistration.bracket} Bracket`
+                              {interclubRegistration.bracket
+                                ? `${interclubRegistration.bracket} Bracket`
                                 : placedBracket?.name
                                   ? `${placedBracket.name} Bracket`
                                   : "Assigned"}
                             </span>
                           </div>
 
-                          {myRegistration.peakRapidRating != null && (
+                          {interclubRegistration.peakRapidRating != null && (
                             <div>
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Peak Bullet (30d)
                               </span>
                               <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
-                                {myRegistration.peakRapidRating}{" "}
+                                {interclubRegistration.peakRapidRating}{" "}
                                 <span className="text-white/40 text-[11px]">
-                                  ({myRegistration.rapidGamesCount ?? 0} games)
+                                  ({interclubRegistration.rapidGamesCount ?? 0}{" "}
+                                  games)
                                 </span>
                               </span>
                             </div>
                           )}
 
-                          {myRegistration.chessUsername && (
+                          {interclubRegistration.chessUsername && (
                             <div>
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Chess.com
                               </span>
                               <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
-                                @{myRegistration.chessUsername}
+                                @{interclubRegistration.chessUsername}
                               </span>
                             </div>
                           )}
 
-                          {(myRegistration.clubName ||
+                          {(interclubRegistration.clubName ||
                             effectiveClubName ||
-                            myRegistration.teamName ||
-                            myRegistration.team?.teamName) && (
+                            interclubRegistration.teamName ||
+                            interclubRegistration.team?.teamName) && (
                             <div className="col-span-2 pt-1 border-t border-white/[0.04]">
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Affiliated Organization / College
                               </span>
                               <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate">
-                                {myRegistration.clubName ||
+                                {interclubRegistration.clubName ||
                                   effectiveClubName ||
-                                  myRegistration.teamName ||
-                                  myRegistration.team?.teamName}
+                                  interclubRegistration.teamName ||
+                                  interclubRegistration.team?.teamName}
                               </span>
                             </div>
                           )}
@@ -715,17 +871,19 @@ export default function EventInterClubRegistrationPage() {
                                 Registration Fee
                               </span>
                               <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
-                                Rs.{myRegistration.paymentAmount || 80}
+                                Rs.{interclubRegistration.paymentAmount || 80}
                               </span>
                             </div>
 
-                            {myRegistration.paymentScreenshotUrl && (
+                            {interclubRegistration.paymentScreenshotUrl && (
                               <div>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                   Payment Proof
                                 </span>
                                 <a
-                                  href={myRegistration.paymentScreenshotUrl}
+                                  href={
+                                    interclubRegistration.paymentScreenshotUrl
+                                  }
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-white/80 hover:text-white text-xs font-mono inline-flex items-center gap-1.5 mt-0.5 underline transition-colors"
@@ -736,13 +894,13 @@ export default function EventInterClubRegistrationPage() {
                               </div>
                             )}
 
-                            {myRegistration.receiptUrl && (
+                            {interclubRegistration.receiptUrl && (
                               <div>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                   Official Receipt
                                 </span>
                                 <a
-                                  href={myRegistration.receiptUrl}
+                                  href={interclubRegistration.receiptUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-emerald-400 hover:text-emerald-300 text-xs font-mono inline-flex items-center gap-1 mt-0.5 underline font-medium transition-colors"
@@ -754,20 +912,20 @@ export default function EventInterClubRegistrationPage() {
                             )}
                           </div>
 
-                          {myRegistration.utr && (
+                          {interclubRegistration.utr && (
                             <div className="flex items-center justify-between sm:justify-end gap-2 min-w-0 sm:max-w-[260px]">
                               <div className="min-w-0">
                                 <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
                                   Transaction Reference
                                 </span>
                                 <span className="text-white/90 font-mono text-[11px] truncate block select-all">
-                                  {myRegistration.utr}
+                                  {interclubRegistration.utr}
                                 </span>
                               </div>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleCopyUtr(myRegistration.utr)
+                                  handleCopyUtr(interclubRegistration.utr)
                                 }
                                 className="p-1 px-2 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors text-[10px] flex items-center gap-1 font-mono border border-white/5 shrink-0 cursor-pointer"
                                 title="Copy Reference"
@@ -861,9 +1019,68 @@ export default function EventInterClubRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-3 w-full"
                         >
+                          <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80">
+                                Participant Gender{" "}
+                                <span className="text-[#ff4444]">*</span>
+                              </span>
+                              {gender && (
+                                <span className="text-[10px] font-mono uppercase text-white/60 font-medium">
+                                  {gender}
+                                </span>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-2 gap-2.5">
+                              <button
+                                type="button"
+                                onClick={() => setGender("male")}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                                  gender === "male"
+                                    ? "bg-white/[0.08] border-red-500/40 text-white"
+                                    : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                }`}
+                              >
+                                <span
+                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
+                                    gender === "male"
+                                      ? "border-red-400/80 bg-red-500/20"
+                                      : "border-white/25 bg-transparent"
+                                  }`}
+                                >
+                                  {gender === "male" && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                                  )}
+                                </span>
+                                <span>Male</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setGender("female")}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                                  gender === "female"
+                                    ? "bg-white/[0.08] border-red-500/40 text-white"
+                                    : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                }`}
+                              >
+                                <span
+                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
+                                    gender === "female"
+                                      ? "border-red-400/80 bg-red-500/20"
+                                      : "border-white/25 bg-transparent"
+                                  }`}
+                                >
+                                  {gender === "female" && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                                  )}
+                                </span>
+                                <span>Female</span>
+                              </button>
+                            </div>
+                          </div>
+
                           <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-3">
                             <div className="flex items-start justify-between gap-3">
                               <div>
@@ -893,29 +1110,121 @@ export default function EventInterClubRegistrationPage() {
                             </div>
                           </div>
 
-                          <div className="space-y-1.5 pt-1">
-                            <label className="block text-[11px] font-pezula uppercase tracking-wider text-white/80">
-                              Representing Club / College
-                            </label>
-                            <Select
-                              value={clubName}
-                              onValueChange={setClubName}
+                          <div className="space-y-1.5 pt-1 relative" ref={clubDropdownRef}>
+                            <div className="flex items-center justify-between">
+                              <label className="block text-[11px] font-pezula uppercase tracking-wider text-white/80">
+                                Representing Club <span className="text-[#ff4444]">*</span>
+                              </label>
+                              {clubName && (
+                                <span className="text-[10px] font-mono text-white/50 truncate max-w-[200px]">
+                                  {clubName}
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsClubOpen((prev) => {
+                                  const next = !prev;
+                                  if (next) {
+                                    setTimeout(() => clubSearchInputRef.current?.focus(), 50);
+                                  }
+                                  return next;
+                                });
+                              }}
+                              className={`w-full flex items-center justify-between bg-white/[0.04] border ${
+                                isClubOpen
+                                  ? "border-red-500/40 bg-white/[0.07]"
+                                  : "border-white/10 hover:border-white/20"
+                              } rounded-lg h-10 px-3 text-xs text-white hover:bg-white/[0.06] transition-all cursor-pointer font-mono select-none`}
                             >
-                              <SelectTrigger className="w-full bg-white/5 border border-white/10 rounded-lg h-10 px-3 text-xs text-white focus:outline-none focus:border-[#9b1a1a] focus:bg-white/10 font-mono transition-colors data-placeholder:text-white/30">
-                                <SelectValue placeholder="Select Club / College" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-[#0e0e0e] border border-white/10 text-white max-h-56 z-[300]">
-                                {CLUB_OPTIONS.map((club) => (
-                                  <SelectItem
-                                    key={club}
-                                    value={club}
-                                    className="text-xs text-white/90 focus:bg-white/10 focus:text-white cursor-pointer py-2 font-mono"
-                                  >
-                                    {club}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              <span className={clubName ? "text-white truncate" : "text-white/30"}>
+                                {clubName || "Select Club / Organization"}
+                              </span>
+                              <ChevronDown
+                                className={`w-3.5 h-3.5 text-white/40 shrink-0 transition-transform duration-200 ${
+                                  isClubOpen ? "rotate-180 text-white" : ""
+                                }`}
+                              />
+                            </button>
+
+                            {isClubOpen && (
+                              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0e0e0e] border border-white/15 rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-2xl animate-in fade-in-0 zoom-in-95 duration-100">
+                                <div className="p-2 border-b border-white/10 bg-white/[0.02]">
+                                  <div className="relative flex items-center">
+                                    <Search className="w-3.5 h-3.5 absolute left-2.5 text-white/40 pointer-events-none" />
+                                    <input
+                                      ref={clubSearchInputRef}
+                                      type="text"
+                                      value={clubSearchQuery}
+                                      onChange={(e) => setClubSearchQuery(e.target.value)}
+                                      placeholder="Search club or organization..."
+                                      className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-7 py-1.5 text-xs text-white placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:bg-white/[0.08] font-mono transition-all"
+                                    />
+                                    {clubSearchQuery && (
+                                      <button
+                                        type="button"
+                                        onClick={() => setClubSearchQuery("")}
+                                        className="absolute right-2 text-white/40 hover:text-white transition-colors cursor-pointer p-0.5"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    )}
+                                  </div>
+                                  {clubSearchQuery && (
+                                    <div className="flex items-center justify-between text-[9px] font-mono text-white/40 px-1 pt-1.5">
+                                      <span>Searching: &quot;{clubSearchQuery}&quot;</span>
+                                      <span>
+                                        {filteredClubOptions.length} match{filteredClubOptions.length === 1 ? "" : "es"}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="max-h-52 overflow-y-auto custom-scrollbar p-1 space-y-0.5">
+                                  {filteredClubOptions.length > 0 ? (
+                                    filteredClubOptions.map((club) => {
+                                      const isSelected = clubName === club;
+                                      return (
+                                        <button
+                                          key={club}
+                                          type="button"
+                                          onClick={() => {
+                                            setClubName(club);
+                                            setIsClubOpen(false);
+                                          }}
+                                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-mono text-left transition-colors cursor-pointer ${
+                                            isSelected
+                                              ? "bg-white/[0.08] text-white font-medium border border-white/10"
+                                              : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
+                                          }`}
+                                        >
+                                          <span className="truncate">{club}</span>
+                                          {isSelected && (
+                                            <Check className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                                          )}
+                                        </button>
+                                      );
+                                    })
+                                  ) : (
+                                    <div className="py-5 px-3 text-center space-y-1">
+                                      <p className="text-xs font-mono text-white/40">
+                                        No clubs found matching &quot;{clubSearchQuery}&quot;
+                                      </p>
+                                      <button
+                                        type="button"
+                                        onClick={() => setClubSearchQuery("")}
+                                        className="text-[11px] font-mono text-red-400 hover:text-red-300 underline cursor-pointer"
+                                      >
+                                        Clear Search
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
                             {clubName === "Other / External Club" && (
                               <input
                                 type="text"
@@ -938,7 +1247,6 @@ export default function EventInterClubRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-2.5 w-full"
                         >
                           <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-2.5 text-xs">
@@ -1074,7 +1382,6 @@ export default function EventInterClubRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-3 w-full"
                         >
                           <div className="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 p-3.5 rounded-xl">
@@ -1150,7 +1457,9 @@ export default function EventInterClubRegistrationPage() {
               </div>
 
               <div className="pt-2.5 shrink-0 border-t border-white/5 mt-2">
-                {!myRegistration && isRegistrationOpen ? (
+                {!interclubRegistration &&
+                isRegistrationOpen &&
+                !hasSoloRegistration ? (
                   <SpecularButton
                     onClick={handleNext}
                     disabled={isSubmitting || !isStepValid(currentStep)}

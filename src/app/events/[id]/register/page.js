@@ -168,9 +168,9 @@ const FALLBACK_EVENT = {
 };
 
 const slideVariants = {
-  initial: { opacity: 0, x: 16 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -16 },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.15, ease: "easeOut" } },
+  exit: { opacity: 0, transition: { duration: 0.1, ease: "easeIn" } },
 };
 
 export default function EventSoloRegistrationPage() {
@@ -185,10 +185,12 @@ export default function EventSoloRegistrationPage() {
   const [event, setEvent] = useState(null);
 
   const [selectedSectionName, setSelectedSectionName] = useState("");
+  const [gender, setGender] = useState("");
   const [isHosteler, setIsHosteler] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
   const [myRegistration, setMyRegistration] = useState(null);
+  const [allRegistrations, setAllRegistrations] = useState([]);
   const [copiedUtr, setCopiedUtr] = useState(false);
   const [bracketPreview, setBracketPreview] = useState(null);
   const [loadingBracketPreview, setLoadingBracketPreview] = useState(false);
@@ -296,13 +298,24 @@ export default function EventSoloRegistrationPage() {
         const data = await fetchApi(
           `/event-registrations/${event._id}/my-registration`,
         );
-        if (data?.success && data?.registration) {
-          setMyRegistration(data.registration);
+        if (data?.success) {
+          if (data.allRegistrations && Array.isArray(data.allRegistrations)) {
+            setAllRegistrations(data.allRegistrations);
+            if (data.allRegistrations.length > 0) {
+              const firstGender = data.allRegistrations[0].gender;
+              if (firstGender) setGender(firstGender);
+            }
+          }
+          if (data.registration) {
+            setMyRegistration(data.registration);
+          }
         } else {
           setMyRegistration(null);
+          setAllRegistrations([]);
         }
       } catch {
         setMyRegistration(null);
+        setAllRegistrations([]);
       }
     }
 
@@ -364,6 +377,37 @@ export default function EventSoloRegistrationPage() {
     return sec === "womens" || sec === "women";
   }, [selectedSectionName]);
 
+  const hasInterclubRegistration = useMemo(() => {
+    return allRegistrations.some(
+      (r) =>
+        r.section === "interclub" ||
+        r.section === "inter-club" ||
+        r.section === "inter club",
+    );
+  }, [allRegistrations]);
+
+  const activeSectionRegistration = useMemo(() => {
+    if (allRegistrations && allRegistrations.length > 0) {
+      return (
+        allRegistrations.find(
+          (r) =>
+            r.section?.toLowerCase().trim() ===
+            selectedSectionName?.toLowerCase().trim(),
+        ) || null
+      );
+    }
+    if (
+      myRegistration &&
+      myRegistration.section?.toLowerCase().trim() ===
+        selectedSectionName?.toLowerCase().trim()
+    ) {
+      return myRegistration;
+    }
+    return null;
+  }, [allRegistrations, selectedSectionName, myRegistration]);
+
+  const currentRegView = activeSectionRegistration;
+
   const sectionFee = isWomensSelected ? 40 : 60;
 
   const chessAccount = userProfile?.chessAccounts?.chessCom;
@@ -401,13 +445,24 @@ export default function EventSoloRegistrationPage() {
   }, [activeSection, bracketPreview, chessAccount]);
 
   const handleSectionSelect = (sectionName) => {
+    if (gender === "male" && (sectionName === "womens" || sectionName === "women")) {
+      toast.error("Women's division is exclusive to female participants.");
+      return;
+    }
     setSelectedSectionName(sectionName);
+  };
+
+  const handleGenderSelect = (selectedGender) => {
+    setGender(selectedGender);
+    if (selectedGender === "male" && (selectedSectionName === "womens" || selectedSectionName === "women")) {
+      setSelectedSectionName("open");
+    }
   };
 
   const getStepTitle = () => {
     switch (currentStep) {
       case 0:
-        return "1. Select Division";
+        return "1. Division & Details";
       case 1:
         return "2. Review Details";
       case 2:
@@ -418,7 +473,11 @@ export default function EventSoloRegistrationPage() {
   };
 
   const isStepValid = (step) => {
-    if (step === 0) return !!selectedSectionName;
+    if (step === 0) {
+      if (!selectedSectionName || !gender) return false;
+      if (gender === "male" && isWomensSelected) return false;
+      return true;
+    }
     if (step === 1) return true;
     if (step === 2)
       return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
@@ -427,8 +486,16 @@ export default function EventSoloRegistrationPage() {
 
   const handleNext = () => {
     if (currentStep === 0) {
+      if (!gender) {
+        toast.error("Please select your gender (Male or Female).");
+        return;
+      }
       if (!selectedSectionName) {
         toast.error("Please choose a tournament division.");
+        return;
+      }
+      if (gender === "male" && isWomensSelected) {
+        toast.error("Male participants cannot register for the Women's division.");
         return;
       }
       setCurrentStep(1);
@@ -468,6 +535,16 @@ export default function EventSoloRegistrationPage() {
       return;
     }
 
+    if (!gender) {
+      toast.error("Please select your gender (Male or Female).");
+      return;
+    }
+
+    if (gender === "male" && isWomensSelected) {
+      toast.error("Male participants cannot register for the Women's division.");
+      return;
+    }
+
     if (!selectedSectionName) {
       toast.error("Please choose a tournament division.");
       return;
@@ -488,6 +565,7 @@ export default function EventSoloRegistrationPage() {
       const formData = new FormData();
       formData.append("section", selectedSectionName);
       formData.append("bracket", placedBracket?.name || "open");
+      formData.append("gender", gender);
       formData.append("isHosteler", String(Boolean(isHosteler)));
       formData.append("utr", paymentUtr.trim());
       formData.append("screenshot", paymentScreenshot);
@@ -507,24 +585,32 @@ export default function EventSoloRegistrationPage() {
         toast.success(
           `Registration submitted for ${event.title || "the event"}! Pending payment verification.`,
         );
-        setMyRegistration(
-          res.registration || {
-            eventId: event._id,
-            section: selectedSectionName,
-            bracket: placedBracket?.name || "open",
-            isHosteler: Boolean(isHosteler),
-            residentType: isHosteler
-              ? "hosteler"
-              : isWomensSelected
-                ? "day_scholar"
-                : null,
-            status: "pending",
-            paymentStatus: "pending",
-            utr: paymentUtr.trim(),
-            paymentAmount: sectionFee,
-            createdAt: new Date().toISOString(),
-          },
-        );
+        const newReg = res.registration || {
+          eventId: event._id,
+          section: selectedSectionName,
+          bracket: placedBracket?.name || "open",
+          gender: gender,
+          isHosteler: Boolean(isHosteler),
+          residentType: isHosteler
+            ? "hosteler"
+            : isWomensSelected
+              ? "day_scholar"
+              : null,
+          status: "pending",
+          paymentStatus: "pending",
+          utr: paymentUtr.trim(),
+          paymentAmount: sectionFee,
+          createdAt: new Date().toISOString(),
+        };
+        setMyRegistration(newReg);
+        setAllRegistrations((prev) => [
+          ...prev.filter(
+            (r) =>
+              r.section?.toLowerCase().trim() !==
+              selectedSectionName?.toLowerCase().trim(),
+          ),
+          newReg,
+        ]);
       } else {
         toast.error(res?.message || "Failed to complete registration.");
       }
@@ -538,20 +624,34 @@ export default function EventSoloRegistrationPage() {
 
   const handleWithdraw = async () => {
     if (!event?._id) return;
-    if (isPaymentConfirmed) {
-      toast.error("Withdrawal is not allowed once payment is confirmed.");
-      return;
-    }
-
+    const targetSection = currentRegView?.section || selectedSectionName;
     try {
       setIsWithdrawing(true);
-      const res = await fetchApi(`/event-registrations/${event._id}/delete`, {
-        method: "DELETE",
-      });
+      const query = targetSection
+        ? `?section=${encodeURIComponent(targetSection)}`
+        : "";
+      const res = await fetchApi(
+        `/event-registrations/${event._id}/delete${query}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (res?.success) {
         toast.success("Your registration has been withdrawn.");
-        setMyRegistration(null);
+        setAllRegistrations((prev) =>
+          prev.filter(
+            (r) =>
+              r.section?.toLowerCase().trim() !==
+              targetSection?.toLowerCase().trim(),
+          ),
+        );
+        if (
+          myRegistration?.section?.toLowerCase().trim() ===
+          targetSection?.toLowerCase().trim()
+        ) {
+          setMyRegistration(null);
+        }
         setCurrentStep(0);
       } else {
         toast.error(res?.message || "Failed to withdraw registration.");
@@ -637,7 +737,45 @@ export default function EventSoloRegistrationPage() {
                 </div>
               </div>
 
-              {!myRegistration && isRegistrationOpen && (
+              {allRegistrations.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {availableSections.map((sec) => {
+                    const isSelected = selectedSectionName === sec.name;
+                    const isSecRegistered = allRegistrations.some(
+                      (r) =>
+                        r.section?.toLowerCase().trim() ===
+                        sec.name?.toLowerCase().trim(),
+                    );
+                    const isWomens =
+                      sec.name?.toLowerCase() === "womens" ||
+                      sec.name?.toLowerCase() === "women";
+                    const isSecDisabled = gender === "male" && isWomens;
+
+                    return (
+                      <button
+                        key={sec.name}
+                        type="button"
+                        disabled={isSecDisabled}
+                        onClick={() => handleSectionSelect(sec.name)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-red-950/60 text-white border border-red-500/40"
+                            : isSecDisabled
+                              ? "bg-white/[0.02] text-white/20 border border-white/5 cursor-not-allowed"
+                              : "bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] border border-white/10"
+                        }`}
+                      >
+                        <span>{sec.title || sec.name}</span>
+                        {isSecRegistered && (
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!currentRegView && isRegistrationOpen && !hasInterclubRegistration && (
                 <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
                   <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
                     {getStepTitle()}
@@ -670,9 +808,34 @@ export default function EventSoloRegistrationPage() {
                 }}
               >
                 <AnimatePresence mode="wait">
-                  {myRegistration ? (
+                  {hasInterclubRegistration ? (
                     <motion.div
-                      key="registered-view"
+                      key="interclub-guardrail"
+                      variants={slideVariants}
+                      initial="initial"
+                      animate="animate"
+                      className="p-5 rounded-2xl bg-amber-500/[0.05] border border-amber-500/20 text-center space-y-3 my-auto"
+                    >
+                      <AlertCircle className="w-8 h-8 text-amber-400 mx-auto" />
+                      <h3 className="font-pezula text-base uppercase tracking-wide text-white">
+                        Inter-Club Participant Guardrail
+                      </h3>
+                      <p className="text-white/60 text-xs max-w-md mx-auto leading-relaxed">
+                        You are registered in the Inter-Club division for this tournament. Participants representing a club cannot register for solo divisions (Open or Women&apos;s).
+                      </p>
+                      <div className="pt-2">
+                        <Link
+                          href={`/events/${event?._id || id}/register/inter-club`}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold uppercase tracking-wider transition-colors border border-white/10"
+                        >
+                          <span>View Inter-Club Registration</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  ) : currentRegView ? (
+                    <motion.div
+                      key={`registered-view-${currentRegView._id || currentRegView.section}`}
                       variants={slideVariants}
                       initial="initial"
                       animate="animate"
@@ -684,17 +847,17 @@ export default function EventSoloRegistrationPage() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
-                                {myRegistration.paymentStatus === "success" ||
-                                myRegistration.status === "confirmed"
+                                {currentRegView.paymentStatus === "success" ||
+                                currentRegView.status === "confirmed"
                                   ? "Registration Confirmed"
-                                  : myRegistration.paymentStatus === "failed"
+                                  : currentRegView.paymentStatus === "failed"
                                     ? "Payment Rejected"
                                     : "Payment Verification Pending"}
                               </h3>
-                              {myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed" ? (
+                              {currentRegView.paymentStatus === "success" ||
+                              currentRegView.status === "confirmed" ? (
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              ) : myRegistration.paymentStatus === "failed" ? (
+                              ) : currentRegView.paymentStatus === "failed" ? (
                                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                               ) : (
                                 <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
@@ -702,10 +865,10 @@ export default function EventSoloRegistrationPage() {
                             </div>
 
                             <p className="text-white/40 text-[11px] font-mono leading-relaxed">
-                              {myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed"
+                              {currentRegView.paymentStatus === "success" ||
+                              currentRegView.status === "confirmed"
                                 ? `Confirmed registration for ${event?.title || "ACC 2026"}`
-                                : myRegistration.paymentStatus === "failed"
+                                : currentRegView.paymentStatus === "failed"
                                   ? "Payment verification was rejected."
                                   : "Your registration was recorded and is awaiting payment verification."}
                             </p>
@@ -713,18 +876,18 @@ export default function EventSoloRegistrationPage() {
 
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
-                              myRegistration.paymentStatus === "success" ||
-                              myRegistration.status === "confirmed"
+                              currentRegView.paymentStatus === "success" ||
+                              currentRegView.status === "confirmed"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : myRegistration.paymentStatus === "failed"
+                                : currentRegView.paymentStatus === "failed"
                                   ? "bg-red-500/10 text-red-400 border-red-500/30"
                                   : "bg-amber-500/10 text-amber-400 border-amber-500/30"
                             }`}
                           >
-                            {myRegistration.paymentStatus === "success" ||
-                            myRegistration.status === "confirmed"
+                            {currentRegView.paymentStatus === "success" ||
+                            currentRegView.status === "confirmed"
                               ? "CONFIRMED"
-                              : myRegistration.paymentStatus === "failed"
+                              : currentRegView.paymentStatus === "failed"
                                 ? "FAILED"
                                 : "PENDING"}
                           </span>
@@ -738,7 +901,7 @@ export default function EventSoloRegistrationPage() {
                               Division
                             </span>
                             <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate capitalize">
-                              {myRegistration.section || selectedSectionName}{" "}
+                              {currentRegView.section || selectedSectionName}{" "}
                               Section
                             </span>
                           </div>
@@ -748,39 +911,39 @@ export default function EventSoloRegistrationPage() {
                               Rating Bracket
                             </span>
                             <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate capitalize">
-                              {myRegistration.bracket
-                                ? `${myRegistration.bracket} Bracket`
+                              {currentRegView.bracket
+                                ? `${currentRegView.bracket} Bracket`
                                 : "Assigned"}
                             </span>
                           </div>
 
-                          {myRegistration.peakRapidRating != null && (
+                          {currentRegView.peakRapidRating != null && (
                             <div>
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Peak Bullet (30d)
                               </span>
                               <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
-                                {myRegistration.peakRapidRating}{" "}
+                                {currentRegView.peakRapidRating}{" "}
                                 <span className="text-white/40 text-[11px]">
-                                  ({myRegistration.rapidGamesCount ?? 0} games)
+                                  ({currentRegView.rapidGamesCount ?? 0} games)
                                 </span>
                               </span>
                             </div>
                           )}
 
-                          {myRegistration.chessUsername && (
+                          {currentRegView.chessUsername && (
                             <div>
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Chess.com
                               </span>
                               <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
-                                @{myRegistration.chessUsername}
+                                @{currentRegView.chessUsername}
                               </span>
                             </div>
                           )}
 
-                          {(myRegistration.isHosteler ||
-                            myRegistration.residentType === "hosteler") && (
+                          {(currentRegView.isHosteler ||
+                            currentRegView.residentType === "hosteler") && (
                             <div className="col-span-2 pt-1 border-t border-white/[0.04]">
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                 Campus Residence
@@ -801,17 +964,17 @@ export default function EventSoloRegistrationPage() {
                                 Registration Fee
                               </span>
                               <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
-                                Rs.{myRegistration.paymentAmount || sectionFee}
+                                Rs.{currentRegView.paymentAmount || sectionFee}
                               </span>
                             </div>
 
-                            {myRegistration.paymentScreenshotUrl && (
+                            {currentRegView.paymentScreenshotUrl && (
                               <div>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                   Payment Proof
                                 </span>
                                 <a
-                                  href={myRegistration.paymentScreenshotUrl}
+                                  href={currentRegView.paymentScreenshotUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-white/80 hover:text-white text-xs font-mono inline-flex items-center gap-1.5 mt-0.5 underline transition-colors"
@@ -822,13 +985,13 @@ export default function EventSoloRegistrationPage() {
                               </div>
                             )}
 
-                            {myRegistration.receiptUrl && (
+                            {currentRegView.receiptUrl && (
                               <div>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
                                   Official Receipt
                                 </span>
                                 <a
-                                  href={myRegistration.receiptUrl}
+                                  href={currentRegView.receiptUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-emerald-400 hover:text-emerald-300 text-xs font-mono inline-flex items-center gap-1 mt-0.5 underline font-medium transition-colors"
@@ -840,20 +1003,20 @@ export default function EventSoloRegistrationPage() {
                             )}
                           </div>
 
-                          {myRegistration.utr && (
+                          {currentRegView.utr && (
                             <div className="flex items-center justify-between sm:justify-end gap-2 min-w-0 sm:max-w-[260px]">
                               <div className="min-w-0">
                                 <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
                                   Transaction Reference
                                 </span>
                                 <span className="text-white/90 font-mono text-[11px] truncate block select-all">
-                                  {myRegistration.utr}
+                                  {currentRegView.utr}
                                 </span>
                               </div>
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleCopyUtr(myRegistration.utr)
+                                  handleCopyUtr(currentRegView.utr)
                                 }
                                 className="p-1 px-2 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors text-[10px] flex items-center gap-1 font-mono border border-white/5 shrink-0 cursor-pointer"
                                 title="Copy Reference"
@@ -877,7 +1040,8 @@ export default function EventSoloRegistrationPage() {
                         </div>
                       </div>
 
-                      {!isPaymentConfirmed && (
+                      {currentRegView.paymentStatus !== "success" &&
+                        currentRegView.status !== "confirmed" && (
                         <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
                           <span className="text-white/40 text-[10px] sm:text-[11px]">
                             Need to withdraw before the deadline?
@@ -946,83 +1110,178 @@ export default function EventSoloRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-3 w-full"
                         >
-                          <div className="space-y-2">
-                            {availableSections.map((sec) => {
-                              const isSelected =
-                                selectedSectionName === sec.name;
-                              return (
-                                <button
-                                  key={sec.name}
-                                  type="button"
-                                  onClick={() => handleSectionSelect(sec.name)}
-                                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group cursor-pointer ${
-                                    isSelected
-                                      ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_20px_rgba(155,26,26,0.2)] text-white"
-                                      : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
-                                  }`}
-                                >
-                                  <div>
-                                    <span className="text-[13px] sm:text-[14px] font-bold font-pezula uppercase tracking-wider block">
-                                      {sec.title || sec.name}
-                                    </span>
-                                    <span className="text-[10px] text-white/40 font-sans block">
-                                      {sec.description ||
-                                        "Solo championship tier"}
-                                    </span>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          {(selectedSectionName === "open" ||
-                            isWomensSelected) && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 6 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80 shrink-0">
-                                    Residence Status
-                                  </span>
-                                  <span className="px-1.5 py-0.5 rounded text-[11px] tracking-wider font-normal text-white/50 shrink-0">
-                                    (Only for Female Participation)
-                                  </span>
-                                </div>
-                                {isHosteler && (
-                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-mono uppercase tracking-wider font-bold text-[#ff4444] shrink-0">
-                                    Hosteler
+                          <div className="space-y-3 w-full">
+                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80">
+                                  Participant Gender <span className="text-[#ff4444]">*</span>
+                                </span>
+                                {gender && (
+                                  <span className="text-[10px] font-mono uppercase text-white/60 font-medium">
+                                    {gender}
                                   </span>
                                 )}
                               </div>
+                              <div className="grid grid-cols-2 gap-2.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleGenderSelect("male")}
+                                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                                    gender === "male"
+                                      ? "bg-white/[0.08] border-red-500/40 text-white"
+                                      : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                  }`}
+                                >
+                                  <span
+                                    className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
+                                      gender === "male"
+                                        ? "border-red-400/80 bg-red-500/20"
+                                        : "border-white/25 bg-transparent"
+                                    }`}
+                                  >
+                                    {gender === "male" && (
+                                      <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                                    )}
+                                  </span>
+                                  <span>Male</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleGenderSelect("female")}
+                                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                                    gender === "female"
+                                      ? "bg-white/[0.08] border-red-500/40 text-white"
+                                      : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                  }`}
+                                >
+                                  <span
+                                    className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
+                                      gender === "female"
+                                        ? "border-red-400/80 bg-red-500/20"
+                                        : "border-white/25 bg-transparent"
+                                    }`}
+                                  >
+                                    {gender === "female" && (
+                                      <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                                    )}
+                                  </span>
+                                  <span>Female</span>
+                                </button>
+                              </div>
+                            </div>
 
-                              <label className="flex items-start gap-3 cursor-pointer group select-none">
-                                <input
-                                  type="checkbox"
-                                  checked={isHosteler}
-                                  onChange={(e) =>
-                                    setIsHosteler(e.target.checked)
-                                  }
-                                  className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/40 text-[#9b1a1a] focus:ring-[#9b1a1a] focus:ring-offset-0 cursor-pointer accent-[#9b1a1a]"
-                                />
-                                <div className="space-y-0.5">
-                                  <span className="text-xs text-white font-medium group-hover:text-white transition-colors block">
-                                    Female Hosteler (ABES Hostel Resident)
-                                  </span>
-                                  <span className="text-[10px] text-white/40 block leading-tight">
-                                    Check this box if you are a female
-                                    participant residing in the college hostel.
-                                    Leave unchecked if you are a Day Scholar.
-                                  </span>
+                            <div className="space-y-2">
+                              <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80 block px-0.5">
+                                Tournament Division <span className="text-[#ff4444]">*</span>
+                              </span>
+                              {availableSections.map((sec) => {
+                                const isSelected =
+                                  selectedSectionName === sec.name;
+                                const isWomens =
+                                  sec.name?.toLowerCase() === "womens" ||
+                                  sec.name?.toLowerCase() === "women";
+                                const isMaleDisabled = gender === "male" && isWomens;
+                                const isAlreadyRegistered = allRegistrations.some(
+                                  (r) =>
+                                    r.section?.toLowerCase().trim() ===
+                                    sec.name?.toLowerCase().trim(),
+                                );
+
+                                return (
+                                  <button
+                                    key={sec.name}
+                                    type="button"
+                                    disabled={isMaleDisabled}
+                                    onClick={() => handleSectionSelect(sec.name)}
+                                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group ${
+                                      isMaleDisabled
+                                        ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed text-white/30"
+                                        : isSelected
+                                          ? "bg-white/[0.06] border-red-500/40 text-white cursor-pointer"
+                                          : "bg-white/[0.02] border-white/10 hover:bg-white/[0.05] hover:border-white/20 text-white/60 hover:text-white cursor-pointer"
+                                    }`}
+                                  >
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[13px] sm:text-[14px] font-bold font-pezula uppercase tracking-wider block">
+                                          {sec.title || sec.name}
+                                        </span>
+                                        {isAlreadyRegistered && (
+                                          <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                                            Registered
+                                          </span>
+                                        )}
+                                        {isWomens && (
+                                          <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-pink-500/15 text-pink-400 border border-pink-500/20">
+                                            Female Only
+                                          </span>
+                                        )}
+                                      </div>
+                                      <span className="text-[10px] text-white/40 font-sans block mt-0.5">
+                                        {sec.description ||
+                                          "Solo championship tier"}
+                                      </span>
+                                    </div>
+                                    <span
+                                      className={`text-xs font-mono font-bold shrink-0 ${
+                                        isSelected
+                                          ? "text-white"
+                                          : "text-white/50 group-hover:text-white/80"
+                                      }`}
+                                    >
+                                      ₹{isWomens ? 40 : 60}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {gender === "female" && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.15 }}
+                                className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5"
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80 shrink-0">
+                                      Residence Status
+                                    </span>
+                                    <span className="px-1.5 py-0.5 rounded text-[11px] tracking-wider font-normal text-white/50 shrink-0">
+                                      (Hostel Resident)
+                                    </span>
+                                  </div>
+                                  {isHosteler && (
+                                    <span className="px-2 py-0.5 rounded-md text-[9px] font-mono uppercase tracking-wider font-medium text-white/80 bg-white/5 border border-white/10 shrink-0">
+                                      Hosteler
+                                    </span>
+                                  )}
                                 </div>
-                              </label>
-                            </motion.div>
-                          )}
+
+                                <label className="flex items-start gap-3 cursor-pointer group select-none">
+                                  <input
+                                    type="checkbox"
+                                    checked={isHosteler}
+                                    onChange={(e) =>
+                                      setIsHosteler(e.target.checked)
+                                    }
+                                    className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/40 text-[#9b1a1a] focus:ring-[#9b1a1a] focus:ring-offset-0 cursor-pointer accent-[#9b1a1a]"
+                                  />
+                                  <div className="space-y-0.5">
+                                    <span className="text-xs text-white font-medium group-hover:text-white transition-colors block">
+                                      Female Hosteler (ABES Hostel Resident)
+                                    </span>
+                                    <span className="text-[10px] text-white/40 block leading-tight">
+                                      Check this box if you are a female participant residing in the college hostel. Leave unchecked if you are a Day Scholar.
+                                    </span>
+                                  </div>
+                                </label>
+                              </motion.div>
+                            )}
+                          </div>
                         </motion.div>
                       )}
 
@@ -1033,7 +1292,6 @@ export default function EventSoloRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-2.5 w-full"
                         >
                           <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-2.5 text-xs">
@@ -1110,10 +1368,10 @@ export default function EventSoloRegistrationPage() {
                             )}
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="grid grid-cols-3 gap-2 text-xs">
                             <div className="bg-white/5 border border-white/5 rounded-xl p-2.5">
                               <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                                Division Selected
+                                Division
                               </span>
                               <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
                                 {activeSection?.title || selectedSectionName}
@@ -1122,19 +1380,23 @@ export default function EventSoloRegistrationPage() {
 
                             <div className="bg-white/5 border border-white/5 rounded-xl p-2.5">
                               <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                                Bracket Placement
+                                Gender
+                              </span>
+                              <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
+                                {gender || "—"}
+                              </span>
+                            </div>
+
+                            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5">
+                              <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                                Placement
                               </span>
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
                                   {placedBracket?.name
-                                    ? `${placedBracket.name} Bracket`
-                                    : "Open Bracket"}
+                                    ? `${placedBracket.name}`
+                                    : "Open"}
                                 </span>
-                                {placedBracket?.range && (
-                                  <span className="text-white/40 font-mono text-[10px]">
-                                    ({placedBracket.range})
-                                  </span>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -1159,7 +1421,6 @@ export default function EventSoloRegistrationPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          transition={{ duration: 0.25 }}
                           className="space-y-3 w-full"
                         >
                           <div className="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 p-3.5 rounded-xl">
@@ -1235,7 +1496,7 @@ export default function EventSoloRegistrationPage() {
               </div>
 
               <div className="pt-2.5 shrink-0 border-t border-white/5 mt-2">
-                {!myRegistration && isRegistrationOpen ? (
+                {!currentRegView && isRegistrationOpen && !hasInterclubRegistration ? (
                   <SpecularButton
                     onClick={handleNext}
                     disabled={isSubmitting || !isStepValid(currentStep)}

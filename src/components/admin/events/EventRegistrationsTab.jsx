@@ -588,9 +588,22 @@ export default function EventRegistrationsTab({
                     >
                       <td className="py-3.5 px-4">
                         <div className="min-w-0">
-                          <span className="block font-semibold text-slate-900 dark:text-slate-100 truncate">
-                            {applicant.userName || "Unnamed Participant"}
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                              {applicant.userName || "Unnamed Participant"}
+                            </span>
+                            {reg.gender && (
+                              <span
+                                className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${
+                                  reg.gender === "female"
+                                    ? "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"
+                                    : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                                }`}
+                              >
+                                {reg.gender}
+                              </span>
+                            )}
+                          </div>
                           {reg.chessUsername ||
                           applicant.chessAccounts?.chessCom?.username ? (
                             <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-mono">
