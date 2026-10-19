@@ -15,6 +15,8 @@ import {
   Loader2,
   Clock,
   ExternalLink,
+  Copy,
+  Check,
   User as UserIcon,
 } from "lucide-react";
 
@@ -187,6 +189,7 @@ export default function EventSoloRegistrationPage() {
   const [userProfile, setUserProfile] = useState(null);
 
   const [myRegistration, setMyRegistration] = useState(null);
+  const [copiedUtr, setCopiedUtr] = useState(false);
   const [bracketPreview, setBracketPreview] = useState(null);
   const [loadingBracketPreview, setLoadingBracketPreview] = useState(false);
 
@@ -195,6 +198,14 @@ export default function EventSoloRegistrationPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  const handleCopyUtr = (utr) => {
+    if (!utr) return;
+    navigator.clipboard.writeText(utr);
+    setCopiedUtr(true);
+    setTimeout(() => setCopiedUtr(false), 2000);
+    toast.success("Reference copied to clipboard");
+  };
 
   useEffect(() => {
     async function loadEventData() {
@@ -341,6 +352,13 @@ export default function EventSoloRegistrationPage() {
     return new Date() <= new Date(event.registrationDeadline);
   }, [event]);
 
+  const isPaymentConfirmed = useMemo(() => {
+    return (
+      myRegistration?.paymentStatus?.toLowerCase() === "success" ||
+      myRegistration?.status?.toLowerCase() === "confirmed"
+    );
+  }, [myRegistration]);
+
   const isWomensSelected = useMemo(() => {
     const sec = (selectedSectionName || "").toLowerCase().trim();
     return sec === "womens" || sec === "women";
@@ -402,7 +420,8 @@ export default function EventSoloRegistrationPage() {
   const isStepValid = (step) => {
     if (step === 0) return !!selectedSectionName;
     if (step === 1) return true;
-    if (step === 2) return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
+    if (step === 2)
+      return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
     return true;
   };
 
@@ -519,6 +538,10 @@ export default function EventSoloRegistrationPage() {
 
   const handleWithdraw = async () => {
     if (!event?._id) return;
+    if (isPaymentConfirmed) {
+      toast.error("Withdrawal is not allowed once payment is confirmed.");
+      return;
+    }
 
     try {
       setIsWithdrawing(true);
@@ -594,9 +617,7 @@ export default function EventSoloRegistrationPage() {
                   <div>
                     TOURNAMENT <span className="text-[#9b1a1a]">EVENT</span>
                   </div>
-                  <div className="mt-0.5">
-                    REGISTRATION
-                  </div>
+                  <div className="mt-0.5">REGISTRATION</div>
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-2 mt-1.5">
@@ -656,183 +677,247 @@ export default function EventSoloRegistrationPage() {
                       initial="initial"
                       animate="animate"
                       exit="exit"
-                      className="p-4 sm:p-5 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-md relative overflow-hidden space-y-3.5 my-auto"
+                      className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md overflow-hidden my-auto"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-white font-bold text-sm uppercase font-pezula tracking-wide">
+                      <div className="p-4 sm:p-5 border-b border-white/[0.06] bg-white/[0.015]">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
+                                {myRegistration.paymentStatus === "success" ||
+                                myRegistration.status === "confirmed"
+                                  ? "Registration Confirmed"
+                                  : myRegistration.paymentStatus === "failed"
+                                    ? "Payment Rejected"
+                                    : "Payment Verification Pending"}
+                              </h3>
+                              {myRegistration.paymentStatus === "success" ||
+                              myRegistration.status === "confirmed" ? (
+                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                              ) : myRegistration.paymentStatus === "failed" ? (
+                                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                              ) : (
+                                <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+                              )}
+                            </div>
+
+                            <p className="text-white/40 text-[11px] font-mono leading-relaxed">
                               {myRegistration.paymentStatus === "success" ||
                               myRegistration.status === "confirmed"
-                                ? "Registration Confirmed"
+                                ? `Confirmed registration for ${event?.title || "ACC 2026"}`
                                 : myRegistration.paymentStatus === "failed"
-                                  ? "Payment Rejected"
-                                  : "Payment Verification Pending"}
-                            </span>
+                                  ? "Payment verification was rejected."
+                                  : "Your registration was recorded and is awaiting payment verification."}
+                            </p>
+                          </div>
+
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
+                              myRegistration.paymentStatus === "success" ||
+                              myRegistration.status === "confirmed"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : myRegistration.paymentStatus === "failed"
+                                  ? "bg-red-500/10 text-red-400 border-red-500/30"
+                                  : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                            }`}
+                          >
                             {myRegistration.paymentStatus === "success" ||
-                            myRegistration.status === "confirmed" ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                            ) : myRegistration.paymentStatus === "failed" ? (
-                              <AlertCircle className="w-3.5 h-3.5 text-red-400" />
-                            ) : (
-                              <Clock className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                            myRegistration.status === "confirmed"
+                              ? "CONFIRMED"
+                              : myRegistration.paymentStatus === "failed"
+                                ? "FAILED"
+                                : "PENDING"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-4 sm:p-5 py-4">
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-3.5 text-xs">
+                          <div>
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                              Division
+                            </span>
+                            <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate capitalize">
+                              {myRegistration.section || selectedSectionName}{" "}
+                              Section
+                            </span>
+                          </div>
+
+                          <div>
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                              Rating Bracket
+                            </span>
+                            <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate capitalize">
+                              {myRegistration.bracket
+                                ? `${myRegistration.bracket} Bracket`
+                                : "Assigned"}
+                            </span>
+                          </div>
+
+                          {myRegistration.peakRapidRating != null && (
+                            <div>
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                Peak Bullet (30d)
+                              </span>
+                              <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
+                                {myRegistration.peakRapidRating}{" "}
+                                <span className="text-white/40 text-[11px]">
+                                  ({myRegistration.rapidGamesCount ?? 0} games)
+                                </span>
+                              </span>
+                            </div>
+                          )}
+
+                          {myRegistration.chessUsername && (
+                            <div>
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                Chess.com
+                              </span>
+                              <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
+                                @{myRegistration.chessUsername}
+                              </span>
+                            </div>
+                          )}
+
+                          {(myRegistration.isHosteler ||
+                            myRegistration.residentType === "hosteler") && (
+                            <div className="col-span-2 pt-1 border-t border-white/[0.04]">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                Campus Residence
+                              </span>
+                              <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block">
+                                Hosteler
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="px-4 sm:px-5 py-3 border-t border-white/[0.06] bg-white/[0.02]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center gap-6">
+                            <div>
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                Registration Fee
+                              </span>
+                              <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
+                                Rs.{myRegistration.paymentAmount || sectionFee}
+                              </span>
+                            </div>
+
+                            {myRegistration.paymentScreenshotUrl && (
+                              <div>
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                  Payment Proof
+                                </span>
+                                <a
+                                  href={myRegistration.paymentScreenshotUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-white/80 hover:text-white text-xs font-mono inline-flex items-center gap-1.5 mt-0.5 underline transition-colors"
+                                >
+                                  <span>Screenshot</span>
+                                  <ExternalLink className="w-2.5 h-2.5 text-white/50" />
+                                </a>
+                              </div>
+                            )}
+
+                            {myRegistration.receiptUrl && (
+                              <div>
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                  Official Receipt
+                                </span>
+                                <a
+                                  href={myRegistration.receiptUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-400 hover:text-emerald-300 text-xs font-mono inline-flex items-center gap-1 mt-0.5 underline font-medium transition-colors"
+                                >
+                                  <span>Download PDF</span>
+                                  <ExternalLink className="w-2.5 h-2.5 text-emerald-400/60" />
+                                </a>
+                              </div>
                             )}
                           </div>
-                          <p className="text-white/40 text-[11px] font-mono">
-                            {myRegistration.paymentStatus === "success" ||
-                            myRegistration.status === "confirmed"
-                              ? `Confirmed seat for ${event.title || "ACC 2026"}`
-                              : myRegistration.paymentStatus === "failed"
-                                ? "Payment verification was rejected by arbiters."
-                                : "Your registration was recorded and is awaiting manual arbiter verification."}
-                          </p>
-                        </div>
 
-                        <span
-                          className={`px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest border ${
-                            myRegistration.paymentStatus === "success" ||
-                            myRegistration.status === "confirmed"
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                              : myRegistration.paymentStatus === "failed"
-                                ? "bg-red-500/10 text-red-400 border-red-500/20"
-                                : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                          }`}
-                        >
-                          {myRegistration.paymentStatus === "success" ||
-                          myRegistration.status === "confirmed"
-                            ? "CONFIRMED"
-                            : myRegistration.paymentStatus === "failed"
-                              ? "FAILED"
-                              : "PENDING"}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2.5 text-xs">
-                        <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                          <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                            Division
-                          </span>
-                          <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                            {myRegistration.section || selectedSectionName}{" "}
-                            Section
-                          </span>
-                        </div>
-                        <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                          <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                            Rating Bracket
-                          </span>
-                          <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                            {myRegistration.bracket
-                              ? `${myRegistration.bracket} Bracket`
-                              : "Assigned"}
-                          </span>
-                        </div>
-                        {myRegistration.peakRapidRating != null && (
-                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                              Peak Bullet (30d)
-                            </span>
-                            <span className="text-white font-semibold font-mono tracking-wide text-xs">
-                              {myRegistration.peakRapidRating} (
-                              {myRegistration.rapidGamesCount ?? 0} games)
-                            </span>
-                          </div>
-                        )}
-                        {(myRegistration.isHosteler ||
-                          myRegistration.residentType === "hosteler") && (
-                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                              Residence
-                            </span>
-                            <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                              Hosteler
-                            </span>
-                          </div>
-                        )}
-                        {myRegistration.chessUsername && (
-                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                              Chess.com
-                            </span>
-                            <span className="text-white font-semibold font-mono tracking-wide text-xs">
-                              @{myRegistration.chessUsername}
-                            </span>
-                          </div>
-                        )}
-                        <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                          <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                            Registration Fee
-                          </span>
-                          <span className="text-white font-semibold font-mono tracking-wide text-xs">
-                            ₹{myRegistration.paymentAmount || sectionFee}
-                          </span>
-                        </div>
-                        {myRegistration.utr && (
-                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
-                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                              Transaction Reference
-                            </span>
-                            <span className="text-white font-mono text-[11px] truncate block select-all">
-                              {myRegistration.utr}
-                            </span>
-                          </div>
-                        )}
-                        {myRegistration.paymentScreenshotUrl && (
-                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex items-center justify-between">
-                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold">
-                              Screenshot
-                            </span>
-                            <a
-                              href={myRegistration.paymentScreenshotUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-400 hover:text-blue-300 text-[10px] font-mono inline-flex items-center gap-1 underline"
-                            >
-                              View <ExternalLink className="w-2.5 h-2.5" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="pt-1.5 flex items-center justify-between text-xs border-t border-white/5">
-                        <span className="text-white/40 text-[10px]">
-                          Need to withdraw before the deadline?
-                        </span>
-
-                        <AlertDialog>
-                          <AlertDialogTrigger
-                            disabled={isWithdrawing || !isRegistrationOpen}
-                            className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                          >
-                            Withdraw
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
-                                Withdraw Registration?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription className="text-white/60 text-sm">
-                                Are you sure you want to withdraw your solo
-                                registration for {event.title || "ACC"}? Your
-                                seat will be released.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
-                                Keep My Seat
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={handleWithdraw}
-                                className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
+                          {myRegistration.utr && (
+                            <div className="flex items-center justify-between sm:justify-end gap-2 min-w-0 sm:max-w-[260px]">
+                              <div className="min-w-0">
+                                <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
+                                  Transaction Reference
+                                </span>
+                                <span className="text-white/90 font-mono text-[11px] truncate block select-all">
+                                  {myRegistration.utr}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleCopyUtr(myRegistration.utr)
+                                }
+                                className="p-1 px-2 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors text-[10px] flex items-center gap-1 font-mono border border-white/5 shrink-0 cursor-pointer"
+                                title="Copy Reference"
                               >
-                                {isWithdrawing
-                                  ? "Withdrawing..."
-                                  : "Confirm Withdrawal"}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                                {copiedUtr ? (
+                                  <>
+                                    <Check className="w-3 h-3 text-emerald-400" />
+                                    <span className="text-emerald-400">
+                                      Copied
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3" />
+                                    <span>Copy</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
+
+                      {!isPaymentConfirmed && (
+                        <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                          <span className="text-white/40 text-[10px] sm:text-[11px]">
+                            Need to withdraw before the deadline?
+                          </span>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger
+                              disabled={isWithdrawing || !isRegistrationOpen}
+                              className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              Withdraw
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
+                                  Withdraw Registration?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-white/60 text-sm">
+                                  Are you sure you want to withdraw your
+                                  registration for {event?.title || "ACC"}? This
+                                  action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={handleWithdraw}
+                                  className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
+                                >
+                                  {isWithdrawing
+                                    ? "Withdrawing..."
+                                    : "Confirm Withdrawal"}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      )}
                     </motion.div>
                   ) : !isRegistrationOpen ? (
                     <motion.div
@@ -1059,7 +1144,9 @@ export default function EventSoloRegistrationPage() {
                               Placement Policy
                             </span>
                             <p className="text-white/45 text-[11px] leading-relaxed">
-                              Placed automatically by peak Chess.com rating in the past 30 days (minimum 5 games required) for fair matchmaking.
+                              Placed automatically by peak Chess.com rating in
+                              the past 30 days (minimum 5 games required) for
+                              fair matchmaking.
                             </p>
                           </div>
                         </motion.div>
@@ -1079,14 +1166,15 @@ export default function EventSoloRegistrationPage() {
                             <div className="flex-1 text-left min-w-0">
                               <div className="flex items-baseline gap-2 mb-1">
                                 <span className="text-lg font-mono font-bold text-white">
-                                  ₹{sectionFee}
+                                  Rs.{sectionFee}
                                 </span>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
                                   Registration Fee
                                 </span>
                               </div>
                               <p className="text-white/50 text-[11px] leading-relaxed mb-2 font-sans">
-                                Pay via any UPI app using the QR code or ID, then enter your transaction reference below.
+                                Pay via any UPI app using the QR code or ID,
+                                then enter your transaction reference below.
                               </p>
                               <div className="text-[11px] font-mono text-white/80 bg-white/5 border border-white/10 px-2.5 py-1 rounded inline-block select-all">
                                 8933905351@ybl

@@ -152,6 +152,9 @@ export default function AdminDashboard() {
       const data = await response.json();
       if (data.success) {
         toast.success(data.message || "Export successful");
+        if (data.sheetUrl) {
+          window.open(data.sheetUrl, "_blank");
+        }
       } else {
         toast.error(data.message || "Export failed");
       }
@@ -352,86 +355,116 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className="lg:col-span-4 flex flex-col gap-4">
             <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 flex items-center gap-2 mb-1">
               <FileText className="w-5 h-5 text-blue-500" />
               Export Sheets
             </h2>
 
-            {[
-              {
-                id: "applications_export",
-                title: "Recruitment Applications",
-                description:
-                  "Update a spreadsheet of all submitted applications.",
-                icon: FileText,
-                sheetUrl:
-                  "https://docs.google.com/spreadsheets/d/11f8MfcIZXmUZo5ENSVohHFfqxgUFMFg1ANFy1ASbn0M/edit?gid=0#gid=0",
-                onClick: createExportHandler(
-                  "applications_export",
-                  "/admin/applications/export",
-                ),
-              },
-              {
-                id: "payments_export",
-                title: "Recruitment Payments",
-                description: "Update a spreadsheet of all payment records.",
-                icon: CreditCard,
-                sheetUrl:
-                  "https://docs.google.com/spreadsheets/d/1awc6omtU9hJ4l7ZqDo8O3R1hW1o0GezAOFqsbU87ckk/edit?gid=0#gid=0",
-                onClick: createExportHandler(
-                  "payments_export",
-                  "/admin/payments/export",
-                ),
-              },
-            ].map((doc) => {
-              const DocIcon = doc.icon;
-              const isLoading = exportingId === doc.id;
-              return (
-                <div
-                  key={doc.id}
-                  className="relative bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group h-full"
-                >
-                  {doc.sheetUrl && (
-                    <a
-                      href={doc.sheetUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
-                      title="Open Sheet"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                  <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
-                    <DocIcon className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-                  </div>
-                  <h3 className="font-bold text-slate-900 dark:text-slate-50 mb-1 tracking-tight">
-                    {doc.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-1 leading-relaxed">
-                    {doc.description}
-                  </p>
-                  <button
-                    onClick={doc.onClick}
-                    disabled={isLoading}
-                    className="w-full mt-auto py-2.5 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
+              {[
+                {
+                  id: "applications_export",
+                  title: "Recruitment Applications",
+                  description:
+                    "Update Google Sheet of all applicant submissions.",
+                  icon: FileText,
+                  sheetUrl:
+                    "https://docs.google.com/spreadsheets/d/11f8MfcIZXmUZo5ENSVohHFfqxgUFMFg1ANFy1ASbn0M/edit?gid=0#gid=0",
+                  onClick: createExportHandler(
+                    "applications_export",
+                    "/admin/applications/export",
+                  ),
+                },
+                {
+                  id: "payments_export",
+                  title: "Recruitment Payments",
+                  description: "Update Google Sheet of all recruitment payments.",
+                  icon: CreditCard,
+                  sheetUrl:
+                    "https://docs.google.com/spreadsheets/d/1awc6omtU9hJ4l7ZqDo8O3R1hW1o0GezAOFqsbU87ckk/edit?gid=0#gid=0",
+                  onClick: createExportHandler(
+                    "payments_export",
+                    "/admin/payments/export?purpose=recruitment",
+                  ),
+                },
+                {
+                  id: "event_registrations_export",
+                  title: "Event Registrations",
+                  description:
+                    "Update Google Sheet of tournament players & teams.",
+                  icon: Users,
+                  sheetUrl:
+                    "https://docs.google.com/spreadsheets/d/1Kdatr8gVvghDlKUb5Pj40Oh5GMrlD3zKWrHg-f6d29w/edit",
+                  onClick: createExportHandler(
+                    "event_registrations_export",
+                    "/admin/event-registrations/export",
+                  ),
+                },
+                {
+                  id: "event_payments_export",
+                  title: "Event Payments",
+                  description:
+                    "Update Google Sheet of tournament entry fee payments.",
+                  icon: CreditCard,
+                  sheetUrl:
+                    "https://docs.google.com/spreadsheets/d/1gKUnb0S5JoczGIf8CvRZekS1YbP20ONiEKkuD2wsX5U/edit",
+                  onClick: createExportHandler(
+                    "event_payments_export",
+                    "/admin/payments/export?purpose=event",
+                  ),
+                },
+              ].map((doc) => {
+                const DocIcon = doc.icon;
+                const isLoading = exportingId === doc.id;
+                return (
+                  <div
+                    key={doc.id}
+                    className="relative bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col hover:border-blue-300 dark:hover:border-blue-500/50 hover:shadow-lg transition-all group"
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5" />
-                        Update Sheet
-                      </>
+                    {doc.sheetUrl && (
+                      <a
+                        href={doc.sheetUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                        title="Open Sheet"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
                     )}
-                  </button>
-                </div>
-              );
-            })}
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-slate-800 flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors shrink-0">
+                        <DocIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                      </div>
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-slate-50 tracking-tight pr-6">
+                        {doc.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+                      {doc.description}
+                    </p>
+                    <button
+                      onClick={doc.onClick}
+                      disabled={isLoading}
+                      className="w-full mt-auto py-2 bg-slate-50 dark:bg-[#020617] hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 dark:group-hover:bg-slate-50 group-hover:text-white dark:group-hover:text-slate-900 group-hover:border-slate-900 dark:group-hover:border-slate-50 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          Update Sheet
+                        </>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </motion.section>

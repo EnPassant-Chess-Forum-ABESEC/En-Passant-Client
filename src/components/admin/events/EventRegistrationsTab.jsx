@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
-import { Users, Copy, Check, Loader2, Trash2 } from "lucide-react";
+import { Users, Copy, Check, Loader2, Trash2, FileSpreadsheet } from "lucide-react";
 import AdminSearchBar from "../AdminSearchBar";
 import {
   AlertDialog,
@@ -67,6 +67,7 @@ export default function EventRegistrationsTab({
   const [copiedCode, setCopiedCode] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const loadRegistrations = useCallback(async () => {
     if (!eventId) return;
@@ -126,6 +127,28 @@ export default function EventRegistrationsTab({
     await loadRegistrations();
     if (onRefreshEventRef.current) {
       onRefreshEventRef.current();
+    }
+  };
+
+  const handleExportSheet = async () => {
+    if (!eventId) return;
+    try {
+      setIsExporting(true);
+      const res = await fetchApiRef.current(
+        `/admin/event-registrations/${eventId}/export`,
+      );
+      if (res?.success) {
+        toast.success(res.message || "Event registrations exported successfully");
+        if (res.sheetUrl) {
+          window.open(res.sheetUrl, "_blank");
+        }
+      } else {
+        toast.error(res?.message || "Failed to export event registrations");
+      }
+    } catch (err) {
+      toast.error("Failed to export: " + err.message);
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -397,55 +420,71 @@ export default function EventRegistrationsTab({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 pb-1 border-b border-slate-200 dark:border-slate-800">
-        <button
-          type="button"
-          onClick={() => {
-            setSectionFilter("ALL");
-            setBracketFilter("ALL");
-          }}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-            sectionFilter === "ALL"
-              ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs"
-              : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-          }`}
-        >
-          <span>All Sections</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-black/10 dark:bg-white/20">
-            {registrations.length}
-          </span>
-        </button>
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-1 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setSectionFilter("ALL");
+              setBracketFilter("ALL");
+            }}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              sectionFilter === "ALL"
+                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs"
+                : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+            }`}
+          >
+            <span>All Sections</span>
+            <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-black/10 dark:bg-white/20">
+              {registrations.length}
+            </span>
+          </button>
 
-        {availableSections.map((sec) => {
-          const count = sectionCounts[sec.value] || 0;
-          const isSelected = sectionFilter === sec.value;
-          return (
-            <button
-              key={sec.value}
-              type="button"
-              onClick={() => {
-                setSectionFilter(sec.value);
-                setBracketFilter("ALL");
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                isSelected
-                  ? "bg-blue-600 text-white shadow-xs shadow-blue-500/20"
-                  : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              <span>{sec.label}</span>
-              <span
-                className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+          {availableSections.map((sec) => {
+            const count = sectionCounts[sec.value] || 0;
+            const isSelected = sectionFilter === sec.value;
+            return (
+              <button
+                key={sec.value}
+                type="button"
+                onClick={() => {
+                  setSectionFilter(sec.value);
+                  setBracketFilter("ALL");
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-white/25 text-white"
-                    : "bg-black/5 dark:bg-white/10"
+                    ? "bg-blue-600 text-white shadow-xs shadow-blue-500/20"
+                    : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
                 }`}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
+                <span>{sec.label}</span>
+                <span
+                  className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                    isSelected
+                      ? "bg-white/25 text-white"
+                      : "bg-black/5 dark:bg-white/10"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={handleExportSheet}
+          disabled={isExporting}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          {isExporting ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+          )}
+          <span>Export to Sheet</span>
+        </button>
       </div>
 
       <AdminSearchBar

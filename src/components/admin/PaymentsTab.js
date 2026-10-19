@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCcw,
+  FileSpreadsheet,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -45,6 +46,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
   const [payments, setPayments] = useState([]);
   const [verifyingId, setVerifyingId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -104,11 +106,11 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
     loadData();
   }, [purpose]);
 
-  async function loadData() {
+  async function loadData(forceRefresh = false) {
     setLoading(true);
     try {
       const res = await fetchApi(
-        `/admin/payments?pageSize=1000&purpose=${purpose}`,
+        `/admin/payments?pageSize=1000&purpose=${purpose}${forceRefresh ? "&refresh=true" : ""}`,
       );
       setPayments(res.payments || []);
     } catch (err) {
@@ -142,7 +144,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
         body: { status, reason: rejectionReason.trim() },
       });
       toast.success(`Payment marked as ${status}`);
-      loadData();
+      loadData(true);
     } catch (err) {
       toast.error("Error: " + err.message);
     }
@@ -158,10 +160,30 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
         method: "POST",
       });
       toast.success(res.message || "Receipt retry initiated");
+      loadData(true);
     } catch (err) {
       toast.error("Error: " + err.message);
     }
     setIsRetrying(false);
+  };
+
+  const handleExportSheet = async () => {
+    setIsExporting(true);
+    try {
+      const res = await fetchApi(`/admin/payments/export?purpose=${purpose}`);
+      if (res?.success) {
+        toast.success(res.message || "Payments exported to Google Sheet successfully");
+        if (res.sheetUrl) {
+          window.open(res.sheetUrl, "_blank");
+        }
+      } else {
+        toast.error(res?.message || "Failed to export payments");
+      }
+    } catch (err) {
+      toast.error("Error: " + err.message);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleCopy = (text) => {
@@ -190,7 +212,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
       >
         <div className="flex-1 w-full">
           <AdminSearchBar
-            onRefresh={loadData}
+            onRefresh={() => loadData(true)}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             statusFilter={statusFilter}
@@ -210,11 +232,23 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
             countLabel="Total Payments"
           />
         </div>
-        {purpose !== "event" && (
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+          <button
+            onClick={handleExportSheet}
+            disabled={isExporting}
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-4 h-[46px] bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm cursor-pointer"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="w-4 h-4" />
+            )}
+            Export to Sheet
+          </button>
           <button
             onClick={handleRetryReceipts}
             disabled={isRetrying}
-            className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 h-[46px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-5 h-[46px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm cursor-pointer"
           >
             {isRetrying ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -223,27 +257,39 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
             )}
             Retry Missing Receipts
           </button>
-        )}
+        </div>
       </motion.div>
       <motion.div
         variants={itemVariants}
         className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors"
       >
         <div className="overflow-x-auto">
-          <table className="hidden md:table w-full text-left whitespace-nowrap">
+          <table className="hidden md:table w-full text-left">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-4 py-4 font-normal">
+                <th className="px-4 py-3.5 font-normal">
                   {purpose === "event" ? "Participant" : "Applicant Name"}
                 </th>
                 {purpose === "event" && (
-                  <th className="px-6 py-4 font-normal">Tournament & Division</th>
+                  <th className="px-3.5 py-3.5 font-normal">
+                    Tournament & Division
+                  </th>
                 )}
-                <th className="px-6 py-4 font-normal">Amount</th>
-                <th className="px-6 py-4 font-normal">ScreenShot & UTR</th>
-                <th className="px-6 py-4 font-normal">Status</th>
-                <th className="px-6 py-4 font-normal">Created At</th>
-                <th className="px-6 py-4 font-normal text-right">Actions</th>
+                <th className="px-3 py-3.5 font-normal whitespace-nowrap">
+                  Amount
+                </th>
+                <th className="px-3.5 py-3.5 font-normal whitespace-nowrap">
+                  ScreenShot & UTR
+                </th>
+                <th className="px-3 py-3.5 font-normal whitespace-nowrap">
+                  Status
+                </th>
+                <th className="px-3.5 py-3.5 font-normal whitespace-nowrap">
+                  Created At
+                </th>
+                <th className="px-4 py-3.5 font-normal text-right whitespace-nowrap">
+                  Actions
+                </th>
               </tr>
             </thead>
             <motion.tbody
@@ -253,7 +299,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
               {paginatedPayments.length === 0 ? (
                 <motion.tr variants={itemVariants}>
                   <td
-                    colSpan="7"
+                    colSpan={purpose === "event" ? 7 : 6}
                     className="p-12 text-center text-slate-500 dark:text-slate-400 uppercase tracking-widest text-xs"
                   >
                     No payments found
@@ -266,10 +312,12 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
                     key={payment._id}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                   >
-                    <td className="px-4 py-5 font-mono text-sm text-slate-800/90 dark:text-slate-200">
-                      {payment.userId?.userName || "Unknown User"}
+                    <td className="px-4 py-3.5 font-mono text-sm text-slate-800/90 dark:text-slate-200">
+                      <div className="font-semibold text-slate-900 dark:text-slate-100 font-sans truncate max-w-[170px] xl:max-w-none">
+                        {payment.userId?.userName || "Unknown User"}
+                      </div>
                       {payment.userId?.email && (
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 font-sans truncate max-w-[170px] xl:max-w-none mt-0.5">
                           {payment.userId.email}
                         </div>
                       )}
@@ -281,51 +329,62 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
                     </td>
 
                     {purpose === "event" && (
-                      <td className="px-6 py-5 text-xs text-slate-800 dark:text-slate-200">
-                        <div className="font-semibold text-slate-900 dark:text-slate-100">
+                      <td className="px-3.5 py-3.5 text-xs text-slate-800 dark:text-slate-200">
+                        <div className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1 max-w-[200px] xl:max-w-none">
                           {payment.eventId?.title || "Tournament"}
                         </div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize mt-0.5">
-                          {payment.registrationId?.section || "Open"} Section &bull;{" "}
-                          {payment.registrationId?.bracket || "Open"} Bracket
+                          {payment.registrationId?.section || "Open"} Section
+                          &bull; {payment.registrationId?.bracket || "Open"}{" "}
+                          Bracket
                         </div>
                         {payment.registrationId?.teamName && (
-                          <div className="text-[10px] text-amber-600 dark:text-amber-400 font-mono mt-0.5">
+                          <div className="text-[10px] text-amber-600 dark:text-amber-400 font-mono mt-0.5 truncate max-w-[180px] xl:max-w-none">
                             {payment.registrationId.teamName}
                           </div>
                         )}
                       </td>
                     )}
 
-                    <td className="px-6 py-5 font-mono font-bold tracking-wide text-slate-800 dark:text-slate-50">
-                      ₹{payment.amount / 100}
+                    <td className="px-3 py-3.5 font-mono font-bold tracking-wide text-slate-800 dark:text-slate-50 whitespace-nowrap">
+                      Rs.{payment.amount / 100}
                     </td>
-                    <td className="px-6 py-5">
-                      {payment.paymentScreenshotUrl ? (
-                        <div className="flex flex-col gap-1">
+                    <td className="px-3.5 py-3.5 whitespace-nowrap">
+                      <div className="flex flex-col gap-1">
+                        {payment.paymentScreenshotUrl ? (
                           <a
                             href={payment.paymentScreenshotUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-[#ff3333] dark:hover:text-[#ff4444] transition-colors text-xs font-bold uppercase tracking-widest"
+                            className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-[#ff3333] dark:hover:text-[#ff4444] transition-colors text-xs font-bold uppercase tracking-wider"
                           >
-                            View Screenshot <ExternalLink className="w-3 h-3" />
+                            Screenshot <ExternalLink className="w-3 h-3" />
                           </a>
-                          {payment.utr && (
-                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                              UTR: {payment.utr}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                          No Receipt
-                        </span>
-                      )}
+                        ) : (
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                            No Proof
+                          </span>
+                        )}
+                        {payment.receiptUrl && (
+                          <a
+                            href={payment.receiptUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold uppercase tracking-wider"
+                          >
+                            Receipt <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                        {payment.utr && (
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                            UTR: {payment.utr}
+                          </span>
+                        )}
+                      </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-3.5 py-3.5 whitespace-nowrap">
                       <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
+                        className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
                           payment.status === "SUCCESS"
                             ? "bg-green-500/10 text-green-500 dark:text-green-400 border-green-500/20"
                             : payment.status === "FAILED"
@@ -336,12 +395,21 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
                         {payment.status}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-sm text-slate-500 dark:text-slate-400 tracking-wide">
-                      {new Date(payment.createdAt).toLocaleString()}
+                    <td className="px-3.5 py-3.5 text-xs text-slate-500 dark:text-slate-400 tracking-wide whitespace-nowrap">
+                      <div>
+                        {new Date(payment.createdAt).toLocaleDateString()}
+                      </div>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
+                        {new Date(payment.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </div>
                     </td>
-                    <td className="px-6 py-5 text-right">
+                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
                       {payment.status === "PENDING" && (
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
                           {verifyingId === payment._id ? (
                             <div className="p-2 text-slate-400 flex justify-center items-center">
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -353,7 +421,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
                                   handleVerify(payment._id, "SUCCESS")
                                 }
                                 disabled={verifyingId === payment._id}
-                                className="p-2 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-50"
+                                className="p-1.5 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-50"
                                 title="Approve Payment"
                               >
                                 <Check className="w-4 h-4" />
@@ -363,7 +431,7 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
                                   handleVerify(payment._id, "FAILED")
                                 }
                                 disabled={verifyingId === payment._id}
-                                className="p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                                className="p-1.5 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
                                 title="Reject Payment"
                               >
                                 <X className="w-4 h-4" />
@@ -387,34 +455,34 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
             ) : (
               paginatedPayments.map((payment) => (
                 <div key={payment._id} className="p-4 flex flex-col gap-4">
-                    <div className="flex justify-between items-start">
-                      <div className="flex flex-col min-w-0 pr-4">
-                        <span className="font-bold tracking-wide text-slate-800/90 dark:text-slate-200 truncate">
-                          {payment.userId?.userName || "Unknown User"}
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col min-w-0 pr-4">
+                      <span className="font-bold tracking-wide text-slate-800/90 dark:text-slate-200 truncate">
+                        {payment.userId?.userName || "Unknown User"}
+                      </span>
+                      {payment.userId?.email && (
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">
+                          {payment.userId.email}
                         </span>
-                        {payment.userId?.email && (
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">
-                            {payment.userId.email}
+                      )}
+                      {purpose === "event" && (
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
+                            {payment.eventId?.title || "Tournament"}
                           </span>
-                        )}
-                        {purpose === "event" && (
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              {payment.eventId?.title || "Tournament"}
-                            </span>
-                            <span className="capitalize block text-[10px]">
-                              {payment.registrationId?.section || "Open"} Section
-                              {payment.registrationId?.teamName
-                                ? ` • ${payment.registrationId.teamName}`
-                                : ""}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end shrink-0">
-                        <span className="font-mono font-black tracking-wide text-lg text-slate-800 dark:text-slate-50">
-                          ₹{payment.amount / 100}
-                        </span>
+                          <span className="capitalize block text-[10px]">
+                            {payment.registrationId?.section || "Open"} Section
+                            {payment.registrationId?.teamName
+                              ? ` • ${payment.registrationId.teamName}`
+                              : ""}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="font-mono font-black tracking-wide text-lg text-slate-800 dark:text-slate-50">
+                        Rs.{payment.amount / 100}
+                      </span>
                       <span
                         className={`mt-1 text-[10px] font-bold uppercase tracking-wider ${
                           payment.status === "SUCCESS"
@@ -431,18 +499,29 @@ export default function PaymentsTab({ purpose = "recruitment" }) {
 
                   <div className="flex items-center justify-between mt-2 pt-4 border-t border-slate-50 dark:border-slate-800/50">
                     <div className="flex items-center gap-2">
-                      {payment.paymentScreenshotUrl ? (
+                      {payment.paymentScreenshotUrl && (
                         <a
                           href={payment.paymentScreenshotUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 transition-colors text-xs font-bold uppercase tracking-widest"
                         >
+                          Screenshot <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                      {payment.receiptUrl && (
+                        <a
+                          href={payment.receiptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg hover:bg-emerald-100 transition-colors text-xs font-bold uppercase tracking-widest"
+                        >
                           Receipt <ExternalLink className="w-3 h-3" />
                         </a>
-                      ) : (
+                      )}
+                      {!payment.paymentScreenshotUrl && !payment.receiptUrl && (
                         <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
-                          No Receipt
+                          No Proof
                         </span>
                       )}
                     </div>
