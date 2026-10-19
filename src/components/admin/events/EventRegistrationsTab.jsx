@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -53,6 +53,15 @@ export default function EventRegistrationsTab({
   onRefreshEvent,
 }) {
   const fetchApi = useApi();
+  const fetchApiRef = useRef(fetchApi);
+  useEffect(() => {
+    fetchApiRef.current = fetchApi;
+  }, [fetchApi]);
+
+  const onRefreshEventRef = useRef(onRefreshEvent);
+  useEffect(() => {
+    onRefreshEventRef.current = onRefreshEvent;
+  }, [onRefreshEvent]);
 
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,13 +81,12 @@ export default function EventRegistrationsTab({
     if (!eventId) return;
     try {
       setRefreshing(true);
-      const res = await fetchApi(
+      const res = await fetchApiRef.current(
         `/admin/event-registrations/${eventId}?pageSize=${pageSize}&pageNumber=${pageNumber}`,
       );
 
       if (res?.success) {
         setRegistrations(res.registrations || []);
-        if (onRefreshEvent) onRefreshEvent();
       } else {
         toast.error(res?.message || "Failed to load registrations");
       }
@@ -88,11 +96,18 @@ export default function EventRegistrationsTab({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [eventId, pageSize, pageNumber, fetchApi, onRefreshEvent]);
+  }, [eventId, pageSize, pageNumber]);
 
   useEffect(() => {
     loadRegistrations();
   }, [loadRegistrations]);
+
+  const handleManualRefresh = async () => {
+    await loadRegistrations();
+    if (onRefreshEventRef.current) {
+      onRefreshEventRef.current();
+    }
+  };
 
   const availableSections = useMemo(() => {
     const map = new Map();
@@ -353,7 +368,7 @@ export default function EventRegistrationsTab({
         <div className="flex items-center gap-2 ml-auto">
           <button
             type="button"
-            onClick={loadRegistrations}
+            onClick={handleManualRefresh}
             disabled={refreshing}
             className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title="Refresh registrations list"

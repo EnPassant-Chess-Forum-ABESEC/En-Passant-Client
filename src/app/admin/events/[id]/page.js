@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -57,6 +57,10 @@ export default function AdminEventDetailPage({ params }) {
   const initialTab = searchParams.get("tab") === "registrations" ? "registrations" : "sections";
   const [activeTab, setActiveTab] = useState(initialTab);
   const fetchApi = useApi();
+  const fetchApiRef = useRef(fetchApi);
+  useEffect(() => {
+    fetchApiRef.current = fetchApi;
+  }, [fetchApi]);
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -65,14 +69,14 @@ export default function AdminEventDetailPage({ params }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const loadEvent = async () => {
+  const loadEvent = useCallback(async () => {
     try {
-      const res = await fetchApi(`/events/${id}`);
+      const res = await fetchApiRef.current(`/events/${id}`);
       setEvent(res?.event || null);
     } catch (err) {
       toast.error("Failed to load event: " + err.message);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     let ignore = false;
