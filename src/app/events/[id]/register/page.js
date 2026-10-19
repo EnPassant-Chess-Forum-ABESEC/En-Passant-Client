@@ -10,10 +10,6 @@ import { toast } from "sonner";
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  Shield,
-  Trophy,
-  Clock,
   CheckCircle2,
   AlertCircle,
   Loader2,
@@ -40,7 +36,7 @@ const FALLBACK_EVENT = {
   root: "A C C",
   eventName: "ACC — ABES Chess Championship 2026",
   description:
-    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open, Women's, and Inter-Club divisions. Contenders duel across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
+    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open and Women's divisions. Contenders duel across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
   format:
     "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered contenders compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
   timeControl: "10 + 5",
@@ -88,24 +84,6 @@ const FALLBACK_EVENT = {
       name: "womens",
       title: "Women's Section",
       description: "women section for female participants",
-      timeControl: "10 + 5",
-      timeFormat: "10 + 5",
-      brackets: [
-        {
-          name: "open",
-          minRating: 0,
-          maxRating: 3000,
-          range: "0 - 3000",
-          totalRounds: 5,
-          timeControl: "10 + 5",
-          timeFormat: "10 + 5",
-        },
-      ],
-    },
-    {
-      name: "interclub",
-      title: "Inter-Club",
-      description: "inter club section for different club representatives",
       timeControl: "10 + 5",
       timeFormat: "10 + 5",
       brackets: [
@@ -203,9 +181,15 @@ export default function EventSoloRegistrationPage() {
   const [event, setEvent] = useState(null);
 
   const [selectedSectionName, setSelectedSectionName] = useState("");
-  const [selectedBracketName, setSelectedBracketName] = useState("");
+  const [isHosteler, setIsHosteler] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
   const [myRegistration, setMyRegistration] = useState(null);
+  const [bracketPreview, setBracketPreview] = useState(null);
+  const [loadingBracketPreview, setLoadingBracketPreview] = useState(false);
+
+  const [paymentUtr, setPaymentUtr] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -214,13 +198,16 @@ export default function EventSoloRegistrationPage() {
     async function loadEventData() {
       try {
         setLoadingEvent(true);
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
         const cleanId = id ? decodeURIComponent(id) : "ACC";
 
         let fetchedEvent = null;
 
         if (cleanId && /^[0-9a-fA-F]{24}$/.test(cleanId)) {
-          const res = await fetch(`${apiUrl}/events/${cleanId}`, { cache: "no-store" }).catch(() => null);
+          const res = await fetch(`${apiUrl}/events/${cleanId}`, {
+            cache: "no-store",
+          }).catch(() => null);
           if (res?.ok) {
             const data = await res.json().catch(() => null);
             if (data?.event) fetchedEvent = data.event;
@@ -228,13 +215,24 @@ export default function EventSoloRegistrationPage() {
         }
 
         if (!fetchedEvent) {
-          const res = await fetch(`${apiUrl}/events`, { cache: "no-store" }).catch(() => null);
+          const res = await fetch(`${apiUrl}/events`, {
+            cache: "no-store",
+          }).catch(() => null);
           if (res?.ok) {
             const data = await res.json().catch(() => null);
             const events = data?.events || [];
             fetchedEvent =
-              events.find((e) => e._id === cleanId || e.title?.toLowerCase() === cleanId.toLowerCase()) ||
-              events.find((e) => e.status === "active" || e.status === "upcoming" || e.status === "in_progress") ||
+              events.find(
+                (e) =>
+                  e._id === cleanId ||
+                  e.title?.toLowerCase() === cleanId.toLowerCase(),
+              ) ||
+              events.find(
+                (e) =>
+                  e.status === "active" ||
+                  e.status === "upcoming" ||
+                  e.status === "in_progress",
+              ) ||
               events[0];
           }
         }
@@ -243,17 +241,18 @@ export default function EventSoloRegistrationPage() {
         setEvent(finalEvent);
 
         if (finalEvent.sections && finalEvent.sections.length > 0) {
-          const firstSec = finalEvent.sections[0];
+          const validSections = finalEvent.sections.filter(
+            (sec) =>
+              sec.name?.toLowerCase() !== "interclub" &&
+              sec.name?.toLowerCase() !== "inter-club",
+          );
+          const firstSec = validSections[0] || finalEvent.sections[0];
           setSelectedSectionName(firstSec.name);
-          if (firstSec.brackets && firstSec.brackets.length > 0) {
-            setSelectedBracketName(firstSec.brackets[0].name);
-          }
         }
       } catch (err) {
         console.error("Failed to load event data, using fallback:", err);
         setEvent(FALLBACK_EVENT);
         setSelectedSectionName("open");
-        setSelectedBracketName("beginner");
       } finally {
         setLoadingEvent(false);
       }
@@ -263,11 +262,27 @@ export default function EventSoloRegistrationPage() {
   }, [id]);
 
   useEffect(() => {
+    async function loadUserProfile() {
+      if (!isSignedIn || !authLoaded) return;
+      try {
+        const data = await fetchApi("/users/me");
+        if (data?.success && data?.user) {
+          setUserProfile(data.user);
+        }
+      } catch {}
+    }
+
+    loadUserProfile();
+  }, [isSignedIn, authLoaded, fetchApi]);
+
+  useEffect(() => {
     async function checkMyRegistration() {
       if (!isSignedIn || !authLoaded || !event?._id) return;
 
       try {
-        const data = await fetchApi(`/event-registrations/${event._id}/my-registration`);
+        const data = await fetchApi(
+          `/event-registrations/${event._id}/my-registration`,
+        );
         if (data?.success && data?.registration) {
           setMyRegistration(data.registration);
         } else {
@@ -281,30 +296,90 @@ export default function EventSoloRegistrationPage() {
     checkMyRegistration();
   }, [event?._id, isSignedIn, authLoaded, fetchApi]);
 
+  useEffect(() => {
+    async function loadBracketPreview() {
+      if (!isSignedIn || !authLoaded || !event?._id) return;
+      try {
+        setLoadingBracketPreview(true);
+        const data = await fetchApi(
+          `/event-registrations/${event._id}/preview-bracket?section=${encodeURIComponent(selectedSectionName || "open")}`,
+        );
+        if (data?.success) {
+          setBracketPreview(data);
+        }
+      } catch {
+        setBracketPreview(null);
+      } finally {
+        setLoadingBracketPreview(false);
+      }
+    }
+
+    loadBracketPreview();
+  }, [isSignedIn, authLoaded, event?._id, selectedSectionName, fetchApi]);
+
+  const availableSections = useMemo(() => {
+    if (!event?.sections) return [];
+    return event.sections.filter(
+      (sec) =>
+        sec.name?.toLowerCase() !== "interclub" &&
+        sec.name?.toLowerCase() !== "inter-club",
+    );
+  }, [event]);
+
   const activeSection = useMemo(() => {
-    if (!event?.sections) return null;
-    return event.sections.find((s) => s.name === selectedSectionName) || event.sections[0];
-  }, [event, selectedSectionName]);
-
-  const activeBrackets = useMemo(() => {
-    return activeSection?.brackets || [];
-  }, [activeSection]);
-
-  const activeBracket = useMemo(() => {
-    return activeBrackets.find((b) => b.name === selectedBracketName) || activeBrackets[0];
-  }, [activeBrackets, selectedBracketName]);
+    if (!availableSections.length) return null;
+    return (
+      availableSections.find((s) => s.name === selectedSectionName) ||
+      availableSections[0]
+    );
+  }, [availableSections, selectedSectionName]);
 
   const isRegistrationOpen = useMemo(() => {
     if (!event?.registrationDeadline) return true;
     return new Date() <= new Date(event.registrationDeadline);
   }, [event]);
 
+  const isWomensSelected = useMemo(() => {
+    const sec = (selectedSectionName || "").toLowerCase().trim();
+    return sec === "womens" || sec === "women";
+  }, [selectedSectionName]);
+
+  const chessAccount = userProfile?.chessAccounts?.chessCom;
+
+  const placedBracket = useMemo(() => {
+    if (!activeSection?.brackets || activeSection.brackets.length === 0)
+      return null;
+    if (activeSection.brackets.length === 1) return activeSection.brackets[0];
+
+    if (bracketPreview?.bracket) {
+      return bracketPreview.bracket;
+    }
+
+    const userRating =
+      bracketPreview?.peakRating ??
+      chessAccount?.ratings?.rapid ??
+      chessAccount?.ratings?.bullet ??
+      0;
+
+    const matched = activeSection.brackets.find(
+      (b) =>
+        (b.minRating == null || userRating >= b.minRating) &&
+        (b.maxRating == null || userRating <= b.maxRating),
+    );
+
+    if (matched) return matched;
+
+    const sorted = [...activeSection.brackets].sort(
+      (a, b) => (b.maxRating || 3000) - (a.maxRating || 3000),
+    );
+    if (userRating > (sorted[0].maxRating || 0)) {
+      return sorted[0];
+    }
+    return activeSection.brackets[0];
+  }, [activeSection, bracketPreview, chessAccount]);
+
   const handleSectionSelect = (sectionName) => {
     setSelectedSectionName(sectionName);
-    const target = event?.sections?.find((s) => s.name === sectionName);
-    if (target?.brackets && target.brackets.length > 0) {
-      setSelectedBracketName(target.brackets[0].name);
-    }
   };
 
   const getStepTitle = () => {
@@ -312,38 +387,35 @@ export default function EventSoloRegistrationPage() {
       case 0:
         return "1. Select Division";
       case 1:
-        return "2. Rating Bracket";
+        return "2. Review Details";
       case 2:
-        return "3. Contender Review";
+        return "3. Payment";
       default:
         return "Registration";
     }
   };
 
-  const getStepDesc = () => {
-    switch (currentStep) {
-      case 0:
-        return "Select your championship tournament division.";
-      case 1:
-        return "Select your rating-stratified bracket.";
-      case 2:
-        return "Confirm your credentials and reserve seat.";
-      default:
-        return "";
-    }
-  };
-
   const isStepValid = (step) => {
     if (step === 0) return !!selectedSectionName;
-    if (step === 1) return !!selectedBracketName;
-    if (step === 2) return true;
+    if (step === 1) return true;
+    if (step === 2) return paymentUtr.trim() !== "";
     return true;
   };
 
   const handleNext = () => {
-    if (currentStep < 2) {
-      setCurrentStep((prev) => prev + 1);
+    if (currentStep === 0) {
+      if (!selectedSectionName) {
+        toast.error("Please choose a tournament division.");
+        return;
+      }
+      setCurrentStep(1);
+    } else if (currentStep === 1) {
+      setCurrentStep(2);
     } else {
+      if (!paymentUtr.trim()) {
+        toast.error("Please enter the payment UTR / transaction ID.");
+        return;
+      }
       handleRegister();
     }
   };
@@ -358,7 +430,9 @@ export default function EventSoloRegistrationPage() {
     if (!isSignedIn) {
       toast.error("Please sign in to complete your tournament registration.");
       const currentUrl = window.location.href;
-      router.push(`/auth/sign-in?redirect_url=${encodeURIComponent(currentUrl)}`);
+      router.push(
+        `/auth/sign-in?redirect_url=${encodeURIComponent(currentUrl)}`,
+      );
       return;
     }
 
@@ -367,8 +441,8 @@ export default function EventSoloRegistrationPage() {
       return;
     }
 
-    if (!selectedSectionName || !selectedBracketName) {
-      toast.error("Please choose a division and rating bracket.");
+    if (!selectedSectionName) {
+      toast.error("Please choose a tournament division.");
       return;
     }
 
@@ -376,7 +450,7 @@ export default function EventSoloRegistrationPage() {
       setIsSubmitting(true);
       const payload = {
         section: selectedSectionName,
-        bracket: selectedBracketName,
+        isHosteler: Boolean(isHosteler),
         participation: {
           participationType: "solo",
         },
@@ -388,12 +462,20 @@ export default function EventSoloRegistrationPage() {
       });
 
       if (res?.success) {
-        toast.success(`Registered successfully for ${event.title || "the event"}!`);
+        toast.success(
+          `Registered successfully for ${event.title || "the event"}!`,
+        );
         setMyRegistration(
           res.registration || {
             eventId: event._id,
             section: selectedSectionName,
-            bracket: selectedBracketName,
+            bracket: "Assigned",
+            isHosteler: Boolean(isHosteler),
+            residentType: isHosteler
+              ? "hosteler"
+              : isWomensSelected
+                ? "day_scholar"
+                : null,
             status: "pending",
             createdAt: new Date().toISOString(),
           },
@@ -475,7 +557,9 @@ export default function EventSoloRegistrationPage() {
           {loadingEvent ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-3 py-16 text-white/50">
               <Loader2 className="w-7 h-7 animate-spin text-[#9b1a1a]" />
-              <p className="font-pezula text-xs uppercase tracking-[0.2em]">Summoning Tournament Ledger...</p>
+              <p className="font-pezula text-xs uppercase tracking-[0.2em]">
+                Summoning Tournament Ledger...
+              </p>
             </div>
           ) : (
             <>
@@ -507,21 +591,16 @@ export default function EventSoloRegistrationPage() {
               </div>
 
               {!myRegistration && isRegistrationOpen && (
-                <div className="pb-1.5 relative z-10 flex items-start justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
-                  <div>
-                    <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white mb-0.5">
-                      {getStepTitle()}
-                    </h2>
-                    <p className="text-white/50 text-[11px] font-sans">
-                      {getStepDesc()}
-                    </p>
-                  </div>
+                <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
+                  <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
+                    {getStepTitle()}
+                  </h2>
 
                   {currentStep > 0 && (
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest self-start shrink-0 cursor-pointer"
+                      className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest shrink-0 cursor-pointer"
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                       <span>Back</span>
@@ -534,10 +613,12 @@ export default function EventSoloRegistrationPage() {
                 className="flex-1 min-h-0 relative overflow-y-auto custom-scrollbar pr-1 py-1"
                 onWheel={(e) => {
                   const el = e.currentTarget;
-                  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+                  const atBottom =
+                    el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
                   const atTop = el.scrollTop <= 0;
                   const scrollingDown = e.deltaY > 0;
-                  if ((scrollingDown && atBottom) || (!scrollingDown && atTop)) return;
+                  if ((scrollingDown && atBottom) || (!scrollingDown && atTop))
+                    return;
                   e.stopPropagation();
                 }}
               >
@@ -552,24 +633,19 @@ export default function EventSoloRegistrationPage() {
                       className="p-4 sm:p-5 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-md relative overflow-hidden space-y-3.5 my-auto"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-[#9b1a1a]/20 border border-[#9b1a1a]/40 flex items-center justify-center text-[#ff4444]">
-                            <Trophy className="w-4 h-4" />
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-white font-bold text-sm uppercase font-pezula tracking-wide">
+                              Registration Confirmed
+                            </span>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                           </div>
-                          <div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-white font-bold text-sm uppercase font-pezula tracking-wide">
-                                You Are Registered
-                              </span>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                            </div>
-                            <p className="text-white/40 text-[11px] font-mono">
-                              Confirmed seat for {event.title || "ACC 2026"}
-                            </p>
-                          </div>
+                          <p className="text-white/40 text-[11px] font-mono">
+                            Confirmed seat for {event.title || "ACC 2026"}
+                          </p>
                         </div>
 
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-[#9b1a1a]/20 text-[#ff4444] border border-[#9b1a1a]/30">
+                        <span className="px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           {myRegistration.status || "CONFIRMED"}
                         </span>
                       </div>
@@ -580,7 +656,8 @@ export default function EventSoloRegistrationPage() {
                             Division
                           </span>
                           <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                            {myRegistration.section || selectedSectionName} Section
+                            {myRegistration.section || selectedSectionName}{" "}
+                            Section
                           </span>
                         </div>
                         <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
@@ -588,9 +665,43 @@ export default function EventSoloRegistrationPage() {
                             Rating Bracket
                           </span>
                           <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                            {myRegistration.bracket || selectedBracketName} Bracket
+                            {myRegistration.bracket
+                              ? `${myRegistration.bracket} Bracket`
+                              : "Assigned"}
                           </span>
                         </div>
+                        {myRegistration.peakRapidRating != null && (
+                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
+                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                              Peak Bullet (30d)
+                            </span>
+                            <span className="text-white font-semibold font-mono tracking-wide text-xs">
+                              {myRegistration.peakRapidRating} (
+                              {myRegistration.rapidGamesCount ?? 0} games)
+                            </span>
+                          </div>
+                        )}
+                        {(myRegistration.isHosteler ||
+                          myRegistration.residentType === "hosteler") && (
+                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
+                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                              Residence
+                            </span>
+                            <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
+                              Hosteler
+                            </span>
+                          </div>
+                        )}
+                        {myRegistration.chessUsername && (
+                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
+                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                              Chess.com
+                            </span>
+                            <span className="text-white font-semibold font-mono tracking-wide text-xs">
+                              @{myRegistration.chessUsername}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="pt-1.5 flex items-center justify-between text-xs border-t border-white/5">
@@ -599,13 +710,11 @@ export default function EventSoloRegistrationPage() {
                         </span>
 
                         <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <button
-                              disabled={isWithdrawing || !isRegistrationOpen}
-                              className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors"
-                            >
-                              Withdraw
-                            </button>
+                          <AlertDialogTrigger
+                            disabled={isWithdrawing || !isRegistrationOpen}
+                            className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Withdraw
                           </AlertDialogTrigger>
                           <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
                             <AlertDialogHeader>
@@ -613,7 +722,9 @@ export default function EventSoloRegistrationPage() {
                                 Withdraw Registration?
                               </AlertDialogTitle>
                               <AlertDialogDescription className="text-white/60 text-sm">
-                                Are you sure you want to withdraw your solo registration for {event.title || "ACC"}? Your seat will be released.
+                                Are you sure you want to withdraw your solo
+                                registration for {event.title || "ACC"}? Your
+                                seat will be released.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -624,7 +735,9 @@ export default function EventSoloRegistrationPage() {
                                 onClick={handleWithdraw}
                                 className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
                               >
-                                {isWithdrawing ? "Withdrawing..." : "Confirm Withdrawal"}
+                                {isWithdrawing
+                                  ? "Withdrawing..."
+                                  : "Confirm Withdrawal"}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -644,7 +757,9 @@ export default function EventSoloRegistrationPage() {
                         Registrations Closed
                       </h3>
                       <p className="text-white/50 text-xs max-w-sm mx-auto leading-relaxed">
-                        The registration deadline has passed for this tournament cycle. Round pairings and live broadcast will be posted on the event board.
+                        The registration deadline has passed for this tournament
+                        cycle. Round pairings and live broadcast will be posted
+                        on the event board.
                       </p>
                     </motion.div>
                   ) : (
@@ -657,86 +772,88 @@ export default function EventSoloRegistrationPage() {
                           animate="animate"
                           exit="exit"
                           transition={{ duration: 0.25 }}
-                          className="space-y-2 w-full"
+                          className="space-y-3 w-full"
                         >
-                          {event.sections?.map((sec) => {
-                            const isSelected = selectedSectionName === sec.name;
-                            return (
-                              <button
-                                key={sec.name}
-                                type="button"
-                                onClick={() => handleSectionSelect(sec.name)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group cursor-pointer ${isSelected
-                                  ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_20px_rgba(155,26,26,0.2)] text-white"
-                                  : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
+                          <div className="space-y-2">
+                            {availableSections.map((sec) => {
+                              const isSelected =
+                                selectedSectionName === sec.name;
+                              return (
+                                <button
+                                  key={sec.name}
+                                  type="button"
+                                  onClick={() => handleSectionSelect(sec.name)}
+                                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group cursor-pointer ${
+                                    isSelected
+                                      ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_20px_rgba(155,26,26,0.2)] text-white"
+                                      : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
                                   }`}
-                              >
-                                <div>
-                                  <span className="text-[13px] sm:text-[14px] font-bold font-pezula uppercase tracking-wider block">
-                                    {sec.title || sec.name}
+                                >
+                                  <div>
+                                    <span className="text-[13px] sm:text-[14px] font-bold font-pezula uppercase tracking-wider block">
+                                      {sec.title || sec.name}
+                                    </span>
+                                    <span className="text-[10px] text-white/40 font-sans block">
+                                      {sec.description ||
+                                        "Solo championship tier"}
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {(selectedSectionName === "open" ||
+                            isWomensSelected) && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80 shrink-0">
+                                    Residence Status
                                   </span>
-                                  <span className="text-[10px] text-white/40 font-sans block">
-                                    {sec.description || "Solo championship tier"}
+                                  <span className="px-1.5 py-0.5 rounded text-[11px] tracking-wider font-normal text-white/50 shrink-0">
+                                    (Only for Female Participation)
                                   </span>
                                 </div>
-                                <div className="text-right shrink-0 ml-2">
-                                  <span className="text-[10px] font-mono text-white/50 block">
-                                    {sec.brackets?.length || 1} Brackets
+                                {isHosteler && (
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-mono uppercase tracking-wider font-bold text-[#ff4444] shrink-0">
+                                    Hosteler
+                                  </span>
+                                )}
+                              </div>
+
+                              <label className="flex items-start gap-3 cursor-pointer group select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={isHosteler}
+                                  onChange={(e) =>
+                                    setIsHosteler(e.target.checked)
+                                  }
+                                  className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/40 text-[#9b1a1a] focus:ring-[#9b1a1a] focus:ring-offset-0 cursor-pointer accent-[#9b1a1a]"
+                                />
+                                <div className="space-y-0.5">
+                                  <span className="text-xs text-white font-medium group-hover:text-white transition-colors block">
+                                    Female Hosteler (ABES Hostel Resident)
+                                  </span>
+                                  <span className="text-[10px] text-white/40 block leading-tight">
+                                    Check this box if you are a female
+                                    participant residing in the college hostel.
+                                    Leave unchecked if you are a Day Scholar.
                                   </span>
                                 </div>
-                              </button>
-                            );
-                          })}
+                              </label>
+                            </motion.div>
+                          )}
                         </motion.div>
                       )}
 
                       {currentStep === 1 && (
                         <motion.div
                           key="step1"
-                          variants={slideVariants}
-                          initial="initial"
-                          animate="animate"
-                          exit="exit"
-                          transition={{ duration: 0.25 }}
-                          className="space-y-2 w-full"
-                        >
-                          {activeBrackets.map((brk) => {
-                            const isSelected = selectedBracketName === brk.name;
-                            return (
-                              <button
-                                key={brk.name}
-                                type="button"
-                                onClick={() => setSelectedBracketName(brk.name)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group cursor-pointer ${isSelected
-                                  ? "bg-[#9b1a1a]/25 border-[#9b1a1a] shadow-[0_0_20px_rgba(155,26,26,0.2)] text-white"
-                                  : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-white/70 hover:text-white"
-                                  }`}
-                              >
-                                <div>
-                                  <span className="text-[13px] sm:text-[14px] font-bold font-pezula uppercase tracking-wider block capitalize">
-                                    {brk.name} Bracket
-                                  </span>
-                                  <span className="text-[10px] text-white/40 font-mono block">
-                                    Rating Tier: {brk.range}
-                                  </span>
-                                </div>
-                                <div className="text-right shrink-0 ml-2 flex flex-col items-end gap-0.5">
-                                  <span className="inline-block px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-white/80">
-                                    {brk.timeControl || "10 + 5"}
-                                  </span>
-                                  <span className="text-[9px] text-white/40 font-mono">
-                                    {brk.totalRounds || 5} Rounds
-                                  </span>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </motion.div>
-                      )}
-
-                      {currentStep === 2 && (
-                        <motion.div
-                          key="step2"
                           variants={slideVariants}
                           initial="initial"
                           animate="animate"
@@ -761,20 +878,61 @@ export default function EventSoloRegistrationPage() {
                               </div>
                               <div className="min-w-0">
                                 <span className="block text-white font-medium truncate font-pezula tracking-wide text-xs sm:text-sm">
-                                  {isSignedIn ? clerkUser?.fullName || "Contender" : "Guest Player"}
+                                  {isSignedIn
+                                    ? clerkUser?.fullName || "Player"
+                                    : "Guest Player"}
                                 </span>
                                 <span className="block text-white/40 text-[10px] truncate font-mono">
                                   {isSignedIn
-                                    ? clerkUser?.primaryEmailAddress?.emailAddress || "Verified Account"
-                                    : "Sign in required to finalize seat"}
+                                    ? clerkUser?.primaryEmailAddress
+                                        ?.emailAddress || "Verified Account"
+                                    : "Sign in required to register"}
                                 </span>
                               </div>
                             </div>
 
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#9b1a1a]/20 text-[#ff4444] text-[9px] font-mono font-bold border border-[#9b1a1a]/30 shrink-0">
-                              <Shield className="w-3 h-3" />
-                              SOLO
-                            </span>
+                            {isHosteler && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#9b1a1a]/20 text-[#ff4444] text-[9px] font-mono font-bold border border-[#9b1a1a]/30 shrink-0">
+                                Hosteler
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-2 text-xs">
+                            <div>
+                              <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                                Linked Chess.com Account
+                              </span>
+                              {chessAccount?.username ? (
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-white font-mono font-semibold text-xs">
+                                    @{chessAccount.username}
+                                  </span>
+                                  {chessAccount.verified ? (
+                                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8.5px] font-mono font-bold text-emerald-400">
+                                      <CheckCircle2 className="w-2.5 h-2.5" />
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8.5px] font-mono font-bold text-amber-400 ">
+                                      Unverified
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-red-400 font-mono text-[11px]">
+                                  No Chess.com account linked
+                                </span>
+                              )}
+                            </div>
+
+                            {!chessAccount?.verified && (
+                              <Link
+                                href="/profile"
+                                className="text-[10px] text-white/60 hover:text-white underline font-mono shrink-0"
+                              >
+                                Manage Profile
+                              </Link>
+                            )}
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -786,13 +944,109 @@ export default function EventSoloRegistrationPage() {
                                 {activeSection?.title || selectedSectionName}
                               </span>
                             </div>
+
                             <div className="bg-white/5 border border-white/5 rounded-xl p-2.5">
                               <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
-                                Rating Bracket
+                                Bracket Placement
                               </span>
-                              <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
-                                {activeBracket?.name} ({activeBracket?.range})
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-white font-semibold capitalize font-pezula tracking-wide text-xs">
+                                  {placedBracket?.name
+                                    ? `${placedBracket.name} Bracket`
+                                    : "Open Bracket"}
+                                </span>
+                                {placedBracket?.range && (
+                                  <span className="text-white/40 font-mono text-[10px]">
+                                    ({placedBracket.range})
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
+                            <span className="text-white/70 font-medium block text-[10px] uppercase font-mono tracking-wider">
+                              Placement Policy
+                            </span>
+                            <p className="text-white/45 text-[11px] leading-relaxed">
+                              Placed automatically by peak Chess.com rating in the past 30 days (minimum 5 games required) for fair matchmaking.
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {currentStep === 2 && (
+                        <motion.div
+                          key="step2"
+                          variants={slideVariants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          transition={{ duration: 0.25 }}
+                          className="space-y-3 w-full"
+                        >
+                          <div className="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 p-3.5 rounded-xl">
+                            <div className="flex-1 text-left min-w-0">
+                              <div className="flex items-baseline gap-2 mb-1">
+                                <span className="text-lg font-mono font-bold text-white">
+                                  ₹40
+                                </span>
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
+                                  Registration Fee
+                                </span>
+                              </div>
+                              <p className="text-white/50 text-[11px] leading-relaxed mb-2 font-sans">
+                                Pay via any UPI app using the QR code or ID, then enter your transaction reference below.
+                              </p>
+                              <div className="text-[11px] font-mono text-white/80 bg-white/5 border border-white/10 px-2.5 py-1 rounded inline-block select-all">
+                                8933905351@ybl
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center shrink-0">
+                              <Image
+                                src="/recruitment/recruitment_payment_qr.jpeg"
+                                alt="Payment QR Code"
+                                width={84}
+                                height={84}
+                                priority
+                                className="object-contain rounded-lg border border-white/10 mb-1"
+                                style={{ width: "84px", height: "auto" }}
+                              />
+                              <span className="text-white/60 font-mono text-[9px] uppercase tracking-wider">
+                                Scan to Pay
                               </span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2.5">
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
+                                Transaction ID (UTR)
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg h-9 px-3 text-xs focus:outline-none focus:border-[#9b1a1a] focus:bg-white/10 placeholder:text-white/20 font-mono transition-colors"
+                                value={paymentUtr}
+                                onChange={(e) => setPaymentUtr(e.target.value)}
+                                placeholder="12-digit transaction reference"
+                              />
+                            </div>
+
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
+                                Payment Screenshot <span className="text-white/30 lowercase font-sans">(optional)</span>
+                              </label>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    setPaymentScreenshot(e.target.files[0]);
+                                  }
+                                }}
+                                className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#9b1a1a] file:mr-3 file:py-0.5 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-mono file:font-medium file:uppercase file:tracking-wider file:bg-white/10 file:text-white hover:file:bg-white/20 file:transition-colors cursor-pointer"
+                              />
                             </div>
                           </div>
                         </motion.div>
@@ -820,29 +1074,32 @@ export default function EventSoloRegistrationPage() {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Securing Seat...</span>
+                          <span>Registering...</span>
                         </>
                       ) : currentStep === 2 ? (
                         <>
-                          <span>Confirm Solo Registration</span>
+                          <span>Confirm Registration</span>
+                          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </>
+                      ) : currentStep === 1 ? (
+                        <>
+                          <span>Continue to Payment</span>
                           <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </>
                       ) : (
                         <>
-                          <span>Continue to {currentStep === 0 ? "Bracket" : "Review"}</span>
+                          <span>Continue to Review</span>
                           <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
                     </div>
                   </SpecularButton>
                 ) : (
-                  <Link href="/events" className="w-full block">
-                    <button
-                      type="button"
-                      className="w-full h-11 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs uppercase tracking-widest font-pezula border border-white/10 transition-colors cursor-pointer"
-                    >
-                      Return to Events Overview
-                    </button>
+                  <Link
+                    href="/events"
+                    className="w-full h-11 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs uppercase tracking-widest font-pezula border border-white/10 transition-colors flex items-center justify-center cursor-pointer"
+                  >
+                    Return to Events Overview
                   </Link>
                 )}
               </div>
