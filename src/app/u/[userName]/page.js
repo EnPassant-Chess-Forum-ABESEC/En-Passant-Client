@@ -5,7 +5,14 @@ import { useApi } from "@/lib/api";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { BookOpen, GraduationCap, Trophy, AlertTriangle } from "lucide-react";
+import {
+  BookOpen,
+  GraduationCap,
+  Trophy,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
 import ChessGridBackground from "@/components/ChessGridBackground";
@@ -176,9 +183,23 @@ export default function PublicProfilePage() {
                           <SiChessdotcom />
                         </div>
                         <div>
-                          <p className="text-[10px] normalcase tracking-wider text-white/40 mb-0.5">
-                            Chess.com
-                          </p>
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] tracking-wider text-white/40 uppercase">
+                              Chess.com
+                            </span>
+                            {chess?.username &&
+                              (chess?.verified ? (
+                                <CheckCircle2
+                                  size={13}
+                                  className="text-emerald-400 fill-emerald-400/20 shrink-0"
+                                  title="Verified Chess.com Account"
+                                />
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-medium text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                                  <AlertCircle size={9} /> Unverified
+                                </span>
+                              ))}
+                          </div>
                           <p className="text-sm font-semibold text-white/90">
                             {chess?.username
                               ? `@${chess.username}`

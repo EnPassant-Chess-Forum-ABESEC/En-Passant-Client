@@ -5,6 +5,7 @@ import { useApi } from "@/lib/api";
 import { UserProfile, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 import {
   Edit2,
@@ -16,6 +17,8 @@ import {
   Trophy,
   MailCheck,
   AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
@@ -34,6 +37,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [chessError, setChessError] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
 
   useEffect(() => {
     if (isLoaded && clerkUser) loadProfile();
@@ -45,6 +49,28 @@ export default function ProfilePage() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("onboarding") === "true") {
         setShowOnboardingModal(true);
+      }
+      if (urlParams.get("chesscom_error") === "already_linked") {
+        setTimeout(() => {
+          toast.error(
+            "This Chess.com account is already linked to another user's profile.",
+          );
+        }, 1000);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
+      }
+      if (urlParams.get("chesscom_linked") === "true") {
+        setTimeout(() => {
+          toast.success("Chess.com account successfully linked!");
+        }, 1000);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
       }
     }
   }, []);
@@ -64,14 +90,28 @@ export default function ProfilePage() {
       setLoading(true);
       const [data, appRes] = await Promise.all([
         fetchApi("/users/me"),
-        fetchApi("/recruitment/my-application").catch(() => null)
+        fetchApi("/recruitment/my-application").catch(() => null),
       ]);
       if (data.success) setProfile(data.user);
       if (appRes?.myApplication) setMyApplication(appRes.myApplication);
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message || "Failed to load profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLinkChesscom = async () => {
+    try {
+      setIsLinking(true);
+      const res = await fetchApi("/auth/chesscom/login", { method: "POST" });
+      if (res.authorizeUrl) {
+        window.location.href = res.authorizeUrl;
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to initiate Chess.com linking.");
+      setIsLinking(false);
     }
   };
 
@@ -103,12 +143,6 @@ export default function ProfilePage() {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8 lg:pr-[70px] pt-32 pb-24">
-        {error && (
-          <div className="mb-8 px-4 py-3 border border-[#ff3333]/30 bg-[#ff3333]/8 text-[#ff3333] text-sm rounded-lg backdrop-blur-md">
-            {error}
-          </div>
-        )}
-
         {profile && !isEditing && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -235,14 +269,19 @@ export default function ProfilePage() {
                               if (!profile.ranks) return "Unranked";
                               let bestRank = Infinity;
                               let bestMode = "";
-                              ["rapid", "blitz", "bullet"].forEach(mode => {
-                                if (profile.ranks[mode]?.rank && profile.ranks[mode].rank < bestRank) {
+                              ["rapid", "blitz", "bullet"].forEach((mode) => {
+                                if (
+                                  profile.ranks[mode]?.rank &&
+                                  profile.ranks[mode].rank < bestRank
+                                ) {
                                   bestRank = profile.ranks[mode].rank;
                                   bestMode = mode;
                                 }
                               });
                               if (bestRank === Infinity) return "Unranked";
-                              const modeStr = bestMode.charAt(0).toUpperCase() + bestMode.slice(1);
+                              const modeStr =
+                                bestMode.charAt(0).toUpperCase() +
+                                bestMode.slice(1);
                               return `#${bestRank} in ${modeStr}`;
                             })()}
                           </p>
@@ -252,30 +291,50 @@ export default function ProfilePage() {
 
                     <div className="w-full h-px bg-white/5" />
 
-                    <div className="flex items-center justify-between group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50">
+                    <div className="flex items-center justify-between group gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50 shrink-0">
                           <SiChessdotcom />
                         </div>
-                        <div>
-                          <p className="text-[10px] normalcase tracking-wider text-white/40 mb-0.5">
-                            Chess.com
-                          </p>
-                          <p className="text-sm font-semibold text-white/90">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] tracking-wider text-white/40 uppercase">
+                              Chess.com
+                            </span>
+                            {chess?.username &&
+                              (chess?.verified ? (
+                                <CheckCircle2
+                                  size={13}
+                                  className="text-emerald-400 fill-emerald-400/20 shrink-0"
+                                  title="Verified Chess.com Account"
+                                />
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-medium text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                                  <AlertCircle size={9} /> Unverified
+                                </span>
+                              ))}
+                          </div>
+                          <p className="text-sm font-semibold text-white/90 truncate">
                             {chess?.username
                               ? `@${chess.username}`
                               : "Not linked"}
                           </p>
                         </div>
                       </div>
-                      {!chess?.username && profile.isOnboardingComplete && (
-                        <button
-                          onClick={() => setIsEditing(true)}
-                          className="text-white/20 hover:text-white/60 transition-colors p-2"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                      )}
+                      {(!chess?.username || !chess?.verified) &&
+                        profile.isOnboardingComplete && (
+                          <button
+                            onClick={handleLinkChesscom}
+                            disabled={isLinking}
+                            className="text-[11px] font-medium tracking-wide px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/90 hover:text-white border border-white/10 hover:border-white/20 transition-all duration-200 shrink-0 disabled:opacity-50 cursor-pointer"
+                          >
+                            {isLinking
+                              ? "Redirecting..."
+                              : chess?.username && !chess?.verified
+                                ? "Verify"
+                                : "Link"}
+                          </button>
+                        )}
                     </div>
 
                     <div className="w-full h-px bg-white/5" />
@@ -308,7 +367,11 @@ export default function ProfilePage() {
                             Year
                           </p>
                           <p className="text-sm font-semibold text-white/90">
-                            {profile.year ? (profile.year === 5 ? "Passed" : `Year ${profile.year}`) : "—"}
+                            {profile.year
+                              ? profile.year === 5
+                                ? "Passed"
+                                : `Year ${profile.year}`
+                              : "—"}
                           </p>
                         </div>
                       </div>
@@ -335,7 +398,9 @@ export default function ProfilePage() {
                     {chessError && (
                       <div className="flex items-center gap-1.5 text-[#ff3333]">
                         <AlertTriangle size={14} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Invalid Username</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">
+                          Invalid Username
+                        </span>
                       </div>
                     )}
                   </div>
