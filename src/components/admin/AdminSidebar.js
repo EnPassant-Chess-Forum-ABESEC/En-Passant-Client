@@ -20,6 +20,7 @@ import {
   X,
   Trophy,
   Calendar,
+  UserCheck,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
@@ -37,6 +38,9 @@ export default function AdminSidebar() {
   const isRecruitmentActive = pathname.startsWith("/admin/recruitment");
   const [isRecruitmentOpen, setIsRecruitmentOpen] =
     useState(isRecruitmentActive);
+
+  const isEventsActive = pathname.startsWith("/admin/events");
+  const [isEventsOpen, setIsEventsOpen] = useState(isEventsActive);
 
   const isPaymentsActive = pathname.startsWith("/admin/payments");
   const [isPaymentsOpen, setIsPaymentsOpen] = useState(isPaymentsActive);
@@ -147,24 +151,64 @@ export default function AdminSidebar() {
             )}
           </Link>
 
-          <Link
-            href="/admin/events"
-            title="Events"
-            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-1
-            ${isCollapsed ? "justify-center px-0" : "px-4"}
-            ${
-              pathname.startsWith("/admin/events")
-                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
-                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
-            }`}
-          >
-            <Calendar
-              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname.startsWith("/admin/events") ? "scale-110" : "group-hover:scale-110"}`}
-            />
-            {!isCollapsed && (
-              <span className="text-sm font-semibold truncate">Events</span>
-            )}
-          </Link>
+          <div className="mt-1">
+            <button
+              onClick={() => {
+                if (isCollapsed) setIsCollapsed(false);
+                setIsEventsOpen(!isEventsOpen);
+              }}
+              title="Events"
+              className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left
+              ${isCollapsed ? "justify-center px-0" : "px-4"}
+              ${
+                isEventsActive && (!isEventsOpen || isCollapsed)
+                  ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+              }`}
+            >
+              <Calendar className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-110" />
+              {!isCollapsed && (
+                <span className="text-sm font-semibold truncate">Events</span>
+              )}
+              {!isCollapsed && (
+                <ChevronDown
+                  className={`w-4 h-4 ml-auto transition-transform duration-300 ${isEventsOpen ? "rotate-180" : ""}`}
+                />
+              )}
+            </button>
+
+            <div
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${isEventsOpen && !isCollapsed ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
+            >
+              <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
+                <Link
+                  href="/admin/events"
+                  className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
+                  ${
+                    pathname === "/admin/events"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-xs font-medium">All Events</span>
+                </Link>
+
+                <Link
+                  href="/admin/events/registrations"
+                  className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
+                  ${
+                    pathname === "/admin/events/registrations"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+                  }`}
+                >
+                  <UserCheck className="w-4 h-4" />
+                  <span className="text-xs font-medium">Registrations</span>
+                </Link>
+              </div>
+            </div>
+          </div>
 
           <Link
             href="/admin/tournaments"
