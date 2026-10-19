@@ -326,18 +326,29 @@ export default function EventList({
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
-                  <Link
-                    href={`/admin/tournaments/events/${ev._id}`}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold transition-colors"
-                  >
-                    <Layers className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Tournaments</span>
-                  </Link>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      href={`/admin/events/${ev._id}?tab=registrations`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 font-semibold transition-colors"
+                      title="View Registered Applicants"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>Registrations</span>
+                    </Link>
+
+                    <Link
+                      href={`/admin/tournaments/events/${ev._id}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold transition-colors"
+                    >
+                      <Layers className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="hidden sm:inline">Tournaments</span>
+                    </Link>
+                  </div>
 
                   <Link
                     href={`/admin/events/${ev._id}`}
-                    className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                    className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:underline ml-auto"
                   >
                     <span>Manage</span>
                     <ChevronRight className="w-4 h-4" />
