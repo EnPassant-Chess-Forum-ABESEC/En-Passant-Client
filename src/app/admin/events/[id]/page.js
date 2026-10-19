@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import EditEventPanel from "@/components/admin/events/EditEventPanel";
+import EventRegistrationsTab from "@/components/admin/events/EventRegistrationsTab";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,6 +53,9 @@ const itemVariants = {
 export default function AdminEventDetailPage({ params }) {
   const { id } = use(params);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") === "registrations" ? "registrations" : "sections";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const fetchApi = useApi();
 
   const [event, setEvent] = useState(null);
@@ -355,25 +359,65 @@ export default function AdminEventDetailPage({ params }) {
         </motion.div>
       )}
 
-      <motion.section variants={itemVariants} className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              Sections & Brackets
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Sections and rating brackets for this event
-            </p>
-          </div>
+      <motion.div variants={itemVariants} className="border-b border-slate-200 dark:border-slate-800 flex items-center gap-6">
+        <button
+          type="button"
+          onClick={() => setActiveTab("sections")}
+          className={`pb-3 text-sm font-bold tracking-tight transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+            activeTab === "sections"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
+              : "border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>Sections & Brackets</span>
+          <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            {sectionsCount}
+          </span>
+        </button>
 
-          <Link
-            href={`/admin/tournaments/events/${id}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-          >
-            <span>View Tournaments</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+        <button
+          type="button"
+          onClick={() => setActiveTab("registrations")}
+          className={`pb-3 text-sm font-bold tracking-tight transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+            activeTab === "registrations"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
+              : "border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+          }`}
+        >
+          <UserCheck className="w-4 h-4" />
+          <span>Registrations</span>
+        </button>
+      </motion.div>
+
+      {activeTab === "registrations" ? (
+        <motion.div variants={itemVariants}>
+          <EventRegistrationsTab
+            eventId={id}
+            event={event}
+            onRefreshEvent={loadEvent}
+          />
+        </motion.div>
+      ) : (
+        <motion.section variants={itemVariants} className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                Sections & Brackets
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Sections and rating brackets for this event
+              </p>
+            </div>
+
+            <Link
+              href={`/admin/tournaments/events/${id}`}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              <span>View Tournaments</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          </div>
 
         {sectionsCount === 0 ? (
           <div className="p-12 text-center border border-slate-200 dark:border-slate-800 rounded-3xl bg-white/50 dark:bg-[#0F172A]/50">
@@ -486,6 +530,7 @@ export default function AdminEventDetailPage({ params }) {
           </div>
         )}
       </motion.section>
+      )}
 
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800">
