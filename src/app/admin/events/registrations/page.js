@@ -5,11 +5,8 @@ import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
   Calendar,
-  Users,
-  ChevronDown,
   Loader2,
   ExternalLink,
-  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -91,38 +88,30 @@ export default function AdminEventRegistrationsPage() {
         className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-6 border-b border-slate-200 dark:border-slate-800"
       >
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Event Sub-Section</span>
-            </span>
-          </div>
-
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
             Event Registrations
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm font-medium">
-            Review registered contenders and filter applicants by section
+            Review registered participants and manage registrations
           </p>
         </div>
 
         {events.length > 0 && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
-            <div className="w-full sm:w-72">
+            <div className="w-full sm:w-80">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Select Tournament Event
               </label>
               <Select value={selectedEventId} onValueChange={setSelectedEventId}>
-                <SelectTrigger className="w-full h-10 bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs font-semibold rounded-xl">
-                  <SelectValue placeholder="Select an Event" />
+                <SelectTrigger className="w-full h-10 bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs font-semibold rounded-xl text-left truncate">
+                  <SelectValue placeholder="Select an Event">
+                    {selectedEvent?.title || "Select an Event"}
+                  </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs font-medium">
+                <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs font-medium max-h-72">
                   {events.map((ev) => (
                     <SelectItem key={ev._id} value={ev._id}>
-                      <span className="font-semibold">{ev.title}</span>{" "}
-                      <span className="text-[10px] text-slate-400 uppercase">
-                        ({ev.status || "upcoming"})
-                      </span>
+                      {ev.title}
                     </SelectItem>
                   ))}
                 </SelectContent>

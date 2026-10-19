@@ -3,29 +3,18 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
+import { Users, Copy, Check, Loader2, Trash2 } from "lucide-react";
+import AdminSearchBar from "../AdminSearchBar";
 import {
-  Users,
-  Search,
-  RefreshCw,
-  CheckCircle2,
-  Copy,
-  Check,
-  Shield,
-  Building2,
-  Trophy,
-  Loader2,
-  Phone,
-  Mail,
-  User as UserIcon,
-  Layers,
-} from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 function timeAgo(dateString) {
   if (!dateString) return "N/A";
@@ -76,6 +65,8 @@ export default function EventRegistrationsTab({
   const [pageNumber] = useState(1);
   const [pageSize] = useState(50);
   const [copiedCode, setCopiedCode] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadRegistrations = useCallback(async () => {
     if (!eventId) return;
@@ -99,13 +90,67 @@ export default function EventRegistrationsTab({
   }, [eventId, pageSize, pageNumber]);
 
   useEffect(() => {
-    loadRegistrations();
-  }, [loadRegistrations]);
+    let ignore = false;
+    async function init() {
+      if (!eventId) return;
+      try {
+        setRefreshing(true);
+        const res = await fetchApiRef.current(
+          `/admin/event-registrations/${eventId}?pageSize=${pageSize}&pageNumber=${pageNumber}`,
+        );
+        if (!ignore) {
+          if (res?.success) {
+            setRegistrations(res.registrations || []);
+          } else {
+            toast.error(res?.message || "Failed to load registrations");
+          }
+        }
+      } catch (err) {
+        if (!ignore) {
+          toast.error("Failed to load event registrations: " + err.message);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      }
+    }
+    init();
+    return () => {
+      ignore = true;
+    };
+  }, [eventId, pageSize, pageNumber]);
 
   const handleManualRefresh = async () => {
     await loadRegistrations();
     if (onRefreshEventRef.current) {
       onRefreshEventRef.current();
+    }
+  };
+
+  const handleDeleteRegistration = async () => {
+    if (!deleteTarget?._id) return;
+    try {
+      setIsDeleting(true);
+      const res = await fetchApiRef.current(
+        `/admin/event-registrations/${deleteTarget._id}`,
+        { method: "DELETE" },
+      );
+      if (res?.success) {
+        toast.success(res.message || "Registration deleted successfully");
+        setDeleteTarget(null);
+        await loadRegistrations();
+        if (onRefreshEventRef.current) {
+          onRefreshEventRef.current();
+        }
+      } else {
+        toast.error(res?.message || "Failed to delete registration");
+      }
+    } catch (err) {
+      toast.error("Failed to delete registration: " + err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -116,7 +161,13 @@ export default function EventRegistrationsTab({
       event.sections.forEach((sec) => {
         const key = (sec.name || "").toLowerCase().trim();
         if (key) {
-          map.set(key, sec.title || (key === "womens" ? "Women's" : key.charAt(0).toUpperCase() + key.slice(1)));
+          map.set(
+            key,
+            sec.title ||
+              (key === "womens"
+                ? "Women's"
+                : key.charAt(0).toUpperCase() + key.slice(1)),
+          );
         }
       });
     }
@@ -124,12 +175,18 @@ export default function EventRegistrationsTab({
     registrations.forEach((reg) => {
       const key = (reg.section || "").toLowerCase().trim();
       if (key && !map.has(key)) {
-        map.set(key, key === "womens" ? "Women's" : key.charAt(0).toUpperCase() + key.slice(1));
+        map.set(
+          key,
+          key === "womens"
+            ? "Women's"
+            : key.charAt(0).toUpperCase() + key.slice(1),
+        );
       }
     });
 
     if (!map.has("open")) map.set("open", "Open Section");
-    if (!map.has("womens") && !map.has("women")) map.set("womens", "Women's Section");
+    if (!map.has("womens") && !map.has("women"))
+      map.set("womens", "Women's Section");
     if (!map.has("interclub")) map.set("interclub", "Inter-Club");
 
     return Array.from(map.entries()).map(([value, label]) => ({
@@ -147,7 +204,9 @@ export default function EventRegistrationsTab({
       });
     } else {
       registrations
-        .filter((reg) => (reg.section || "").toLowerCase().trim() === sectionFilter)
+        .filter(
+          (reg) => (reg.section || "").toLowerCase().trim() === sectionFilter,
+        )
         .forEach((reg) => {
           if (reg.bracket) set.add(reg.bracket.toLowerCase().trim());
         });
@@ -202,16 +261,34 @@ export default function EventRegistrationsTab({
         const q = searchQuery.toLowerCase().trim();
         const userName = (reg.registeredBy?.userName || "").toLowerCase();
         const email = (reg.registeredBy?.email || "").toLowerCase();
+        const collegeEmail = (
+          reg.registeredBy?.collegeEmail || ""
+        ).toLowerCase();
         const phone = (reg.registeredBy?.phoneNumber || "").toLowerCase();
-        const teamName = (reg.team?.teamName || "").toLowerCase();
+        const chessHandle = (
+          reg.chessUsername ||
+          reg.registeredBy?.chessAccounts?.chessCom?.username ||
+          ""
+        ).toLowerCase();
+        const teamName = (
+          reg.teamName ||
+          reg.team?.teamName ||
+          ""
+        ).toLowerCase();
+        const clubName = (reg.clubName || "").toLowerCase();
         const joinCode = (reg.team?.joinCode || "").toLowerCase();
+        const utr = (reg.utr || "").toLowerCase();
 
         const matches =
           userName.includes(q) ||
           email.includes(q) ||
+          collegeEmail.includes(q) ||
           phone.includes(q) ||
+          chessHandle.includes(q) ||
           teamName.includes(q) ||
+          clubName.includes(q) ||
           joinCode.includes(q) ||
+          utr.includes(q) ||
           regSection.includes(q) ||
           regBracket.includes(q);
 
@@ -250,193 +327,160 @@ export default function EventRegistrationsTab({
     return "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700";
   };
 
+  const getStatusTextStyle = (status) => {
+    const s = (status || "").toLowerCase();
+    if (s === "confirmed" || s === "success") {
+      return "text-emerald-600 dark:text-emerald-400";
+    }
+    if (s === "pending") {
+      return "text-amber-600 dark:text-amber-400";
+    }
+    if (s === "cancelled" || s === "rejected" || s === "failed") {
+      return "text-red-600 dark:text-red-400";
+    }
+    return "text-slate-600 dark:text-slate-400";
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Total Applicants
-            </span>
-            <Users className="w-4 h-4 text-blue-500" />
-          </div>
+        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+            Total Registrations
+          </span>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-slate-50">
               {registrations.length}
             </span>
-            <span className="text-xs text-slate-500">registered</span>
+            <span className="text-xs text-slate-400 font-medium">
+              registered
+            </span>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Open Section
-            </span>
-            <Trophy className="w-4 h-4 text-blue-400" />
-          </div>
+        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+            Open Section
+          </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black font-mono text-blue-600 dark:text-blue-400">
+            <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-slate-50">
               {sectionCounts["open"] || 0}
             </span>
-            <span className="text-xs text-slate-500">contenders</span>
+            <span className="text-xs text-slate-400 font-medium">players</span>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Women's Section
-            </span>
-            <Shield className="w-4 h-4 text-purple-400" />
-          </div>
+        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+            Women&apos;s Section
+          </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black font-mono text-purple-600 dark:text-purple-400">
+            <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-slate-50">
               {sectionCounts["womens"] || sectionCounts["women"] || 0}
             </span>
-            <span className="text-xs text-slate-500">contenders</span>
+            <span className="text-xs text-slate-400 font-medium">players</span>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Inter-Club
-            </span>
-            <Building2 className="w-4 h-4 text-amber-400" />
-          </div>
+        <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+            Inter-Club
+          </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black font-mono text-amber-600 dark:text-amber-400">
+            <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-slate-50">
               {sectionCounts["interclub"] || 0}
             </span>
-            <span className="text-xs text-slate-500">visiting/reps</span>
+            <span className="text-xs text-slate-400 font-medium">
+              participants
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-1 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setSectionFilter("ALL");
-              setBracketFilter("ALL");
-            }}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-              sectionFilter === "ALL"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs"
-                : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>All Sections</span>
-            <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-black/10 dark:bg-white/20">
-              {registrations.length}
-            </span>
-          </button>
+      <div className="flex flex-wrap items-center gap-2 pb-1 border-b border-slate-200 dark:border-slate-800">
+        <button
+          type="button"
+          onClick={() => {
+            setSectionFilter("ALL");
+            setBracketFilter("ALL");
+          }}
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+            sectionFilter === "ALL"
+              ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs"
+              : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+          }`}
+        >
+          <span>All Sections</span>
+          <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-black/10 dark:bg-white/20">
+            {registrations.length}
+          </span>
+        </button>
 
-          {availableSections.map((sec) => {
-            const count = sectionCounts[sec.value] || 0;
-            const isSelected = sectionFilter === sec.value;
-            return (
-              <button
-                key={sec.value}
-                type="button"
-                onClick={() => {
-                  setSectionFilter(sec.value);
-                  setBracketFilter("ALL");
-                }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+        {availableSections.map((sec) => {
+          const count = sectionCounts[sec.value] || 0;
+          const isSelected = sectionFilter === sec.value;
+          return (
+            <button
+              key={sec.value}
+              type="button"
+              onClick={() => {
+                setSectionFilter(sec.value);
+                setBracketFilter("ALL");
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                isSelected
+                  ? "bg-blue-600 text-white shadow-xs shadow-blue-500/20"
+                  : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              <span>{sec.label}</span>
+              <span
+                className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
                   isSelected
-                    ? "bg-blue-600 text-white shadow-xs shadow-blue-500/20"
-                    : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    ? "bg-white/25 text-white"
+                    : "bg-black/5 dark:bg-white/10"
                 }`}
               >
-                <span>{sec.label}</span>
-                <span
-                  className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-                    isSelected ? "bg-white/25 text-white" : "bg-black/5 dark:bg-white/10"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center gap-2 ml-auto">
-          <button
-            type="button"
-            onClick={handleManualRefresh}
-            disabled={refreshing}
-            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Refresh registrations list"
-          >
-            <RefreshCw
-              className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-blue-500" : ""}`}
-            />
-          </button>
-        </div>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search by Name, Email, Phone, Team Name, Join Code..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-
-        {availableBrackets.length > 0 && (
-          <div className="w-full md:w-44 shrink-0">
-            <Select value={bracketFilter} onValueChange={setBracketFilter}>
-              <SelectTrigger className="w-full h-10 bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs rounded-xl">
-                <SelectValue placeholder="All Brackets" />
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs">
-                <SelectItem value="ALL">All Brackets</SelectItem>
-                {availableBrackets.map((brk) => (
-                  <SelectItem key={brk} value={brk} className="capitalize">
-                    {brk} Bracket
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        <div className="w-full md:w-36 shrink-0">
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full h-10 bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs rounded-xl">
-              <SelectValue placeholder="All Modes" />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs">
-              <SelectItem value="ALL">All Modes</SelectItem>
-              <SelectItem value="solo">Solo Only</SelectItem>
-              <SelectItem value="team">Team Only</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-full md:w-36 shrink-0">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full h-10 bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs rounded-xl">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-xs">
-              <SelectItem value="ALL">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <AdminSearchBar
+        onRefresh={handleManualRefresh}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        searchPlaceholder="Search by name, email, handle, UTR, team, or code..."
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        statusLabel="Status"
+        statusPlaceholder="All Status"
+        statusOptions={[
+          { label: "Pending", value: "pending" },
+          { label: "Confirmed", value: "confirmed" },
+          { label: "Cancelled", value: "cancelled" },
+        ]}
+        departmentFilter={bracketFilter}
+        setDepartmentFilter={setBracketFilter}
+        departmentLabel="Bracket"
+        departmentPlaceholder="All Brackets"
+        departmentOptions={availableBrackets.map((brk) => ({
+          label: `${brk.charAt(0).toUpperCase() + brk.slice(1)} Bracket`,
+          value: brk,
+        }))}
+        sortFilter={typeFilter}
+        setSortFilter={setTypeFilter}
+        sortLabel="Mode"
+        sortPlaceholder="All Modes"
+        sortOptions={[
+          { label: "Solo", value: "solo" },
+          { label: "Team", value: "team" },
+        ]}
+        totalCount={filteredRegistrations.length}
+        countLabel="Registrations"
+      />
 
       {loading ? (
         <div className="py-24 text-center border border-slate-200 dark:border-slate-800 rounded-2xl bg-white/50 dark:bg-[#0F172A]/50">
@@ -482,17 +526,19 @@ export default function EventRegistrationsTab({
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-[10px] uppercase font-bold tracking-wider text-slate-400">
                 <tr>
-                  <th className="py-3 px-4">Contender</th>
+                  <th className="py-3 px-4">Participant</th>
                   <th className="py-3 px-4">Contact</th>
                   <th className="py-3 px-4">Section & Bracket</th>
                   <th className="py-3 px-4">Mode / Team</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Registered</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                 {filteredRegistrations.map((reg) => {
-                  const applicant = reg.registeredBy || reg.team?.leaderId || {};
+                  const applicant =
+                    reg.registeredBy || reg.team?.leaderId || {};
                   const isTeam = reg.registrationType === "team";
                   const teamInfo = reg.team;
 
@@ -502,38 +548,40 @@ export default function EventRegistrationsTab({
                       className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
                     >
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 text-slate-500 font-bold font-mono text-xs">
-                            {applicant.userName
-                              ? applicant.userName.charAt(0).toUpperCase()
-                              : "U"}
-                          </div>
-                          <div className="min-w-0">
-                            <span className="block font-semibold text-slate-900 dark:text-slate-100 truncate">
-                              {applicant.userName || "Unnamed Contender"}
+                        <div className="min-w-0">
+                          <span className="block font-semibold text-slate-900 dark:text-slate-100 truncate">
+                            {applicant.userName || "Unnamed Participant"}
+                          </span>
+                          {reg.chessUsername ||
+                          applicant.chessAccounts?.chessCom?.username ? (
+                            <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                              @
+                              {reg.chessUsername ||
+                                applicant.chessAccounts?.chessCom?.username}
                             </span>
-                            <span className="block text-[10px] text-slate-400 font-mono">
-                              ID: {reg._id ? reg._id.slice(-6) : "N/A"}
+                          ) : applicant.collegeEmail ? (
+                            <span className="block text-[10px] text-slate-400 font-mono truncate">
+                              {applicant.collegeEmail}
                             </span>
-                          </div>
+                          ) : null}
                         </div>
                       </td>
 
                       <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
                         <div className="space-y-0.5">
                           {applicant.email ? (
-                            <div className="flex items-center gap-1.5 text-[11px] truncate max-w-[200px]">
-                              <Mail className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="truncate">{applicant.email}</span>
+                            <div className="text-[11px] truncate max-w-[220px] text-slate-700 dark:text-slate-200 font-medium">
+                              {applicant.email}
                             </div>
                           ) : (
-                            <span className="text-slate-400 text-[10px]">—</span>
+                            <span className="text-slate-400 text-[10px]">
+                              —
+                            </span>
                           )}
 
                           {applicant.phoneNumber && (
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
-                              <Phone className="w-2.5 h-2.5 shrink-0" />
-                              <span>{applicant.phoneNumber}</span>
+                            <div className="text-[10px] text-slate-400 font-mono">
+                              {applicant.phoneNumber}
                             </div>
                           )}
                         </div>
@@ -542,14 +590,17 @@ export default function EventRegistrationsTab({
                       <td className="py-3.5 px-4">
                         <div className="flex flex-col items-start gap-1">
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${getSectionBadgeStyle(
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getSectionBadgeStyle(
                               reg.section,
                             )}`}
                           >
                             {reg.section || "open"}
                           </span>
                           <span className="text-[10px] font-mono text-slate-400 capitalize">
-                            Bracket: <strong className="text-slate-700 dark:text-slate-300">{reg.bracket || "open"}</strong>
+                            Bracket:{" "}
+                            <strong className="text-slate-700 dark:text-slate-300">
+                              {reg.bracket || "open"}
+                            </strong>
                           </span>
                         </div>
                       </td>
@@ -558,10 +609,10 @@ export default function EventRegistrationsTab({
                         {isTeam ? (
                           <div className="space-y-1">
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
                                 Team
                               </span>
-                              <span className="font-semibold text-slate-800 dark:text-slate-200">
+                              <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">
                                 {teamInfo?.teamName || "Unnamed Team"}
                               </span>
                             </div>
@@ -572,8 +623,10 @@ export default function EventRegistrationsTab({
                                 </span>
                                 <button
                                   type="button"
-                                  onClick={() => handleCopyCode(teamInfo.joinCode)}
-                                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-300 hover:text-blue-500 cursor-pointer"
+                                  onClick={() =>
+                                    handleCopyCode(teamInfo.joinCode)
+                                  }
+                                  className="inline-flex items-center gap-1 text-[10px] font-mono text-slate-600 dark:text-slate-300 hover:text-blue-500 cursor-pointer"
                                   title="Copy Join Code"
                                 >
                                   <span>{teamInfo.joinCode}</span>
@@ -592,17 +645,29 @@ export default function EventRegistrationsTab({
                             )}
                           </div>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                            <UserIcon className="w-2.5 h-2.5" />
-                            Solo
-                          </span>
+                          <div className="flex flex-col items-start gap-0.5">
+                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                              Solo
+                            </span>
+                            {(reg.clubName || reg.teamName || reg.team?.teamName) && (
+                              <span
+                                className="text-[11px] text-amber-600 dark:text-amber-400 font-medium truncate max-w-[200px]"
+                                title={reg.clubName || reg.teamName || reg.team?.teamName}
+                              >
+                                {reg.clubName || reg.teamName || reg.team?.teamName}
+                              </span>
+                            )}
+                          </div>
                         )}
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                          <CheckCircle2 className="w-2.5 h-2.5" />
-                          {reg.status || "CONFIRMED"}
+                        <span
+                          className={`text-xs font-semibold font-mono capitalize ${getStatusTextStyle(
+                            reg.status,
+                          )}`}
+                        >
+                          {reg.status || "pending"}
                         </span>
                       </td>
 
@@ -616,6 +681,17 @@ export default function EventRegistrationsTab({
                             : ""}
                         </span>
                       </td>
+
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteTarget(reg)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer inline-flex items-center justify-center"
+                          title="Delete Registration"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -625,14 +701,51 @@ export default function EventRegistrationsTab({
 
           <div className="p-3 bg-slate-50/60 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
             <span>
-              Showing {filteredRegistrations.length} of {registrations.length} applicant{registrations.length === 1 ? "" : "s"}
+              Showing {filteredRegistrations.length} of {registrations.length}{" "}
+              applicant{registrations.length === 1 ? "" : "s"}
             </span>
-            <span className="font-mono text-[11px]">
-              Page {pageNumber}
-            </span>
+            <span className="font-mono text-[11px]">Page {pageNumber}</span>
           </div>
         </div>
       )}
+
+      <AlertDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
+        <AlertDialogContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-slate-900 dark:text-slate-50">
+              Delete Registration?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+              Are you sure you want to delete the registration for{" "}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">
+                {deleteTarget?.registeredBy?.userName ||
+                  deleteTarget?.team?.leaderId?.userName ||
+                  "this participant"}
+              </span>
+              ? This action cannot be undone and will permanently delete this
+              registration, associated payment records, and team memberships.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isDeleting}
+              className="border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteRegistration}
+              disabled={isDeleting}
+              className="bg-rose-600 hover:bg-rose-700 text-white"
+            >
+              {isDeleting ? "Deleting..." : "Delete Registration"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

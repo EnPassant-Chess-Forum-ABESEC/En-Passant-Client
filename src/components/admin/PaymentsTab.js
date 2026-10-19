@@ -40,7 +40,7 @@ const itemVariants = {
   },
 };
 
-export default function PaymentsTab() {
+export default function PaymentsTab({ purpose = "recruitment" }) {
   const fetchApi = useApi();
   const [payments, setPayments] = useState([]);
   const [verifyingId, setVerifyingId] = useState(null);
@@ -55,9 +55,15 @@ export default function PaymentsTab() {
     let result = payments.filter((payment) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
-        payment.applicationId?.toLowerCase().includes(q) ||
+        (payment.applicationId || "").toLowerCase().includes(q) ||
         (payment.userId?.userName || "").toLowerCase().includes(q) ||
-        (payment.userId?.email || "").toLowerCase().includes(q);
+        (payment.userId?.email || "").toLowerCase().includes(q) ||
+        (payment.utr || "").toLowerCase().includes(q) ||
+        (payment.eventId?.title || "").toLowerCase().includes(q) ||
+        (payment.registrationId?.section || "").toLowerCase().includes(q) ||
+        (payment.registrationId?.bracket || "").toLowerCase().includes(q) ||
+        (payment.registrationId?.teamName || "").toLowerCase().includes(q) ||
+        (payment.registrationId?.chessUsername || "").toLowerCase().includes(q);
 
       const matchesStatus =
         statusFilter === "ALL" || payment.status === statusFilter;
@@ -96,12 +102,14 @@ export default function PaymentsTab() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [purpose]);
 
   async function loadData() {
     setLoading(true);
     try {
-      const res = await fetchApi("/admin/payments?pageSize=1000");
+      const res = await fetchApi(
+        `/admin/payments?pageSize=1000&purpose=${purpose}`,
+      );
       setPayments(res.payments || []);
     } catch (err) {
       toast.error("Error: " + err.message);
@@ -202,18 +210,20 @@ export default function PaymentsTab() {
             countLabel="Total Payments"
           />
         </div>
-        <button
-          onClick={handleRetryReceipts}
-          disabled={isRetrying}
-          className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 h-[46px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
-        >
-          {isRetrying ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <RefreshCcw className="w-4 h-4" />
-          )}
-          Retry Missing Receipts
-        </button>
+        {purpose !== "event" && (
+          <button
+            onClick={handleRetryReceipts}
+            disabled={isRetrying}
+            className="flex items-center justify-center w-full lg:w-auto gap-2 px-5 h-[46px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 shrink-0 shadow-sm"
+          >
+            {isRetrying ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCcw className="w-4 h-4" />
+            )}
+            Retry Missing Receipts
+          </button>
+        )}
       </motion.div>
       <motion.div
         variants={itemVariants}
@@ -223,7 +233,12 @@ export default function PaymentsTab() {
           <table className="hidden md:table w-full text-left whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-[#020617] text-slate-500 dark:text-slate-400 text-[10px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-4 py-4 font-normal">Applicant Name</th>
+                <th className="px-4 py-4 font-normal">
+                  {purpose === "event" ? "Participant" : "Applicant Name"}
+                </th>
+                {purpose === "event" && (
+                  <th className="px-6 py-4 font-normal">Tournament & Division</th>
+                )}
                 <th className="px-6 py-4 font-normal">Amount</th>
                 <th className="px-6 py-4 font-normal">ScreenShot & UTR</th>
                 <th className="px-6 py-4 font-normal">Status</th>
@@ -258,10 +273,32 @@ export default function PaymentsTab() {
                           {payment.userId.email}
                         </div>
                       )}
+                      {payment.registrationId?.chessUsername && (
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
+                          @{payment.registrationId.chessUsername}
+                        </div>
+                      )}
                     </td>
 
+                    {purpose === "event" && (
+                      <td className="px-6 py-5 text-xs text-slate-800 dark:text-slate-200">
+                        <div className="font-semibold text-slate-900 dark:text-slate-100">
+                          {payment.eventId?.title || "Tournament"}
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize mt-0.5">
+                          {payment.registrationId?.section || "Open"} Section &bull;{" "}
+                          {payment.registrationId?.bracket || "Open"} Bracket
+                        </div>
+                        {payment.registrationId?.teamName && (
+                          <div className="text-[10px] text-amber-600 dark:text-amber-400 font-mono mt-0.5">
+                            {payment.registrationId.teamName}
+                          </div>
+                        )}
+                      </td>
+                    )}
+
                     <td className="px-6 py-5 font-mono font-bold tracking-wide text-slate-800 dark:text-slate-50">
-                      {payment.amount / 100}
+                      ₹{payment.amount / 100}
                     </td>
                     <td className="px-6 py-5">
                       {payment.paymentScreenshotUrl ? (
@@ -350,21 +387,34 @@ export default function PaymentsTab() {
             ) : (
               paginatedPayments.map((payment) => (
                 <div key={payment._id} className="p-4 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex flex-col min-w-0 pr-4">
-                      <span className="font-bold tracking-wide text-slate-800/90 dark:text-slate-200 truncate">
-                        {payment.userId?.userName || "Unknown User"}
-                      </span>
-                      {payment.userId?.email && (
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">
-                          {payment.userId.email}
+                    <div className="flex justify-between items-start">
+                      <div className="flex flex-col min-w-0 pr-4">
+                        <span className="font-bold tracking-wide text-slate-800/90 dark:text-slate-200 truncate">
+                          {payment.userId?.userName || "Unknown User"}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex flex-col items-end shrink-0">
-                      <span className="font-mono font-black tracking-wide text-lg text-slate-800 dark:text-slate-50">
-                        {payment.amount / 100}
-                      </span>
+                        {payment.userId?.email && (
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">
+                            {payment.userId.email}
+                          </span>
+                        )}
+                        {purpose === "event" && (
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                            <span className="font-medium text-slate-700 dark:text-slate-300">
+                              {payment.eventId?.title || "Tournament"}
+                            </span>
+                            <span className="capitalize block text-[10px]">
+                              {payment.registrationId?.section || "Open"} Section
+                              {payment.registrationId?.teamName
+                                ? ` • ${payment.registrationId.teamName}`
+                                : ""}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end shrink-0">
+                        <span className="font-mono font-black tracking-wide text-lg text-slate-800 dark:text-slate-50">
+                          ₹{payment.amount / 100}
+                        </span>
                       <span
                         className={`mt-1 text-[10px] font-bold uppercase tracking-wider ${
                           payment.status === "SUCCESS"

@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Clock,
+  ExternalLink,
   User as UserIcon,
 } from "lucide-react";
 
@@ -36,9 +38,9 @@ const FALLBACK_EVENT = {
   root: "A C C",
   eventName: "ACC — ABES Chess Championship 2026",
   description:
-    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open and Women's divisions. Contenders duel across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
+    "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open and Women's divisions. Participants compete across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
   format:
-    "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered contenders compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
+    "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered participants compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
   timeControl: "10 + 5",
   participationMode: "solo",
   status: "upcoming",
@@ -128,7 +130,7 @@ const FALLBACK_EVENT = {
         badge: "SWISS SYSTEM",
         title: "Swiss League Phase",
         summary:
-          "All registered contenders begin in competitive Swiss-system league rounds. There are no early eliminations; every participant plays all scheduled rounds against opponents with equal match points.",
+          "All registered participants begin in competitive Swiss-system league rounds. There are no early eliminations; every participant plays all scheduled rounds against opponents with equal match points.",
         bullets: [
           "Non-elimination league matches ensuring equal play opportunities for all participants.",
           "Players paired each round based on matching scores and progressive tournament records.",
@@ -144,7 +146,7 @@ const FALLBACK_EVENT = {
         bullets: [
           "Head-to-head sudden death duels where only victorious players advance.",
           "Seeding strictly determined by performance and tiebreak ranks from the Swiss league.",
-          "High-pressure playoff encounters filtering down until only two contenders remain.",
+          "High-pressure playoff encounters filtering down until only two finalists remain.",
         ],
       },
       {
@@ -344,6 +346,8 @@ export default function EventSoloRegistrationPage() {
     return sec === "womens" || sec === "women";
   }, [selectedSectionName]);
 
+  const sectionFee = isWomensSelected ? 40 : 60;
+
   const chessAccount = userProfile?.chessAccounts?.chessCom;
 
   const placedBracket = useMemo(() => {
@@ -398,7 +402,7 @@ export default function EventSoloRegistrationPage() {
   const isStepValid = (step) => {
     if (step === 0) return !!selectedSectionName;
     if (step === 1) return true;
-    if (step === 2) return paymentUtr.trim() !== "";
+    if (step === 2) return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
     return true;
   };
 
@@ -414,6 +418,10 @@ export default function EventSoloRegistrationPage() {
     } else {
       if (!paymentUtr.trim()) {
         toast.error("Please enter the payment UTR / transaction ID.");
+        return;
+      }
+      if (!paymentScreenshot) {
+        toast.error("Please upload your payment screenshot.");
         return;
       }
       handleRegister();
@@ -446,30 +454,45 @@ export default function EventSoloRegistrationPage() {
       return;
     }
 
+    if (!paymentUtr.trim()) {
+      toast.error("Please enter your transaction UTR.");
+      return;
+    }
+
+    if (!paymentScreenshot) {
+      toast.error("Please upload your payment screenshot.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      const payload = {
-        section: selectedSectionName,
-        isHosteler: Boolean(isHosteler),
-        participation: {
+      const formData = new FormData();
+      formData.append("section", selectedSectionName);
+      formData.append("bracket", placedBracket?.name || "open");
+      formData.append("isHosteler", String(Boolean(isHosteler)));
+      formData.append("utr", paymentUtr.trim());
+      formData.append("screenshot", paymentScreenshot);
+      formData.append(
+        "participation",
+        JSON.stringify({
           participationType: "solo",
-        },
-      };
+        }),
+      );
 
       const res = await fetchApi(`/event-registrations/${event._id}/register`, {
         method: "POST",
-        body: payload,
+        body: formData,
       });
 
       if (res?.success) {
         toast.success(
-          `Registered successfully for ${event.title || "the event"}!`,
+          `Registration submitted for ${event.title || "the event"}! Pending payment verification.`,
         );
         setMyRegistration(
           res.registration || {
             eventId: event._id,
             section: selectedSectionName,
-            bracket: "Assigned",
+            bracket: placedBracket?.name || "open",
             isHosteler: Boolean(isHosteler),
             residentType: isHosteler
               ? "hosteler"
@@ -477,6 +500,9 @@ export default function EventSoloRegistrationPage() {
                 ? "day_scholar"
                 : null,
             status: "pending",
+            paymentStatus: "pending",
+            utr: paymentUtr.trim(),
+            paymentAmount: sectionFee,
             createdAt: new Date().toISOString(),
           },
         );
@@ -558,7 +584,7 @@ export default function EventSoloRegistrationPage() {
             <div className="flex-1 flex flex-col items-center justify-center space-y-3 py-16 text-white/50">
               <Loader2 className="w-7 h-7 animate-spin text-[#9b1a1a]" />
               <p className="font-pezula text-xs uppercase tracking-[0.2em]">
-                Summoning Tournament Ledger...
+                Loading Tournament...
               </p>
             </div>
           ) : (
@@ -566,10 +592,10 @@ export default function EventSoloRegistrationPage() {
               <div className="shrink-0 mb-3">
                 <h1 className="font-pezula text-xl sm:text-2xl md:text-[26px] lg:text-[30px] font-bold uppercase tracking-wider leading-[1.08] text-white drop-shadow-md">
                   <div>
-                    COMETH THE <span className="text-[#9b1a1a]">HOUR,</span>
+                    TOURNAMENT <span className="text-[#9b1a1a]">EVENT</span>
                   </div>
                   <div className="mt-0.5">
-                    COMETH THE <span className="text-[#9b1a1a]">MAN</span>
+                    REGISTRATION
                   </div>
                 </h1>
 
@@ -636,17 +662,48 @@ export default function EventSoloRegistrationPage() {
                         <div>
                           <div className="flex items-center gap-1.5">
                             <span className="text-white font-bold text-sm uppercase font-pezula tracking-wide">
-                              Registration Confirmed
+                              {myRegistration.paymentStatus === "success" ||
+                              myRegistration.status === "confirmed"
+                                ? "Registration Confirmed"
+                                : myRegistration.paymentStatus === "failed"
+                                  ? "Payment Rejected"
+                                  : "Payment Verification Pending"}
                             </span>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            {myRegistration.paymentStatus === "success" ||
+                            myRegistration.status === "confirmed" ? (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            ) : myRegistration.paymentStatus === "failed" ? (
+                              <AlertCircle className="w-3.5 h-3.5 text-red-400" />
+                            ) : (
+                              <Clock className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                            )}
                           </div>
                           <p className="text-white/40 text-[11px] font-mono">
-                            Confirmed seat for {event.title || "ACC 2026"}
+                            {myRegistration.paymentStatus === "success" ||
+                            myRegistration.status === "confirmed"
+                              ? `Confirmed seat for ${event.title || "ACC 2026"}`
+                              : myRegistration.paymentStatus === "failed"
+                                ? "Payment verification was rejected by arbiters."
+                                : "Your registration was recorded and is awaiting manual arbiter verification."}
                           </p>
                         </div>
 
-                        <span className="px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          {myRegistration.status || "CONFIRMED"}
+                        <span
+                          className={`px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest border ${
+                            myRegistration.paymentStatus === "success" ||
+                            myRegistration.status === "confirmed"
+                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                              : myRegistration.paymentStatus === "failed"
+                                ? "bg-red-500/10 text-red-400 border-red-500/20"
+                                : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                          }`}
+                        >
+                          {myRegistration.paymentStatus === "success" ||
+                          myRegistration.status === "confirmed"
+                            ? "CONFIRMED"
+                            : myRegistration.paymentStatus === "failed"
+                              ? "FAILED"
+                              : "PENDING"}
                         </span>
                       </div>
 
@@ -700,6 +757,39 @@ export default function EventSoloRegistrationPage() {
                             <span className="text-white font-semibold font-mono tracking-wide text-xs">
                               @{myRegistration.chessUsername}
                             </span>
+                          </div>
+                        )}
+                        <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
+                          <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                            Registration Fee
+                          </span>
+                          <span className="text-white font-semibold font-mono tracking-wide text-xs">
+                            ₹{myRegistration.paymentAmount || sectionFee}
+                          </span>
+                        </div>
+                        {myRegistration.utr && (
+                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5">
+                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold mb-0.5">
+                              Transaction Reference
+                            </span>
+                            <span className="text-white font-mono text-[11px] truncate block select-all">
+                              {myRegistration.utr}
+                            </span>
+                          </div>
+                        )}
+                        {myRegistration.paymentScreenshotUrl && (
+                          <div className="bg-white/5 border border-white/5 rounded-lg p-2.5 flex items-center justify-between">
+                            <span className="text-white/40 block text-[9px] uppercase tracking-wider font-bold">
+                              Screenshot
+                            </span>
+                            <a
+                              href={myRegistration.paymentScreenshotUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:text-blue-300 text-[10px] font-mono inline-flex items-center gap-1 underline"
+                            >
+                              View <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
                           </div>
                         )}
                       </div>
@@ -989,7 +1079,7 @@ export default function EventSoloRegistrationPage() {
                             <div className="flex-1 text-left min-w-0">
                               <div className="flex items-baseline gap-2 mb-1">
                                 <span className="text-lg font-mono font-bold text-white">
-                                  ₹40
+                                  ₹{sectionFee}
                                 </span>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
                                   Registration Fee
@@ -1035,7 +1125,7 @@ export default function EventSoloRegistrationPage() {
 
                             <div className="space-y-1">
                               <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
-                                Payment Screenshot <span className="text-white/30 lowercase font-sans">(optional)</span>
+                                Payment Screenshot
                               </label>
                               <input
                                 type="file"

@@ -5,9 +5,9 @@ export async function GET() {
     root: "A C C",
     eventName: "ACC — ABES Chess Championship 2026",
     description:
-      "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open, Women's, and Inter-Club divisions. Contenders duel across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
+      "The ABES Chess Championship (ACC) stands as the institute's premier collegiate chess tournament, bringing together tactical minds, strategic thinkers, and seasoned arbiters under one banner. Organized by the En Passant Chess Club, the championship serves as the proving ground to crown the undisputed chess champion of ABES Engineering College.\n\nDesigned to accommodate both rising novices and master-tier competitors, the tournament features rating-stratified brackets spanning Open, Women's, and Inter-Club divisions. Participants compete across rapid and classical time controls with official FIDE-standard regulations, full arbiter oversight, and live digital pairing boards.\n\nBeyond the silver and gold accolades, the championship awards custom goodies, memberships, etc. Prepare your openings, calculate every variation, and rise through the brackets to claim the throne.",
     format:
-      "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered contenders compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
+      "Swiss League & Knockout Finals\n\nThe championship features a multi-stage competitive progression:\n\n• Stage 1 — Swiss League Phase: All registered participants compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.\n\n• Stage 2 — Elimination Knockout Stage: Upon the conclusion of the Swiss league rounds, the highest-ranking seeds from each bracket advance into the single-elimination playoff bracket.\n\n• Stage 3 — The Grand Finals: The knockout playoffs culminate in the definitive top 2 finalists who clash in the official championship finals match to determine the champion, claim the champions title, and take the top prize.",
     formatDetails: {
       overview:
         "The championship follows a two-stage hybrid progression: a comprehensive Swiss-system league phase followed by high-stakes single-elimination knockouts to crown the champion.",
@@ -17,7 +17,7 @@ export async function GET() {
           badge: "SWISS SYSTEM",
           title: "Swiss League Phase",
           summary:
-            "All registered contenders begin in competitive Swiss-system league rounds. There are no early eliminations; every participant plays all scheduled rounds against opponents with equal match points.",
+            "All registered participants begin in competitive Swiss-system league rounds. There are no early eliminations; every participant plays all scheduled rounds against opponents with equal match points.",
           bullets: [
             "Non-elimination league matches ensuring equal play opportunities for all participants.",
             "Players paired each round based on matching scores and progressive tournament records.",
@@ -33,7 +33,7 @@ export async function GET() {
           bullets: [
             "Head-to-head sudden death duels where only victorious players advance.",
             "Seeding strictly determined by performance and tiebreak ranks from the Swiss league.",
-            "High-pressure playoff encounters filtering down until only two contenders remain.",
+            "High-pressure playoff encounters filtering down until only two finalists remain.",
           ],
         },
         {

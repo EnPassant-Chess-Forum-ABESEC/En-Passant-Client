@@ -399,6 +399,18 @@ export default function AdminSidebar() {
                   <Briefcase className="w-4 h-4" />
                   <span className="text-xs font-medium">Recruitment</span>
                 </Link>
+                <Link
+                  href="/admin/payments/events"
+                  className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
+                  ${
+                    pathname === "/admin/payments/events"
+                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  <span className="text-xs font-medium">Events</span>
+                </Link>
               </div>
             </div>
           </div>

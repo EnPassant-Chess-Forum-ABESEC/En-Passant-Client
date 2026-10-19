@@ -26,7 +26,7 @@ function parseFormatText(rawText) {
           num: "1",
           heading: "Stage 1 — Swiss League Phase",
           title: "Swiss League Phase",
-          body: "All registered contenders compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.",
+          body: "All registered participants compete in a multi-round Swiss-system tournament. There is no early elimination; every participant plays all scheduled league rounds against opponents of matching tournament scores, ensuring fair and balanced competition across all rating tiers.",
         },
         {
           num: "2",

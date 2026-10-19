@@ -184,6 +184,12 @@ export default function AdminEventDetailPage({ params }) {
   }
 
   const sectionsCount = event.sections?.length || 0;
+  const formatTitle = event.format
+    ? (() => {
+        const firstLine = event.format.split("\n")[0].trim().replace(/^format:\s*/i, "");
+        return firstLine.length > 50 ? firstLine.slice(0, 47) + "..." : firstLine;
+      })()
+    : null;
 
   return (
     <motion.div
@@ -220,9 +226,9 @@ export default function AdminEventDetailPage({ params }) {
                   {event.root}
                 </span>
               )}
-              {event.format && (
+              {formatTitle && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                  Format: {event.format}
+                  Format: {formatTitle}
                 </span>
               )}
               {event.timeControl && (
@@ -238,13 +244,9 @@ export default function AdminEventDetailPage({ params }) {
               )}
             </div>
 
-            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-slate-50 mb-2">
+            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-slate-50">
               {event.title}
             </h1>
-
-            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-              {event.description}
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">

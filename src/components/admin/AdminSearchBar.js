@@ -27,6 +27,8 @@ export default function AdminSearchBar({
   sortFilter,
   setSortFilter,
   sortOptions = [],
+  sortLabel = "Sort By",
+  sortPlaceholder = "Sort By",
   totalCount,
   countLabel = "Total",
   onRefresh,
@@ -128,7 +130,7 @@ export default function AdminSearchBar({
           <div className="flex flex-col gap-2 w-full md:w-40 lg:w-44 shrink-0">
             <Select value={sortFilter} onValueChange={setSortFilter}>
               <SelectTrigger className="w-full bg-slate-50 dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-xl h-[46px] text-sm font-semibold text-slate-700 dark:text-slate-200 focus:ring-blue-500 dark:focus:ring-blue-500/50">
-                <SelectValue placeholder="Sort By" />
+                <SelectValue placeholder={sortPlaceholder} />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
                 {sortOptions.map((opt) => (
@@ -143,7 +145,7 @@ export default function AdminSearchBar({
               </SelectContent>
             </Select>
             <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 normal-case tracking-wide px-2">
-              Sort By
+              {sortLabel}
             </span>
           </div>
         )}
