@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -41,34 +41,41 @@ const itemVariants = {
 
 export default function AdminEventRegistrationsPage() {
   const fetchApi = useApi();
+  const fetchApiRef = useRef(fetchApi);
+  useEffect(() => {
+    fetchApiRef.current = fetchApi;
+  }, [fetchApi]);
 
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState("");
 
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async (isInitial = false) => {
     try {
-      setLoadingEvents(true);
-      const res = await fetchApi("/events");
+      if (isInitial) setLoadingEvents(true);
+      const res = await fetchApiRef.current("/events");
       const list = res?.events || [];
       setEvents(list);
 
       if (list.length > 0) {
-        const activeEvent =
-          list.find((e) => e.status === "active" || e.status === "upcoming" || e.status === "ongoing") ||
-          list[0];
-        setSelectedEventId(activeEvent._id);
+        setSelectedEventId((prev) => {
+          if (prev && list.some((e) => e._id === prev)) return prev;
+          const activeEvent =
+            list.find((e) => e.status === "active" || e.status === "upcoming" || e.status === "ongoing") ||
+            list[0];
+          return activeEvent._id;
+        });
       }
     } catch (err) {
       toast.error("Failed to load events: " + err.message);
     } finally {
-      setLoadingEvents(false);
+      if (isInitial) setLoadingEvents(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadEvents();
-  }, []);
+    loadEvents(true);
+  }, [loadEvents]);
 
   const selectedEvent = events.find((e) => e._id === selectedEventId) || null;
 
