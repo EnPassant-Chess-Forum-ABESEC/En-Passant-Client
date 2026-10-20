@@ -2,12 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  WhatsAppIcon,
-  InstagramIcon,
-  DiscordIcon,
-  ChessDotComIcon,
-} from "./SocialIcons";
+import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
+import { SiChessdotcom } from "react-icons/si";
 import { Copyright } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -34,22 +30,22 @@ const socials = [
   {
     label: "WhatsApp",
     href: "https://chat.whatsapp.com/IoiMk9ru9CpEew7dHJkHve",
-    icon: <WhatsAppIcon size={20} />,
+    icon: <FaWhatsapp size={20} />,
   },
   {
     label: "Chess.com",
     href: "https://www.chess.com/club/en-passant-abesec",
-    icon: <ChessDotComIcon size={20} />,
+    icon: <SiChessdotcom size={20} />,
   },
   {
     label: "Instagram",
     href: "https://www.instagram.com/enpassant.abesec/",
-    icon: <InstagramIcon size={20} />,
+    icon: <FaInstagram size={20} />,
   },
   {
     label: "Discord",
     href: "https://discord.gg/WDF4UXrXC",
-    icon: <DiscordIcon size={20} />,
+    icon: <FaDiscord size={20} />,
   },
 ];
 
@@ -76,7 +72,15 @@ export default function Footer() {
         style={{ y }}
         className="w-full h-full flex flex-col relative z-0"
       >
-        <div className="relative z-10 flex flex-col flex-1 px-6 sm:px-8 md:px-16 lg:px-24 pt-16 sm:pt-24 md:pt-[120px] lg:pt-[150px] pb-6 sm:pb-8">
+        <div
+          className="absolute top-0 left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(155,26,26,0.12) 0%, transparent 70%)",
+          }}
+        />
+
+        <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-32 md:pt-[120px] lg:pt-[150px] pb-8">
           <div className="flex flex-col md:flex-row items-start md:justify-between w-full mb-6 md:mb-8 gap-6 md:gap-0">
             <div>
               <span
@@ -87,7 +91,7 @@ export default function Footer() {
                   lineHeight: 1,
                 }}
               >
-                Vive L&apos; EN<span style={{ color: "#9b1a1a" }}>PASSANT</span>
+                Vive L' EN<span style={{ color: "#9b1a1a" }}>PASSANT</span>
               </span>
               <p className="text-white/30 text-sm mt-3 font-sans tracking-widest uppercase">
                 For the game must always go on
@@ -122,8 +126,8 @@ export default function Footer() {
                 className="font-sans italic leading-relaxed text-white/70"
                 style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
               >
-                &ldquo;The beauty of a move lies not in its appearance but in
-                the thought behind it.&rdquo;
+                "The beauty of a move lies not in its appearance but in the
+                thought behind it."
               </p>
               <footer
                 className="font-sans text-[11px] uppercase tracking-[0.22em] mt-6"
