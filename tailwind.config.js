@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
+        playfair: ['var(--font-playfair)', 'serif'],
         pezula: ['pezula', 'sans-serif'],
         prfaExtrabold: ['prfaExtrabold', 'sans-serif'],
         adminSans: ['var(--font-admin-sans)', 'sans-serif'],

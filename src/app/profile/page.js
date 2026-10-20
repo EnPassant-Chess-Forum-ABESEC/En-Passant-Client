@@ -21,7 +21,7 @@ import {
   AlertCircle,
   Calendar,
 } from "lucide-react";
-import { SiChessdotcom } from "react-icons/si";
+import { ChessDotComIcon } from "@/components/SocialIcons";
 import ChessRatingCard from "@/components/ChessRatingCard";
 import CustomProfileForm from "@/components/profile/CustomProfileForm";
 import { userProfileAppearance } from "@/lib/clerkAppearance";
@@ -295,7 +295,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between group gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50 shrink-0">
-                          <SiChessdotcom />
+                          <ChessDotComIcon size={16} />
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">

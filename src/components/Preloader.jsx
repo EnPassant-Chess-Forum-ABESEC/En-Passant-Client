@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SiChessdotcom } from "react-icons/si";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import FoldText from "./FoldText";
 

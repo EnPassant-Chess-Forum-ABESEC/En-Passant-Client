@@ -2,8 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaWhatsapp, FaInstagram, FaDiscord } from "react-icons/fa";
-import { SiChessdotcom } from "react-icons/si";
+import {
+  WhatsAppIcon,
+  InstagramIcon,
+  DiscordIcon,
+  ChessDotComIcon,
+} from "./SocialIcons";
 import { Copyright } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -30,22 +34,22 @@ const socials = [
   {
     label: "WhatsApp",
     href: "https://chat.whatsapp.com/IoiMk9ru9CpEew7dHJkHve",
-    icon: <FaWhatsapp size={20} />,
+    icon: <WhatsAppIcon size={20} />,
   },
   {
     label: "Chess.com",
     href: "https://www.chess.com/club/en-passant-abesec",
-    icon: <SiChessdotcom size={20} />,
+    icon: <ChessDotComIcon size={20} />,
   },
   {
     label: "Instagram",
     href: "https://www.instagram.com/enpassant.abesec/",
-    icon: <FaInstagram size={20} />,
+    icon: <InstagramIcon size={20} />,
   },
   {
     label: "Discord",
     href: "https://discord.gg/WDF4UXrXC",
-    icon: <FaDiscord size={20} />,
+    icon: <DiscordIcon size={20} />,
   },
 ];
 

@@ -28,10 +28,7 @@ export default function EventHero() {
         style={{ y: yBg }}
         className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden"
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, ease: premiumEase }}
+        <div
           style={{
             WebkitTransform: "translateZ(0)",
             backfaceVisibility: "hidden",
@@ -62,7 +59,7 @@ export default function EventHero() {
                 "radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.5) 100%)",
             }}
           />
-        </motion.div>
+        </div>
       </motion.div>
 
       <motion.div
@@ -128,10 +125,7 @@ export default function EventHero() {
         style={{ y: yFront }}
         className="absolute inset-0 w-full h-full pointer-events-none z-30 overflow-hidden"
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, ease: premiumEase }}
+        <div
           style={{
             WebkitTransform: "translateZ(0)",
             backfaceVisibility: "hidden",
@@ -155,7 +149,7 @@ export default function EventHero() {
               className="object-cover"
             />
           </div>
-        </motion.div>
+        </div>
       </motion.div>
 
       <div className="absolute bottom-0 left-0 w-full h-[15vw] max-h-[160px] bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-40 pointer-events-none" />

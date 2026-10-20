@@ -24,7 +24,6 @@ export default function EventCTA({ event = null }) {
           src="/event/cta/hands.webp"
           alt=""
           fill
-          priority
           sizes="100vw"
           className={styles.handsImg}
         />

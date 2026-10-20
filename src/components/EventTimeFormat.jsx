@@ -143,6 +143,16 @@ function extractTimeTiers(event) {
 
 function ClockArtwork({ id, side = "left" }) {
   const isRight = side === "right";
+  const [showClock, setShowClock] = useState(false);
+
+  useEffect(() => {
+    const check = () => setShowClock(window.innerWidth > 820);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  if (!showClock) return null;
 
   return (
     <div

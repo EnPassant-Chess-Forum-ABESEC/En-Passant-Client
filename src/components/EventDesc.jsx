@@ -10,6 +10,11 @@ export default function EventDesc({ initialDescription = "" }) {
   const [loading, setLoading] = useState(!initialDescription);
 
   useEffect(() => {
+    if (initialDescription) {
+      setDescription(initialDescription);
+      setLoading(false);
+      return;
+    }
     let isMounted = true;
     async function loadEventDescription() {
       try {
