@@ -57,8 +57,13 @@ export default async function EventsPage() {
       <EventDesc initialDescription={currentEvent?.description || ""} />
       <EventDetailsTree event={currentEvent} />
       <EventTimeFormat event={currentEvent} />
-      <EventRegulation event={currentEvent} initialFormat={currentEvent?.format || currentEvent?.tournamentFormat || ""} />
-      <EventSponsors sponsors={currentEvent?.sponsors || []} />
+      <EventRegulation
+        event={currentEvent}
+        initialFormat={
+          currentEvent?.format || currentEvent?.tournamentFormat || ""
+        }
+      />
+      {/* <EventSponsors sponsors={currentEvent?.sponsors || []} /> */}
       <EventCTA event={currentEvent} />
     </div>
   );

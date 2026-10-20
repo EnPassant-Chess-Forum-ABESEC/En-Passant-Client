@@ -77,6 +77,7 @@ export const TREE_DECORATIONS = {
       // Terminal crown at Open Section header
       { type: "leaf", u: 0.94, side: -1, length: 27, bend: 0.25 },
       { type: "leaf", u: 0.95, side: 1, length: 27, bend: -0.25 },
+      { type: "rose", color: "red", u: 0.96, side: 1, size: 21, rot: 0.35 },
       { type: "rose", color: "red", u: 0.98, side: 0, size: 27, rot: 0.1 },
     ],
   },

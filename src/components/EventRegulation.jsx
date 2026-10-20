@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "lenis/react";
+import Link from "next/link";
+import { BookOpen, ArrowUpRight } from "lucide-react";
 import styles from "./EventRegulation.module.css";
 
 if (typeof window !== "undefined") {
@@ -182,7 +184,6 @@ export default function EventRegulation({
 
   const parsed = parseFormatText(format);
 
-  // GSAP Stacking Cards Parallax Timeline (Desktop)
   useEffect(() => {
     if (loading || !parsed.stages || parsed.stages.length === 0) return;
     if (!stackWrapperRef.current) return;
@@ -203,10 +204,8 @@ export default function EventRegulation({
       const totalStages = cards.length;
       if (totalStages <= 1) return;
 
-      // Card 0 starts locked in at top: 0, scale: 1
       gsap.set(cards[0], { yPercent: 0, scale: 1, zIndex: 10 });
 
-      // Cards 1..N start below the viewport at yPercent: 100 with ascending zIndex
       for (let i = 1; i < totalStages; i++) {
         gsap.set(cards[i], {
           yPercent: 100,
@@ -215,15 +214,14 @@ export default function EventRegulation({
         });
       }
 
-      // Master ScrollTrigger timeline that pins stackWrapperRef
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: stackWrapperRef.current,
           start: "top top",
-          end: `+=${(totalStages - 1) * 115}%`,
+          end: `+=${(totalStages - 1) * 60}%`,
           pin: true,
           pinSpacing: true,
-          scrub: 1,
+          scrub: 0.4,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onRefresh: () => {
@@ -232,7 +230,6 @@ export default function EventRegulation({
         },
       });
 
-      // Animate each subsequent stage stacking over the previous ones
       for (let i = 1; i < totalStages; i++) {
         const incomingCard = cards[i];
         const prevCard = cards[i - 1];
@@ -242,18 +239,16 @@ export default function EventRegulation({
 
         const label = `stage-stack-${i}`;
 
-        // 1. Incoming card slides up onto the stack
         tl.to(
           incomingCard,
           {
             yPercent: 0,
             duration: 1,
-            ease: "none",
+            ease: "power1.out",
           },
           label,
         );
 
-        // 2. Incoming card's giant numeral glides up with subtle parallax
         if (incomingNumeral) {
           gsap.set(incomingNumeral, { yPercent: 16 });
           tl.to(
@@ -261,20 +256,19 @@ export default function EventRegulation({
             {
               yPercent: 0,
               duration: 1,
-              ease: "none",
+              ease: "power1.out",
             },
             label,
           );
         }
 
-        // 3. Previous card scales down slightly (0.94) and darkens
         if (prevCard) {
           tl.to(
             prevCard,
             {
               scale: 0.94,
               duration: 1,
-              ease: "none",
+              ease: "power1.out",
             },
             label,
           );
@@ -286,7 +280,7 @@ export default function EventRegulation({
             {
               opacity: 0.45,
               duration: 1,
-              ease: "none",
+              ease: "power1.out",
             },
             label,
           );
@@ -298,13 +292,12 @@ export default function EventRegulation({
             {
               yPercent: -12,
               duration: 1,
-              ease: "none",
+              ease: "power1.out",
             },
             label,
           );
         }
 
-        // 4. If there is an older card (i - 2), recede it further
         if (i >= 2) {
           const olderCard = cards[i - 2];
           const olderOverlay = overlays[i - 2];
@@ -314,7 +307,7 @@ export default function EventRegulation({
               {
                 scale: 0.89,
                 duration: 1,
-                ease: "none",
+                ease: "power1.out",
               },
               label,
             );
@@ -325,7 +318,7 @@ export default function EventRegulation({
               {
                 opacity: 0.7,
                 duration: 1,
-                ease: "none",
+                ease: "power1.out",
               },
               label,
             );
@@ -342,10 +335,7 @@ export default function EventRegulation({
 
   return (
     <section className={styles.section} aria-label="Tournament Regulation">
-      {/* Atmospheric top fade */}
       <div className={styles.topFade} />
-
-      {/* Top Header: THE REGULATION */}
       <div className={styles.headerContainer}>
         <h2 className={styles.sectionHeader}>
           <span className="flex flex-nowrap">
@@ -387,9 +377,24 @@ export default function EventRegulation({
             ))}
           </span>
         </h2>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px 0px -20px 0px" }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-wrap items-center gap-4 mt-6"
+        >
+          <Link
+            href="/events/rulebook"
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-[#9b1a1a]/50 text-white font-mono text-xs uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(155,26,26,0.25)] group cursor-pointer"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-[#9b1a1a] group-hover:scale-110 transition-transform" />
+            <span>Tournament Rulebook</span>
+          </Link>
+        </motion.div>
       </div>
 
-      {/* Pinned Stacking Cards Wrapper */}
       <div ref={stackWrapperRef} className={styles.stackWrapper}>
         {parsed.stages.map((stg, sIdx) => {
           const stageCode = STAGE_CODES[sIdx] || `e${sIdx + 3}`;
@@ -415,7 +420,6 @@ export default function EventRegulation({
                     : styles.stageLayoutReversed
                 }`}
               >
-                {/* Content Column */}
                 <motion.div
                   initial={{ opacity: 0, x: isNormalLayout ? -60 : 60 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -454,7 +458,6 @@ export default function EventRegulation({
         })}
       </div>
 
-      {/* Trailing paragraphs (if any) */}
       {parsed.paragraphs.length > 0 && (
         <div className={styles.trailingContainer}>
           <div className="space-y-4 max-w-3xl">
@@ -469,8 +472,6 @@ export default function EventRegulation({
           </div>
         </div>
       )}
-
-      {/* Atmospheric bottom fade */}
       <div className={styles.bottomFade} />
     </section>
   );
