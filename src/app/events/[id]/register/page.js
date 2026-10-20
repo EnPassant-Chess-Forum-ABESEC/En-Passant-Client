@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -201,6 +201,89 @@ export default function EventSoloRegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
+  const isDraftLoadedRef = useRef(false);
+  const draftStorageKey = useMemo(() => {
+    const cleanId = id ? decodeURIComponent(id) : "ACC";
+    return `acc_reg_draft_common_${cleanId}`;
+  }, [id]);
+  const draftScreenshotKey = useMemo(() => {
+    const cleanId = id ? decodeURIComponent(id) : "ACC";
+    return `acc_reg_screenshot_common_${cleanId}`;
+  }, [id]);
+
+  const clearDraft = useCallback(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.removeItem(draftStorageKey);
+      sessionStorage.removeItem(draftScreenshotKey);
+    } catch (e) {
+      console.warn("Failed to clear registration draft:", e);
+    }
+  }, [draftStorageKey, draftScreenshotKey]);
+
+  const dataURLtoFile = (dataurl, filename) => {
+    try {
+      const arr = dataurl.split(",");
+      const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename || "payment_screenshot.png", {
+        type: mime,
+      });
+    } catch (e) {
+      console.warn("Failed to reconstruct file from dataURL:", e);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const savedDraftRaw = localStorage.getItem(draftStorageKey);
+      if (savedDraftRaw) {
+        const draft = JSON.parse(savedDraftRaw);
+        if (
+          typeof draft.currentStep === "number" &&
+          draft.currentStep >= 0 &&
+          draft.currentStep <= 2
+        ) {
+          setCurrentStep(draft.currentStep);
+        }
+        if (draft.selectedSectionName) {
+          setSelectedSectionName(draft.selectedSectionName);
+        }
+        if (draft.gender) {
+          setGender(draft.gender);
+        }
+        if (typeof draft.isHosteler === "boolean") {
+          setIsHosteler(draft.isHosteler);
+        }
+        if (draft.paymentUtr) {
+          setPaymentUtr(draft.paymentUtr);
+        }
+      }
+
+      const savedScreenshotRaw = sessionStorage.getItem(draftScreenshotKey);
+      if (savedScreenshotRaw) {
+        const parsed = JSON.parse(savedScreenshotRaw);
+        if (parsed?.data) {
+          const file = dataURLtoFile(parsed.data, parsed.name);
+          if (file) {
+            setPaymentScreenshot(file);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to restore registration draft:", err);
+    } finally {
+      isDraftLoadedRef.current = true;
+    }
+  }, [draftStorageKey, draftScreenshotKey]);
+
   const handleCopyUtr = (utr) => {
     if (!utr) return;
     navigator.clipboard.writeText(utr);
@@ -262,12 +345,12 @@ export default function EventSoloRegistrationPage() {
               sec.name?.toLowerCase() !== "inter-club",
           );
           const firstSec = validSections[0] || finalEvent.sections[0];
-          setSelectedSectionName(firstSec.name);
+          setSelectedSectionName((prev) => prev || firstSec.name);
         }
       } catch (err) {
         console.error("Failed to load event data, using fallback:", err);
         setEvent(FALLBACK_EVENT);
-        setSelectedSectionName("open");
+        setSelectedSectionName((prev) => prev || "open");
       } finally {
         setLoadingEvent(false);
       }
@@ -407,6 +490,63 @@ export default function EventSoloRegistrationPage() {
   }, [allRegistrations, selectedSectionName, myRegistration]);
 
   const currentRegView = activeSectionRegistration;
+
+  useEffect(() => {
+    if (!isDraftLoadedRef.current || typeof window === "undefined") return;
+    if (currentRegView) return;
+
+    try {
+      const draft = {
+        currentStep,
+        selectedSectionName,
+        gender,
+        isHosteler,
+        paymentUtr,
+      };
+      localStorage.setItem(draftStorageKey, JSON.stringify(draft));
+    } catch (err) {
+      console.error("Failed to save registration draft:", err);
+    }
+  }, [
+    currentStep,
+    selectedSectionName,
+    gender,
+    isHosteler,
+    paymentUtr,
+    currentRegView,
+    draftStorageKey,
+  ]);
+
+  useEffect(() => {
+    if (!isDraftLoadedRef.current || typeof window === "undefined") return;
+    if (currentRegView) return;
+
+    if (!paymentScreenshot) {
+      try {
+        sessionStorage.removeItem(draftScreenshotKey);
+      } catch (e) {}
+      return;
+    }
+
+    if (
+      paymentScreenshot instanceof File &&
+      paymentScreenshot.size <= 3 * 1024 * 1024
+    ) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const payload = JSON.stringify({
+            name: paymentScreenshot.name,
+            data: reader.result,
+          });
+          sessionStorage.setItem(draftScreenshotKey, payload);
+        } catch (e) {
+          console.warn("Could not save screenshot draft to sessionStorage:", e);
+        }
+      };
+      reader.readAsDataURL(paymentScreenshot);
+    }
+  }, [paymentScreenshot, currentRegView, draftScreenshotKey]);
 
   const sectionFee = isWomensSelected ? 40 : 60;
 
@@ -592,6 +732,7 @@ export default function EventSoloRegistrationPage() {
       });
 
       if (res?.success) {
+        clearDraft();
         toast.success(
           `Registration submitted for ${event.title || "the event"}! Pending payment verification.`,
         );
@@ -648,6 +789,7 @@ export default function EventSoloRegistrationPage() {
       );
 
       if (res?.success) {
+        clearDraft();
         toast.success("Your registration has been withdrawn.");
         setAllRegistrations((prev) =>
           prev.filter(
@@ -1498,6 +1640,14 @@ export default function EventSoloRegistrationPage() {
                             <div className="space-y-1">
                               <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
                                 Payment Screenshot
+                                {paymentScreenshot && (
+                                  <span className="text-emerald-400 font-mono text-[9px] lowercase tracking-normal ml-2">
+                                    ✓ (
+                                    {paymentScreenshot.name ||
+                                      "screenshot attached"}
+                                    )
+                                  </span>
+                                )}
                               </label>
                               <input
                                 type="file"
