@@ -102,7 +102,7 @@ const journalEntries = [
     desktopLayout: ["T-right", "I", "W", "D"],
   },
   {
-    date: "NOVEMBER 8, 2026",
+    date: "NOVEMBER 8, 2025",
     title: "KNIGHTMARES 2.0",
     text: "En Passant's flagship team tournament which honoured the knights of the garrison.",
     image: "/journal/knightmares_2026.png",

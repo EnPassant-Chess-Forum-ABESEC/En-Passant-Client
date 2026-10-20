@@ -445,7 +445,10 @@ export default function EventSoloRegistrationPage() {
   }, [activeSection, bracketPreview, chessAccount]);
 
   const handleSectionSelect = (sectionName) => {
-    if (gender === "male" && (sectionName === "womens" || sectionName === "women")) {
+    if (
+      gender === "male" &&
+      (sectionName === "womens" || sectionName === "women")
+    ) {
       toast.error("Women's division is exclusive to female participants.");
       return;
     }
@@ -454,7 +457,10 @@ export default function EventSoloRegistrationPage() {
 
   const handleGenderSelect = (selectedGender) => {
     setGender(selectedGender);
-    if (selectedGender === "male" && (selectedSectionName === "womens" || selectedSectionName === "women")) {
+    if (
+      selectedGender === "male" &&
+      (selectedSectionName === "womens" || selectedSectionName === "women")
+    ) {
       setSelectedSectionName("open");
     }
   };
@@ -495,7 +501,9 @@ export default function EventSoloRegistrationPage() {
         return;
       }
       if (gender === "male" && isWomensSelected) {
-        toast.error("Male participants cannot register for the Women's division.");
+        toast.error(
+          "Male participants cannot register for the Women's division.",
+        );
         return;
       }
       setCurrentStep(1);
@@ -541,7 +549,9 @@ export default function EventSoloRegistrationPage() {
     }
 
     if (gender === "male" && isWomensSelected) {
-      toast.error("Male participants cannot register for the Women's division.");
+      toast.error(
+        "Male participants cannot register for the Women's division.",
+      );
       return;
     }
 
@@ -691,7 +701,7 @@ export default function EventSoloRegistrationPage() {
 
         <div className="hidden lg:flex relative lg:w-[40%] xl:w-[42%] h-full bg-[#030303] overflow-hidden items-center justify-center shrink-0">
           <Image
-            src="/event/registration/left throne.webp"
+            src="/event/registration/left_throne.png"
             alt="Throne of ACC"
             fill
             priority
@@ -775,24 +785,26 @@ export default function EventSoloRegistrationPage() {
                 </div>
               )}
 
-              {!currentRegView && isRegistrationOpen && !hasInterclubRegistration && (
-                <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
-                  <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
-                    {getStepTitle()}
-                  </h2>
+              {!currentRegView &&
+                isRegistrationOpen &&
+                !hasInterclubRegistration && (
+                  <div className="pb-1.5 relative z-10 flex items-center justify-between gap-3 border-b border-white/5 mb-2.5 shrink-0">
+                    <h2 className="text-base sm:text-lg font-pezula uppercase tracking-tight text-white">
+                      {getStepTitle()}
+                    </h2>
 
-                  {currentStep > 0 && (
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest shrink-0 cursor-pointer"
-                    >
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                      <span>Back</span>
-                    </button>
-                  )}
-                </div>
-              )}
+                    {currentStep > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="text-white/40 hover:text-white transition-colors p-1 flex items-center gap-1 text-[11px] font-normal uppercase tracking-widest shrink-0 cursor-pointer"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>Back</span>
+                      </button>
+                    )}
+                  </div>
+                )}
 
               <div
                 className="flex-1 min-h-0 relative overflow-y-auto custom-scrollbar pr-1 py-1"
@@ -821,7 +833,9 @@ export default function EventSoloRegistrationPage() {
                         Inter-Club Participant Guardrail
                       </h3>
                       <p className="text-white/60 text-xs max-w-md mx-auto leading-relaxed">
-                        You are registered in the Inter-Club division for this tournament. Participants representing a club cannot register for solo divisions (Open or Women&apos;s).
+                        You are registered in the Inter-Club division for this
+                        tournament. Participants representing a club cannot
+                        register for solo divisions (Open or Women&apos;s).
                       </p>
                       <div className="pt-2">
                         <Link
@@ -1042,46 +1056,46 @@ export default function EventSoloRegistrationPage() {
 
                       {currentRegView.paymentStatus !== "success" &&
                         currentRegView.status !== "confirmed" && (
-                        <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                          <span className="text-white/40 text-[10px] sm:text-[11px]">
-                            Need to withdraw before the deadline?
-                          </span>
+                          <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                            <span className="text-white/40 text-[10px] sm:text-[11px]">
+                              Need to withdraw before the deadline?
+                            </span>
 
-                          <AlertDialog>
-                            <AlertDialogTrigger
-                              disabled={isWithdrawing || !isRegistrationOpen}
-                              className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                              Withdraw
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
-                                  Withdraw Registration?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-white/60 text-sm">
-                                  Are you sure you want to withdraw your
-                                  registration for {event?.title || "ACC"}? This
-                                  action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
-                                  Cancel
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={handleWithdraw}
-                                  className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
-                                >
-                                  {isWithdrawing
-                                    ? "Withdrawing..."
-                                    : "Confirm Withdrawal"}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      )}
+                            <AlertDialog>
+                              <AlertDialogTrigger
+                                disabled={isWithdrawing || !isRegistrationOpen}
+                                className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                              >
+                                Withdraw
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
+                                    Withdraw Registration?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-white/60 text-sm">
+                                    Are you sure you want to withdraw your
+                                    registration for {event?.title || "ACC"}?
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
+                                    Cancel
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={handleWithdraw}
+                                    className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
+                                  >
+                                    {isWithdrawing
+                                      ? "Withdrawing..."
+                                      : "Confirm Withdrawal"}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        )}
                     </motion.div>
                   ) : !isRegistrationOpen ? (
                     <motion.div
@@ -1116,7 +1130,8 @@ export default function EventSoloRegistrationPage() {
                             <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 space-y-2.5">
                               <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80">
-                                  Participant Gender <span className="text-[#ff4444]">*</span>
+                                  Participant Gender{" "}
+                                  <span className="text-[#ff4444]">*</span>
                                 </span>
                                 {gender && (
                                   <span className="text-[10px] font-mono uppercase text-white/60 font-medium">
@@ -1174,7 +1189,8 @@ export default function EventSoloRegistrationPage() {
 
                             <div className="space-y-2">
                               <span className="text-[11px] font-pezula uppercase tracking-widest text-white/80 block px-0.5">
-                                Tournament Division <span className="text-[#ff4444]">*</span>
+                                Tournament Division{" "}
+                                <span className="text-[#ff4444]">*</span>
                               </span>
                               {availableSections.map((sec) => {
                                 const isSelected =
@@ -1182,19 +1198,23 @@ export default function EventSoloRegistrationPage() {
                                 const isWomens =
                                   sec.name?.toLowerCase() === "womens" ||
                                   sec.name?.toLowerCase() === "women";
-                                const isMaleDisabled = gender === "male" && isWomens;
-                                const isAlreadyRegistered = allRegistrations.some(
-                                  (r) =>
-                                    r.section?.toLowerCase().trim() ===
-                                    sec.name?.toLowerCase().trim(),
-                                );
+                                const isMaleDisabled =
+                                  gender === "male" && isWomens;
+                                const isAlreadyRegistered =
+                                  allRegistrations.some(
+                                    (r) =>
+                                      r.section?.toLowerCase().trim() ===
+                                      sec.name?.toLowerCase().trim(),
+                                  );
 
                                 return (
                                   <button
                                     key={sec.name}
                                     type="button"
                                     disabled={isMaleDisabled}
-                                    onClick={() => handleSectionSelect(sec.name)}
+                                    onClick={() =>
+                                      handleSectionSelect(sec.name)
+                                    }
                                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 text-left group ${
                                       isMaleDisabled
                                         ? "bg-white/[0.02] border-white/5 opacity-40 cursor-not-allowed text-white/30"
@@ -1275,7 +1295,10 @@ export default function EventSoloRegistrationPage() {
                                       Female Hosteler (ABES Hostel Resident)
                                     </span>
                                     <span className="text-[10px] text-white/40 block leading-tight">
-                                      Check this box if you are a female participant residing in the college hostel. Leave unchecked if you are a Day Scholar.
+                                      Check this box if you are a female
+                                      participant residing in the college
+                                      hostel. Leave unchecked if you are a Day
+                                      Scholar.
                                     </span>
                                   </div>
                                 </label>
@@ -1496,7 +1519,9 @@ export default function EventSoloRegistrationPage() {
               </div>
 
               <div className="pt-2.5 shrink-0 border-t border-white/5 mt-2">
-                {!currentRegView && isRegistrationOpen && !hasInterclubRegistration ? (
+                {!currentRegView &&
+                isRegistrationOpen &&
+                !hasInterclubRegistration ? (
                   <SpecularButton
                     onClick={handleNext}
                     disabled={isSubmitting || !isStepValid(currentStep)}

@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   AlertCircle,
+  Calendar,
 } from "lucide-react";
 import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
@@ -206,10 +207,10 @@ export default function ProfilePage() {
                   </Link>
                 </div>
                 <Link
-                  href={recruitmentPath}
+                  href="/events"
                   className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider uppercase bg-[#c21818]/90 text-white hover:bg-[#c21818] rounded-lg transition-all shadow-[0_0_15px_rgba(194,24,24,0.3)] w-full"
                 >
-                  Recruitment
+                  Events
                 </Link>
               </div>
             </motion.div>

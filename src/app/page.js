@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import LazyLoad from "@/components/LazyLoad";
 import HeroSection from "@/components/HeroSection";
-import HeroRecruitmentButton from "@/components/HeroRecruitmentButton";
+import HeroEventButton from "@/components/HeroEventButton";
 
 const NumbersSection = dynamic(() => import("@/components/NumbersSection"));
 const CommunityDesc = dynamic(() => import("@/components/CommunityDesc"));
@@ -46,7 +46,7 @@ export default async function Home() {
               Dedicated to spread the game of chess
             </div>
             <div className="group relative w-full sm:w-auto flex justify-center mt-2 md:mt-0">
-              <HeroRecruitmentButton />
+              <HeroEventButton />
             </div>
           </div>
         </div>

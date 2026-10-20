@@ -614,7 +614,7 @@ export default function EventInterClubRegistrationPage() {
 
         <div className="hidden lg:flex relative lg:w-[40%] xl:w-[42%] h-full bg-[#030303] overflow-hidden items-center justify-center shrink-0">
           <Image
-            src="/event/registration/left throne.webp"
+            src="/event/registration/left_throne.png"
             alt="Throne of ACC Inter-Club"
             fill
             priority
@@ -1110,10 +1110,14 @@ export default function EventInterClubRegistrationPage() {
                             </div>
                           </div>
 
-                          <div className="space-y-1.5 pt-1 relative" ref={clubDropdownRef}>
+                          <div
+                            className="space-y-1.5 pt-1 relative"
+                            ref={clubDropdownRef}
+                          >
                             <div className="flex items-center justify-between">
                               <label className="block text-[11px] font-pezula uppercase tracking-wider text-white/80">
-                                Representing Club <span className="text-[#ff4444]">*</span>
+                                Representing Club{" "}
+                                <span className="text-[#ff4444]">*</span>
                               </label>
                               {clubName && (
                                 <span className="text-[10px] font-mono text-white/50 truncate max-w-[200px]">
@@ -1128,7 +1132,10 @@ export default function EventInterClubRegistrationPage() {
                                 setIsClubOpen((prev) => {
                                   const next = !prev;
                                   if (next) {
-                                    setTimeout(() => clubSearchInputRef.current?.focus(), 50);
+                                    setTimeout(
+                                      () => clubSearchInputRef.current?.focus(),
+                                      50,
+                                    );
                                   }
                                   return next;
                                 });
@@ -1139,7 +1146,13 @@ export default function EventInterClubRegistrationPage() {
                                   : "border-white/10 hover:border-white/20"
                               } rounded-lg h-10 px-3 text-xs text-white hover:bg-white/[0.06] transition-all cursor-pointer font-mono select-none`}
                             >
-                              <span className={clubName ? "text-white truncate" : "text-white/30"}>
+                              <span
+                                className={
+                                  clubName
+                                    ? "text-white truncate"
+                                    : "text-white/30"
+                                }
+                              >
                                 {clubName || "Select Club / Organization"}
                               </span>
                               <ChevronDown
@@ -1158,7 +1171,9 @@ export default function EventInterClubRegistrationPage() {
                                       ref={clubSearchInputRef}
                                       type="text"
                                       value={clubSearchQuery}
-                                      onChange={(e) => setClubSearchQuery(e.target.value)}
+                                      onChange={(e) =>
+                                        setClubSearchQuery(e.target.value)
+                                      }
                                       placeholder="Search club or organization..."
                                       className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-7 py-1.5 text-xs text-white placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:bg-white/[0.08] font-mono transition-all"
                                     />
@@ -1174,9 +1189,14 @@ export default function EventInterClubRegistrationPage() {
                                   </div>
                                   {clubSearchQuery && (
                                     <div className="flex items-center justify-between text-[9px] font-mono text-white/40 px-1 pt-1.5">
-                                      <span>Searching: &quot;{clubSearchQuery}&quot;</span>
                                       <span>
-                                        {filteredClubOptions.length} match{filteredClubOptions.length === 1 ? "" : "es"}
+                                        Searching: &quot;{clubSearchQuery}&quot;
+                                      </span>
+                                      <span>
+                                        {filteredClubOptions.length} match
+                                        {filteredClubOptions.length === 1
+                                          ? ""
+                                          : "es"}
                                       </span>
                                     </div>
                                   )}
@@ -1200,7 +1220,9 @@ export default function EventInterClubRegistrationPage() {
                                               : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
                                           }`}
                                         >
-                                          <span className="truncate">{club}</span>
+                                          <span className="truncate">
+                                            {club}
+                                          </span>
                                           {isSelected && (
                                             <Check className="w-3.5 h-3.5 text-red-400 shrink-0" />
                                           )}
@@ -1210,7 +1232,8 @@ export default function EventInterClubRegistrationPage() {
                                   ) : (
                                     <div className="py-5 px-3 text-center space-y-1">
                                       <p className="text-xs font-mono text-white/40">
-                                        No clubs found matching &quot;{clubSearchQuery}&quot;
+                                        No clubs found matching &quot;
+                                        {clubSearchQuery}&quot;
                                       </p>
                                       <button
                                         type="button"
