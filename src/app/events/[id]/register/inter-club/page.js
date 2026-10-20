@@ -673,7 +673,7 @@ export default function EventInterClubRegistrationPage() {
           status: "pending",
           paymentStatus: "pending",
           utr: paymentUtr.trim(),
-          paymentAmount: 80,
+          paymentAmount: 60,
           createdAt: new Date().toISOString(),
         };
         setMyRegistration(newReg);
@@ -750,7 +750,7 @@ export default function EventInterClubRegistrationPage() {
         initial={{ opacity: 0, scale: 0.97, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-20 flex flex-col lg:flex-row w-full max-w-[460px] sm:max-w-xl lg:max-w-5xl overflow-hidden rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] border border-white/10 bg-[#080808]/95 shadow-[0_24px_80px_rgba(0,0,0,0.8),0_0_40px_rgba(155,26,26,0.12)] h-auto max-h-[85dvh] lg:max-h-none lg:h-[min(590px,calc(100dvh-130px))] shrink-0"
+        className="relative z-20 flex flex-col lg:flex-row w-full max-w-[460px] sm:max-w-xl lg:max-w-5xl overflow-hidden rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] border border-white/10 bg-[#080808]/95 shadow-[0_24px_80px_rgba(0,0,0,0.8)] h-auto max-h-[85dvh] lg:max-h-none lg:h-[min(590px,calc(100dvh-130px))] shrink-0"
       >
         <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-30" />
 
@@ -780,10 +780,8 @@ export default function EventInterClubRegistrationPage() {
               <div className="shrink-0 mb-3">
                 <div className="mb-1">
                   <h1 className="font-pezula text-xl sm:text-2xl md:text-[26px] lg:text-[30px] font-bold uppercase tracking-wider leading-[1.08] text-white drop-shadow-md">
-                    <div>
-                      INTER-CLUB <span className="text-[#9b1a1a]">CHESS</span>
-                    </div>
-                    <div className="mt-0.5">REGISTRATION</div>
+                    <div>INTER-CLUB</div>
+                    <div className="mt-0.5 text-[#9b1a1a]">REGISTRATION</div>
                   </h1>
                 </div>
 
@@ -1013,7 +1011,7 @@ export default function EventInterClubRegistrationPage() {
                                 Registration Fee
                               </span>
                               <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
-                                Rs.{interclubRegistration.paymentAmount || 80}
+                                Rs.{interclubRegistration.paymentAmount || 60}
                               </span>
                             </div>
 
@@ -1553,7 +1551,7 @@ export default function EventInterClubRegistrationPage() {
                             <div className="flex-1 text-left min-w-0">
                               <div className="flex items-baseline gap-2 mb-1">
                                 <span className="text-lg font-mono font-bold text-white">
-                                  Rs.80
+                                  Rs.60
                                 </span>
                                 <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
                                   Registration Fee
@@ -1569,15 +1567,23 @@ export default function EventInterClubRegistrationPage() {
                             </div>
 
                             <div className="flex flex-col items-center justify-center shrink-0">
-                              <Image
-                                src="/recruitment/recruitment_payment_qr.jpeg"
-                                alt="Payment QR Code"
-                                width={84}
-                                height={84}
-                                priority
-                                className="object-contain rounded-lg border border-white/10 mb-1"
-                                style={{ width: "84px", height: "auto" }}
-                              />
+                              <a
+                                href="/event/registration/QR_60Rs.jpeg"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Click to view full QR code"
+                                className="group/qr block"
+                              >
+                                <Image
+                                  src="/event/registration/QR_60Rs.jpeg"
+                                  alt="Payment QR Code for Rs.60"
+                                  width={84}
+                                  height={84}
+                                  priority
+                                  className="object-contain rounded-lg border border-white/10 mb-1 group-hover/qr:border-white/30 transition-colors"
+                                  style={{ width: "84px", height: "auto" }}
+                                />
+                              </a>
                               <span className="text-white/60 font-mono text-[9px] uppercase tracking-wider">
                                 Scan to Pay
                               </span>

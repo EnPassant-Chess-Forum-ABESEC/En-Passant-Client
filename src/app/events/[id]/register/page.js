@@ -549,6 +549,10 @@ export default function EventSoloRegistrationPage() {
   }, [paymentScreenshot, currentRegView, draftScreenshotKey]);
 
   const sectionFee = isWomensSelected ? 40 : 60;
+  const qrCodeSrc =
+    sectionFee === 40
+      ? "/event/registration/QR_40Rs.jpeg"
+      : "/event/registration/QR_60Rs.jpeg";
 
   const chessAccount = userProfile?.chessAccounts?.chessCom;
 
@@ -837,7 +841,7 @@ export default function EventSoloRegistrationPage() {
         initial={{ opacity: 0, scale: 0.97, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-20 flex flex-col lg:flex-row w-full max-w-[460px] sm:max-w-xl lg:max-w-5xl overflow-hidden rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] border border-white/10 bg-[#080808]/95 shadow-[0_24px_80px_rgba(0,0,0,0.8),0_0_40px_rgba(155,26,26,0.12)] h-auto max-h-[85dvh] lg:max-h-none lg:h-[min(590px,calc(100dvh-130px))] shrink-0"
+        className="relative z-20 flex flex-col lg:flex-row w-full max-w-[460px] sm:max-w-xl lg:max-w-5xl overflow-hidden rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] border border-white/10 bg-[#080808]/95 shadow-[0_24px_80px_rgba(0,0,0,0.8)] h-auto max-h-[85dvh] lg:max-h-none lg:h-[min(590px,calc(100dvh-130px))] shrink-0"
       >
         <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-30" />
 
@@ -866,10 +870,8 @@ export default function EventSoloRegistrationPage() {
             <>
               <div className="shrink-0 mb-3">
                 <h1 className="font-pezula text-xl sm:text-2xl md:text-[26px] lg:text-[30px] font-bold uppercase tracking-wider leading-[1.08] text-white drop-shadow-md">
-                  <div>
-                    TOURNAMENT <span className="text-[#9b1a1a]">EVENT</span>
-                  </div>
-                  <div className="mt-0.5">REGISTRATION</div>
+                  <div>ACC</div>
+                  <div className="mt-0.5 text-[#9b1a1a]">REGISTRATION</div>
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-2 mt-1.5">
@@ -1608,15 +1610,23 @@ export default function EventSoloRegistrationPage() {
                             </div>
 
                             <div className="flex flex-col items-center justify-center shrink-0">
-                              <Image
-                                src="/recruitment/recruitment_payment_qr.jpeg"
-                                alt="Payment QR Code"
-                                width={84}
-                                height={84}
-                                priority
-                                className="object-contain rounded-lg border border-white/10 mb-1"
-                                style={{ width: "84px", height: "auto" }}
-                              />
+                              <a
+                                href={qrCodeSrc}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Click to view full QR code"
+                                className="group/qr block"
+                              >
+                                <Image
+                                  src={qrCodeSrc}
+                                  alt={`Payment QR Code for Rs.${sectionFee}`}
+                                  width={84}
+                                  height={84}
+                                  priority
+                                  className="object-contain rounded-lg border border-white/10 mb-1 group-hover/qr:border-white/30 transition-colors"
+                                  style={{ width: "84px", height: "auto" }}
+                                />
+                              </a>
                               <span className="text-white/60 font-mono text-[9px] uppercase tracking-wider">
                                 Scan to Pay
                               </span>
