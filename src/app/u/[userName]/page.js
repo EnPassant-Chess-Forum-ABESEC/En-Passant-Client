@@ -13,7 +13,7 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import { ChessDotComIcon } from "@/components/SocialIcons";
+import { SiChessdotcom } from "react-icons/si";
 import ChessRatingCard from "@/components/ChessRatingCard";
 import ChessGridBackground from "@/components/ChessGridBackground";
 import { notFound, useParams } from "next/navigation";
@@ -180,7 +180,7 @@ export default function PublicProfilePage() {
                     <div className="flex items-center justify-between group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/50">
-                          <ChessDotComIcon size={16} />
+                          <SiChessdotcom size={16} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-0.5">
