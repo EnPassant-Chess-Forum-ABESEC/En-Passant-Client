@@ -56,25 +56,25 @@ export default function EventDesc({ initialDescription = "" }) {
     .filter(Boolean);
 
   return (
-    <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-24 md:py-36 px-0 overflow-hidden select-none">
-      <div className="absolute top-0 left-0 w-full h-32 sm:h-48 md:h-64 bg-gradient-to-b from-[#050505] via-[#050505]/80 to-transparent z-10 pointer-events-none" />
+    <section className="relative w-full min-h-[80vh] md:min-h-screen bg-[#050505] flex flex-col justify-center py-16 sm:py-24 md:py-36 px-0 overflow-hidden select-none">
+      <div className="absolute top-0 left-0 w-full h-24 sm:h-48 md:h-64 bg-gradient-to-b from-[#050505] via-[#050505]/80 to-transparent z-10 pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-8 md:px-11 flex flex-col items-start text-left">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-5 sm:px-8 md:px-11 flex flex-col items-start text-left">
         <h2
-          className="flex flex-col uppercase tracking-[0.04em] md:tracking-[0.08em] leading-[0.82]"
+          className="flex flex-col uppercase tracking-[0.03em] sm:tracking-[0.04em] md:tracking-[0.08em] leading-[0.85]"
           style={{
             fontFamily: "pezula, sans-serif",
-            fontSize: "clamp(44px, 6.8vw, 96px)",
+            fontSize: "clamp(24px, 6.5vw, 96px)",
             fontWeight: 700,
           }}
         >
-          <span className="flex flex-wrap">
+          <span className="flex flex-nowrap">
             {Array.from("MONARCH'S").map((letter, i) => (
               <motion.span
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,
@@ -87,13 +87,13 @@ export default function EventDesc({ initialDescription = "" }) {
               </motion.span>
             ))}
           </span>
-          <span className="flex flex-wrap mt-2">
+          <span className="flex flex-nowrap mt-2">
             {Array.from("MANUSCRIPT").map((letter, i) => (
               <motion.span
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,

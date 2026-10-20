@@ -356,7 +356,7 @@ export default function EventTimeFormat({
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,
@@ -375,7 +375,7 @@ export default function EventTimeFormat({
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,

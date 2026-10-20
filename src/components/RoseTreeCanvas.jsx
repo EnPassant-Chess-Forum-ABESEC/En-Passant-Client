@@ -278,13 +278,13 @@ class TypeGardenEngine {
     let lines = [A.map((_, i) => i)];
     const unit = lineW(lines[0], 1);
     let S = unit > 0 ? Math.min(S0, maxW / unit) : S0;
-    S = Math.max(115, Math.min(145, S));
+    S = Math.max(44, Math.min(145, S));
 
     const n = lines.length;
     const lh = LH * S;
     lines.forEach((li, k) => {
       let x = this.centerX - lineW(li, S) / 2;
-      const y = this.centerY;
+      const y = S < 95 ? Math.max(130, S * 1.6) : this.centerY;
       li.forEach((i) => {
         const l = A[i];
         const w = ws[i] * S;

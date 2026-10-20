@@ -50,8 +50,8 @@
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: clamp(100px, 14vh, 180px) clamp(24px, 5vw, 80px)
-    clamp(40px, 6vh, 80px);
+  padding: clamp(60px, 10vh, 180px) clamp(20px, 5vw, 80px)
+    clamp(30px, 5vh, 80px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -62,12 +62,12 @@
   display: flex;
   flex-direction: column;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 0.82;
+  letter-spacing: 0.04em;
+  line-height: 0.85;
   font-family: pezula, sans-serif;
-  font-size: clamp(48px, 7vw, 104px);
+  font-size: clamp(24px, 6.5vw, 104px);
   font-weight: 700;
-  margin-bottom: clamp(24px, 4vh, 48px);
+  margin-bottom: clamp(20px, 4vh, 48px);
   max-width: 100%;
   overflow-wrap: break-word;
 }
@@ -314,7 +314,7 @@
     left: auto;
     height: auto;
     min-height: auto;
-    padding: 80px 0;
+    padding: clamp(36px, 6vh, 60px) 0;
     overflow: hidden;
     transform: none !important;
     border-radius: 0;
@@ -328,16 +328,26 @@
 
   .stageInner {
     flex-direction: column-reverse !important;
-    gap: 40px;
+    gap: 20px;
     align-items: flex-start;
     height: auto;
-    padding: 0 clamp(20px, 5vw, 40px);
+    padding: 0 clamp(16px, 5vw, 36px);
   }
 
   .contentCol {
     flex: none;
     width: 100%;
     max-width: 100%;
+  }
+
+  .stageTitle {
+    font-size: clamp(24px, 5.5vw, 38px);
+    margin-bottom: 12px;
+  }
+
+  .stageBody {
+    font-size: clamp(13px, 3.5vw, 16px);
+    line-height: 1.7;
   }
 
   .numberCol {
@@ -349,7 +359,7 @@
   }
 
   .giantNumeral {
-    font-size: min(50vw, 240px);
+    font-size: min(38vw, 160px);
     line-height: 0.9;
   }
 }

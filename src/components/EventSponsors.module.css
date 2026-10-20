@@ -55,12 +55,14 @@
 
 .whiteLine {
   display: block;
+  white-space: nowrap;
   color: #ffffff;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .redLine {
   display: block;
+  white-space: nowrap;
   margin-top: 8px;
   color: #9b1a1a;
   text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
@@ -176,22 +178,25 @@
 
 @media (max-width: 767px) {
   .section {
-    padding-top: 180px;
-    padding-bottom: 120px;
+    padding-top: 140px;
+    padding-bottom: 80px;
   }
 
   .headingContainer {
-    top: 40px;
+    top: 24px;
+    padding: 0 20px;
   }
 
   .heading {
-    font-size: clamp(38px, 9vw, 64px);
+    font-size: clamp(26px, 7vw, 64px);
+    line-height: 0.88;
   }
 
   .board {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 100%;
     margin-left: 0;
+    padding: 0 8px;
   }
 
   .space { display: none; }

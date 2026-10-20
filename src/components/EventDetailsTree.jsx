@@ -602,8 +602,8 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
               ease: "power2.out",
               scrollTrigger: {
                 trigger: el,
-                start: "top 86%",
-                toggleActions: "play none none reverse",
+                start: "top 92%",
+                toggleActions: "play none none none",
                 invalidateOnRefresh: true,
               },
             },
@@ -629,7 +629,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,
@@ -648,7 +648,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,
@@ -667,7 +667,7 @@ export default function EventDetailsTree({ event: initialEvent = null }) {
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,

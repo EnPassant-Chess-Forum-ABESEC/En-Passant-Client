@@ -62,12 +62,14 @@
 
 .whiteLine {
   display: block;
+  white-space: nowrap;
   color: #ffffff;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .redLine {
   display: block;
+  white-space: nowrap;
   margin-top: 8px;
   color: #9b1a1a;
   text-shadow: 0 0 20px rgba(155, 26, 26, 0.4);
@@ -333,6 +335,13 @@
   .tree {
     padding: 80px 0 70px;
   }
+  .intro {
+    padding: 0 24px;
+  }
+  .title {
+    font-size: clamp(28px, 7.5vw, 64px);
+    line-height: 0.88;
+  }
   .canvas {
     margin-top: 112px;
   }
@@ -341,7 +350,7 @@
     padding-bottom: 30px;
   }
   .monogram {
-    font-size: clamp(90px, 20vw, 140px);
+    font-size: clamp(48px, 16vw, 120px);
   }
   .root .eyebrow {
     font-size: 8px;
@@ -360,7 +369,7 @@
     padding-top: 0;
   }
   .sectionHeading h3 {
-    font-size: clamp(34px, 7vw, 54px);
+    font-size: clamp(28px, 7vw, 54px);
   }
   .sectionHeading {
     padding: 28px 0 22px;
@@ -384,7 +393,7 @@
     padding: 32px 0;
   }
   .prizeHeading h3 {
-    font-size: clamp(38px, 8vw, 62px);
+    font-size: clamp(32px, 8vw, 62px);
   }
   .podium {
     grid-template-columns: 1fr;
@@ -396,7 +405,7 @@
     margin-top: 0;
   }
   .amount {
-    font-size: clamp(50px, 11vw, 72px);
+    font-size: clamp(44px, 11vw, 72px);
   }
   .endMark {
     margin-top: 120px;
@@ -404,7 +413,7 @@
 }
 
 .tree [data-tree-reveal] {
-  opacity: 0;
+  opacity: 1;
   will-change: opacity, transform, filter;
 }
 

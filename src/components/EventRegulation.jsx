@@ -348,13 +348,13 @@ export default function EventRegulation({
       {/* Top Header: THE REGULATION */}
       <div className={styles.headerContainer}>
         <h2 className={styles.sectionHeader}>
-          <span className="flex flex-wrap">
+          <span className="flex flex-nowrap">
             {Array.from("THE").map((letter, i) => (
               <motion.span
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,
@@ -367,13 +367,13 @@ export default function EventRegulation({
               </motion.span>
             ))}
           </span>
-          <span className="flex flex-wrap mt-2">
+          <span className="flex flex-nowrap mt-2">
             {Array.from("REGULATION").map((letter, i) => (
               <motion.span
                 key={i}
                 initial={{ y: 35, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                 transition={{
                   type: "spring",
                   stiffness: 65,

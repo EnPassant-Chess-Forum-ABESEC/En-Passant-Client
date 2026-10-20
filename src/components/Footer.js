@@ -19,6 +19,7 @@ const columns = [
   {
     heading: "ENGAGE",
     links: [
+      { label: "Events", href: "/events" },
       { label: "Recruitment", href: "/recruitment" },
       { label: "Profile", href: "/profile" },
     ],
@@ -117,8 +118,8 @@ export default function Footer() {
                 className="font-sans italic leading-relaxed text-white/70"
                 style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
               >
-                &ldquo;The beauty of a move lies not in its appearance but in the
-                thought behind it.&rdquo;
+                &ldquo;The beauty of a move lies not in its appearance but in
+                the thought behind it.&rdquo;
               </p>
               <footer
                 className="font-sans text-[11px] uppercase tracking-[0.22em] mt-6"

@@ -74,7 +74,7 @@ export default function EventHero() {
           style={{ transform: "translateY(-2%)" }}
         >
           <div className="relative flex items-center justify-center">
-            <div className="relative z-10 flex items-center justify-center gap-6 sm:gap-11 md:gap-16">
+            <div className="relative z-10 flex items-center justify-center gap-4 sm:gap-11 md:gap-16">
               {["A", "C", "C"].map((letter, index) => (
                 <motion.span
                   key={index}
@@ -87,7 +87,7 @@ export default function EventHero() {
                     delay: 0.35 + index * 0.15,
                   }}
                   style={{
-                    fontSize: "clamp(4.2rem, 10.5vw, 8.2rem)",
+                    fontSize: "clamp(3.2rem, 10vw, 8.2rem)",
                     WebkitTransform: "translateZ(0)",
                     backfaceVisibility: "hidden",
                   }}
@@ -109,15 +109,15 @@ export default function EventHero() {
               delay: 0.8,
             }}
             style={{
-              fontSize: "clamp(0.6rem, 1.6vw, 0.95rem)",
-              letterSpacing: "0.38em",
+              fontSize: "clamp(0.55rem, 1.6vw, 0.95rem)",
+              letterSpacing: "clamp(0.18em, 0.4vw, 0.38em)",
               color: "#e2e8f0",
-              marginTop: "clamp(14px, 2.2vw, 26px)",
+              marginTop: "clamp(12px, 2.2vw, 26px)",
               textShadow: "0 2px 14px rgba(0,0,0,0.95)",
               WebkitTransform: "translateZ(0)",
               backfaceVisibility: "hidden",
             }}
-            className="font-sans font-medium uppercase text-center"
+            className="font-sans font-medium uppercase text-center px-4 max-w-full"
           >
             ABES CHESS <span className="text-red-500">CHAMPIONSHIP</span>
           </motion.p>
