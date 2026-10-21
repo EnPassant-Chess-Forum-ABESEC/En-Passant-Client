@@ -439,7 +439,6 @@ export default function EventInterClubRegistrationPage() {
     const userRating =
       bracketPreview?.peakRating ??
       chessAccount?.ratings?.rapid ??
-      chessAccount?.ratings?.bullet ??
       0;
 
     const matched = interclubSection.brackets.find(
@@ -799,7 +798,7 @@ export default function EventInterClubRegistrationPage() {
                           {interclubRegistration.peakRapidRating != null && (
                             <div>
                               <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                Peak Bullet (30d)
+                                Peak Rapid (30d)
                               </span>
                               <span className="text-white font-mono text-xs sm:text-[13px] mt-0.5 block">
                                 {interclubRegistration.peakRapidRating}{" "}
