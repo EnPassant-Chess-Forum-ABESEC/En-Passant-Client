@@ -363,31 +363,31 @@ export default function AdminDashboard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
               {[
-                {
-                  id: "applications_export",
-                  title: "Recruitment Applications",
-                  description:
-                    "Update Google Sheet of all applicant submissions.",
-                  icon: FileText,
-                  sheetUrl:
-                    "https://docs.google.com/spreadsheets/d/11f8MfcIZXmUZo5ENSVohHFfqxgUFMFg1ANFy1ASbn0M/edit?gid=0#gid=0",
-                  onClick: createExportHandler(
-                    "applications_export",
-                    "/admin/applications/export",
-                  ),
-                },
-                {
-                  id: "payments_export",
-                  title: "Recruitment Payments",
-                  description: "Update Google Sheet of all recruitment payments.",
-                  icon: CreditCard,
-                  sheetUrl:
-                    "https://docs.google.com/spreadsheets/d/1awc6omtU9hJ4l7ZqDo8O3R1hW1o0GezAOFqsbU87ckk/edit?gid=0#gid=0",
-                  onClick: createExportHandler(
-                    "payments_export",
-                    "/admin/payments/export?purpose=recruitment",
-                  ),
-                },
+                // {
+                //   id: "applications_export",
+                //   title: "Recruitment Applications",
+                //   description:
+                //     "Update Google Sheet of all applicant submissions.",
+                //   icon: FileText,
+                //   sheetUrl:
+                //     "https://docs.google.com/spreadsheets/d/11f8MfcIZXmUZo5ENSVohHFfqxgUFMFg1ANFy1ASbn0M/edit?gid=0#gid=0",
+                //   onClick: createExportHandler(
+                //     "applications_export",
+                //     "/admin/applications/export",
+                //   ),
+                // },
+                // {
+                //   id: "payments_export",
+                //   title: "Recruitment Payments",
+                //   description: "Update Google Sheet of all recruitment payments.",
+                //   icon: CreditCard,
+                //   sheetUrl:
+                //     "https://docs.google.com/spreadsheets/d/1awc6omtU9hJ4l7ZqDo8O3R1hW1o0GezAOFqsbU87ckk/edit?gid=0#gid=0",
+                //   onClick: createExportHandler(
+                //     "payments_export",
+                //     "/admin/payments/export?purpose=recruitment",
+                //   ),
+                // },
                 {
                   id: "event_registrations_export",
                   title: "Event Registrations",
