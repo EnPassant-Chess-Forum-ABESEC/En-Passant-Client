@@ -13,9 +13,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Clock,
-  ExternalLink,
-  Copy,
   Check,
   User as UserIcon,
 } from "lucide-react";
@@ -188,15 +185,10 @@ export default function EventSoloRegistrationPage() {
   const [gender, setGender] = useState("");
   const [isHosteler, setIsHosteler] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-
   const [myRegistration, setMyRegistration] = useState(null);
   const [allRegistrations, setAllRegistrations] = useState([]);
-  const [copiedUtr, setCopiedUtr] = useState(false);
   const [bracketPreview, setBracketPreview] = useState(null);
   const [loadingBracketPreview, setLoadingBracketPreview] = useState(false);
-
-  const [paymentUtr, setPaymentUtr] = useState("");
-  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -206,39 +198,15 @@ export default function EventSoloRegistrationPage() {
     const cleanId = id ? decodeURIComponent(id) : "ACC";
     return `acc_reg_draft_common_${cleanId}`;
   }, [id]);
-  const draftScreenshotKey = useMemo(() => {
-    const cleanId = id ? decodeURIComponent(id) : "ACC";
-    return `acc_reg_screenshot_common_${cleanId}`;
-  }, [id]);
 
   const clearDraft = useCallback(() => {
     if (typeof window === "undefined") return;
     try {
       localStorage.removeItem(draftStorageKey);
-      sessionStorage.removeItem(draftScreenshotKey);
     } catch (e) {
       console.warn("Failed to clear registration draft:", e);
     }
-  }, [draftStorageKey, draftScreenshotKey]);
-
-  const dataURLtoFile = (dataurl, filename) => {
-    try {
-      const arr = dataurl.split(",");
-      const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename || "payment_screenshot.png", {
-        type: mime,
-      });
-    } catch (e) {
-      console.warn("Failed to reconstruct file from dataURL:", e);
-      return null;
-    }
-  };
+  }, [draftStorageKey]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -249,7 +217,7 @@ export default function EventSoloRegistrationPage() {
         if (
           typeof draft.currentStep === "number" &&
           draft.currentStep >= 0 &&
-          draft.currentStep <= 2
+          draft.currentStep <= 1
         ) {
           setCurrentStep(draft.currentStep);
         }
@@ -262,35 +230,13 @@ export default function EventSoloRegistrationPage() {
         if (typeof draft.isHosteler === "boolean") {
           setIsHosteler(draft.isHosteler);
         }
-        if (draft.paymentUtr) {
-          setPaymentUtr(draft.paymentUtr);
-        }
-      }
-
-      const savedScreenshotRaw = sessionStorage.getItem(draftScreenshotKey);
-      if (savedScreenshotRaw) {
-        const parsed = JSON.parse(savedScreenshotRaw);
-        if (parsed?.data) {
-          const file = dataURLtoFile(parsed.data, parsed.name);
-          if (file) {
-            setPaymentScreenshot(file);
-          }
-        }
       }
     } catch (err) {
       console.error("Failed to restore registration draft:", err);
     } finally {
       isDraftLoadedRef.current = true;
     }
-  }, [draftStorageKey, draftScreenshotKey]);
-
-  const handleCopyUtr = (utr) => {
-    if (!utr) return;
-    navigator.clipboard.writeText(utr);
-    setCopiedUtr(true);
-    setTimeout(() => setCopiedUtr(false), 2000);
-    toast.success("Reference copied to clipboard");
-  };
+  }, [draftStorageKey]);
 
   useEffect(() => {
     async function loadEventData() {
@@ -501,7 +447,6 @@ export default function EventSoloRegistrationPage() {
         selectedSectionName,
         gender,
         isHosteler,
-        paymentUtr,
       };
       localStorage.setItem(draftStorageKey, JSON.stringify(draft));
     } catch (err) {
@@ -512,47 +457,9 @@ export default function EventSoloRegistrationPage() {
     selectedSectionName,
     gender,
     isHosteler,
-    paymentUtr,
     currentRegView,
     draftStorageKey,
   ]);
-
-  useEffect(() => {
-    if (!isDraftLoadedRef.current || typeof window === "undefined") return;
-    if (currentRegView) return;
-
-    if (!paymentScreenshot) {
-      try {
-        sessionStorage.removeItem(draftScreenshotKey);
-      } catch (e) {}
-      return;
-    }
-
-    if (
-      paymentScreenshot instanceof File &&
-      paymentScreenshot.size <= 3 * 1024 * 1024
-    ) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const payload = JSON.stringify({
-            name: paymentScreenshot.name,
-            data: reader.result,
-          });
-          sessionStorage.setItem(draftScreenshotKey, payload);
-        } catch (e) {
-          console.warn("Could not save screenshot draft to sessionStorage:", e);
-        }
-      };
-      reader.readAsDataURL(paymentScreenshot);
-    }
-  }, [paymentScreenshot, currentRegView, draftScreenshotKey]);
-
-  const sectionFee = isWomensSelected ? 40 : 60;
-  const qrCodeSrc =
-    sectionFee === 40
-      ? "/event/registration/QR_40Rs.jpeg"
-      : "/event/registration/QR_60Rs.jpeg";
 
   const chessAccount = userProfile?.chessAccounts?.chessCom;
 
@@ -614,9 +521,7 @@ export default function EventSoloRegistrationPage() {
       case 0:
         return "1. Division & Details";
       case 1:
-        return "2. Review Details";
-      case 2:
-        return "3. Payment";
+        return "2. Review & Confirm";
       default:
         return "Registration";
     }
@@ -629,8 +534,6 @@ export default function EventSoloRegistrationPage() {
       return true;
     }
     if (step === 1) return true;
-    if (step === 2)
-      return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
     return true;
   };
 
@@ -651,17 +554,7 @@ export default function EventSoloRegistrationPage() {
         return;
       }
       setCurrentStep(1);
-    } else if (currentStep === 1) {
-      setCurrentStep(2);
     } else {
-      if (!paymentUtr.trim()) {
-        toast.error("Please enter the payment UTR / transaction ID.");
-        return;
-      }
-      if (!paymentScreenshot) {
-        toast.error("Please upload your payment screenshot.");
-        return;
-      }
       handleRegister();
     }
   };
@@ -704,16 +597,6 @@ export default function EventSoloRegistrationPage() {
       return;
     }
 
-    if (!paymentUtr.trim()) {
-      toast.error("Please enter your transaction UTR.");
-      return;
-    }
-
-    if (!paymentScreenshot) {
-      toast.error("Please upload your payment screenshot.");
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       const formData = new FormData();
@@ -721,8 +604,6 @@ export default function EventSoloRegistrationPage() {
       formData.append("bracket", placedBracket?.name || "open");
       formData.append("gender", gender);
       formData.append("isHosteler", String(Boolean(isHosteler)));
-      formData.append("utr", paymentUtr.trim());
-      formData.append("screenshot", paymentScreenshot);
       formData.append(
         "participation",
         JSON.stringify({
@@ -738,7 +619,7 @@ export default function EventSoloRegistrationPage() {
       if (res?.success) {
         clearDraft();
         toast.success(
-          `Registration submitted for ${event.title || "the event"}! Pending payment verification.`,
+          `Registration confirmed for ${event.title || "the event"}!`,
         );
         const newReg = res.registration || {
           eventId: event._id,
@@ -751,10 +632,9 @@ export default function EventSoloRegistrationPage() {
             : isWomensSelected
               ? "day_scholar"
               : null,
-          status: "pending",
-          paymentStatus: "pending",
-          utr: paymentUtr.trim(),
-          paymentAmount: sectionFee,
+          status: "confirmed",
+          paymentStatus: "success",
+          paymentAmount: 0,
           createdAt: new Date().toISOString(),
         };
         setMyRegistration(newReg);
@@ -920,9 +800,6 @@ export default function EventSoloRegistrationPage() {
                         }`}
                       >
                         <span>{sec.title || sec.name}</span>
-                        {isSecRegistered && (
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                        )}
                       </button>
                     );
                   })}
@@ -974,7 +851,7 @@ export default function EventSoloRegistrationPage() {
                     >
                       <AlertCircle className="w-8 h-8 text-amber-400 mx-auto" />
                       <h3 className="font-pezula text-base uppercase tracking-wide text-white">
-                        Inter-Club Participant Guardrail
+                        Inter-Club Participant
                       </h3>
                       <p className="text-white/60 text-xs max-w-md mx-auto leading-relaxed">
                         You are registered in the Inter-Club division for this
@@ -1001,54 +878,15 @@ export default function EventSoloRegistrationPage() {
                       className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md overflow-hidden my-auto"
                     >
                       <div className="p-4 sm:p-5 border-b border-white/[0.06] bg-white/[0.015]">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
-                                {currentRegView.paymentStatus === "success" ||
-                                currentRegView.status === "confirmed"
-                                  ? "Registration Confirmed"
-                                  : currentRegView.paymentStatus === "failed"
-                                    ? "Payment Rejected"
-                                    : "Payment Verification Pending"}
-                              </h3>
-                              {currentRegView.paymentStatus === "success" ||
-                              currentRegView.status === "confirmed" ? (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              ) : currentRegView.paymentStatus === "failed" ? (
-                                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                              ) : (
-                                <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
-                              )}
-                            </div>
+                        <div className="space-y-1">
+                          <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
+                            Registration Confirmed
+                          </h3>
 
-                            <p className="text-white/40 text-[11px] font-mono leading-relaxed">
-                              {currentRegView.paymentStatus === "success" ||
-                              currentRegView.status === "confirmed"
-                                ? `Confirmed registration for ${event?.title || "ACC 2026"}`
-                                : currentRegView.paymentStatus === "failed"
-                                  ? "Payment verification was rejected."
-                                  : "Your registration was recorded and is awaiting payment verification."}
-                            </p>
-                          </div>
-
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
-                              currentRegView.paymentStatus === "success" ||
-                              currentRegView.status === "confirmed"
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : currentRegView.paymentStatus === "failed"
-                                  ? "bg-red-500/10 text-red-400 border-red-500/30"
-                                  : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                            }`}
-                          >
-                            {currentRegView.paymentStatus === "success" ||
-                            currentRegView.status === "confirmed"
-                              ? "CONFIRMED"
-                              : currentRegView.paymentStatus === "failed"
-                                ? "FAILED"
-                                : "PENDING"}
-                          </span>
+                          <p className="text-white/40 text-[11px] font-mono leading-relaxed">
+                            Confirmed registration for{" "}
+                            {event?.title || "ACC 2026"}
+                          </p>
                         </div>
                       </div>
 
@@ -1114,132 +952,47 @@ export default function EventSoloRegistrationPage() {
                         </div>
                       </div>
 
-                      <div className="px-4 sm:px-5 py-3 border-t border-white/[0.06] bg-white/[0.02]">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                          <div className="flex items-center gap-6">
-                            <div>
-                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                Registration Fee
-                              </span>
-                              <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
-                                Rs.{currentRegView.paymentAmount || sectionFee}
-                              </span>
-                            </div>
+                      {isRegistrationOpen && (
+                        <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                          <span className="text-white/40 text-[10px] sm:text-[11px]">
+                            Need to withdraw before the deadline?
+                          </span>
 
-                            {currentRegView.paymentScreenshotUrl && (
-                              <div>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                  Payment Proof
-                                </span>
-                                <a
-                                  href={currentRegView.paymentScreenshotUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-white/80 hover:text-white text-xs font-mono inline-flex items-center gap-1.5 mt-0.5 underline transition-colors"
+                          <AlertDialog>
+                            <AlertDialogTrigger
+                              disabled={isWithdrawing || !isRegistrationOpen}
+                              className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              Withdraw
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
+                                  Withdraw Registration?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-white/60 text-sm">
+                                  Are you sure you want to withdraw your
+                                  registration for {event?.title || "ACC"}? This
+                                  action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={handleWithdraw}
+                                  className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
                                 >
-                                  <span>Screenshot</span>
-                                  <ExternalLink className="w-2.5 h-2.5 text-white/50" />
-                                </a>
-                              </div>
-                            )}
-
-                            {currentRegView.receiptUrl && (
-                              <div>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                  Official Receipt
-                                </span>
-                                <a
-                                  href={currentRegView.receiptUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-emerald-400 hover:text-emerald-300 text-xs font-mono inline-flex items-center gap-1 mt-0.5 underline font-medium transition-colors"
-                                >
-                                  <span>Download PDF</span>
-                                  <ExternalLink className="w-2.5 h-2.5 text-emerald-400/60" />
-                                </a>
-                              </div>
-                            )}
-                          </div>
-
-                          {currentRegView.utr && (
-                            <div className="flex items-center justify-between sm:justify-end gap-2 min-w-0 sm:max-w-[260px]">
-                              <div className="min-w-0">
-                                <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
-                                  Transaction Reference
-                                </span>
-                                <span className="text-white/90 font-mono text-[11px] truncate block select-all">
-                                  {currentRegView.utr}
-                                </span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleCopyUtr(currentRegView.utr)
-                                }
-                                className="p-1 px-2 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors text-[10px] flex items-center gap-1 font-mono border border-white/5 shrink-0 cursor-pointer"
-                                title="Copy Reference"
-                              >
-                                {copiedUtr ? (
-                                  <>
-                                    <Check className="w-3 h-3 text-emerald-400" />
-                                    <span className="text-emerald-400">
-                                      Copied
-                                    </span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="w-3 h-3" />
-                                    <span>Copy</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          )}
+                                  {isWithdrawing
+                                    ? "Withdrawing..."
+                                    : "Confirm Withdrawal"}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
-                      </div>
-
-                      {currentRegView.paymentStatus !== "success" &&
-                        currentRegView.status !== "confirmed" && (
-                          <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                            <span className="text-white/40 text-[10px] sm:text-[11px]">
-                              Need to withdraw before the deadline?
-                            </span>
-
-                            <AlertDialog>
-                              <AlertDialogTrigger
-                                disabled={isWithdrawing || !isRegistrationOpen}
-                                className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                              >
-                                Withdraw
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
-                                    Withdraw Registration?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription className="text-white/60 text-sm">
-                                    Are you sure you want to withdraw your
-                                    registration for {event?.title || "ACC"}?
-                                    This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
-                                    Cancel
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={handleWithdraw}
-                                    className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
-                                  >
-                                    {isWithdrawing
-                                      ? "Withdrawing..."
-                                      : "Confirm Withdrawal"}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        )}
+                      )}
                     </motion.div>
                   ) : !isRegistrationOpen ? (
                     <motion.div
@@ -1388,14 +1141,8 @@ export default function EventSoloRegistrationPage() {
                                           "Solo championship tier"}
                                       </span>
                                     </div>
-                                    <span
-                                      className={`text-xs font-mono font-bold shrink-0 ${
-                                        isSelected
-                                          ? "text-white"
-                                          : "text-white/50 group-hover:text-white/80"
-                                      }`}
-                                    >
-                                      ₹{isWomens ? 40 : 60}
+                                    <span className="text-xs font-mono font-bold shrink-0 text-emerald-400">
+                                      FREE
                                     </span>
                                   </button>
                                 );
@@ -1568,6 +1315,15 @@ export default function EventSoloRegistrationPage() {
                             </div>
                           </div>
 
+                          <div className="p-3 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/20">
+                            <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 block font-semibold">
+                              Registration Fee
+                            </span>
+                            <span className="text-white/70 text-xs">
+                              Free entry for all eligible participants
+                            </span>
+                          </div>
+
                           <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
                             <span className="text-white/70 font-medium block text-[10px] uppercase font-mono tracking-wider">
                               Placement Policy
@@ -1577,99 +1333,6 @@ export default function EventSoloRegistrationPage() {
                               the past 30 days (minimum 5 games required) for
                               fair matchmaking.
                             </p>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {currentStep === 2 && (
-                        <motion.div
-                          key="step2"
-                          variants={slideVariants}
-                          initial="initial"
-                          animate="animate"
-                          exit="exit"
-                          className="space-y-3 w-full"
-                        >
-                          <div className="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 p-3.5 rounded-xl">
-                            <div className="flex-1 text-left min-w-0">
-                              <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-lg font-mono font-bold text-white">
-                                  Rs.{sectionFee}
-                                </span>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
-                                  Registration Fee
-                                </span>
-                              </div>
-                              <p className="text-white/50 text-[11px] leading-relaxed mb-2 font-sans">
-                                Pay via any UPI app using the QR code or ID,
-                                then enter your transaction reference below.
-                              </p>
-                              <div className="text-[11px] font-mono text-white/80 bg-white/5 border border-white/10 px-2.5 py-1 rounded inline-block select-all">
-                                8933905351@ybl
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-center shrink-0">
-                              <a
-                                href={qrCodeSrc}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="Click to view full QR code"
-                                className="group/qr block"
-                              >
-                                <Image
-                                  src={qrCodeSrc}
-                                  alt={`Payment QR Code for Rs.${sectionFee}`}
-                                  width={84}
-                                  height={84}
-                                  priority
-                                  className="object-contain rounded-lg border border-white/10 mb-1 group-hover/qr:border-white/30 transition-colors"
-                                  style={{ width: "84px", height: "auto" }}
-                                />
-                              </a>
-                              <span className="text-white/60 font-mono text-[9px] uppercase tracking-wider">
-                                Scan to Pay
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2.5">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
-                                Transaction ID (UTR)
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg h-9 px-3 text-xs focus:outline-none focus:border-[#9b1a1a] focus:bg-white/10 placeholder:text-white/20 font-mono transition-colors"
-                                value={paymentUtr}
-                                onChange={(e) => setPaymentUtr(e.target.value)}
-                                placeholder="12-digit transaction reference"
-                              />
-                            </div>
-
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
-                                Payment Screenshot
-                                {paymentScreenshot && (
-                                  <span className="text-emerald-400 font-mono text-[9px] lowercase tracking-normal ml-2">
-                                    ✓ (
-                                    {paymentScreenshot.name ||
-                                      "screenshot attached"}
-                                    )
-                                  </span>
-                                )}
-                              </label>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  if (e.target.files && e.target.files[0]) {
-                                    setPaymentScreenshot(e.target.files[0]);
-                                  }
-                                }}
-                                className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#9b1a1a] file:mr-3 file:py-0.5 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-mono file:font-medium file:uppercase file:tracking-wider file:bg-white/10 file:text-white hover:file:bg-white/20 file:transition-colors cursor-pointer"
-                              />
-                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -1700,14 +1363,9 @@ export default function EventSoloRegistrationPage() {
                           <Loader2 className="w-4 h-4 animate-spin" />
                           <span>Registering...</span>
                         </>
-                      ) : currentStep === 2 ? (
-                        <>
-                          <span>Confirm Registration</span>
-                          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </>
                       ) : currentStep === 1 ? (
                         <>
-                          <span>Continue to Payment</span>
+                          <span>Confirm & Register</span>
                           <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </>
                       ) : (

@@ -14,9 +14,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Clock,
-  ExternalLink,
-  Copy,
   Check,
   Search,
   X,
@@ -133,9 +130,6 @@ export default function EventInterClubRegistrationPage() {
   const [isClubOpen, setIsClubOpen] = useState(false);
   const clubDropdownRef = useRef(null);
   const clubSearchInputRef = useRef(null);
-  const [paymentUtr, setPaymentUtr] = useState("");
-  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
-
   const effectiveClubName = useMemo(() => {
     if (clubName === "Other / External Club") {
       return customClubName.trim() || "External Club";
@@ -175,7 +169,6 @@ export default function EventInterClubRegistrationPage() {
 
   const [myRegistration, setMyRegistration] = useState(null);
   const [allRegistrations, setAllRegistrations] = useState([]);
-  const [copiedUtr, setCopiedUtr] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -185,39 +178,15 @@ export default function EventInterClubRegistrationPage() {
     const cleanId = id ? decodeURIComponent(id) : "ACC";
     return `acc_reg_draft_interclub_${cleanId}`;
   }, [id]);
-  const draftScreenshotKey = useMemo(() => {
-    const cleanId = id ? decodeURIComponent(id) : "ACC";
-    return `acc_reg_screenshot_interclub_${cleanId}`;
-  }, [id]);
 
   const clearDraft = useCallback(() => {
     if (typeof window === "undefined") return;
     try {
       localStorage.removeItem(draftStorageKey);
-      sessionStorage.removeItem(draftScreenshotKey);
     } catch (e) {
       console.warn("Failed to clear inter-club draft:", e);
     }
-  }, [draftStorageKey, draftScreenshotKey]);
-
-  const dataURLtoFile = (dataurl, filename) => {
-    try {
-      const arr = dataurl.split(",");
-      const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename || "payment_screenshot.png", {
-        type: mime,
-      });
-    } catch (e) {
-      console.warn("Failed to reconstruct file from dataURL:", e);
-      return null;
-    }
-  };
+  }, [draftStorageKey]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -228,7 +197,7 @@ export default function EventInterClubRegistrationPage() {
         if (
           typeof draft.currentStep === "number" &&
           draft.currentStep >= 0 &&
-          draft.currentStep <= 2
+          draft.currentStep <= 1
         ) {
           setCurrentStep(draft.currentStep);
         }
@@ -241,35 +210,13 @@ export default function EventInterClubRegistrationPage() {
         if (draft.customClubName) {
           setCustomClubName(draft.customClubName);
         }
-        if (draft.paymentUtr) {
-          setPaymentUtr(draft.paymentUtr);
-        }
-      }
-
-      const savedScreenshotRaw = sessionStorage.getItem(draftScreenshotKey);
-      if (savedScreenshotRaw) {
-        const parsed = JSON.parse(savedScreenshotRaw);
-        if (parsed?.data) {
-          const file = dataURLtoFile(parsed.data, parsed.name);
-          if (file) {
-            setPaymentScreenshot(file);
-          }
-        }
       }
     } catch (err) {
       console.error("Failed to restore inter-club draft:", err);
     } finally {
       isDraftLoadedRef.current = true;
     }
-  }, [draftStorageKey, draftScreenshotKey]);
-
-  const handleCopyUtr = (utr) => {
-    if (!utr) return;
-    navigator.clipboard.writeText(utr);
-    setCopiedUtr(true);
-    setTimeout(() => setCopiedUtr(false), 2000);
-    toast.success("Reference copied to clipboard");
-  };
+  }, [draftStorageKey]);
 
   useEffect(() => {
     async function loadEventData() {
@@ -456,7 +403,6 @@ export default function EventInterClubRegistrationPage() {
         gender,
         clubName,
         customClubName,
-        paymentUtr,
       };
       localStorage.setItem(draftStorageKey, JSON.stringify(draft));
     } catch (err) {
@@ -467,41 +413,9 @@ export default function EventInterClubRegistrationPage() {
     gender,
     clubName,
     customClubName,
-    paymentUtr,
     interclubRegistration,
     draftStorageKey,
   ]);
-
-  useEffect(() => {
-    if (!isDraftLoadedRef.current || typeof window === "undefined") return;
-    if (interclubRegistration) return;
-
-    if (!paymentScreenshot) {
-      try {
-        sessionStorage.removeItem(draftScreenshotKey);
-      } catch (e) {}
-      return;
-    }
-
-    if (
-      paymentScreenshot instanceof File &&
-      paymentScreenshot.size <= 3 * 1024 * 1024
-    ) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const payload = JSON.stringify({
-            name: paymentScreenshot.name,
-            data: reader.result,
-          });
-          sessionStorage.setItem(draftScreenshotKey, payload);
-        } catch (e) {
-          console.warn("Could not save screenshot draft to sessionStorage:", e);
-        }
-      };
-      reader.readAsDataURL(paymentScreenshot);
-    }
-  }, [paymentScreenshot, interclubRegistration, draftScreenshotKey]);
 
   const isPaymentConfirmed = useMemo(() => {
     return (
@@ -550,9 +464,7 @@ export default function EventInterClubRegistrationPage() {
       case 0:
         return "1. Club Details";
       case 1:
-        return "2. Review Details";
-      case 2:
-        return "3. Payment";
+        return "2. Review & Confirm";
       default:
         return "Inter-Club Registration";
     }
@@ -561,8 +473,6 @@ export default function EventInterClubRegistrationPage() {
   const isStepValid = (step) => {
     if (step === 0) return Boolean(gender) && Boolean(effectiveClubName);
     if (step === 1) return true;
-    if (step === 2)
-      return paymentUtr.trim() !== "" && Boolean(paymentScreenshot);
     return true;
   };
 
@@ -578,16 +488,6 @@ export default function EventInterClubRegistrationPage() {
       }
       setCurrentStep(1);
     } else if (currentStep === 1) {
-      setCurrentStep(2);
-    } else {
-      if (!paymentUtr.trim()) {
-        toast.error("Please enter the payment UTR / transaction ID.");
-        return;
-      }
-      if (!paymentScreenshot) {
-        toast.error("Please upload your payment screenshot.");
-        return;
-      }
       handleRegister();
     }
   };
@@ -623,16 +523,6 @@ export default function EventInterClubRegistrationPage() {
       return;
     }
 
-    if (!paymentUtr.trim()) {
-      toast.error("Please enter your transaction UTR.");
-      return;
-    }
-
-    if (!paymentScreenshot) {
-      toast.error("Please upload your payment screenshot.");
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       const formData = new FormData();
@@ -640,8 +530,6 @@ export default function EventInterClubRegistrationPage() {
       formData.append("bracket", placedBracket?.name || "open");
       formData.append("gender", gender);
       formData.append("isHosteler", "false");
-      formData.append("utr", paymentUtr.trim());
-      formData.append("screenshot", paymentScreenshot);
       formData.append("clubName", effectiveClubName);
       formData.append("teamName", effectiveClubName);
       formData.append(
@@ -661,7 +549,7 @@ export default function EventInterClubRegistrationPage() {
       if (res?.success) {
         clearDraft();
         toast.success(
-          `Registration submitted for Inter-Club in ${event.title || "the event"}! Pending payment verification.`,
+          `Registration confirmed for Inter-Club in ${event.title || "the event"}!`,
         );
         const newReg = res.registration || {
           eventId: event._id,
@@ -670,10 +558,9 @@ export default function EventInterClubRegistrationPage() {
           gender: gender,
           clubName: effectiveClubName,
           teamName: effectiveClubName,
-          status: "pending",
-          paymentStatus: "pending",
-          utr: paymentUtr.trim(),
-          paymentAmount: 60,
+          status: "confirmed",
+          paymentStatus: "success",
+          paymentAmount: 0,
           createdAt: new Date().toISOString(),
         };
         setMyRegistration(newReg);
@@ -695,10 +582,6 @@ export default function EventInterClubRegistrationPage() {
 
   const handleWithdraw = async () => {
     if (!event?._id) return;
-    if (isPaymentConfirmed) {
-      toast.error("Withdrawal is not allowed once payment is confirmed.");
-      return;
-    }
 
     try {
       setIsWithdrawing(true);
@@ -847,7 +730,7 @@ export default function EventInterClubRegistrationPage() {
                     >
                       <AlertCircle className="w-8 h-8 text-amber-400 mx-auto" />
                       <h3 className="font-pezula text-base uppercase tracking-wide text-white">
-                        Solo Participant Guardrail
+                        Solo Participant
                       </h3>
                       <p className="text-white/60 text-xs max-w-md mx-auto leading-relaxed">
                         You are registered in a solo division (Open /
@@ -874,63 +757,18 @@ export default function EventInterClubRegistrationPage() {
                       className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md overflow-hidden my-auto"
                     >
                       <div className="p-4 sm:p-5 border-b border-white/[0.06] bg-white/[0.015]">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
-                                {interclubRegistration.paymentStatus ===
-                                  "success" ||
-                                interclubRegistration.status === "confirmed"
-                                  ? "Registration Confirmed"
-                                  : interclubRegistration.paymentStatus ===
-                                      "failed"
-                                    ? "Payment Rejected"
-                                    : "Payment Verification Pending"}
-                              </h3>
-                              {interclubRegistration.paymentStatus ===
-                                "success" ||
-                              interclubRegistration.status === "confirmed" ? (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              ) : interclubRegistration.paymentStatus ===
-                                "failed" ? (
-                                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                              ) : (
-                                <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
-                              )}
-                            </div>
+                        <div className="space-y-1">
+                          <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
+                            {interclubRegistration.paymentStatus === "failed"
+                              ? "Registration Failed"
+                              : "Registration Confirmed"}
+                          </h3>
 
-                            <p className="text-white/40 text-[11px] font-mono leading-relaxed">
-                              {interclubRegistration.paymentStatus ===
-                                "success" ||
-                              interclubRegistration.status === "confirmed"
-                                ? `Confirmed registration for ${event?.title || "ACC 2026"}`
-                                : interclubRegistration.paymentStatus ===
-                                    "failed"
-                                  ? "Payment verification was rejected."
-                                  : "Your registration was recorded and is awaiting payment verification."}
-                            </p>
-                          </div>
-
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
-                              interclubRegistration.paymentStatus ===
-                                "success" ||
-                              interclubRegistration.status === "confirmed"
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : interclubRegistration.paymentStatus ===
-                                    "failed"
-                                  ? "bg-red-500/10 text-red-400 border-red-500/30"
-                                  : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                            }`}
-                          >
-                            {interclubRegistration.paymentStatus ===
-                              "success" ||
-                            interclubRegistration.status === "confirmed"
-                              ? "CONFIRMED"
-                              : interclubRegistration.paymentStatus === "failed"
-                                ? "FAILED"
-                                : "PENDING"}
-                          </span>
+                          <p className="text-white/40 text-[11px] font-mono leading-relaxed">
+                            {interclubRegistration.paymentStatus === "failed"
+                              ? "Your registration could not be completed."
+                              : `Confirmed registration for ${event?.title || "ACC 2026"}`}
+                          </p>
                         </div>
                       </div>
 
@@ -1003,93 +841,7 @@ export default function EventInterClubRegistrationPage() {
                         </div>
                       </div>
 
-                      <div className="px-4 sm:px-5 py-3 border-t border-white/[0.06] bg-white/[0.02]">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                          <div className="flex items-center gap-6">
-                            <div>
-                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                Registration Fee
-                              </span>
-                              <span className="text-white font-mono font-semibold text-xs sm:text-sm mt-0.5 block">
-                                Rs.{interclubRegistration.paymentAmount || 60}
-                              </span>
-                            </div>
-
-                            {interclubRegistration.paymentScreenshotUrl && (
-                              <div>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                  Payment Proof
-                                </span>
-                                <a
-                                  href={
-                                    interclubRegistration.paymentScreenshotUrl
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-white/80 hover:text-white text-xs font-mono inline-flex items-center gap-1.5 mt-0.5 underline transition-colors"
-                                >
-                                  <span>Screenshot</span>
-                                  <ExternalLink className="w-2.5 h-2.5 text-white/50" />
-                                </a>
-                              </div>
-                            )}
-
-                            {interclubRegistration.receiptUrl && (
-                              <div>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                  Official Receipt
-                                </span>
-                                <a
-                                  href={interclubRegistration.receiptUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-emerald-400 hover:text-emerald-300 text-xs font-mono inline-flex items-center gap-1 mt-0.5 underline font-medium transition-colors"
-                                >
-                                  <span>Download PDF</span>
-                                  <ExternalLink className="w-2.5 h-2.5 text-emerald-400/60" />
-                                </a>
-                              </div>
-                            )}
-                          </div>
-
-                          {interclubRegistration.utr && (
-                            <div className="flex items-center justify-between sm:justify-end gap-2 min-w-0 sm:max-w-[260px]">
-                              <div className="min-w-0">
-                                <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
-                                  Transaction Reference
-                                </span>
-                                <span className="text-white/90 font-mono text-[11px] truncate block select-all">
-                                  {interclubRegistration.utr}
-                                </span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleCopyUtr(interclubRegistration.utr)
-                                }
-                                className="p-1 px-2 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors text-[10px] flex items-center gap-1 font-mono border border-white/5 shrink-0 cursor-pointer"
-                                title="Copy Reference"
-                              >
-                                {copiedUtr ? (
-                                  <>
-                                    <Check className="w-3 h-3 text-emerald-400" />
-                                    <span className="text-emerald-400">
-                                      Copied
-                                    </span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="w-3 h-3" />
-                                    <span>Copy</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {!isPaymentConfirmed && (
+                      {isRegistrationOpen && (
                         <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
                           <span className="text-white/40 text-[10px] sm:text-[11px]">
                             Need to withdraw before the deadline?
@@ -1097,7 +849,7 @@ export default function EventInterClubRegistrationPage() {
 
                           <AlertDialog>
                             <AlertDialogTrigger
-                              disabled={isWithdrawing || !isRegistrationOpen}
+                              disabled={isWithdrawing}
                               className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                               Withdraw
@@ -1525,6 +1277,15 @@ export default function EventInterClubRegistrationPage() {
                             </div>
                           )}
 
+                          <div className="p-3 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/20">
+                            <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 block font-semibold">
+                              Registration Fee
+                            </span>
+                            <span className="text-white/70 text-xs">
+                              Free entry for all eligible participants
+                            </span>
+                          </div>
+
                           <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
                             <span className="text-white/70 font-medium block text-[10px] uppercase font-mono tracking-wider">
                               Placement Policy
@@ -1534,99 +1295,6 @@ export default function EventInterClubRegistrationPage() {
                               the past 30 days (minimum 5 games required) for
                               fair matchmaking.
                             </p>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {currentStep === 2 && (
-                        <motion.div
-                          key="step2"
-                          variants={slideVariants}
-                          initial="initial"
-                          animate="animate"
-                          exit="exit"
-                          className="space-y-3 w-full"
-                        >
-                          <div className="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 p-3.5 rounded-xl">
-                            <div className="flex-1 text-left min-w-0">
-                              <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-lg font-mono font-bold text-white">
-                                  Rs.60
-                                </span>
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
-                                  Registration Fee
-                                </span>
-                              </div>
-                              <p className="text-white/50 text-[11px] leading-relaxed mb-2 font-sans">
-                                Pay via any UPI app using the QR code or ID,
-                                then enter your transaction reference below.
-                              </p>
-                              <div className="text-[11px] font-mono text-white/80 bg-white/5 border border-white/10 px-2.5 py-1 rounded inline-block select-all">
-                                8933905351@ybl
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-center shrink-0">
-                              <a
-                                href="/event/registration/QR_60Rs.jpeg"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="Click to view full QR code"
-                                className="group/qr block"
-                              >
-                                <Image
-                                  src="/event/registration/QR_60Rs.jpeg"
-                                  alt="Payment QR Code for Rs.60"
-                                  width={84}
-                                  height={84}
-                                  priority
-                                  className="object-contain rounded-lg border border-white/10 mb-1 group-hover/qr:border-white/30 transition-colors"
-                                  style={{ width: "84px", height: "auto" }}
-                                />
-                              </a>
-                              <span className="text-white/60 font-mono text-[9px] uppercase tracking-wider">
-                                Scan to Pay
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2.5">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
-                                Transaction ID (UTR)
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg h-9 px-3 text-xs focus:outline-none focus:border-[#9b1a1a] focus:bg-white/10 placeholder:text-white/20 font-mono transition-colors"
-                                value={paymentUtr}
-                                onChange={(e) => setPaymentUtr(e.target.value)}
-                                placeholder="12-digit transaction reference"
-                              />
-                            </div>
-
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-mono uppercase tracking-wider text-white/60 block">
-                                Payment Screenshot
-                                {paymentScreenshot && (
-                                  <span className="text-emerald-400 font-mono text-[9px] lowercase tracking-normal ml-2">
-                                    ✓ (
-                                    {paymentScreenshot.name ||
-                                      "screenshot attached"}
-                                    )
-                                  </span>
-                                )}
-                              </label>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  if (e.target.files && e.target.files[0]) {
-                                    setPaymentScreenshot(e.target.files[0]);
-                                  }
-                                }}
-                                className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#9b1a1a] file:mr-3 file:py-0.5 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-mono file:font-medium file:uppercase file:tracking-wider file:bg-white/10 file:text-white hover:file:bg-white/20 file:transition-colors cursor-pointer"
-                              />
-                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -1655,16 +1323,11 @@ export default function EventInterClubRegistrationPage() {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Submitting Registration...</span>
-                        </>
-                      ) : currentStep === 2 ? (
-                        <>
-                          <span>Confirm Inter-Club Registration</span>
-                          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          <span>Registering...</span>
                         </>
                       ) : currentStep === 1 ? (
                         <>
-                          <span>Continue to Payment</span>
+                          <span>Confirm & Register</span>
                           <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </>
                       ) : (

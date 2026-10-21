@@ -42,8 +42,6 @@ export default function AdminSidebar() {
   const isEventsActive = pathname.startsWith("/admin/events");
   const [isEventsOpen, setIsEventsOpen] = useState(isEventsActive);
 
-  const isPaymentsActive = pathname.startsWith("/admin/payments");
-  const [isPaymentsOpen, setIsPaymentsOpen] = useState(isPaymentsActive);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -357,63 +355,24 @@ export default function AdminSidebar() {
             )}
           </Link>
 
-          <div className="mt-2">
-            <button
-              onClick={() => {
-                if (isCollapsed) setIsCollapsed(false);
-                setIsPaymentsOpen(!isPaymentsOpen);
-              }}
-              title="Payments"
-              className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left
-              ${isCollapsed ? "justify-center px-0" : "px-4"}
-              ${
-                isPaymentsActive && (!isPaymentsOpen || isCollapsed)
-                  ? "bg-blue-50/50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
-              }`}
-            >
-              <CreditCard className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:scale-110" />
-              {!isCollapsed && (
-                <span className="text-sm font-semibold truncate">Payments</span>
-              )}
-              {!isCollapsed && (
-                <ChevronDown
-                  className={`w-4 h-4 ml-auto transition-transform duration-300 ${isPaymentsOpen ? "rotate-180" : ""}`}
-                />
-              )}
-            </button>
-
-            <div
-              className={`overflow-hidden transition-all duration-500 ease-in-out ${isPaymentsOpen && !isCollapsed ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"}`}
-            >
-              <div className="flex flex-col gap-1 pl-4 pr-4 border-l border-slate-100 dark:border-slate-800 ml-6">
-                <Link
-                  href="/admin/payments/recruitment"
-                  className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
-                  ${
-                    pathname === "/admin/payments/recruitment"
-                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
-                  }`}
-                >
-                  <Briefcase className="w-4 h-4" />
-                  <span className="text-xs font-medium">Recruitment</span>
-                </Link>
-                <Link
-                  href="/admin/payments/events"
-                  className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors
-                  ${
-                    pathname === "/admin/payments/events"
-                      ? "text-blue-600 bg-blue-50/50 dark:text-blue-400 dark:bg-blue-500/10"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
-                  }`}
-                >
-                  <Trophy className="w-4 h-4" />
-                  <span className="text-xs font-medium">Events</span>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link
+            href="/admin/payments/recruitment"
+            title="Payments"
+            className={`group flex items-center gap-4 py-3 rounded-xl transition-all duration-300 w-full text-left mt-2
+            ${isCollapsed ? "justify-center px-0" : "px-4"}
+            ${
+              pathname.startsWith("/admin/payments")
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
+            }`}
+          >
+            <CreditCard
+              className={`w-5 h-5 shrink-0 transition-transform duration-300 ${pathname.startsWith("/admin/payments") ? "scale-110" : "group-hover:scale-110"}`}
+            />
+            {!isCollapsed && (
+              <span className="text-sm font-semibold truncate">Payments</span>
+            )}
+          </Link>
         </nav>
 
         <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
