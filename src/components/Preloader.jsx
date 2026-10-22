@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import FoldText from "./FoldText";
+import { SiChessdotcom } from "react-icons/si";
 
 const SQUARE_SIZE = 140;
 const GRID_COLS = 9;
