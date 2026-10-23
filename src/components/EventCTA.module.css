@@ -174,8 +174,9 @@
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  padding: 16px 52px;
-  min-width: 215px;
+  padding: 16px 44px;
+  min-width: 220px;
+  white-space: nowrap;
   overflow: visible;
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85));
   transition: filter 0.3s ease;
@@ -328,11 +329,17 @@
   color: #ffffff;
   text-transform: uppercase;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  word-break: keep-all;
+  display: inline-block;
   transition: letter-spacing 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.redBracketVineBtn:hover .redBtnText {
+.redBracketVineBtn:hover .redBtnText,
+.redBracketVineBtn:active .redBtnText,
+.redBracketVineBtn:focus .redBtnText {
   letter-spacing: 0.22em;
+  white-space: nowrap;
 }
 
 /* Layer C: Outer Vine Frame SVG (Z-INDEX 6: Passes IN FRONT OF leaf stems!) */
@@ -693,6 +700,26 @@
 
   .handsImg {
     object-position: center;
+  }
+
+  .redBtnInner {
+    padding: 14px 38px;
+    min-width: 210px;
+    white-space: nowrap;
+  }
+
+  .redBtnText {
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  .redBracketVineBtn:hover .redBtnText,
+  .redBracketVineBtn:active .redBtnText,
+  .redBracketVineBtn:focus .redBtnText {
+    letter-spacing: 0.18em;
+    white-space: nowrap !important;
   }
 }
 
