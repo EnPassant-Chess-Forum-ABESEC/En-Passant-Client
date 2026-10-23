@@ -26,6 +26,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function timeAgo(dateString) {
   if (!dateString) return "N/A";
@@ -808,36 +815,29 @@ export default function EventRegistrationsTab({
                   className="p-4 space-y-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/15 to-indigo-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-black text-blue-600 dark:text-blue-400">
-                          {(applicant.userName || "?").charAt(0).toUpperCase()}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-slate-900 dark:text-slate-100 text-sm truncate">
+                          {applicant.userName || "Unnamed Participant"}
                         </span>
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-slate-900 dark:text-slate-100 text-sm truncate">
-                            {applicant.userName || "Unnamed Participant"}
+                        {reg.gender && (
+                          <span
+                            className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${
+                              reg.gender === "female"
+                                ? "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"
+                                : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                            }`}
+                          >
+                            {reg.gender}
                           </span>
-                          {reg.gender && (
-                            <span
-                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${
-                                reg.gender === "female"
-                                  ? "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"
-                                  : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                              }`}
-                            >
-                              {reg.gender}
-                            </span>
-                          )}
-                        </div>
+                        )}
+                      </div>
                         {chessHandle && (
                           <span className="text-xs text-blue-600 dark:text-blue-400 font-mono font-medium block mt-0.5">
                             @{chessHandle}
                           </span>
                         )}
                       </div>
-                    </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span
@@ -980,21 +980,33 @@ export default function EventRegistrationsTab({
                 )}
               </span>
 
-              <div className="flex items-center gap-1.5 text-xs">
+              <div className="flex items-center gap-2 text-xs">
                 <span className="text-slate-400">Per page:</span>
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
+                <Select
+                  value={String(itemsPerPage)}
+                  onValueChange={(val) => {
+                    setItemsPerPage(Number(val));
                     setCurrentPage(1);
                   }}
-                  className="px-2 py-1 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-700 dark:text-slate-300 focus:outline-hidden focus:border-blue-500 cursor-pointer"
                 >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
+                  <SelectTrigger className="w-[72px] h-8 bg-white dark:bg-[#020617] border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono font-semibold text-slate-700 dark:text-slate-300 focus:ring-blue-500">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 min-w-[72px]">
+                    <SelectItem value="10" className="text-xs font-mono">
+                      10
+                    </SelectItem>
+                    <SelectItem value="25" className="text-xs font-mono">
+                      25
+                    </SelectItem>
+                    <SelectItem value="50" className="text-xs font-mono">
+                      50
+                    </SelectItem>
+                    <SelectItem value="100" className="text-xs font-mono">
+                      100
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
