@@ -3,7 +3,18 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useApi } from "@/lib/api";
 import { toast } from "sonner";
-import { Users, Copy, Check, Loader2, Trash2, FileSpreadsheet } from "lucide-react";
+import {
+  Users,
+  Copy,
+  Check,
+  Loader2,
+  Trash2,
+  FileSpreadsheet,
+  ChevronLeft,
+  ChevronRight,
+  Mail,
+  Phone,
+} from "lucide-react";
 import AdminSearchBar from "../AdminSearchBar";
 import {
   AlertDialog,
@@ -62,8 +73,8 @@ export default function EventRegistrationsTab({
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
-  const [pageNumber] = useState(1);
-  const [pageSize] = useState(50);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [copiedCode, setCopiedCode] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -74,7 +85,7 @@ export default function EventRegistrationsTab({
     try {
       setRefreshing(true);
       const res = await fetchApiRef.current(
-        `/admin/event-registrations/${eventId}?pageSize=${pageSize}&pageNumber=${pageNumber}`,
+        `/admin/event-registrations/${eventId}?pageSize=1000&pageNumber=1`,
       );
 
       if (res?.success) {
@@ -88,7 +99,7 @@ export default function EventRegistrationsTab({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [eventId, pageSize, pageNumber]);
+  }, [eventId]);
 
   useEffect(() => {
     let ignore = false;
@@ -97,7 +108,7 @@ export default function EventRegistrationsTab({
       try {
         setRefreshing(true);
         const res = await fetchApiRef.current(
-          `/admin/event-registrations/${eventId}?pageSize=${pageSize}&pageNumber=${pageNumber}`,
+          `/admin/event-registrations/${eventId}?pageSize=1000&pageNumber=1`,
         );
         if (!ignore) {
           if (res?.success) {
@@ -121,7 +132,18 @@ export default function EventRegistrationsTab({
     return () => {
       ignore = true;
     };
-  }, [eventId, pageSize, pageNumber]);
+  }, [eventId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    sectionFilter,
+    bracketFilter,
+    typeFilter,
+    statusFilter,
+    itemsPerPage,
+  ]);
 
   const handleManualRefresh = async () => {
     await loadRegistrations();
@@ -138,7 +160,9 @@ export default function EventRegistrationsTab({
         `/admin/event-registrations/${eventId}/export`,
       );
       if (res?.success) {
-        toast.success(res.message || "Event registrations exported successfully");
+        toast.success(
+          res.message || "Event registrations exported successfully",
+        );
         if (res.sheetUrl) {
           window.open(res.sheetUrl, "_blank");
         }
@@ -328,6 +352,16 @@ export default function EventRegistrationsTab({
     statusFilter,
     searchQuery,
   ]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRegistrations.length / itemsPerPage),
+  );
+
+  const paginatedRegistrations = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredRegistrations.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredRegistrations, currentPage, itemsPerPage]);
 
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
@@ -561,7 +595,7 @@ export default function EventRegistrationsTab({
         </div>
       ) : (
         <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-[10px] uppercase font-bold tracking-wider text-slate-400">
                 <tr>
@@ -575,7 +609,7 @@ export default function EventRegistrationsTab({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                {filteredRegistrations.map((reg) => {
+                {paginatedRegistrations.map((reg) => {
                   const applicant =
                     reg.registeredBy || reg.team?.leaderId || {};
                   const isTeam = reg.registrationType === "team";
@@ -606,7 +640,7 @@ export default function EventRegistrationsTab({
                           </div>
                           {reg.chessUsername ||
                           applicant.chessAccounts?.chessCom?.username ? (
-                            <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                            <span className="block text-[11px] text-blue-600 dark:text-blue-400 font-mono font-medium">
                               @
                               {reg.chessUsername ||
                                 applicant.chessAccounts?.chessCom?.username}
@@ -701,12 +735,20 @@ export default function EventRegistrationsTab({
                             <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                               Solo
                             </span>
-                            {(reg.clubName || reg.teamName || reg.team?.teamName) && (
+                            {(reg.clubName ||
+                              reg.teamName ||
+                              reg.team?.teamName) && (
                               <span
                                 className="text-[11px] text-amber-600 dark:text-amber-400 font-medium truncate max-w-[200px]"
-                                title={reg.clubName || reg.teamName || reg.team?.teamName}
+                                title={
+                                  reg.clubName ||
+                                  reg.teamName ||
+                                  reg.team?.teamName
+                                }
                               >
-                                {reg.clubName || reg.teamName || reg.team?.teamName}
+                                {reg.clubName ||
+                                  reg.teamName ||
+                                  reg.team?.teamName}
                               </span>
                             )}
                           </div>
@@ -751,12 +793,240 @@ export default function EventRegistrationsTab({
             </table>
           </div>
 
-          <div className="p-3 bg-slate-50/60 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
-            <span>
-              Showing {filteredRegistrations.length} of {registrations.length}{" "}
-              applicant{registrations.length === 1 ? "" : "s"}
-            </span>
-            <span className="font-mono text-[11px]">Page {pageNumber}</span>
+          <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
+            {paginatedRegistrations.map((reg) => {
+              const applicant = reg.registeredBy || reg.team?.leaderId || {};
+              const isTeam = reg.registrationType === "team";
+              const teamInfo = reg.team;
+              const chessHandle =
+                reg.chessUsername ||
+                applicant.chessAccounts?.chessCom?.username;
+
+              return (
+                <div
+                  key={reg._id}
+                  className="p-4 space-y-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/15 to-indigo-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-black text-blue-600 dark:text-blue-400">
+                          {(applicant.userName || "?").charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-bold text-slate-900 dark:text-slate-100 text-sm truncate">
+                            {applicant.userName || "Unnamed Participant"}
+                          </span>
+                          {reg.gender && (
+                            <span
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase tracking-wider border ${
+                                reg.gender === "female"
+                                  ? "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"
+                                  : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                              }`}
+                            >
+                              {reg.gender}
+                            </span>
+                          )}
+                        </div>
+                        {chessHandle && (
+                          <span className="text-xs text-blue-600 dark:text-blue-400 font-mono font-medium block mt-0.5">
+                            @{chessHandle}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono border ${
+                          (reg.status || "").toLowerCase() === "confirmed" ||
+                          (reg.status || "").toLowerCase() === "success"
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                            : (reg.status || "").toLowerCase() === "pending"
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                              : "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20"
+                        }`}
+                      >
+                        {reg.status || "pending"}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeleteTarget(reg)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                        title="Delete Registration"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1 text-xs text-slate-600 dark:text-slate-300 bg-slate-50/80 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80">
+                    {applicant.email && (
+                      <div className="flex items-center gap-2 truncate">
+                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate font-medium">
+                          {applicant.email}
+                        </span>
+                      </div>
+                    )}
+                    {applicant.collegeEmail &&
+                      applicant.collegeEmail !== applicant.email && (
+                        <div className="flex items-center gap-2 truncate text-slate-400 text-[11px] font-mono">
+                          <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span className="truncate">
+                            {applicant.collegeEmail}
+                          </span>
+                        </div>
+                      )}
+                    {applicant.phoneNumber && (
+                      <div className="flex items-center gap-2 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{applicant.phoneNumber}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getSectionBadgeStyle(
+                          reg.section,
+                        )}`}
+                      >
+                        {reg.section || "open"}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 capitalize">
+                        {reg.bracket || "open"}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 capitalize">
+                        {isTeam ? "Team" : "Solo"}
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      {timeAgo(reg.createdAt)}
+                    </span>
+                  </div>
+
+                  {isTeam && teamInfo && (
+                    <div className="flex items-center justify-between gap-2 p-2 bg-blue-50/60 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/40 text-xs">
+                      <div className="min-w-0 flex items-center gap-1.5">
+                        <span className="font-semibold text-blue-700 dark:text-blue-300 truncate">
+                          {teamInfo.teamName || "Team"}
+                        </span>
+                        {teamInfo.members && (
+                          <span className="text-[10px] text-slate-400">
+                            ({teamInfo.members.length + 1} players)
+                          </span>
+                        )}
+                      </div>
+                      {teamInfo.joinCode && (
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(teamInfo.joinCode)}
+                          className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-mono font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-500 shadow-xs cursor-pointer"
+                          title="Copy Join Code"
+                        >
+                          <span>{teamInfo.joinCode}</span>
+                          {copiedCode === teamInfo.joinCode ? (
+                            <Check className="w-3 h-3 text-emerald-500" />
+                          ) : (
+                            <Copy className="w-3 h-3 text-slate-400" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {!isTeam && (reg.clubName || reg.teamName) && (
+                    <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium px-2 py-1 bg-amber-500/10 rounded-lg w-fit">
+                      Club: {reg.clubName || reg.teamName}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="p-4 bg-slate-50/60 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span>
+                Showing{" "}
+                <strong className="text-slate-900 dark:text-slate-100 font-mono">
+                  {filteredRegistrations.length === 0
+                    ? 0
+                    : (currentPage - 1) * itemsPerPage + 1}
+                </strong>
+                -
+                <strong className="text-slate-900 dark:text-slate-100 font-mono">
+                  {Math.min(
+                    currentPage * itemsPerPage,
+                    filteredRegistrations.length,
+                  )}
+                </strong>{" "}
+                of{" "}
+                <strong className="text-slate-900 dark:text-slate-100 font-mono">
+                  {filteredRegistrations.length}
+                </strong>{" "}
+                registrations
+                {filteredRegistrations.length !== registrations.length && (
+                  <span className="text-slate-400 ml-1">
+                    ({registrations.length} total)
+                  </span>
+                )}
+              </span>
+
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-slate-400">Per page:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2 py-1 bg-white dark:bg-[#020617] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-700 dark:text-slate-300 focus:outline-hidden focus:border-blue-500 cursor-pointer"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-slate-400">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                    title="Previous Page"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#020617] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                    title="Next Page"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
