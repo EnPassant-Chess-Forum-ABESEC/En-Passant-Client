@@ -173,6 +173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   background-color: transparent;
   padding: 16px 52px;
   min-width: 215px;
@@ -321,6 +322,10 @@
 .redBtnText {
   position: relative;
   z-index: 10;
+  display: block;
+  width: 100%;
+  text-align: center;
+  line-height: 1.25;
   font-family: pezula, sans-serif;
   font-size: clamp(14px, 1.25vw, 17px);
   font-weight: 700;
@@ -680,6 +685,17 @@
 
   .ctaWrapper {
     top: calc(50% + 30px);
+  }
+
+  .redBtnInner {
+    padding: 14px 40px;
+    text-align: center;
+  }
+
+  .redBtnText {
+    text-align: center;
+    width: 100%;
+    display: block;
   }
 
   .handsLayer {
