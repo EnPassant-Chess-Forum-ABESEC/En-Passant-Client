@@ -113,7 +113,7 @@ export default function EventCTA({ event = null }) {
           {/* Layer B: Solid Red Center Plaque with Roughened Straight Lines */}
           <div className={styles.redBtnInner}>
             {/* Button Text */}
-            <span className={styles.redBtnText}>COME FORTH</span>
+            <span className={styles.redBtnText}>Register Now</span>
           </div>
 
           {/* Layer C: Sinuous Bramble Vine Cane Frame (in FRONT of leaves so canes hide their stems!) */}
@@ -182,52 +182,6 @@ export default function EventCTA({ event = null }) {
             />
           </svg>
 
-          {/* Layer D: Roses on top of the cane & plaque edge */}
-          <div className={styles.rosesLayer} aria-hidden="true">
-            {/* Edge Rose 1: Top edge, left */}
-            <div className={styles.organicRose1}>
-              <Image
-                src="/roses/white/white_rose.webp"
-                alt=""
-                width={36}
-                height={36}
-                className={styles.edgeRoseImg}
-              />
-            </div>
-
-            {/* Edge Rose 2: Top edge, right */}
-            <div className={styles.organicRose2}>
-              <Image
-                src="/roses/white/white_rose_angle.webp"
-                alt=""
-                width={30}
-                height={30}
-                className={styles.edgeRoseImg}
-              />
-            </div>
-
-            {/* Edge Rose 3: Bottom edge, right */}
-            <div className={styles.organicRose3}>
-              <Image
-                src="/roses/white/white_rose.webp"
-                alt=""
-                width={34}
-                height={34}
-                className={styles.edgeRoseImg}
-              />
-            </div>
-
-            {/* Edge Rose 4: Bottom edge, left */}
-            <div className={styles.organicRose4}>
-              <Image
-                src="/roses/red/red_rose_angle.webp"
-                alt=""
-                width={28}
-                height={28}
-                className={styles.edgeRoseImg}
-              />
-            </div>
-          </div>
         </Link>
       </div>
 
