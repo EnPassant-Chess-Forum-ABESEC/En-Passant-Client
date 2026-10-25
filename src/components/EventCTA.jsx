@@ -52,65 +52,7 @@ export default function EventCTA({ event = null }) {
           className={`${styles.redBracketVineBtn} cursor-good group`}
           aria-label="Register for Event"
         >
-          {/* Layer A: Leaves Layer (BEHIND the vine cane path so stems are hidden under the cane) */}
-          <div className={styles.leafLayer} aria-hidden="true">
-            {/* Edge Leaf 1: Stem tucked behind top vine cane near left corner */}
-            <div className={styles.organicLeaf1}>
-              <Image
-                src="/roses/leaves/event_cta_leaves.webp"
-                alt=""
-                width={38}
-                height={38}
-                className={styles.edgeLeafImg}
-              />
-            </div>
-
-            {/* Edge Leaf 2: Stem tucked behind top vine cane at center */}
-            <div className={styles.organicLeaf2}>
-              <Image
-                src="/roses/leaves/event_cta_leaves.webp"
-                alt=""
-                width={38}
-                height={38}
-                className={styles.edgeLeafImg}
-              />
-            </div>
-
-            {/* Edge Leaf 3: Stem tucked behind right vine cane */}
-            <div className={styles.organicLeaf3}>
-              <Image
-                src="/roses/leaves/event_cta_leaves.webp"
-                alt=""
-                width={38}
-                height={38}
-                className={styles.edgeLeafImg}
-              />
-            </div>
-
-            {/* Edge Leaf 4: Stem tucked behind bottom vine cane */}
-            <div className={styles.organicLeaf4}>
-              <Image
-                src="/roses/leaves/event_cta_leaves.webp"
-                alt=""
-                width={38}
-                height={38}
-                className={styles.edgeLeafImg}
-              />
-            </div>
-
-            {/* Edge Leaf 5: Stem tucked behind left vine cane */}
-            <div className={styles.organicLeaf5}>
-              <Image
-                src="/roses/leaves/event_cta_leaves.webp"
-                alt=""
-                width={38}
-                height={38}
-                className={styles.edgeLeafImg}
-              />
-            </div>
-          </div>
-
-          {/* Layer B: Solid Red Center Plaque with Roughened Straight Lines */}
+          {/* Solid Red Center Plaque with Roughened Straight Lines */}
           <div className={styles.redBtnInner}>
             {/* Button Text */}
             <span className={styles.redBtnText}>Register Now</span>
