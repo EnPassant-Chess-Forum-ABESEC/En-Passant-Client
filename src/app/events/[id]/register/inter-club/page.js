@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const CLUB_OPTIONS = [
+  "Minerva",
+  "Drone & Robotics",
   "Cultural Club",
   "Dramatics Club",
   "Talentrove Club",
@@ -56,7 +58,6 @@ const CLUB_OPTIONS = [
   "Techovation Club",
   "ACES ABES",
   "Sports Club",
-  "En Passant Chess Club",
   "Spritualandyoga Club",
   "Dare2Compete",
   "DataVerse Club",
@@ -334,7 +335,7 @@ export default function EventInterClubRegistrationPage() {
         if (data?.success && data?.user) {
           setUserProfile(data.user);
         }
-      } catch {}
+      } catch { }
     }
 
     loadUserProfile();
@@ -479,7 +480,7 @@ export default function EventInterClubRegistrationPage() {
     if (!paymentScreenshot) {
       try {
         sessionStorage.removeItem(draftScreenshotKey);
-      } catch (e) {}
+      } catch (e) { }
       return;
     }
 
@@ -880,16 +881,16 @@ export default function EventInterClubRegistrationPage() {
                               <h3 className="text-white font-pezula text-base sm:text-lg uppercase tracking-wide">
                                 {interclubRegistration.paymentStatus ===
                                   "success" ||
-                                interclubRegistration.status === "confirmed"
+                                  interclubRegistration.status === "confirmed"
                                   ? "Registration Confirmed"
                                   : interclubRegistration.paymentStatus ===
-                                      "failed"
+                                    "failed"
                                     ? "Payment Rejected"
                                     : "Payment Verification Pending"}
                               </h3>
                               {interclubRegistration.paymentStatus ===
                                 "success" ||
-                              interclubRegistration.status === "confirmed" ? (
+                                interclubRegistration.status === "confirmed" ? (
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                               ) : interclubRegistration.paymentStatus ===
                                 "failed" ? (
@@ -902,30 +903,29 @@ export default function EventInterClubRegistrationPage() {
                             <p className="text-white/40 text-[11px] font-mono leading-relaxed">
                               {interclubRegistration.paymentStatus ===
                                 "success" ||
-                              interclubRegistration.status === "confirmed"
+                                interclubRegistration.status === "confirmed"
                                 ? `Confirmed registration for ${event?.title || "ACC 2026"}`
                                 : interclubRegistration.paymentStatus ===
-                                    "failed"
+                                  "failed"
                                   ? "Payment verification was rejected."
                                   : "Your registration was recorded and is awaiting payment verification."}
                             </p>
                           </div>
 
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${
-                              interclubRegistration.paymentStatus ===
-                                "success" ||
+                            className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-medium uppercase tracking-widest border shrink-0 ${interclubRegistration.paymentStatus ===
+                              "success" ||
                               interclubRegistration.status === "confirmed"
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : interclubRegistration.paymentStatus ===
-                                    "failed"
-                                  ? "bg-red-500/10 text-red-400 border-red-500/30"
-                                  : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                            }`}
+                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                              : interclubRegistration.paymentStatus ===
+                                "failed"
+                                ? "bg-red-500/10 text-red-400 border-red-500/30"
+                                : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                              }`}
                           >
                             {interclubRegistration.paymentStatus ===
                               "success" ||
-                            interclubRegistration.status === "confirmed"
+                              interclubRegistration.status === "confirmed"
                               ? "CONFIRMED"
                               : interclubRegistration.paymentStatus === "failed"
                                 ? "FAILED"
@@ -988,18 +988,18 @@ export default function EventInterClubRegistrationPage() {
                             effectiveClubName ||
                             interclubRegistration.teamName ||
                             interclubRegistration.team?.teamName) && (
-                            <div className="col-span-2 pt-1 border-t border-white/[0.04]">
-                              <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                Affiliated Organization / College
-                              </span>
-                              <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate">
-                                {interclubRegistration.clubName ||
-                                  effectiveClubName ||
-                                  interclubRegistration.teamName ||
-                                  interclubRegistration.team?.teamName}
-                              </span>
-                            </div>
-                          )}
+                              <div className="col-span-2 pt-1 border-t border-white/[0.04]">
+                                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                  Affiliated Organization / College
+                                </span>
+                                <span className="text-white font-medium text-xs sm:text-[13px] mt-0.5 block truncate">
+                                  {interclubRegistration.clubName ||
+                                    effectiveClubName ||
+                                    interclubRegistration.teamName ||
+                                    interclubRegistration.team?.teamName}
+                                </span>
+                              </div>
+                            )}
                         </div>
                       </div>
 
@@ -1177,18 +1177,16 @@ export default function EventInterClubRegistrationPage() {
                               <button
                                 type="button"
                                 onClick={() => setGender("male")}
-                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                                  gender === "male"
-                                    ? "bg-white/[0.08] border-red-500/40 text-white"
-                                    : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
-                                }`}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${gender === "male"
+                                  ? "bg-white/[0.08] border-red-500/40 text-white"
+                                  : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                  }`}
                               >
                                 <span
-                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
-                                    gender === "male"
-                                      ? "border-red-400/80 bg-red-500/20"
-                                      : "border-white/25 bg-transparent"
-                                  }`}
+                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${gender === "male"
+                                    ? "border-red-400/80 bg-red-500/20"
+                                    : "border-white/25 bg-transparent"
+                                    }`}
                                 >
                                   {gender === "male" && (
                                     <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
@@ -1199,18 +1197,16 @@ export default function EventInterClubRegistrationPage() {
                               <button
                                 type="button"
                                 onClick={() => setGender("female")}
-                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                                  gender === "female"
-                                    ? "bg-white/[0.08] border-red-500/40 text-white"
-                                    : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
-                                }`}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${gender === "female"
+                                  ? "bg-white/[0.08] border-red-500/40 text-white"
+                                  : "bg-white/[0.03] border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.06]"
+                                  }`}
                               >
                                 <span
-                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${
-                                    gender === "female"
-                                      ? "border-red-400/80 bg-red-500/20"
-                                      : "border-white/25 bg-transparent"
-                                  }`}
+                                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors ${gender === "female"
+                                    ? "border-red-400/80 bg-red-500/20"
+                                    : "border-white/25 bg-transparent"
+                                    }`}
                                 >
                                   {gender === "female" && (
                                     <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
@@ -1280,11 +1276,10 @@ export default function EventInterClubRegistrationPage() {
                                   return next;
                                 });
                               }}
-                              className={`w-full flex items-center justify-between bg-white/[0.04] border ${
-                                isClubOpen
-                                  ? "border-red-500/40 bg-white/[0.07]"
-                                  : "border-white/10 hover:border-white/20"
-                              } rounded-lg h-10 px-3 text-xs text-white hover:bg-white/[0.06] transition-all cursor-pointer font-mono select-none`}
+                              className={`w-full flex items-center justify-between bg-white/[0.04] border ${isClubOpen
+                                ? "border-red-500/40 bg-white/[0.07]"
+                                : "border-white/10 hover:border-white/20"
+                                } rounded-lg h-10 px-3 text-xs text-white hover:bg-white/[0.06] transition-all cursor-pointer font-mono select-none`}
                             >
                               <span
                                 className={
@@ -1296,9 +1291,8 @@ export default function EventInterClubRegistrationPage() {
                                 {clubName || "Select Club / Organization"}
                               </span>
                               <ChevronDown
-                                className={`w-3.5 h-3.5 text-white/40 shrink-0 transition-transform duration-200 ${
-                                  isClubOpen ? "rotate-180 text-white" : ""
-                                }`}
+                                className={`w-3.5 h-3.5 text-white/40 shrink-0 transition-transform duration-200 ${isClubOpen ? "rotate-180 text-white" : ""
+                                  }`}
                               />
                             </button>
 
@@ -1354,11 +1348,10 @@ export default function EventInterClubRegistrationPage() {
                                             setClubName(club);
                                             setIsClubOpen(false);
                                           }}
-                                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-mono text-left transition-colors cursor-pointer ${
-                                            isSelected
-                                              ? "bg-white/[0.08] text-white font-medium border border-white/10"
-                                              : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
-                                          }`}
+                                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-mono text-left transition-colors cursor-pointer ${isSelected
+                                            ? "bg-white/[0.08] text-white font-medium border border-white/10"
+                                            : "text-white/70 hover:text-white hover:bg-white/5 border border-transparent"
+                                            }`}
                                         >
                                           <span className="truncate">
                                             {club}
@@ -1431,13 +1424,13 @@ export default function EventInterClubRegistrationPage() {
                                 <span className="block text-white font-medium truncate font-pezula tracking-wide text-xs sm:text-sm">
                                   {isSignedIn
                                     ? clerkUser?.fullName ||
-                                      "Club Representative"
+                                    "Club Representative"
                                     : "Guest Player"}
                                 </span>
                                 <span className="block text-white/40 text-[10px] truncate font-mono">
                                   {isSignedIn
                                     ? clerkUser?.primaryEmailAddress
-                                        ?.emailAddress || "Verified Account"
+                                      ?.emailAddress || "Verified Account"
                                     : "Sign in required to register"}
                                 </span>
                               </div>
@@ -1637,8 +1630,8 @@ export default function EventInterClubRegistrationPage() {
 
               <div className="pt-2.5 shrink-0 border-t border-white/5 mt-2">
                 {!interclubRegistration &&
-                isRegistrationOpen &&
-                !hasSoloRegistration ? (
+                  isRegistrationOpen &&
+                  !hasSoloRegistration ? (
                   <SpecularButton
                     onClick={handleNext}
                     disabled={isSubmitting || !isStepValid(currentStep)}
