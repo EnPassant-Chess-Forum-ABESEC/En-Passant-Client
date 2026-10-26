@@ -116,7 +116,7 @@ export default function AdminEventDetailPage({ params }) {
     try {
       const res = await fetchApi(`/events/${id}/tournaments/initialize`, {
         method: "POST",
-        body: { section: "all" },
+        body: {},
       });
       toast.success(
         res?.message || "Tournament brackets initialized successfully!",
@@ -134,7 +134,7 @@ export default function AdminEventDetailPage({ params }) {
     try {
       const res = await fetchApi(`/events/${id}/tournaments/seed`, {
         method: "POST",
-        body: {},
+        body: { autoAssignByRating: true },
       });
       const seededCount = res?.result?.totalSeeded || 0;
       if (seededCount === 0) {
