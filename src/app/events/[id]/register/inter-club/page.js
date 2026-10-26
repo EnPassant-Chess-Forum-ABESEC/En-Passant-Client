@@ -53,7 +53,8 @@ const CLUB_OPTIONS = [
   "Techovation Club",
   "ACES ABES",
   "Sports Club",
-  "En Passant Chess Club",
+  "Minerva",
+  "Drone & Robotics",
   "Spritualandyoga Club",
   "Dare2Compete",
   "DataVerse Club",
@@ -437,9 +438,7 @@ export default function EventInterClubRegistrationPage() {
     }
 
     const userRating =
-      bracketPreview?.peakRating ??
-      chessAccount?.ratings?.rapid ??
-      0;
+      bracketPreview?.peakRating ?? chessAccount?.ratings?.rapid ?? 0;
 
     const matched = interclubSection.brackets.find(
       (b) =>
