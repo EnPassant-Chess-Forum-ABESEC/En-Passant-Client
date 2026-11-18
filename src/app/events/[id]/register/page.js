@@ -1396,8 +1396,9 @@ export default function EventSoloRegistrationPage() {
                         <button
                           type="button"
                           disabled
-                          className="w-full h-11 rounded-xl bg-white/[0.04] text-white/50 font-pezula uppercase tracking-widest text-xs border border-white/10 flex items-center justify-center gap-2 cursor-default select-none"
+                          className="w-full h-11 rounded-xl bg-emerald-950/40 text-emerald-400 font-pezula uppercase tracking-widest text-xs border border-emerald-500/40 flex items-center justify-center gap-2 cursor-default select-none shadow-sm shadow-emerald-950/30"
                         >
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                           <span className="truncate">Presence Confirmed</span>
                         </button>
                       ) : (
