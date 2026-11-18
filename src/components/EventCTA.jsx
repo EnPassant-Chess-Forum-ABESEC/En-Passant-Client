@@ -18,7 +18,6 @@ export default function EventCTA({ event = null }) {
       <div className={styles.vignetteBottom} aria-hidden="true" />
       <div className={styles.radialVignette} aria-hidden="true" />
 
-      {/* Layer 1: Marble Hands */}
       <div className={styles.handsLayer} aria-hidden="true">
         <Image
           src="/event/cta/hands.webp"
@@ -29,7 +28,6 @@ export default function EventCTA({ event = null }) {
         />
       </div>
 
-      {/* Layer 2: Blood & Roses Wreath Circle */}
       <div className={styles.wreathContainer} aria-hidden="true">
         <Image
           src="/event/cta/circle_btm.webp"
@@ -45,20 +43,20 @@ export default function EventCTA({ event = null }) {
         />
       </div>
 
-      {/* Layer 3: Final Register CTA Button with Vine Canes & Roses */}
       <div className={styles.ctaWrapper}>
         <Link
           href={registerHref}
           className={`${styles.redBracketVineBtn} cursor-good group`}
           aria-label="Register for Event"
         >
-          {/* Solid Red Center Plaque with Roughened Straight Lines */}
           <div className={styles.redBtnInner}>
-            {/* Button Text */}
-            <span className={styles.redBtnText}>Register Now</span>
+            <span className={styles.redBtnText}>
+              {event?.isRegistrationOpen === false
+                ? "Confirm Presence"
+                : "Register Now"}
+            </span>
           </div>
 
-          {/* Layer C: Sinuous Bramble Vine Cane Frame (in FRONT of leaves so canes hide their stems!) */}
           <svg
             className={styles.bracketVineSvg}
             viewBox="0 0 270 80"
@@ -66,18 +64,16 @@ export default function EventCTA({ event = null }) {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {/* Primary Sinuous Rose Cane */}
             <path
               d="M 16 8 C 55 5, 95 9, 135 6 C 175 4, 215 8, 252 6 C 262 6, 265 14, 264 24 C 263 38, 266 50, 264 62 C 263 70, 256 74, 246 73 C 210 74, 165 71, 130 74 C 90 76, 50 72, 22 74 C 12 74, 6 68, 6 58 C 6 46, 8 32, 6 20 C 6 12, 10 8, 16 8 Z"
               className={styles.vineCaneMain}
             />
-            {/* Secondary Intertwining Tendril Cane */}
+
             <path
               d="M 12 12 C 50 3, 90 10, 130 4 C 175 0, 220 11, 256 5 C 266 8, 261 24, 265 36 C 261 50, 266 60, 254 70 C 215 76, 175 70, 130 75 C 85 71, 45 76, 14 70 C 4 62, 8 48, 5 36 C 8 22, 4 14, 12 12 Z"
               className={styles.vineCaneTendril}
             />
 
-            {/* Organic Briar Thorns along canes */}
             <path
               d="M 72 7 Q 74 1 79 2 Q 76 7 74 8 Z"
               className={styles.bracketThorn}
@@ -123,11 +119,9 @@ export default function EventCTA({ event = null }) {
               className={styles.bracketTendril}
             />
           </svg>
-
         </Link>
       </div>
 
-      {/* Layer 4: Headline */}
       <div className={styles.headingWrapper}>
         <div className={styles.headingContainer}>
           <h2 className={styles.title}>

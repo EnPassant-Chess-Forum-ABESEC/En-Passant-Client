@@ -12,8 +12,6 @@ import {
   Edit2,
   ArrowLeft,
   Users,
-  Trophy,
-  ExternalLink,
   Loader2,
   Sparkles,
   UserCheck,
@@ -64,7 +62,6 @@ export default function AdminEventDetailPage({ params }) {
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -108,47 +105,6 @@ export default function AdminEventDetailPage({ params }) {
       toast.error("Failed to delete event: " + err.message);
       setIsDeleting(false);
       setIsDeleteOpen(false);
-    }
-  };
-
-  const handleInitializeBrackets = async () => {
-    setActionLoading(true);
-    try {
-      const res = await fetchApi(`/events/${id}/tournaments/initialize`, {
-        method: "POST",
-        body: {},
-      });
-      toast.success(
-        res?.message || "Tournament brackets initialized successfully!",
-      );
-      await loadEvent();
-    } catch (err) {
-      toast.error("Initialization error: " + err.message);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleSeedPlayers = async () => {
-    setActionLoading(true);
-    try {
-      const res = await fetchApi(`/events/${id}/tournaments/seed`, {
-        method: "POST",
-        body: { autoAssignByRating: true },
-      });
-      const seededCount = res?.result?.totalSeeded || 0;
-      if (seededCount === 0) {
-        toast.info("No confirmed participant registrations found to seed yet.");
-      } else {
-        toast.success(
-          `Seeded ${seededCount} participants into tournament brackets!`,
-        );
-      }
-      await loadEvent();
-    } catch (err) {
-      toast.error("Seeding error: " + err.message);
-    } finally {
-      setActionLoading(false);
     }
   };
 
@@ -271,34 +227,6 @@ export default function AdminEventDetailPage({ params }) {
               )}
             </button>
 
-            <Link
-              href={`/admin/tournaments/events/${id}`}
-              className="h-10 inline-flex items-center gap-1.5 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors shadow-2xs"
-            >
-              <span>Tournaments</span>
-            </Link>
-
-            <button
-              onClick={handleInitializeBrackets}
-              disabled={actionLoading}
-              className="h-10 inline-flex items-center gap-1.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-sm shadow-blue-500/20 disabled:opacity-50"
-            >
-              {actionLoading ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <></>
-              )}
-              <span>Initialize Tournaments</span>
-            </button>
-
-            <button
-              onClick={handleSeedPlayers}
-              disabled={actionLoading}
-              className="h-10 inline-flex items-center gap-1.5 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors disabled:opacity-50"
-            >
-              <span>Seed Players</span>
-            </button>
-
             <button
               onClick={() => setIsDeleteOpen(true)}
               aria-label="Delete Event"
@@ -415,14 +343,6 @@ export default function AdminEventDetailPage({ params }) {
                 Sections and rating brackets for this event
               </p>
             </div>
-
-            <Link
-              href={`/admin/tournaments/events/${id}`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              <span>View Tournaments</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
           </div>
 
         {sectionsCount === 0 ? (
@@ -432,7 +352,7 @@ export default function AdminEventDetailPage({ params }) {
               No Sections Created
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">
-              Edit this event to add tournament sections (e.g. Open, Women) and
+              Edit this event to add sections (e.g. Open, Women) and
               rating brackets.
             </p>
             <button
@@ -518,16 +438,6 @@ export default function AdminEventDetailPage({ params }) {
                           </span>
                         </div>
                       </div>
-
-                      <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-xs">
-                        <Link
-                          href={`/admin/tournaments/events/${id}`}
-                          className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                        >
-                          <span>View Bracket</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </Link>
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -546,8 +456,8 @@ export default function AdminEventDetailPage({ params }) {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
               Are you sure you want to delete &ldquo;{event.title}&rdquo;? This
-              action cannot be undone. Associated tournaments and participant
-              brackets may also be affected.
+              action cannot be undone. All event data and participant
+              registrations will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

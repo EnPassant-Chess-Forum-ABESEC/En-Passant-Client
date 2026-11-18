@@ -79,6 +79,7 @@ export default function EventRegistrationsTab({
   const [bracketFilter, setBracketFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [presenceFilter, setPresenceFilter] = useState("ALL");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -208,6 +209,35 @@ export default function EventRegistrationsTab({
     }
   };
 
+  const handleTogglePresence = async (reg) => {
+    try {
+      const nextConfirmed = !reg.isConfirmed;
+      const res = await fetchApiRef.current(
+        `/admin/event-registrations/${reg._id}/presence`,
+        {
+          method: "PATCH",
+          body: { isConfirmed: nextConfirmed },
+        },
+      );
+      if (res?.success) {
+        toast.success(
+          nextConfirmed
+            ? "Participant presence confirmed!"
+            : "Participant presence unconfirmed!",
+        );
+        setRegistrations((prev) =>
+          prev.map((r) =>
+            r._id === reg._id ? { ...r, isConfirmed: nextConfirmed } : r,
+          ),
+        );
+      } else {
+        toast.error(res?.message || "Failed to update presence");
+      }
+    } catch (err) {
+      toast.error("Error updating presence: " + err.message);
+    }
+  };
+
   const availableSections = useMemo(() => {
     const map = new Map();
 
@@ -311,6 +341,14 @@ export default function EventRegistrationsTab({
         return false;
       }
 
+      if (presenceFilter === "CONFIRMED" && !reg.isConfirmed) {
+        return false;
+      }
+
+      if (presenceFilter === "UNCONFIRMED" && reg.isConfirmed) {
+        return false;
+      }
+
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const userName = (reg.registeredBy?.userName || "").toLowerCase();
@@ -357,6 +395,7 @@ export default function EventRegistrationsTab({
     bracketFilter,
     typeFilter,
     statusFilter,
+    presenceFilter,
     searchQuery,
   ]);
 
@@ -526,6 +565,34 @@ export default function EventRegistrationsTab({
           )}
           <span>Export to Sheet</span>
         </button>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+            Presence:
+          </span>
+          <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800/80 p-1 border border-slate-200 dark:border-slate-800">
+            {[
+              { id: "ALL", label: "All Presence" },
+              { id: "CONFIRMED", label: "Confirmed" },
+              { id: "UNCONFIRMED", label: "Unconfirmed" },
+            ].map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setPresenceFilter(p.id)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  presenceFilter === p.id
+                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <AdminSearchBar
@@ -763,13 +830,34 @@ export default function EventRegistrationsTab({
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span
-                          className={`text-xs font-semibold font-mono capitalize ${getStatusTextStyle(
-                            reg.status,
-                          )}`}
-                        >
-                          {reg.status || "pending"}
-                        </span>
+                        <div className="flex flex-col items-start gap-1">
+                          <span
+                            className={`text-xs font-semibold font-mono capitalize ${getStatusTextStyle(
+                              reg.status,
+                            )}`}
+                          >
+                            {reg.status || "pending"}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePresence(reg)}
+                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono cursor-pointer transition-colors ${
+                              reg.isConfirmed
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700"
+                            }`}
+                            title="Click to toggle presence confirmation"
+                          >
+                            {reg.isConfirmed ? (
+                              <>
+                                <Check className="w-2.5 h-2.5 text-emerald-500" />
+                                <span>Confirmed</span>
+                              </>
+                            ) : (
+                              <span>Unconfirmed</span>
+                            )}
+                          </button>
+                        </div>
                       </td>
 
                       <td className="py-3.5 px-4 text-right">
@@ -852,6 +940,19 @@ export default function EventRegistrationsTab({
                       >
                         {reg.status || "pending"}
                       </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePresence(reg)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono cursor-pointer transition-colors ${
+                          reg.isConfirmed
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                        }`}
+                        title="Click to toggle presence confirmation"
+                      >
+                        {reg.isConfirmed ? "Confirmed" : "Unconfirmed"}
+                      </button>
 
                       <button
                         type="button"

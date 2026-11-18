@@ -192,6 +192,7 @@ export default function EventSoloRegistrationPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const isDraftLoadedRef = useRef(false);
   const draftStorageKey = useMemo(() => {
@@ -333,10 +334,20 @@ export default function EventSoloRegistrationPage() {
             if (data.allRegistrations.length > 0) {
               const firstGender = data.allRegistrations[0].gender;
               if (firstGender) setGender(firstGender);
+              if (data.allRegistrations[0].section) {
+                setSelectedSectionName(
+                  (prev) => prev || data.allRegistrations[0].section,
+                );
+              }
             }
           }
           if (data.registration) {
             setMyRegistration(data.registration);
+            if (data.registration.section) {
+              setSelectedSectionName(
+                (prev) => prev || data.registration.section,
+              );
+            }
           }
         } else {
           setMyRegistration(null);
@@ -390,8 +401,14 @@ export default function EventSoloRegistrationPage() {
   }, [availableSections, selectedSectionName]);
 
   const isRegistrationOpen = useMemo(() => {
+    if (event?.isRegistrationOpen === false) return false;
     if (!event?.registrationDeadline) return true;
     return new Date() <= new Date(event.registrationDeadline);
+  }, [event]);
+
+  const isDeadlinePassed = useMemo(() => {
+    if (!event?.registrationDeadline) return false;
+    return new Date() > new Date(event.registrationDeadline);
   }, [event]);
 
   const isPaymentConfirmed = useMemo(() => {
@@ -417,19 +434,22 @@ export default function EventSoloRegistrationPage() {
 
   const activeSectionRegistration = useMemo(() => {
     if (allRegistrations && allRegistrations.length > 0) {
-      return (
-        allRegistrations.find(
-          (r) =>
-            r.section?.toLowerCase().trim() ===
-            selectedSectionName?.toLowerCase().trim(),
-        ) || null
-      );
+      const normSel = (selectedSectionName || "").toLowerCase().trim();
+      const match = allRegistrations.find((r) => {
+        const sec = (r.section || "").toLowerCase().trim();
+        if (sec === normSel) return true;
+        if (
+          (sec === "womens" || sec === "women") &&
+          (normSel === "womens" || normSel === "women")
+        ) {
+          return true;
+        }
+        return false;
+      });
+      if (match) return match;
+      return allRegistrations[0];
     }
-    if (
-      myRegistration &&
-      myRegistration.section?.toLowerCase().trim() ===
-        selectedSectionName?.toLowerCase().trim()
-    ) {
+    if (myRegistration) {
       return myRegistration;
     }
     return null;
@@ -473,9 +493,7 @@ export default function EventSoloRegistrationPage() {
     }
 
     const userRating =
-      bracketPreview?.peakRating ??
-      chessAccount?.ratings?.rapid ??
-      0;
+      bracketPreview?.peakRating ?? chessAccount?.ratings?.rapid ?? 0;
 
     const matched = activeSection.brackets.find(
       (b) =>
@@ -658,6 +676,12 @@ export default function EventSoloRegistrationPage() {
 
   const handleWithdraw = async () => {
     if (!event?._id) return;
+    if (isDeadlinePassed) {
+      toast.error(
+        "Withdrawal is not allowed after the registration deadline has passed.",
+      );
+      return;
+    }
     const targetSection = currentRegView?.section || selectedSectionName;
     try {
       setIsWithdrawing(true);
@@ -696,6 +720,38 @@ export default function EventSoloRegistrationPage() {
       toast.error(err.message || "Failed to withdraw registration.");
     } finally {
       setIsWithdrawing(false);
+    }
+  };
+
+  const handleConfirmPresence = async () => {
+    if (!event?._id) return;
+    const targetSection =
+      currentRegView?.section || selectedSectionName || "open";
+    try {
+      setIsConfirming(true);
+      const res = await fetchApi(
+        `/event-registrations/${event._id}/confirm-presence`,
+        {
+          method: "PATCH",
+          body: { section: targetSection },
+        },
+      );
+
+      if (res?.success && res.registration) {
+        toast.success("Presence confirmed! Your presence has been reserved.");
+        setMyRegistration(res.registration);
+        setAllRegistrations((prev) =>
+          prev.map((r) =>
+            r._id === res.registration._id ? res.registration : r,
+          ),
+        );
+      } else {
+        toast.error(res?.message || "Failed to confirm presence.");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to confirm presence.");
+    } finally {
+      setIsConfirming(false);
     }
   };
 
@@ -951,45 +1007,37 @@ export default function EventSoloRegistrationPage() {
                         </div>
                       </div>
 
-                      {isRegistrationOpen && (
-                        <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                          <span className="text-white/40 text-[10px] sm:text-[11px]">
-                            Need to withdraw before the deadline?
+                      {currentRegView?.isConfirmed ? (
+                        <div className="px-4 sm:px-5 py-3 border-t border-white/[0.06] bg-white/[0.015] flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5">
+                            <div>
+                              <span className="text-xs font-semibold text-white/90 block uppercase tracking-wider font-pezula">
+                                Presence Confirmed
+                              </span>
+                              <span className="text-[11px] text-white/40 block">
+                                Seat reserved for tournament round pairings.
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-[9.5px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/10 shrink-0">
+                            Ready
                           </span>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger
-                              disabled={isWithdrawing || !isRegistrationOpen}
-                              className="text-xs text-red-400 hover:text-red-300 underline font-medium cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                              Withdraw
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
-                                  Withdraw Registration?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-white/60 text-sm">
-                                  Are you sure you want to withdraw your
-                                  registration for {event?.title || "ACC"}? This
-                                  action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl">
-                                  Cancel
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={handleWithdraw}
-                                  className="bg-[#9b1a1a] hover:bg-[#b01e1e] text-white rounded-xl"
-                                >
-                                  {isWithdrawing
-                                    ? "Withdrawing..."
-                                    : "Confirm Withdrawal"}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                        </div>
+                      ) : (
+                        <div className="px-4 sm:px-5 py-3 border-t border-white/[0.06] bg-white/[0.015] flex items-center justify-between gap-3">
+                          <div className="flex items-start sm:items-center gap-2.5">
+                            <div>
+                              <span className="text-xs font-semibold text-white/80 block uppercase tracking-wider font-pezula">
+                                Confirmation Required
+                              </span>
+                              <span className="text-[11px] text-white/40 block leading-tight">
+                                Confirm attendance below to reserve your board.
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-[9.5px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-white/40 border border-white/10 shrink-0">
+                            Pending
+                          </span>
                         </div>
                       )}
                     </motion.div>
@@ -1341,9 +1389,87 @@ export default function EventSoloRegistrationPage() {
               </div>
 
               <div className="pt-2.5 shrink-0 border-t border-white/5 mt-2">
-                {!currentRegView &&
-                isRegistrationOpen &&
-                !hasInterclubRegistration ? (
+                {currentRegView ? (
+                  <div className="space-y-2 w-full">
+                    <div className="grid grid-cols-2 gap-2.5 w-full">
+                      {currentRegView?.isConfirmed ? (
+                        <button
+                          type="button"
+                          disabled
+                          className="w-full h-11 rounded-xl bg-white/[0.04] text-white/50 font-pezula uppercase tracking-widest text-xs border border-white/10 flex items-center justify-center gap-2 cursor-default select-none"
+                        >
+                          <span className="truncate">Presence Confirmed</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleConfirmPresence}
+                          disabled={isConfirming}
+                          className="w-full h-11 rounded-xl bg-red-950/60 hover:bg-red-950/80 text-white font-pezula uppercase tracking-widest text-xs border border-red-500/40 hover:border-red-500/60 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 select-none shadow-sm shadow-red-950/40"
+                        >
+                          {isConfirming ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                              <span className="truncate">Confirming...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="truncate">Confirm Presence</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+
+                      <AlertDialog>
+                        <AlertDialogTrigger
+                          disabled={isWithdrawing || isDeadlinePassed}
+                          className="w-full h-11 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white font-pezula uppercase tracking-widest text-xs border border-white/10 hover:border-white/20 transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                        >
+                          {isWithdrawing ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                              <span className="truncate">Withdrawing...</span>
+                            </>
+                          ) : (
+                            <span className="truncate">Withdraw</span>
+                          )}
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="font-pezula uppercase tracking-wide text-lg">
+                              Withdraw Registration?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-white/60 text-sm">
+                              Are you sure you want to withdraw your
+                              registration for {event?.title || "ACC"}? This
+                              action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-xl font-pezula uppercase text-xs tracking-wider">
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={handleWithdraw}
+                              className="bg-white/10 hover:bg-white/15 text-white border border-white/15 rounded-xl font-pezula uppercase text-xs tracking-wider"
+                            >
+                              {isWithdrawing
+                                ? "Withdrawing..."
+                                : "Confirm Withdrawal"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+
+                    <Link
+                      href="/events"
+                      className="w-full py-2 rounded-xl bg-transparent hover:bg-white/[0.03] text-white/40 hover:text-white/70 text-[11px] uppercase tracking-widest font-pezula transition-colors flex items-center justify-center cursor-pointer"
+                    >
+                      Return to Events Overview
+                    </Link>
+                  </div>
+                ) : isRegistrationOpen && !hasInterclubRegistration ? (
                   <SpecularButton
                     onClick={handleNext}
                     disabled={isSubmitting || !isStepValid(currentStep)}

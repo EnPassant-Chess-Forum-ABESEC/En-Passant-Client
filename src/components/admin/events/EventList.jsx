@@ -10,7 +10,6 @@ import {
   Edit2,
   ChevronRight,
   Users,
-  Trophy,
   ExternalLink,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -335,14 +334,6 @@ export default function EventList({
                     >
                       <Users className="w-3.5 h-3.5" />
                       <span>Registrations</span>
-                    </Link>
-
-                    <Link
-                      href={`/admin/tournaments/events/${ev._id}`}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold transition-colors"
-                    >
-                      <Layers className="w-3.5 h-3.5 text-slate-400" />
-                      <span className="hidden sm:inline">Tournaments</span>
                     </Link>
                   </div>
 
