@@ -738,16 +738,23 @@ class TypeGardenEngine {
     return pts;
   }
 
-  getEdgeBranchConfig(edge) {
+  getEdgeBranchConfig(edge, geometry) {
     const id = edge.id;
     const entry = TREE_DECORATIONS[id];
 
     if (entry) {
+      let letterIdx = entry.letterIdx ?? -1;
+      if (id === "section-1" && geometry?.edges) {
+        const hasSection2 = geometry.edges.some((e) => e.id === "section-2");
+        if (!hasSection2) {
+          letterIdx = 2;
+        }
+      }
       return {
         id,
         color: entry.stemColor || "stem",
         isLetterAnchored: !!entry.isLetterAnchored,
-        letterIdx: entry.letterIdx ?? -1,
+        letterIdx,
         stemWidth: entry.stemWidth || 1.0,
         elements: (entry.elements || []).map((el, i) =>
           normalizeTreeElement(el, i)
@@ -809,7 +816,7 @@ class TypeGardenEngine {
     geometry.edges.forEach((edge, idx) => {
       if (!edge || !edge.segments) return;
 
-      const cfg = this.getEdgeBranchConfig(edge);
+      const cfg = this.getEdgeBranchConfig(edge, geometry);
       const pts = this.sampleBezierSegments(edge.segments, 6);
       if (pts.length < 2) return;
 

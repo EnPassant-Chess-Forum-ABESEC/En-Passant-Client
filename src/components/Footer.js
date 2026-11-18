@@ -72,14 +72,6 @@ export default function Footer() {
         style={{ y }}
         className="w-full h-full flex flex-col relative z-0"
       >
-        <div
-          className="absolute top-0 left-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(155,26,26,0.12) 0%, transparent 70%)",
-          }}
-        />
-
         <div className="relative z-10 flex flex-col flex-1 px-8 md:px-16 lg:px-24 pt-32 md:pt-[120px] lg:pt-[150px] pb-8">
           <div className="flex flex-col md:flex-row items-start md:justify-between w-full mb-6 md:mb-8 gap-6 md:gap-0">
             <div>

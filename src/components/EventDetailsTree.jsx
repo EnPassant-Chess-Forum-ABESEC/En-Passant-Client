@@ -32,14 +32,6 @@ const DEFAULT_TREE_DATA = {
       description: "women section for female participants",
       brackets: [{ id: "womens-open", name: "All Ratings", range: "0 - 3000" }],
     },
-    {
-      id: "interclub",
-      title: "Inter-Club",
-      description: "inter club section for different club representatives",
-      brackets: [
-        { id: "interclub-open", name: "All Ratings", range: "0 - 3000" },
-      ],
-    },
   ],
   prizes: {
     label: "Prizes",
@@ -103,9 +95,13 @@ function formatRoot(event) {
 function normalizeData(json) {
   if (!json || typeof json !== "object") return DEFAULT_TREE_DATA;
 
-  const rawSections = Array.isArray(json.sections)
-    ? json.sections
-    : DEFAULT_TREE_DATA.sections;
+  const rawSections = (
+    Array.isArray(json.sections) ? json.sections : DEFAULT_TREE_DATA.sections
+  ).filter((s) => {
+    if (!s) return false;
+    const name = (s.name || s.id || "").toLowerCase().trim();
+    return name !== "interclub" && name !== "inter-club";
+  });
 
   const sections = rawSections.filter(Boolean).map((section, index) => {
     const rawBrackets = Array.isArray(section.brackets) ? section.brackets : [];

@@ -190,6 +190,10 @@
 .division:nth-child(3n) {
   padding-top: 320px;
 }
+.division:nth-child(2):last-child {
+  grid-column: 3;
+  padding-top: 180px;
+}
 .sectionHeading {
   padding: 32px 0 24px;
   text-align: center;
@@ -366,6 +370,10 @@
     padding: 0 54px;
   }
   .division:nth-child(n) {
+    padding-top: 0;
+  }
+  .division:nth-child(2):last-child {
+    grid-column: auto;
     padding-top: 0;
   }
   .sectionHeading h3 {
