@@ -652,6 +652,8 @@ export default function EventSoloRegistrationPage() {
           status: "confirmed",
           paymentStatus: "success",
           paymentAmount: 0,
+          isConfirmed: true,
+          confirmedAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
         };
         setMyRegistration(newReg);
@@ -675,52 +677,9 @@ export default function EventSoloRegistrationPage() {
   };
 
   const handleWithdraw = async () => {
-    if (!event?._id) return;
-    if (isDeadlinePassed) {
-      toast.error(
-        "Withdrawal is not allowed after the registration deadline has passed.",
-      );
-      return;
-    }
-    const targetSection = currentRegView?.section || selectedSectionName;
-    try {
-      setIsWithdrawing(true);
-      const query = targetSection
-        ? `?section=${encodeURIComponent(targetSection)}`
-        : "";
-      const res = await fetchApi(
-        `/event-registrations/${event._id}/delete${query}`,
-        {
-          method: "DELETE",
-        },
-      );
-
-      if (res?.success) {
-        clearDraft();
-        toast.success("Your registration has been withdrawn.");
-        setAllRegistrations((prev) =>
-          prev.filter(
-            (r) =>
-              r.section?.toLowerCase().trim() !==
-              targetSection?.toLowerCase().trim(),
-          ),
-        );
-        if (
-          myRegistration?.section?.toLowerCase().trim() ===
-          targetSection?.toLowerCase().trim()
-        ) {
-          setMyRegistration(null);
-        }
-        setCurrentStep(0);
-      } else {
-        toast.error(res?.message || "Failed to withdraw registration.");
-      }
-    } catch (err) {
-      console.error("Withdraw error:", err);
-      toast.error(err.message || "Failed to withdraw registration.");
-    } finally {
-      setIsWithdrawing(false);
-    }
+    toast.error(
+      "Withdrawal is not allowed. Participants can only confirm presence.",
+    );
   };
 
   const handleConfirmPresence = async () => {
@@ -838,7 +797,9 @@ export default function EventSoloRegistrationPage() {
                     const isWomens =
                       sec.name?.toLowerCase() === "womens" ||
                       sec.name?.toLowerCase() === "women";
-                    const isSecDisabled = gender === "male" && isWomens;
+                    const isSecDisabled =
+                      (gender === "male" && isWomens) ||
+                      (!isSecRegistered && allRegistrations.length > 0);
 
                     return (
                       <button
@@ -1422,17 +1383,10 @@ export default function EventSoloRegistrationPage() {
 
                       <AlertDialog>
                         <AlertDialogTrigger
-                          disabled={isWithdrawing || isDeadlinePassed}
-                          className="w-full h-11 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white font-pezula uppercase tracking-widest text-xs border border-white/10 hover:border-white/20 transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                          disabled={true}
+                          className="w-full h-11 rounded-xl bg-white/5 text-white/40 font-pezula uppercase tracking-widest text-xs border border-white/5 transition-colors flex items-center justify-center gap-2 cursor-not-allowed select-none opacity-40"
                         >
-                          {isWithdrawing ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                              <span className="truncate">Withdrawing...</span>
-                            </>
-                          ) : (
-                            <span className="truncate">Withdraw</span>
-                          )}
+                          <span className="truncate">Withdraw</span>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 text-white rounded-2xl">
                           <AlertDialogHeader>
